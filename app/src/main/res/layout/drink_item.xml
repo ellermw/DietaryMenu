@@ -1,0 +1,44 @@
+
+// ================================================================================================
+// FILE: app/src/main/res/layout/drink_item.xml
+// ================================================================================================
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="#f8f9fa"
+    android:padding="8dp"
+    android:layout_marginBottom="8dp"
+    android:elevation="1dp">
+
+    <Spinner
+        android:id="@+id/drinkSpinner"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_weight="1"
+        android:layout_marginEnd="8dp" />
+
+    <EditText
+        android:id="@+id/amountInput"
+        android:layout_width="80dp"
+        android:layout_height="40dp"
+        android:hint="ml"
+        android:inputType="number"
+        android:gravity="center"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/edit_text_background"
+        android:enabled="false" />
+
+    <Button
+        android:id="@+id/removeButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:text="×"
+        android:background="#e74c3c"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+</LinearLayout>
