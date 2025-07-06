@@ -1,13 +1,3 @@
-// ================================================================================================
-// HOSPITAL DIETARY ANDROID APP - COMPLETE PROJECT FILES
-// ================================================================================================
-// Copy each section below into the corresponding file path
-// Create the folder structure first, then paste the content
-
-// ================================================================================================
-// FILE: README.md (Root directory)
-// ================================================================================================
-
 # Hospital Dietary Management Android App
 
 A complete Android application for managing hospital dietary orders with SQLite database integration.
