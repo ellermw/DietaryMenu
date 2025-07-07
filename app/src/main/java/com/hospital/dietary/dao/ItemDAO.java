@@ -33,7 +33,30 @@ public class ItemDAO {
         Cursor cursor = db.rawQuery(query, new String[]{categoryName});
         
         if (cursor.moveToFirst()) {
+            int idxId       = cursor.getColumnIndexOrThrow("item_id");
+            int idxCatId    = cursor.getColumnIndexOrThrow("category_id");
+            int idxName     = cursor.getColumnIndexOrThrow("name");
+            int idxSize     = cursor.getColumnIndex("size_ml");
+            int idxAda      = cursor.getColumnIndexOrThrow("is_ada_friendly");
+            int idxSoda     = cursor.getColumnIndexOrThrow("is_soda");
+            int idxCatName  = cursor.getColumnIndexOrThrow("category_name");
+
             do {
+                Item item = new Item();
+                item.setItemId(       cursor.getInt(idxId)         );
+                item.setCategoryId(   cursor.getInt(idxCatId)      );
+                item.setName(         cursor.getString(idxName)    );
+                if (!cursor.isNull(idxSize)) {
+                    item.setSizeML(cursor.getInt(idxSize));
+                }
+                item.setAdaFriendly(  cursor.getInt(idxAda)  == 1  );
+                item.setSoda(         cursor.getInt(idxSoda) == 1  );
+                item.setCategoryName( cursor.getString(idxCatName) );
+                items.add(item);
+            } while (cursor.moveToNext());
+
+            // INFO: The below was wrong.
+            /*do {
                 Item item = new Item();
                 item.setItemId(cursor.getInt("item_id"));
                 item.setCategoryId(cursor.getInt("category_id"));
@@ -48,7 +71,7 @@ public class ItemDAO {
                 item.setCategoryName(cursor.getString("category_name"));
                 
                 items.add(item);
-            } while (cursor.moveToNext());
+            } while (cursor.moveToNext());*/
         }
         
         cursor.close();
@@ -168,7 +191,9 @@ public class ItemDAO {
         
         Integer limit = null;
         if (cursor.moveToFirst()) {
-            limit = cursor.getInt("limit_ml");
+            // INFO: Need to pull index first
+            int index = cursor.getColumnIndexOrThrow("limit_ml");
+            limit = cursor.getInt(index);
         }
         
         cursor.close();
@@ -208,7 +233,9 @@ public class ItemDAO {
         // Get diet ID
         Cursor cursor = db.rawQuery("SELECT diet_id FROM Diet WHERE name = ?", new String[]{diet});
         if (cursor.moveToFirst()) {
-            values.put("diet_id", cursor.getInt("diet_id"));
+            // INFO: This is how this needs to happen
+            int index = cursor.getColumnIndexOrThrow("diet_id");
+            values.put("diet_id", cursor.getInt(index));
         }
         cursor.close();
         
@@ -250,18 +277,26 @@ public class ItemDAO {
         
         Item item = null;
         if (cursor.moveToFirst()) {
+            int itemIndex = cursor.getColumnIndexOrThrow("item_id");
+            int catIndex = cursor.getColumnIndexOrThrow("category_id");
+            int nameIndex = cursor.getColumnIndexOrThrow("name");
+            int sizeIndex = cursor.getColumnIndexOrThrow("size_ml");
+            int friendlyIndex = cursor.getColumnIndexOrThrow("is_ada_friendly");
+            int sodaIndex = cursor.getColumnIndexOrThrow("is_soda");
+            int catNameIndex = cursor.getColumnIndexOrThrow("category_name");
+
             item = new Item();
-            item.setItemId(cursor.getInt("item_id"));
-            item.setCategoryId(cursor.getInt("category_id"));
-            item.setName(cursor.getString("name"));
+            item.setItemId(cursor.getInt(itemIndex));
+            item.setCategoryId(cursor.getInt(catIndex));
+            item.setName(cursor.getString(nameIndex));
             
-            if (!cursor.isNull(cursor.getColumnIndex("size_ml"))) {
-                item.setSizeML(cursor.getInt("size_ml"));
+            if (!cursor.isNull(sizeIndex)) {
+                item.setSizeML(cursor.getInt(sizeIndex));
             }
             
-            item.setAdaFriendly(cursor.getInt("is_ada_friendly") == 1);
-            item.setSoda(cursor.getInt("is_soda") == 1);
-            item.setCategoryName(cursor.getString("category_name"));
+            item.setAdaFriendly(cursor.getInt(friendlyIndex) == 1);
+            item.setSoda(cursor.getInt(sodaIndex) == 1);
+            item.setCategoryName(cursor.getString(catNameIndex));
         }
         
         cursor.close();

@@ -1,6 +1,3 @@
-// ================================================================================================
-// FILE: app/src/main/res/values/styles.xml
-// ================================================================================================
 <resources>
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="colorPrimary">#3498db</item>
