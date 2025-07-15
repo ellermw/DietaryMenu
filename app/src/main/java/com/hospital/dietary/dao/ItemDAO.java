@@ -298,7 +298,167 @@ public class ItemDAO {
             item.setSoda(cursor.getInt(sodaIndex) == 1);
             item.setCategoryName(cursor.getString(catNameIndex));
         }
+
+            public long updateItem(Item item) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
         
+        values.put("category_id", item.getCategoryId());
+        values.put("name", item.getName());
+        
+        if (item.getSizeML() != null) {
+            values.put("size_ml", item.getSizeML());
+        } else {
+            values.putNull("size_ml");
+        }
+        
+        values.put("is_ada_friendly", item.isAdaFriendly() ? 1 : 0);
+        values.put("is_soda", item.isSoda() ? 1 : 0);
+        
+        return db.update("Item", values, "item_id = ?", 
+                        new String[]{String.valueOf(item.getItemId())});
+    }
+
+    public List<Item> getAllItems() {
+        List<Item> items = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        
+        String query = "SELECT i.item_id, i.category_id, i.name, i.size_ml, " +
+                      "i.is_ada_friendly, i.is_soda, c.name as category_name " +
+                      "FROM Item i " +
+                      "INNER JOIN Category c ON i.category_id = c.category_id " +
+                      "ORDER BY c.name, i.name";
+        
+        Cursor cursor = db.rawQuery(query, null);
+        
+        if (cursor.moveToFirst()) {
+            do {
+                Item item = new Item();
+                item.setItemId(cursor.getInt("item_id"));
+                item.setCategoryId(cursor.getInt("category_id"));
+                item.setName(cursor.getString("name"));
+                
+                if (!cursor.isNull(cursor.getColumnIndex("size_ml"))) {
+                    item.setSizeML(cursor.getInt("size_ml"));
+                }
+                
+                item.setAdaFriendly(cursor.getInt("is_ada_friendly") == 1);
+                item.setSoda(cursor.getInt("is_soda") == 1);
+                item.setCategoryName(cursor.getString("category_name"));
+                
+                items.add(item);
+            } while (cursor.moveToNext());
+        }
+        
+        cursor.close();
+        return items;
+    }
+
+    public boolean isItemUsedInOrders(int itemId) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        
+        String query = "SELECT COUNT(*) FROM MealLine WHERE item_id = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(itemId)});
+        
+        boolean isUsed = false;
+        if (cursor.moveToFirst()) {
+            isUsed = cursor.getInt(0) > 0;
+        }
+        
+        cursor.close();
+        return isUsed;
+    }
+
+    public List<String> getAllCategoryNames() {
+        List<String> categories = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        
+        String query = "SELECT name FROM Category ORDER BY name";
+        Cursor cursor = db.rawQuery(query, null);
+        
+        if (cursor.moveToFirst()) {
+            do {
+                categories.add(cursor.getString("name"));
+            } while (cursor.moveToNext());
+        }
+        
+        cursor.close();
+        return categories;
+    }
+
+    public int getCategoryIdByName(String categoryName) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        
+        String query = "SELECT category_id FROM Category WHERE name = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{categoryName});
+        
+        int categoryId = 1; // Default to first category
+        if (cursor.moveToFirst()) {
+            categoryId = cursor.getInt("category_id");
+        }
+        
+        cursor.close();
+        return categoryId;
+    }
+
+    // REPLACE your existing deleteItem method with this enhanced version
+    @Override
+    public boolean deleteItem(int itemId) {
+        // First check if item is used in any orders
+        if (isItemUsedInOrders(itemId)) {
+            return false; // Cannot delete item that's used in orders
+        }
+        
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        return db.delete("Item", "item_id = ?", new String[]{String.valueOf(itemId)}) > 0;
+    }
+
+    public boolean itemNameExists(String name, int excludeItemId) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        
+        String query = "SELECT COUNT(*) FROM Item WHERE LOWER(name) = LOWER(?) AND item_id != ?";
+        Cursor cursor = db.rawQuery(query, new String[]{name, String.valueOf(excludeItemId)});
+        
+        boolean exists = false;
+        if (cursor.moveToFirst()) {
+            exists = cursor.getInt(0) > 0;
+        }
+        
+        cursor.close();
+        return exists;
+    }
+
+    public List<Item> searchItems(String searchQuery) {
+        List<Item> items = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        
+        String query = "SELECT i.item_id, i.category_id, i.name, i.size_ml, " +
+                      "i.is_ada_friendly, i.is_soda, c.name as category_name " +
+                      "FROM Item i " +
+                      "INNER JOIN Category c ON i.category_id = c.category_id " +
+                      "WHERE LOWER(i.name) LIKE LOWER(?) " +
+                      "ORDER BY i.name";
+        
+        Cursor cursor = db.rawQuery(query, new String[]{"%" + searchQuery + "%"});
+        
+        if (cursor.moveToFirst()) {
+            do {
+                Item item = new Item();
+                item.setItemId(cursor.getInt("item_id"));
+                item.setCategoryId(cursor.getInt("category_id"));
+                item.setName(cursor.getString("name"));
+                
+                if (!cursor.isNull(cursor.getColumnIndex("size_ml"))) {
+                    item.setSizeML(cursor.getInt("size_ml"));
+                }
+                
+                item.setAdaFriendly(cursor.getInt("is_ada_friendly") == 1);
+                item.setSoda(cursor.getInt("is_soda") == 1);
+                item.setCategoryName(cursor.getString("category_name"));
+                
+                items.add(item);
+            } while (cursor.moveToNext());
+        }
         cursor.close();
         return item;
     }
