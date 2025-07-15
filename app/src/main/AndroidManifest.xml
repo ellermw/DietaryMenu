@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.hospital.dietary">
 
     <application
         android:allowBackup="true"
@@ -15,6 +16,19 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        
+        <!-- ADD THIS NEW ACTIVITY for the Admin Panel -->
+        <activity
+            android:name=".AdminActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:label="Admin Panel"
+            android:parentActivityName=".MainActivity">
+            <!-- Add back navigation to MainActivity -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
         </activity>
         
     </application>
