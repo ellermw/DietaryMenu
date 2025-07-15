@@ -19,6 +19,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import android.content.Intent;
+import android.view.Menu;
+import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity {
     
@@ -60,7 +63,63 @@ public class MainActivity extends AppCompatActivity {
     
     // Default items for each diet
     private Map<String, Map<String, Object>> defaultItems = new HashMap<>();
-    
+        @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(0, 1, 0, "Admin Panel")
+            .setIcon(android.R.drawable.ic_menu_manage)
+            .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case 1: // Admin Panel
+                showAdminAccessDialog();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void showAdminAccessDialog() {
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_admin_access, null);
+        EditText passwordInput = dialogView.findViewById(R.id.adminPasswordInput);
+        
+        AlertDialog dialog = new AlertDialog.Builder(this)
+            .setTitle("Admin Access")
+            .setMessage("Enter admin password to access the admin panel:")
+            .setView(dialogView)
+            .setPositiveButton("Access", null) // Set to null initially
+            .setNegativeButton("Cancel", null)
+            .create();
+        
+        dialog.setOnShowListener(dialogInterface -> {
+            Button accessButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            accessButton.setOnClickListener(v -> {
+                String password = passwordInput.getText().toString();
+                
+                // Simple password check - you can make this more secure
+                if (password.equals("admin123")) {
+                    dialog.dismiss();
+                    openAdminPanel();
+                } else {
+                    passwordInput.setError("Incorrect password");
+                    passwordInput.selectAll();
+                }
+            });
+        });
+        
+        dialog.show();
+        
+        // Auto-focus password input
+        passwordInput.requestFocus();
+    }
+
+    private void openAdminPanel() {
+        Intent intent = new Intent(this, AdminActivity.class);
+        startActivity(intent);
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
