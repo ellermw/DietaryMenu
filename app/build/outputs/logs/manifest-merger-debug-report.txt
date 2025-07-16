@@ -43,8 +43,8 @@ MERGED from [androidx.annotation:annotation-experimental:1.3.0] C:\Users\mieks\.
 	xmlns:android
 		ADDED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:2:11-69
 application
-ADDED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:5:5-21:19
-INJECTED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:5:5-21:19
+ADDED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:5:5-22:19
+INJECTED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:5:5-22:19
 MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\873971c02893ba5813f2b8448e796a0c\transformed\constraintlayout-2.1.4\AndroidManifest.xml:9:5-20
 MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\873971c02893ba5813f2b8448e796a0c\transformed\constraintlayout-2.1.4\AndroidManifest.xml:9:5-20
 MERGED from [androidx.emoji2:emoji2:1.2.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\44489c516bd83bb675a4c6c7b436daa8\transformed\emoji2-1.2.0\AndroidManifest.xml:23:5-33:19
@@ -61,32 +61,34 @@ MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\mi
 		INJECTED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml
 	android:appComponentFactory
 		ADDED from [androidx.core:core:1.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\5418d86f9bf51acc009e025a9c494d67\transformed\core-1.9.0\AndroidManifest.xml:28:18-86
+	android:supportsRtl
+		ADDED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:10:9-35
 	android:label
 		ADDED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:8:9-41
+	android:roundIcon
+		ADDED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:9:9-54
 	android:icon
 		ADDED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:7:9-43
 	android:allowBackup
 		ADDED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:6:9-35
 	android:theme
-		ADDED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:9:9-74
+		ADDED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:11:9-40
 activity#com.hospital.dietary.MainActivity
-ADDED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:11:9-19:20
-	android:screenOrientation
-		ADDED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:14:13-49
+ADDED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:13:3-20:14
 	android:exported
-		ADDED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:13:13-36
+		ADDED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:15:4-27
 	android:name
-		ADDED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:12:13-41
+		ADDED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:14:4-32
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:15:13-18:29
+ADDED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:16:4-19:20
 action#android.intent.action.MAIN
-ADDED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:16:17-69
+ADDED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:17:5-57
 	android:name
-		ADDED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:16:25-66
+		ADDED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:17:13-54
 category#android.intent.category.LAUNCHER
-ADDED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:17:17-77
+ADDED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:18:5-65
 	android:name
-		ADDED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:17:27-74
+		ADDED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:18:15-62
 uses-sdk
 INJECTED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml
