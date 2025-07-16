@@ -21,7 +21,6 @@
         android:extractNativeLibs="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:testOnly="true"
         android:theme="@style/AppTheme" >
         <activity
             android:name="com.hospital.dietary.MainActivity"
@@ -37,6 +36,16 @@
             android:name="com.hospital.dietary.AdminActivity"
             android:exported="false"
             android:label="Admin Panel"
+            android:parentActivityName="com.hospital.dietary.MainActivity"
+            android:screenOrientation="portrait" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+        <activity
+            android:name="com.hospital.dietary.ViewOrdersActivity"
+            android:exported="false"
+            android:label="View Orders"
             android:parentActivityName="com.hospital.dietary.MainActivity"
             android:screenOrientation="portrait" >
             <meta-data

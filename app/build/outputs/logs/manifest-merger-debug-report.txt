@@ -1,9 +1,9 @@
 -- Merging decision tree log ---
 manifest
-ADDED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:2:1-34:12
-INJECTED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:2:1-34:12
-INJECTED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:2:1-34:12
-INJECTED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:2:1-34:12
+ADDED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:2:1-45:12
+INJECTED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:2:1-45:12
+INJECTED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:2:1-45:12
+INJECTED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:2:1-45:12
 MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\873971c02893ba5813f2b8448e796a0c\transformed\constraintlayout-2.1.4\AndroidManifest.xml:2:1-11:12
 MERGED from [androidx.appcompat:appcompat-resources:1.6.1] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b3d5b2b1bc7708f4e777a26879974de9\transformed\appcompat-resources-1.6.1\AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.appcompat:appcompat:1.6.1] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\9f4ccd3212b97d78ca5085eb75c4d8ac\transformed\appcompat-1.6.1\AndroidManifest.xml:17:1-22:12
@@ -43,8 +43,8 @@ MERGED from [androidx.annotation:annotation-experimental:1.3.0] C:\Users\mieks\.
 	xmlns:android
 		ADDED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:2:11-69
 application
-ADDED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:5:5-32:19
-INJECTED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:5:5-32:19
+ADDED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:5:5-43:19
+INJECTED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:5:5-43:19
 MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\873971c02893ba5813f2b8448e796a0c\transformed\constraintlayout-2.1.4\AndroidManifest.xml:9:5-20
 MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\873971c02893ba5813f2b8448e796a0c\transformed\constraintlayout-2.1.4\AndroidManifest.xml:9:5-20
 MERGED from [androidx.emoji2:emoji2:1.2.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\44489c516bd83bb675a4c6c7b436daa8\transformed\emoji2-1.2.0\AndroidManifest.xml:23:5-33:19
@@ -105,6 +105,18 @@ ADDED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\An
 		ADDED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:29:17-46
 	android:name
 		ADDED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:28:17-63
+activity#com.hospital.dietary.ViewOrdersActivity
+ADDED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:32:9-41:20
+	android:screenOrientation
+		ADDED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:35:13-49
+	android:parentActivityName
+		ADDED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:37:13-55
+	android:label
+		ADDED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:36:13-40
+	android:exported
+		ADDED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:34:13-37
+	android:name
+		ADDED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:33:13-47
 uses-sdk
 INJECTED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml

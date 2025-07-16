@@ -1044,6 +1044,7 @@ id cos
 id currentState
 id custom
 id customPanel
+id dateFilterSpinner
 id dayGroup
 id decelerate
 id decelerateAndComplete
@@ -1162,6 +1163,7 @@ id notification_main_column_container
 id off
 id on
 id onInterceptTouchReturnSwipe
+id ordersListView
 id overshoot
 id packed
 id parent
@@ -1175,6 +1177,8 @@ id patientNameInput
 id percent
 id position
 id postLayout
+id printAllButton
+id printSelectedButton
 id progress_circular
 id progress_horizontal
 id radio
@@ -1337,6 +1341,7 @@ layout activity_admin
 layout activity_admin_menu
 layout activity_admin_new
 layout activity_main
+layout activity_view_orders
 layout custom_dialog
 layout dialog_add_edit_item
 layout dialog_admin_access
@@ -1358,6 +1363,7 @@ layout select_dialog_multichoice_material
 layout select_dialog_singlechoice_material
 layout support_simple_spinner_dropdown_item
 mipmap ic_launcher
+mipmap ic_launcher_foreground
 mipmap ic_launcher_round
 string abc_action_bar_home_description
 string abc_action_bar_up_description

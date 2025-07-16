@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "hospital_dietary.db";
-    private static final int DATABASE_VERSION = 3; // Incremented for User table schema fix
+    private static final int DATABASE_VERSION = 4; // Incremented for User table schema fix
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -28,20 +28,46 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         insertInitialData(db);
     }
 
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if (oldVersion < 2) {
-            // Add User table for version 2
-            createUserTable(db);
-            insertDefaultUsers(db);
-        }
-        if (oldVersion < 3) {
-            // Fix User table schema for version 3
-            db.execSQL("DROP TABLE IF EXISTS User");
-            createUserTable(db);
-            insertDefaultUsers(db);
-        }
-    }
+	@Override
+	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+		if (oldVersion < 2) {
+			// Add User table for version 2
+			createUserTable(db);
+			insertDefaultUsers(db);
+		}
+		if (oldVersion < 3) {
+			// Fix User table schema for version 3
+			db.execSQL("DROP TABLE IF EXISTS User");
+			createUserTable(db);
+			insertDefaultUsers(db);
+		}
+		if (oldVersion < 4) {
+			// Add FinalizedOrder table for version 4
+			db.execSQL("CREATE TABLE IF NOT EXISTS FinalizedOrder (" +
+					"order_id INTEGER PRIMARY KEY AUTOINCREMENT," +
+					"patient_name TEXT NOT NULL," +
+					"wing TEXT NOT NULL," +
+					"room TEXT NOT NULL," +
+					"order_date TEXT NOT NULL," +
+					"diet_type TEXT NOT NULL," +
+					"fluid_restriction TEXT," +
+					"mechanical_ground INTEGER NOT NULL DEFAULT 0," +
+					"mechanical_chopped INTEGER NOT NULL DEFAULT 0," +
+					"bite_size INTEGER NOT NULL DEFAULT 0," +
+					"bread_ok INTEGER NOT NULL DEFAULT 0," +
+					"breakfast_items TEXT," +
+					"lunch_items TEXT," +
+					"dinner_items TEXT," +
+					"breakfast_juices TEXT," +
+					"lunch_juices TEXT," +
+					"dinner_juices TEXT," +
+					"breakfast_drinks TEXT," +
+					"lunch_drinks TEXT," +
+					"dinner_drinks TEXT," +
+					"created_timestamp TEXT DEFAULT CURRENT_TIMESTAMP," +
+					"UNIQUE(wing, room, order_date))");
+		}
+	}
 
     private void createTables(SQLiteDatabase db) {
         // User table (NEW - for authentication and role management)
@@ -146,6 +172,30 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "item_id INTEGER," +
                 "FOREIGN KEY(order_id) REFERENCES MealOrder(order_id)," +
                 "FOREIGN KEY(item_id) REFERENCES Item(item_id))");
+		
+		db.execSQL("CREATE TABLE IF NOT EXISTS FinalizedOrder (" +
+				"order_id INTEGER PRIMARY KEY AUTOINCREMENT," +
+				"patient_name TEXT NOT NULL," +
+				"wing TEXT NOT NULL," +
+				"room TEXT NOT NULL," +
+				"order_date TEXT NOT NULL," +
+				"diet_type TEXT NOT NULL," +
+				"fluid_restriction TEXT," +
+				"mechanical_ground INTEGER NOT NULL DEFAULT 0," +
+				"mechanical_chopped INTEGER NOT NULL DEFAULT 0," +
+				"bite_size INTEGER NOT NULL DEFAULT 0," +
+				"bread_ok INTEGER NOT NULL DEFAULT 0," +
+				"breakfast_items TEXT," +
+				"lunch_items TEXT," +
+				"dinner_items TEXT," +
+				"breakfast_juices TEXT," +
+				"lunch_juices TEXT," +
+				"dinner_juices TEXT," +
+				"breakfast_drinks TEXT," +
+				"lunch_drinks TEXT," +
+				"dinner_drinks TEXT," +
+				"created_timestamp TEXT DEFAULT CURRENT_TIMESTAMP," +
+				"UNIQUE(wing, room, order_date))");
     }
 
     private void createUserTable(SQLiteDatabase db) {
