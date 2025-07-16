@@ -7,7 +7,6 @@ package com.hospital.dietary.dao;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 import com.hospital.dietary.DatabaseHelper;
 import com.hospital.dietary.models.User;
 import java.text.SimpleDateFormat;
@@ -18,47 +17,44 @@ import java.util.Locale;
 
 public class UserDAO {
     private DatabaseHelper dbHelper;
-    private SimpleDateFormat dateFormat;
 
     public UserDAO(DatabaseHelper dbHelper) {
         this.dbHelper = dbHelper;
-        this.dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
     }
 
-    /**
-     * Authenticate user with username and password
-     */
-    public User authenticateUser(String username, String password) {
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String passwordHash = hashPassword(password);
-
-        String query = "SELECT * FROM User WHERE username = ? AND password_hash = ? AND is_active = 1";
-        Cursor cursor = db.rawQuery(query, new String[]{username, passwordHash});
-
-        User user = null;
-        if (cursor.moveToFirst()) {
-            user = cursorToUser(cursor);
-            // Update last login time
-            updateLastLogin(user.getUserId());
-        }
-
-        cursor.close();
-        return user;
-    }
-
-    /**
-     * Get all users
-     */
     public List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        String query = "SELECT * FROM User ORDER BY username";
+        String query = "SELECT * FROM User ORDER BY full_name";
         Cursor cursor = db.rawQuery(query, null);
 
         if (cursor.moveToFirst()) {
+            int idxId = cursor.getColumnIndexOrThrow("user_id");
+            int idxUsername = cursor.getColumnIndexOrThrow("username");
+            int idxPassword = cursor.getColumnIndexOrThrow("password");
+            int idxRole = cursor.getColumnIndexOrThrow("role");
+            int idxFullName = cursor.getColumnIndexOrThrow("full_name");
+            int idxEmail = cursor.getColumnIndex("email");
+            int idxActive = cursor.getColumnIndexOrThrow("is_active");
+            int idxCreated = cursor.getColumnIndexOrThrow("created_date");
+
             do {
-                users.add(cursorToUser(cursor));
+                User user = new User();
+                user.setUserId(cursor.getInt(idxId));
+                user.setUsername(cursor.getString(idxUsername));
+                user.setPassword(cursor.getString(idxPassword));
+                user.setRole(cursor.getString(idxRole));
+                user.setFullName(cursor.getString(idxFullName));
+                
+                if (!cursor.isNull(idxEmail)) {
+                    user.setEmail(cursor.getString(idxEmail));
+                }
+                
+                user.setActive(cursor.getInt(idxActive) == 1);
+                user.setCreatedDate(cursor.getString(idxCreated));
+                
+                users.add(user);
             } while (cursor.moveToNext());
         }
 
@@ -66,224 +62,150 @@ public class UserDAO {
         return users;
     }
 
-    /**
-     * Get user by username
-     */
     public User getUserByUsername(String username) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        String query = "SELECT * FROM User WHERE username = ?";
+        String query = "SELECT * FROM User WHERE username = ? AND is_active = 1";
         Cursor cursor = db.rawQuery(query, new String[]{username});
 
         User user = null;
         if (cursor.moveToFirst()) {
-            user = cursorToUser(cursor);
+            int idxId = cursor.getColumnIndexOrThrow("user_id");
+            int idxUsername = cursor.getColumnIndexOrThrow("username");
+            int idxPassword = cursor.getColumnIndexOrThrow("password");
+            int idxRole = cursor.getColumnIndexOrThrow("role");
+            int idxFullName = cursor.getColumnIndexOrThrow("full_name");
+            int idxEmail = cursor.getColumnIndex("email");
+            int idxActive = cursor.getColumnIndexOrThrow("is_active");
+            int idxCreated = cursor.getColumnIndexOrThrow("created_date");
+
+            user = new User();
+            user.setUserId(cursor.getInt(idxId));
+            user.setUsername(cursor.getString(idxUsername));
+            user.setPassword(cursor.getString(idxPassword));
+            user.setRole(cursor.getString(idxRole));
+            user.setFullName(cursor.getString(idxFullName));
+            
+            if (!cursor.isNull(idxEmail)) {
+                user.setEmail(cursor.getString(idxEmail));
+            }
+            
+            user.setActive(cursor.getInt(idxActive) == 1);
+            user.setCreatedDate(cursor.getString(idxCreated));
         }
 
         cursor.close();
         return user;
     }
 
-    /**
-     * Create new user
-     */
-    public boolean createUser(String username, String password, String role) {
-        try {
-            SQLiteDatabase db = dbHelper.getWritableDatabase();
-
-            // Check if username already exists
-            if (getUserByUsername(username) != null) {
-                return false; // Username already exists
-            }
-
-            ContentValues values = new ContentValues();
-            values.put("username", username);
-            values.put("password_hash", hashPassword(password));
-            values.put("role", role);
-            values.put("created_date", dateFormat.format(new Date()));
-            values.put("is_active", 1);
-
-            long result = db.insert("User", null, values);
-            return result != -1;
-
-        } catch (SQLiteException e) {
-            e.printStackTrace();
-            return false;
+    public User authenticateUser(String username, String password) {
+        User user = getUserByUsername(username);
+        if (user != null && user.getPassword().equals(password)) {
+            return user;
         }
+        return null;
     }
 
-    /**
-     * Update user
-     */
-    public boolean updateUser(User user) {
-        try {
-            SQLiteDatabase db = dbHelper.getWritableDatabase();
+    public long addUser(User user) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
 
-            ContentValues values = new ContentValues();
-            values.put("username", user.getUsername());
-            values.put("role", user.getRole());
-            values.put("is_active", user.isActive() ? 1 : 0);
-
-            // Only update password if it's provided
-            if (user.getPasswordHash() != null && !user.getPasswordHash().isEmpty()) {
-                values.put("password_hash", user.getPasswordHash());
-            }
-
-            int rowsUpdated = db.update("User", values, "user_id = ?",
-                    new String[]{String.valueOf(user.getUserId())});
-
-            return rowsUpdated > 0;
-
-        } catch (SQLiteException e) {
-            e.printStackTrace();
-            return false;
+        values.put("username", user.getUsername());
+        values.put("password", user.getPassword());
+        values.put("role", user.getRole());
+        values.put("full_name", user.getFullName());
+        
+        if (user.getEmail() != null) {
+            values.put("email", user.getEmail());
         }
+        
+        values.put("is_active", user.isActive() ? 1 : 0);
+        
+        // Set current date
+        String currentDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+                .format(new Date());
+        values.put("created_date", currentDate);
+
+        return db.insert("User", null, values);
     }
 
-    /**
-     * Update user password
-     */
-    public boolean updateUserPassword(int userId, String newPassword) {
-        try {
-            SQLiteDatabase db = dbHelper.getWritableDatabase();
+    public long updateUser(User user) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
 
-            ContentValues values = new ContentValues();
-            values.put("password_hash", hashPassword(newPassword));
-
-            int rowsUpdated = db.update("User", values, "user_id = ?",
-                    new String[]{String.valueOf(userId)});
-
-            return rowsUpdated > 0;
-
-        } catch (SQLiteException e) {
-            e.printStackTrace();
-            return false;
+        values.put("username", user.getUsername());
+        values.put("password", user.getPassword());
+        values.put("role", user.getRole());
+        values.put("full_name", user.getFullName());
+        
+        if (user.getEmail() != null) {
+            values.put("email", user.getEmail());
         }
+        
+        values.put("is_active", user.isActive() ? 1 : 0);
+
+        return db.update("User", values, "user_id = ?", 
+                        new String[]{String.valueOf(user.getUserId())});
     }
 
-    /**
-     * Delete user (soft delete - set inactive)
-     */
     public boolean deleteUser(int userId) {
-        try {
-            // Prevent deletion of the last admin user
-            if (isLastAdmin(userId)) {
-                return false;
-            }
+        // Don't actually delete, just deactivate
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("is_active", 0);
 
-            SQLiteDatabase db = dbHelper.getWritableDatabase();
-
-            ContentValues values = new ContentValues();
-            values.put("is_active", 0);
-
-            int rowsUpdated = db.update("User", values, "user_id = ?",
-                    new String[]{String.valueOf(userId)});
-
-            return rowsUpdated > 0;
-
-        } catch (SQLiteException e) {
-            e.printStackTrace();
-            return false;
-        }
+        return db.update("User", values, "user_id = ?", 
+                        new String[]{String.valueOf(userId)}) > 0;
     }
 
-    /**
-     * Check if user is the last admin
-     */
-    private boolean isLastAdmin(int userId) {
+    public boolean permanentDeleteUser(int userId) {
+        // Only use this if you really want to permanently delete
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        return db.delete("User", "user_id = ?", 
+                        new String[]{String.valueOf(userId)}) > 0;
+    }
+
+    public boolean usernameExists(String username, int excludeUserId) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        // Get the user being deleted
-        String userQuery = "SELECT role FROM User WHERE user_id = ?";
-        Cursor userCursor = db.rawQuery(userQuery, new String[]{String.valueOf(userId)});
+        String query = "SELECT COUNT(*) FROM User WHERE LOWER(username) = LOWER(?) AND user_id != ? AND is_active = 1";
+        Cursor cursor = db.rawQuery(query, new String[]{username, String.valueOf(excludeUserId)});
 
-        String userRole = null;
-        if (userCursor.moveToFirst()) {
-            userRole = userCursor.getString(0);
-        }
-        userCursor.close();
-
-        // If not an admin, deletion is allowed
-        if (!"Admin".equals(userRole)) {
-            return false;
+        boolean exists = false;
+        if (cursor.moveToFirst()) {
+            exists = cursor.getInt(0) > 0;
         }
 
-        // Count active admin users
-        String countQuery = "SELECT COUNT(*) FROM User WHERE role = 'Admin' AND is_active = 1";
-        Cursor countCursor = db.rawQuery(countQuery, null);
-
-        int adminCount = 0;
-        if (countCursor.moveToFirst()) {
-            adminCount = countCursor.getInt(0);
-        }
-        countCursor.close();
-
-        // If there's only one admin, don't allow deletion
-        return adminCount <= 1;
+        cursor.close();
+        return exists;
     }
 
-    /**
-     * Update last login time
-     */
-    private void updateLastLogin(int userId) {
-        try {
-            SQLiteDatabase db = dbHelper.getWritableDatabase();
-
-            ContentValues values = new ContentValues();
-            values.put("last_login", dateFormat.format(new Date()));
-
-            db.update("User", values, "user_id = ?",
-                    new String[]{String.valueOf(userId)});
-
-        } catch (SQLiteException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Convert cursor to User object
-     */
-    private User cursorToUser(Cursor cursor) {
-        User user = new User();
-
-        user.setUserId(cursor.getInt(cursor.getColumnIndexOrThrow("user_id")));
-        user.setUsername(cursor.getString(cursor.getColumnIndexOrThrow("username")));
-        user.setPasswordHash(cursor.getString(cursor.getColumnIndexOrThrow("password_hash")));
-        user.setRole(cursor.getString(cursor.getColumnIndexOrThrow("role")));
-        user.setCreatedDate(cursor.getString(cursor.getColumnIndexOrThrow("created_date")));
-
-        int lastLoginIndex = cursor.getColumnIndex("last_login");
-        if (lastLoginIndex != -1 && !cursor.isNull(lastLoginIndex)) {
-            user.setLastLogin(cursor.getString(lastLoginIndex));
-        }
-
-        user.setActive(cursor.getInt(cursor.getColumnIndexOrThrow("is_active")) == 1);
-
-        return user;
-    }
-
-    /**
-     * Simple password hashing - use proper hashing in production
-     */
-    private String hashPassword(String password) {
-        // This is a very basic hash - use BCrypt or similar in production
-        return String.valueOf(password.hashCode());
-    }
-
-    /**
-     * Get active users count by role
-     */
-    public int getUserCountByRole(String role) {
+    public int getUserCount() {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-
-        String query = "SELECT COUNT(*) FROM User WHERE role = ? AND is_active = 1";
-        Cursor cursor = db.rawQuery(query, new String[]{role});
-
+        
+        String query = "SELECT COUNT(*) FROM User WHERE is_active = 1";
+        Cursor cursor = db.rawQuery(query, null);
+        
         int count = 0;
         if (cursor.moveToFirst()) {
             count = cursor.getInt(0);
         }
+        
+        cursor.close();
+        return count;
+    }
 
+    public int getAdminCount() {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        
+        String query = "SELECT COUNT(*) FROM User WHERE role = 'admin' AND is_active = 1";
+        Cursor cursor = db.rawQuery(query, null);
+        
+        int count = 0;
+        if (cursor.moveToFirst()) {
+            count = cursor.getInt(0);
+        }
+        
         cursor.close();
         return count;
     }

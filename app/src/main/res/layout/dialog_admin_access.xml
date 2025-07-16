@@ -6,14 +6,31 @@
     android:padding="16dp">
 
     <EditText
-        android:id="@+id/adminPasswordInput"
+        android:id="@+id/adminUsernameInput"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:hint="Admin Password"
+        android:layout_height="wrap_content"
+        android:hint="Username"
         android:padding="12dp"
         android:background="@drawable/edit_text_background"
+        android:layout_marginBottom="12dp"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/adminPasswordInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Password"
         android:inputType="textPassword"
-        android:drawableStart="@android:drawable/ic_lock_lock"
-        android:drawablePadding="8dp" />
+        android:padding="12dp"
+        android:background="@drawable/edit_text_background" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Default: admin / admin123"
+        android:textSize="12sp"
+        android:textColor="#7f8c8d"
+        android:gravity="center"
+        android:layout_marginTop="8dp" />
 
 </LinearLayout>
