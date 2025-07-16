@@ -23,12 +23,4 @@
         android:inputType="textPassword"
         android:padding="12dp" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Default: admin/admin123 or user/user123"
-        android:textSize="12sp"
-        android:gravity="center"
-        android:layout_marginTop="8dp" />
-
 </LinearLayout>
