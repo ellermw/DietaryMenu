@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.hospital.dietary.app-mergeDebugResources-29:/values-v17/values-v17.xml",
+            "outputFile": "com.hospital.dietary.app-mergeDebugResources-19:/values-v17/values-v17.xml",
             "map": [
                 {
                     "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\caches\\8.13\\transforms\\9f4ccd3212b97d78ca5085eb75c4d8ac\\transformed\\appcompat-1.6.1\\res\\values-v17\\values-v17.xml",

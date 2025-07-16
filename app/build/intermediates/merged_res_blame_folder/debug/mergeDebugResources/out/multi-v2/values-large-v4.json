@@ -1,25 +1,8 @@
 {
     "logs": [
         {
-            "outputFile": "com.hospital.dietary.app-mergeDebugResources-29:/values-large-v4/values-large-v4.xml",
+            "outputFile": "com.hospital.dietary.app-mergeDebugResources-19:/values-large-v4/values-large-v4.xml",
             "map": [
-                {
-                    "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\caches\\8.13\\transforms\\b3a61cce2ad1dad98c4e5ab92fec4e8c\\transformed\\material-1.10.0\\res\\values-large-v4\\values-large-v4.xml",
-                    "from": {
-                        "startLines": "2,3,4,5",
-                        "startColumns": "4,4,4,4",
-                        "startOffsets": "55,169,285,407",
-                        "endColumns": "113,115,121,133",
-                        "endOffsets": "164,280,402,536"
-                    },
-                    "to": {
-                        "startLines": "11,12,13,14",
-                        "startColumns": "4,4,4,4",
-                        "startOffsets": "752,866,982,1104",
-                        "endColumns": "113,115,121,133",
-                        "endOffsets": "861,977,1099,1233"
-                    }
-                },
                 {
                     "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\caches\\8.13\\transforms\\9f4ccd3212b97d78ca5085eb75c4d8ac\\transformed\\appcompat-1.6.1\\res\\values-large-v4\\values-large-v4.xml",
                     "from": {

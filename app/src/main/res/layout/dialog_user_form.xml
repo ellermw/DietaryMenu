@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <!-- Username -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Username:"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="4dp" />
+
+    <EditText
+        android:id="@+id/usernameInput"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="Enter username"
+        android:padding="12dp"
+        android:background="@drawable/edit_text_background"
+        android:inputType="text"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Password -->
+    <TextView
+        android:id="@+id/passwordLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Password:"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="4dp" />
+
+    <EditText
+        android:id="@+id/passwordInput"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="Enter password"
+        android:padding="12dp"
+        android:background="@drawable/edit_text_background"
+        android:inputType="textPassword"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Role -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Role:"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="4dp" />
+
+    <Spinner
+        android:id="@+id/roleSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@drawable/edit_text_background"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Active Status -->
+    <CheckBox
+        android:id="@+id/activeCheckBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Active User"
+        android:textSize="14sp"
+        android:checked="true" />
+
+    <!-- Info Text -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="• Admin users can access the admin panel\n• User accounts can only access the main application\n• At least one admin user must remain active"
+        android:textSize="12sp"
+        android:textColor="#7f8c8d"
+        android:background="#f8f9fa"
+        android:padding="8dp"
+        android:layout_marginTop="8dp" />
+
+</LinearLayout>
