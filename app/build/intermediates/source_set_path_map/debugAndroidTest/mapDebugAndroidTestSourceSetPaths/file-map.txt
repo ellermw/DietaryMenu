@@ -1,0 +1,4 @@
+com.hospital.dietary.test.app-androidTest-0 C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\build\generated\res\resValues\androidTest\debug
+com.hospital.dietary.test.app-mergeDebugAndroidTestResources-1 C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\build\intermediates\incremental\debugAndroidTest\mergeDebugAndroidTestResources\merged.dir
+com.hospital.dietary.test.app-mergeDebugAndroidTestResources-2 C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\build\intermediates\incremental\debugAndroidTest\mergeDebugAndroidTestResources\stripped.dir
+com.hospital.dietary.test.app-debugAndroidTest-3 C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\build\intermediates\merged_res\debugAndroidTest\mergeDebugAndroidTestResources

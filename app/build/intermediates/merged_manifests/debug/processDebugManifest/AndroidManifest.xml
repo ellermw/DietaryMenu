@@ -34,6 +34,20 @@
             </intent-filter>
         </activity>
 
+        <!-- ADD THIS NEW ACTIVITY for the Admin Panel -->
+        <activity
+            android:name="com.hospital.dietary.AdminActivity"
+            android:exported="false"
+            android:label="Admin Panel"
+            android:parentActivityName="com.hospital.dietary.MainActivity"
+            android:screenOrientation="portrait" >
+
+            <!-- Add back navigation to MainActivity -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="com.hospital.dietary.androidx-startup"

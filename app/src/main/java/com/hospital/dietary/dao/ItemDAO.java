@@ -1,7 +1,3 @@
-// ================================================================================================
-// FILE: app/src/main/java/com/hospital/dietary/dao/ItemDAO.java
-// ================================================================================================
-
 package com.hospital.dietary.dao;
 
 import android.content.ContentValues;
@@ -13,71 +9,339 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ItemDAO {
+
     private DatabaseHelper dbHelper;
 
     public ItemDAO(DatabaseHelper dbHelper) {
         this.dbHelper = dbHelper;
     }
 
+    public Item getItemByName(String itemName) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String query = "SELECT i.item_id, i.category_id, i.name, i.size_ml, " +
+                "i.is_ada_friendly, i.is_soda, c.name as category_name " +
+                "FROM Item i " +
+                "INNER JOIN Category c ON i.category_id = c.category_id " +
+                "WHERE i.name = ?";
+
+        Cursor cursor = db.rawQuery(query, new String[]{itemName});
+        Item item = null;
+
+        if (cursor.moveToFirst()) {
+            int itemIndex = cursor.getColumnIndexOrThrow("item_id");
+            int catIndex = cursor.getColumnIndexOrThrow("category_id");
+            int nameIndex = cursor.getColumnIndexOrThrow("name");
+            int sizeIndex = cursor.getColumnIndexOrThrow("size_ml");
+            int friendlyIndex = cursor.getColumnIndexOrThrow("is_ada_friendly");
+            int sodaIndex = cursor.getColumnIndexOrThrow("is_soda");
+            int catNameIndex = cursor.getColumnIndexOrThrow("category_name");
+
+            item = new Item();
+            item.setItemId(cursor.getInt(itemIndex));
+            item.setCategoryId(cursor.getInt(catIndex));
+            item.setName(cursor.getString(nameIndex));
+
+            if (!cursor.isNull(sizeIndex)) {
+                item.setSizeML(cursor.getInt(sizeIndex));
+            }
+
+            item.setAdaFriendly(cursor.getInt(friendlyIndex) == 1);
+            item.setSoda(cursor.getInt(sodaIndex) == 1);
+            // IMPORTANT: Set category name last to trigger isBread calculation
+            item.setCategoryName(cursor.getString(catNameIndex));
+        }
+
+        cursor.close();
+        return item;
+    }
+
+    public long updateItem(Item item) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put("category_id", item.getCategoryId());
+        values.put("name", item.getName());
+
+        if (item.getSizeML() != null) {
+            values.put("size_ml", item.getSizeML());
+        } else {
+            values.putNull("size_ml");
+        }
+
+        values.put("is_ada_friendly", item.isAdaFriendly() ? 1 : 0);
+        values.put("is_soda", item.isSoda() ? 1 : 0);
+
+        return db.update("Item", values, "item_id = ?", new String[]{String.valueOf(item.getItemId())});
+    }
+
     public List<Item> getItemsByCategory(String categoryName) {
         List<Item> items = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        
+
         String query = "SELECT i.item_id, i.category_id, i.name, i.size_ml, " +
-                      "i.is_ada_friendly, i.is_soda, c.name as category_name " +
-                      "FROM Item i " +
-                      "INNER JOIN Category c ON i.category_id = c.category_id " +
-                      "WHERE c.name = ? " +
-                      "ORDER BY i.name";
-        
+                "i.is_ada_friendly, i.is_soda, c.name as category_name " +
+                "FROM Item i " +
+                "INNER JOIN Category c ON i.category_id = c.category_id " +
+                "WHERE c.name = ? " +
+                "ORDER BY i.name";
+
         Cursor cursor = db.rawQuery(query, new String[]{categoryName});
-        
+
         if (cursor.moveToFirst()) {
-            int idxId       = cursor.getColumnIndexOrThrow("item_id");
-            int idxCatId    = cursor.getColumnIndexOrThrow("category_id");
-            int idxName     = cursor.getColumnIndexOrThrow("name");
-            int idxSize     = cursor.getColumnIndex("size_ml");
-            int idxAda      = cursor.getColumnIndexOrThrow("is_ada_friendly");
-            int idxSoda     = cursor.getColumnIndexOrThrow("is_soda");
-            int idxCatName  = cursor.getColumnIndexOrThrow("category_name");
+            int idxId = cursor.getColumnIndexOrThrow("item_id");
+            int idxCatId = cursor.getColumnIndexOrThrow("category_id");
+            int idxName = cursor.getColumnIndexOrThrow("name");
+            int idxSize = cursor.getColumnIndex("size_ml");
+            int idxAda = cursor.getColumnIndexOrThrow("is_ada_friendly");
+            int idxSoda = cursor.getColumnIndexOrThrow("is_soda");
+            int idxCatName = cursor.getColumnIndexOrThrow("category_name");
 
             do {
                 Item item = new Item();
-                item.setItemId(       cursor.getInt(idxId)         );
-                item.setCategoryId(   cursor.getInt(idxCatId)      );
-                item.setName(         cursor.getString(idxName)    );
+                item.setItemId(cursor.getInt(idxId));
+                item.setCategoryId(cursor.getInt(idxCatId));
+                item.setName(cursor.getString(idxName));
+
                 if (!cursor.isNull(idxSize)) {
                     item.setSizeML(cursor.getInt(idxSize));
                 }
-                item.setAdaFriendly(  cursor.getInt(idxAda)  == 1  );
-                item.setSoda(         cursor.getInt(idxSoda) == 1  );
-                item.setCategoryName( cursor.getString(idxCatName) );
+
+                item.setAdaFriendly(cursor.getInt(idxAda) == 1);
+                item.setSoda(cursor.getInt(idxSoda) == 1);
+
+                // IMPORTANT: Set category name last to trigger isBread calculation
+                item.setCategoryName(cursor.getString(idxCatName));
+
                 items.add(item);
             } while (cursor.moveToNext());
-
-            // INFO: The below was wrong.
-            /*do {
-                Item item = new Item();
-                item.setItemId(cursor.getInt("item_id"));
-                item.setCategoryId(cursor.getInt("category_id"));
-                item.setName(cursor.getString("name"));
-                
-                if (!cursor.isNull(cursor.getColumnIndex("size_ml"))) {
-                    item.setSizeML(cursor.getInt("size_ml"));
-                }
-                
-                item.setAdaFriendly(cursor.getInt("is_ada_friendly") == 1);
-                item.setSoda(cursor.getInt("is_soda") == 1);
-                item.setCategoryName(cursor.getString("category_name"));
-                
-                items.add(item);
-            } while (cursor.moveToNext());*/
         }
-        
+
         cursor.close();
         return items;
     }
 
+    public long addItem(Item item) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put("category_id", item.getCategoryId());
+        values.put("name", item.getName());
+
+        if (item.getSizeML() != null) {
+            values.put("size_ml", item.getSizeML());
+        }
+
+        values.put("is_ada_friendly", item.isAdaFriendly() ? 1 : 0);
+        values.put("is_soda", item.isSoda() ? 1 : 0);
+
+        return db.insert("Item", null, values);
+    }
+
+    // FIXED: Removed invalid @Override annotation
+    public boolean deleteItem(int itemId) {
+        // First check if item is used in any orders
+        if (isItemUsedInOrders(itemId)) {
+            return false; // Cannot delete item that's used in orders
+        }
+
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        return db.delete("Item", "item_id = ?", new String[]{String.valueOf(itemId)}) > 0;
+    }
+
+    public boolean itemNameExists(String name, int excludeItemId) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        String query = "SELECT COUNT(*) FROM Item WHERE LOWER(name) = LOWER(?) AND item_id != ?";
+        Cursor cursor = db.rawQuery(query, new String[]{name, String.valueOf(excludeItemId)});
+
+        boolean exists = false;
+        if (cursor.moveToFirst()) {
+            exists = cursor.getInt(0) > 0;
+        }
+
+        cursor.close();
+        return exists;
+    }
+
+    // FIXED: Return statement now returns 'items' instead of 'item'
+    public List<Item> searchItems(String searchQuery) {
+        List<Item> items = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        String query = "SELECT i.item_id, i.category_id, i.name, i.size_ml, " +
+                "i.is_ada_friendly, i.is_soda, c.name as category_name " +
+                "FROM Item i " +
+                "INNER JOIN Category c ON i.category_id = c.category_id " +
+                "WHERE LOWER(i.name) LIKE LOWER(?) " +
+                "ORDER BY i.name";
+
+        Cursor cursor = db.rawQuery(query, new String[]{"%" + searchQuery + "%"});
+
+        if (cursor.moveToFirst()) {
+            int idxId = cursor.getColumnIndexOrThrow("item_id");
+            int idxCatId = cursor.getColumnIndexOrThrow("category_id");
+            int idxName = cursor.getColumnIndexOrThrow("name");
+            int idxSize = cursor.getColumnIndex("size_ml");
+            int idxAda = cursor.getColumnIndexOrThrow("is_ada_friendly");
+            int idxSoda = cursor.getColumnIndexOrThrow("is_soda");
+            int idxCatName = cursor.getColumnIndexOrThrow("category_name");
+
+            do {
+                Item item = new Item();
+                item.setItemId(cursor.getInt(idxId));
+                item.setCategoryId(cursor.getInt(idxCatId));
+                item.setName(cursor.getString(idxName));
+
+                if (!cursor.isNull(idxSize)) {
+                    item.setSizeML(cursor.getInt(idxSize));
+                }
+
+                item.setAdaFriendly(cursor.getInt(idxAda) == 1);
+                item.setSoda(cursor.getInt(idxSoda) == 1);
+                // IMPORTANT: Set category name last to trigger isBread calculation
+                item.setCategoryName(cursor.getString(idxCatName));
+
+                items.add(item);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        return items; // FIXED: Was returning 'item' before
+    }
+
+    public List<Item> getAllItems() {
+        List<Item> items = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        String query = "SELECT i.item_id, i.category_id, i.name, i.size_ml, " +
+                "i.is_ada_friendly, i.is_soda, c.name as category_name " +
+                "FROM Item i " +
+                "INNER JOIN Category c ON i.category_id = c.category_id " +
+                "ORDER BY c.name, i.name";
+
+        Cursor cursor = db.rawQuery(query, null);
+
+        if (cursor.moveToFirst()) {
+            int idxId = cursor.getColumnIndexOrThrow("item_id");
+            int idxCatId = cursor.getColumnIndexOrThrow("category_id");
+            int idxName = cursor.getColumnIndexOrThrow("name");
+            int idxSize = cursor.getColumnIndex("size_ml");
+            int idxAda = cursor.getColumnIndexOrThrow("is_ada_friendly");
+            int idxSoda = cursor.getColumnIndexOrThrow("is_soda");
+            int idxCatName = cursor.getColumnIndexOrThrow("category_name");
+
+            do {
+                Item item = new Item();
+                item.setItemId(cursor.getInt(idxId));
+                item.setCategoryId(cursor.getInt(idxCatId));
+                item.setName(cursor.getString(idxName));
+
+                if (!cursor.isNull(idxSize)) {
+                    item.setSizeML(cursor.getInt(idxSize));
+                }
+
+                item.setAdaFriendly(cursor.getInt(idxAda) == 1);
+                item.setSoda(cursor.getInt(idxSoda) == 1);
+                // IMPORTANT: Set category name last to trigger isBread calculation
+                item.setCategoryName(cursor.getString(idxCatName));
+
+                items.add(item);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        return items;
+    }
+
+    public boolean isItemUsedInOrders(int itemId) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        String query = "SELECT COUNT(*) FROM MealLine WHERE item_id = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(itemId)});
+
+        boolean isUsed = false;
+        if (cursor.moveToFirst()) {
+            isUsed = cursor.getInt(0) > 0;
+        }
+
+        cursor.close();
+        return isUsed;
+    }
+
+    public List<String> getAllCategoryNames() {
+        List<String> categories = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        String query = "SELECT name FROM Category ORDER BY name";
+        Cursor cursor = db.rawQuery(query, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                categories.add(cursor.getString(0));
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        return categories;
+    }
+
+    public int getCategoryIdByName(String categoryName) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        String query = "SELECT category_id FROM Category WHERE name = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{categoryName});
+
+        int categoryId = 1; // Default to first category
+        if (cursor.moveToFirst()) {
+            categoryId = cursor.getInt(0);
+        }
+
+        cursor.close();
+        return categoryId;
+    }
+
+    public long savePatient(String name, String wing, String room, String diet) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put("name", name);
+        values.put("wing", wing);
+        values.put("room_number", room);
+
+        // Get diet ID
+        Cursor cursor = db.rawQuery("SELECT diet_id FROM Diet WHERE name = ?", new String[]{diet});
+        if (cursor.moveToFirst()) {
+            int index = cursor.getColumnIndexOrThrow("diet_id");
+            values.put("diet_id", cursor.getInt(index));
+        }
+        cursor.close();
+
+        return db.insert("Patient", null, values);
+    }
+
+    public long saveMealOrder(int patientId, String meal, String timestamp) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put("patient_id", patientId);
+        values.put("meal", meal);
+        values.put("guest_tray", 0);
+        values.put("timestamp", timestamp);
+
+        return db.insert("MealOrder", null, values);
+    }
+
+    public void saveMealLine(int orderId, int itemId) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put("order_id", orderId);
+        values.put("item_id", itemId);
+
+        db.insert("MealLine", null, values);
+    }
+
+    // Helper methods for different food categories
     public List<Item> getBreakfastItems() {
         return getItemsByCategory("Breakfast");
     }
@@ -146,6 +410,27 @@ public class ItemDAO {
         return adaItems;
     }
 
+    // MISSING METHOD: This is the method MainActivity is calling
+    public List<Item> getFilteredItems(List<Item> items, boolean isADA, boolean filterBread) {
+        List<Item> filteredItems = new ArrayList<>();
+
+        for (Item item : items) {
+            // ADA filtering - skip non-ADA items if ADA diet is selected
+            if (isADA && !item.isAdaFriendly()) {
+                continue;
+            }
+
+            // Bread filtering for texture modifications - skip bread items if filterBread is true
+            if (filterBread && item.isBread()) {
+                continue;
+            }
+
+            filteredItems.add(item);
+        }
+
+        return filteredItems;
+    }
+
     public List<Item> getNonBreadItems(List<Item> items) {
         List<Item> nonBreadItems = new ArrayList<>();
         for (Item item : items) {
@@ -156,310 +441,27 @@ public class ItemDAO {
         return nonBreadItems;
     }
 
-    public List<Item> getFilteredItems(List<Item> items, boolean isADA, boolean filterBread) {
-        List<Item> filteredItems = new ArrayList<>();
-        
-        for (Item item : items) {
-            // ADA filtering
-            if (isADA && !item.isAdaFriendly()) {
-                continue;
-            }
-            
-            // Bread filtering for texture modifications
-            if (filterBread && item.isBread()) {
-                continue;
-            }
-            
-            filteredItems.add(item);
-        }
-        
-        return filteredItems;
-    }
-
+    // MISSING METHOD: For fluid restriction tracking
     public Integer getFluidLimit(String fluidRestriction, String meal) {
         if (fluidRestriction == null || fluidRestriction.equals("No Restriction")) {
             return null;
         }
-        
+
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        
+
         String query = "SELECT rl.limit_ml FROM FluidRestriction fr " +
-                      "INNER JOIN RestrictionLimit rl ON fr.fluid_id = rl.fluid_id " +
-                      "WHERE fr.name = ? AND rl.meal = ?";
-        
+                "INNER JOIN RestrictionLimit rl ON fr.fluid_id = rl.fluid_id " +
+                "WHERE fr.name = ? AND rl.meal = ?";
+
         Cursor cursor = db.rawQuery(query, new String[]{fluidRestriction, meal});
-        
+
         Integer limit = null;
         if (cursor.moveToFirst()) {
-            // INFO: Need to pull index first
             int index = cursor.getColumnIndexOrThrow("limit_ml");
             limit = cursor.getInt(index);
         }
-        
+
         cursor.close();
         return limit;
-    }
-
-    public long addItem(Item item) {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        
-        values.put("category_id", item.getCategoryId());
-        values.put("name", item.getName());
-        
-        if (item.getSizeML() != null) {
-            values.put("size_ml", item.getSizeML());
-        }
-        
-        values.put("is_ada_friendly", item.isAdaFriendly() ? 1 : 0);
-        values.put("is_soda", item.isSoda() ? 1 : 0);
-        
-        return db.insert("Item", null, values);
-    }
-
-    public boolean deleteItem(int itemId) {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        return db.delete("Item", "item_id = ?", new String[]{String.valueOf(itemId)}) > 0;
-    }
-
-    public long savePatient(String name, String wing, String room, String diet) {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        
-        values.put("name", name);
-        values.put("wing", wing);
-        values.put("room_number", room);
-        
-        // Get diet ID
-        Cursor cursor = db.rawQuery("SELECT diet_id FROM Diet WHERE name = ?", new String[]{diet});
-        if (cursor.moveToFirst()) {
-            // INFO: This is how this needs to happen
-            int index = cursor.getColumnIndexOrThrow("diet_id");
-            values.put("diet_id", cursor.getInt(index));
-        }
-        cursor.close();
-        
-        return db.insert("Patient", null, values);
-    }
-
-    public long saveMealOrder(int patientId, String meal, String timestamp) {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        
-        values.put("patient_id", patientId);
-        values.put("meal", meal);
-        values.put("guest_tray", 0);
-        values.put("timestamp", timestamp);
-        
-        return db.insert("MealOrder", null, values);
-    }
-
-    public void saveMealLine(int orderId, int itemId) {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        
-        values.put("order_id", orderId);
-        values.put("item_id", itemId);
-        
-        db.insert("MealLine", null, values);
-    }
-
-    public Item getItemByName(String itemName) {
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        
-        String query = "SELECT i.item_id, i.category_id, i.name, i.size_ml, " +
-                      "i.is_ada_friendly, i.is_soda, c.name as category_name " +
-                      "FROM Item i " +
-                      "INNER JOIN Category c ON i.category_id = c.category_id " +
-                      "WHERE i.name = ?";
-        
-        Cursor cursor = db.rawQuery(query, new String[]{itemName});
-        
-        Item item = null;
-        if (cursor.moveToFirst()) {
-            int itemIndex = cursor.getColumnIndexOrThrow("item_id");
-            int catIndex = cursor.getColumnIndexOrThrow("category_id");
-            int nameIndex = cursor.getColumnIndexOrThrow("name");
-            int sizeIndex = cursor.getColumnIndexOrThrow("size_ml");
-            int friendlyIndex = cursor.getColumnIndexOrThrow("is_ada_friendly");
-            int sodaIndex = cursor.getColumnIndexOrThrow("is_soda");
-            int catNameIndex = cursor.getColumnIndexOrThrow("category_name");
-
-            item = new Item();
-            item.setItemId(cursor.getInt(itemIndex));
-            item.setCategoryId(cursor.getInt(catIndex));
-            item.setName(cursor.getString(nameIndex));
-            
-            if (!cursor.isNull(sizeIndex)) {
-                item.setSizeML(cursor.getInt(sizeIndex));
-            }
-            
-            item.setAdaFriendly(cursor.getInt(friendlyIndex) == 1);
-            item.setSoda(cursor.getInt(sodaIndex) == 1);
-            item.setCategoryName(cursor.getString(catNameIndex));
-        }
-
-            public long updateItem(Item item) {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        
-        values.put("category_id", item.getCategoryId());
-        values.put("name", item.getName());
-        
-        if (item.getSizeML() != null) {
-            values.put("size_ml", item.getSizeML());
-        } else {
-            values.putNull("size_ml");
-        }
-        
-        values.put("is_ada_friendly", item.isAdaFriendly() ? 1 : 0);
-        values.put("is_soda", item.isSoda() ? 1 : 0);
-        
-        return db.update("Item", values, "item_id = ?", 
-                        new String[]{String.valueOf(item.getItemId())});
-    }
-
-    public List<Item> getAllItems() {
-        List<Item> items = new ArrayList<>();
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        
-        String query = "SELECT i.item_id, i.category_id, i.name, i.size_ml, " +
-                      "i.is_ada_friendly, i.is_soda, c.name as category_name " +
-                      "FROM Item i " +
-                      "INNER JOIN Category c ON i.category_id = c.category_id " +
-                      "ORDER BY c.name, i.name";
-        
-        Cursor cursor = db.rawQuery(query, null);
-        
-        if (cursor.moveToFirst()) {
-            do {
-                Item item = new Item();
-                item.setItemId(cursor.getInt("item_id"));
-                item.setCategoryId(cursor.getInt("category_id"));
-                item.setName(cursor.getString("name"));
-                
-                if (!cursor.isNull(cursor.getColumnIndex("size_ml"))) {
-                    item.setSizeML(cursor.getInt("size_ml"));
-                }
-                
-                item.setAdaFriendly(cursor.getInt("is_ada_friendly") == 1);
-                item.setSoda(cursor.getInt("is_soda") == 1);
-                item.setCategoryName(cursor.getString("category_name"));
-                
-                items.add(item);
-            } while (cursor.moveToNext());
-        }
-        
-        cursor.close();
-        return items;
-    }
-
-    public boolean isItemUsedInOrders(int itemId) {
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        
-        String query = "SELECT COUNT(*) FROM MealLine WHERE item_id = ?";
-        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(itemId)});
-        
-        boolean isUsed = false;
-        if (cursor.moveToFirst()) {
-            isUsed = cursor.getInt(0) > 0;
-        }
-        
-        cursor.close();
-        return isUsed;
-    }
-
-    public List<String> getAllCategoryNames() {
-        List<String> categories = new ArrayList<>();
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        
-        String query = "SELECT name FROM Category ORDER BY name";
-        Cursor cursor = db.rawQuery(query, null);
-        
-        if (cursor.moveToFirst()) {
-            do {
-                categories.add(cursor.getString("name"));
-            } while (cursor.moveToNext());
-        }
-        
-        cursor.close();
-        return categories;
-    }
-
-    public int getCategoryIdByName(String categoryName) {
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        
-        String query = "SELECT category_id FROM Category WHERE name = ?";
-        Cursor cursor = db.rawQuery(query, new String[]{categoryName});
-        
-        int categoryId = 1; // Default to first category
-        if (cursor.moveToFirst()) {
-            categoryId = cursor.getInt("category_id");
-        }
-        
-        cursor.close();
-        return categoryId;
-    }
-
-    // REPLACE your existing deleteItem method with this enhanced version
-    @Override
-    public boolean deleteItem(int itemId) {
-        // First check if item is used in any orders
-        if (isItemUsedInOrders(itemId)) {
-            return false; // Cannot delete item that's used in orders
-        }
-        
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        return db.delete("Item", "item_id = ?", new String[]{String.valueOf(itemId)}) > 0;
-    }
-
-    public boolean itemNameExists(String name, int excludeItemId) {
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        
-        String query = "SELECT COUNT(*) FROM Item WHERE LOWER(name) = LOWER(?) AND item_id != ?";
-        Cursor cursor = db.rawQuery(query, new String[]{name, String.valueOf(excludeItemId)});
-        
-        boolean exists = false;
-        if (cursor.moveToFirst()) {
-            exists = cursor.getInt(0) > 0;
-        }
-        
-        cursor.close();
-        return exists;
-    }
-
-    public List<Item> searchItems(String searchQuery) {
-        List<Item> items = new ArrayList<>();
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        
-        String query = "SELECT i.item_id, i.category_id, i.name, i.size_ml, " +
-                      "i.is_ada_friendly, i.is_soda, c.name as category_name " +
-                      "FROM Item i " +
-                      "INNER JOIN Category c ON i.category_id = c.category_id " +
-                      "WHERE LOWER(i.name) LIKE LOWER(?) " +
-                      "ORDER BY i.name";
-        
-        Cursor cursor = db.rawQuery(query, new String[]{"%" + searchQuery + "%"});
-        
-        if (cursor.moveToFirst()) {
-            do {
-                Item item = new Item();
-                item.setItemId(cursor.getInt("item_id"));
-                item.setCategoryId(cursor.getInt("category_id"));
-                item.setName(cursor.getString("name"));
-                
-                if (!cursor.isNull(cursor.getColumnIndex("size_ml"))) {
-                    item.setSizeML(cursor.getInt("size_ml"));
-                }
-                
-                item.setAdaFriendly(cursor.getInt("is_ada_friendly") == 1);
-                item.setSoda(cursor.getInt("is_soda") == 1);
-                item.setCategoryName(cursor.getString("category_name"));
-                
-                items.add(item);
-            } while (cursor.moveToNext());
-        }
-        cursor.close();
-        return item;
     }
 }

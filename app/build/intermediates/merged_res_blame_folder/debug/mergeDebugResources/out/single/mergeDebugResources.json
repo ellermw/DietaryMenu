@@ -1,78 +1,90 @@
 [
     {
-        "merged": "/Users/jeremyevans/.gradle/daemon/8.13/com.hospital.dietary.app-debug-31:/mipmap-hdpi_ic_launcher_round.png.flat",
-        "source": "/Users/jeremyevans/.gradle/daemon/8.13/com.hospital.dietary.app-main-33:/mipmap-hdpi/ic_launcher_round.png"
+        "merged": "com.hospital.dietary.app-debug-31:/mipmap-hdpi_ic_launcher.png.flat",
+        "source": "com.hospital.dietary.app-main-33:/mipmap-hdpi/ic_launcher.png"
     },
     {
-        "merged": "/Users/jeremyevans/.gradle/daemon/8.13/com.hospital.dietary.app-debug-31:/mipmap-mdpi_ic_launcher.png.flat",
-        "source": "/Users/jeremyevans/.gradle/daemon/8.13/com.hospital.dietary.app-main-33:/mipmap-mdpi/ic_launcher.png"
+        "merged": "com.hospital.dietary.app-debug-31:/layout_dialog_add_edit_item.xml.flat",
+        "source": "com.hospital.dietary.app-main-33:/layout/dialog_add_edit_item.xml"
     },
     {
-        "merged": "/Users/jeremyevans/.gradle/daemon/8.13/com.hospital.dietary.app-debug-31:/mipmap-hdpi_ic_launcher.png.flat",
-        "source": "/Users/jeremyevans/.gradle/daemon/8.13/com.hospital.dietary.app-main-33:/mipmap-hdpi/ic_launcher.png"
+        "merged": "com.hospital.dietary.app-debug-31:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "com.hospital.dietary.app-main-33:/mipmap-anydpi-v26/ic_launcher_round.xml"
     },
     {
-        "merged": "/Users/jeremyevans/.gradle/daemon/8.13/com.hospital.dietary.app-debug-31:/drawable_edit_text_background.xml.flat",
-        "source": "/Users/jeremyevans/.gradle/daemon/8.13/com.hospital.dietary.app-main-33:/drawable/edit_text_background.xml"
+        "merged": "com.hospital.dietary.app-debug-31:/layout_dialog_admin_access.xml.flat",
+        "source": "com.hospital.dietary.app-main-33:/layout/dialog_admin_access.xml"
     },
     {
-        "merged": "/Users/jeremyevans/.gradle/daemon/8.13/com.hospital.dietary.app-debug-31:/mipmap-anydpi-v26_ic_launcher.xml.flat",
-        "source": "/Users/jeremyevans/.gradle/daemon/8.13/com.hospital.dietary.app-main-33:/mipmap-anydpi-v26/ic_launcher.xml"
+        "merged": "com.hospital.dietary.app-debug-31:/mipmap-xhdpi_ic_launcher_round.png.flat",
+        "source": "com.hospital.dietary.app-main-33:/mipmap-xhdpi/ic_launcher_round.png"
     },
     {
-        "merged": "/Users/jeremyevans/.gradle/daemon/8.13/com.hospital.dietary.app-debug-31:/layout_drink_item.xml.flat",
-        "source": "/Users/jeremyevans/.gradle/daemon/8.13/com.hospital.dietary.app-main-33:/layout/drink_item.xml"
+        "merged": "com.hospital.dietary.app-debug-31:/layout_main_course_item.xml.flat",
+        "source": "com.hospital.dietary.app-main-33:/layout/main_course_item.xml"
     },
     {
-        "merged": "/Users/jeremyevans/.gradle/daemon/8.13/com.hospital.dietary.app-debug-31:/mipmap-xhdpi_ic_launcher.png.flat",
-        "source": "/Users/jeremyevans/.gradle/daemon/8.13/com.hospital.dietary.app-main-33:/mipmap-xhdpi/ic_launcher.png"
+        "merged": "com.hospital.dietary.app-debug-31:/drawable_edit_text_background.xml.flat",
+        "source": "com.hospital.dietary.app-main-33:/drawable/edit_text_background.xml"
     },
     {
-        "merged": "/Users/jeremyevans/.gradle/daemon/8.13/com.hospital.dietary.app-debug-31:/layout_main_course_item.xml.flat",
-        "source": "/Users/jeremyevans/.gradle/daemon/8.13/com.hospital.dietary.app-main-33:/layout/main_course_item.xml"
+        "merged": "com.hospital.dietary.app-debug-31:/mipmap-xxhdpi_ic_launcher_round.png.flat",
+        "source": "com.hospital.dietary.app-main-33:/mipmap-xxhdpi/ic_launcher_round.png"
     },
     {
-        "merged": "/Users/jeremyevans/.gradle/daemon/8.13/com.hospital.dietary.app-debug-31:/drawable_ic_launcher_background.xml.flat",
-        "source": "/Users/jeremyevans/.gradle/daemon/8.13/com.hospital.dietary.app-main-33:/drawable/ic_launcher_background.xml"
+        "merged": "com.hospital.dietary.app-debug-31:/mipmap-mdpi_ic_launcher_round.png.flat",
+        "source": "com.hospital.dietary.app-main-33:/mipmap-mdpi/ic_launcher_round.png"
     },
     {
-        "merged": "/Users/jeremyevans/.gradle/daemon/8.13/com.hospital.dietary.app-debug-31:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
-        "source": "/Users/jeremyevans/.gradle/daemon/8.13/com.hospital.dietary.app-main-33:/mipmap-anydpi-v26/ic_launcher_round.xml"
+        "merged": "com.hospital.dietary.app-debug-31:/mipmap-xhdpi_ic_launcher.png.flat",
+        "source": "com.hospital.dietary.app-main-33:/mipmap-xhdpi/ic_launcher.png"
     },
     {
-        "merged": "/Users/jeremyevans/.gradle/daemon/8.13/com.hospital.dietary.app-debug-31:/mipmap-xxxhdpi_ic_launcher.png.flat",
-        "source": "/Users/jeremyevans/.gradle/daemon/8.13/com.hospital.dietary.app-main-33:/mipmap-xxxhdpi/ic_launcher.png"
+        "merged": "com.hospital.dietary.app-debug-31:/mipmap-mdpi_ic_launcher.png.flat",
+        "source": "com.hospital.dietary.app-main-33:/mipmap-mdpi/ic_launcher.png"
     },
     {
-        "merged": "/Users/jeremyevans/.gradle/daemon/8.13/com.hospital.dietary.app-debug-31:/mipmap-xxhdpi_ic_launcher_round.png.flat",
-        "source": "/Users/jeremyevans/.gradle/daemon/8.13/com.hospital.dietary.app-main-33:/mipmap-xxhdpi/ic_launcher_round.png"
+        "merged": "com.hospital.dietary.app-debug-31:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "com.hospital.dietary.app-main-33:/mipmap-anydpi-v26/ic_launcher.xml"
     },
     {
-        "merged": "/Users/jeremyevans/.gradle/daemon/8.13/com.hospital.dietary.app-debug-31:/mipmap-xxxhdpi_ic_launcher_round.png.flat",
-        "source": "/Users/jeremyevans/.gradle/daemon/8.13/com.hospital.dietary.app-main-33:/mipmap-xxxhdpi/ic_launcher_round.png"
+        "merged": "com.hospital.dietary.app-debug-31:/mipmap-xxhdpi_ic_launcher.png.flat",
+        "source": "com.hospital.dietary.app-main-33:/mipmap-xxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.hospital.dietary.app-debug-31:/drawable-anydpi-v24_ic_launcher_foreground.xml.flat",
+        "source": "com.hospital.dietary.app-pngs-27:/drawable-anydpi-v24/ic_launcher_foreground.xml"
     },
     {
         "merged": "com.hospital.dietary.app-debug-31:/layout_activity_main.xml.flat",
         "source": "com.hospital.dietary.app-main-33:/layout/activity_main.xml"
     },
     {
-        "merged": "/Users/jeremyevans/.gradle/daemon/8.13/com.hospital.dietary.app-debug-31:/layout_activity_main.xml.flat",
-        "source": "/Users/jeremyevans/.gradle/daemon/8.13/com.hospital.dietary.app-main-33:/layout/activity_main.xml"
+        "merged": "com.hospital.dietary.app-debug-31:/layout_drink_item.xml.flat",
+        "source": "com.hospital.dietary.app-main-33:/layout/drink_item.xml"
     },
     {
-        "merged": "/Users/jeremyevans/.gradle/daemon/8.13/com.hospital.dietary.app-debug-31:/mipmap-xhdpi_ic_launcher_round.png.flat",
-        "source": "/Users/jeremyevans/.gradle/daemon/8.13/com.hospital.dietary.app-main-33:/mipmap-xhdpi/ic_launcher_round.png"
+        "merged": "com.hospital.dietary.app-debug-31:/drawable_ic_launcher_background.xml.flat",
+        "source": "com.hospital.dietary.app-main-33:/drawable/ic_launcher_background.xml"
     },
     {
-        "merged": "/Users/jeremyevans/.gradle/daemon/8.13/com.hospital.dietary.app-debug-31:/mipmap-mdpi_ic_launcher_round.png.flat",
-        "source": "/Users/jeremyevans/.gradle/daemon/8.13/com.hospital.dietary.app-main-33:/mipmap-mdpi/ic_launcher_round.png"
+        "merged": "com.hospital.dietary.app-debug-31:/layout_activity_admin.xml.flat",
+        "source": "com.hospital.dietary.app-main-33:/layout/activity_admin.xml"
     },
     {
-        "merged": "/Users/jeremyevans/.gradle/daemon/8.13/com.hospital.dietary.app-debug-31:/mipmap-xxhdpi_ic_launcher.png.flat",
-        "source": "/Users/jeremyevans/.gradle/daemon/8.13/com.hospital.dietary.app-main-33:/mipmap-xxhdpi/ic_launcher.png"
+        "merged": "com.hospital.dietary.app-debug-31:/layout_item_admin_row.xml.flat",
+        "source": "com.hospital.dietary.app-main-33:/layout/item_admin_row.xml"
     },
     {
-        "merged": "/Users/jeremyevans/.gradle/daemon/8.13/com.hospital.dietary.app-debug-31:/drawable-anydpi-v24_ic_launcher_foreground.xml.flat",
-        "source": "/Users/jeremyevans/.gradle/daemon/8.13/com.hospital.dietary.app-pngs-27:/drawable-anydpi-v24/ic_launcher_foreground.xml"
+        "merged": "com.hospital.dietary.app-debug-31:/mipmap-hdpi_ic_launcher_round.png.flat",
+        "source": "com.hospital.dietary.app-main-33:/mipmap-hdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "com.hospital.dietary.app-debug-31:/mipmap-xxxhdpi_ic_launcher.png.flat",
+        "source": "com.hospital.dietary.app-main-33:/mipmap-xxxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.hospital.dietary.app-debug-31:/mipmap-xxxhdpi_ic_launcher_round.png.flat",
+        "source": "com.hospital.dietary.app-main-33:/mipmap-xxxhdpi/ic_launcher_round.png"
     }
 ]

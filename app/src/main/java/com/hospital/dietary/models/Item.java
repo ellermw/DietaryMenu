@@ -1,7 +1,3 @@
-// ================================================================================================
-// FILE: app/src/main/java/com/hospital/dietary/models/Item.java
-// ================================================================================================
-
 package com.hospital.dietary.models;
 
 public class Item {
@@ -16,15 +12,14 @@ public class Item {
 
     public Item() {}
 
-    public Item(int itemId, int categoryId, String name, Integer sizeML, 
-               boolean isAdaFriendly, boolean isSoda) {
+    public Item(int itemId, int categoryId, String name, Integer sizeML,
+                boolean isAdaFriendly, boolean isSoda) {
         this.itemId = itemId;
         this.categoryId = categoryId;
         this.name = name;
         this.sizeML = sizeML;
         this.isAdaFriendly = isAdaFriendly;
         this.isSoda = isSoda;
-        this.isBread = isBreadItem(name, categoryName);
     }
 
     // Getters and setters
@@ -35,7 +30,11 @@ public class Item {
     public void setCategoryId(int categoryId) { this.categoryId = categoryId; }
 
     public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public void setName(String name) {
+        this.name = name;
+        // Update bread status when name changes
+        this.isBread = isBreadItem(this.name, this.categoryName);
+    }
 
     public Integer getSizeML() { return sizeML; }
     public void setSizeML(Integer sizeML) { this.sizeML = sizeML; }
@@ -47,28 +46,55 @@ public class Item {
     public void setSoda(boolean soda) { isSoda = soda; }
 
     public String getCategoryName() { return categoryName; }
-    public void setCategoryName(String categoryName) { 
+    public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
+        // Update bread status when category changes
         this.isBread = isBreadItem(this.name, categoryName);
     }
 
     public boolean isBread() { return isBread; }
     public void setBread(boolean bread) { isBread = bread; }
 
+    /**
+     * Determines if an item should be considered a "bread item" for texture modification filtering.
+     */
     private boolean isBreadItem(String name, String category) {
         if (name == null) return false;
-        
-        // Items that are considered bread items for texture modification filtering
-        return name.contains("Toast") || name.contains("French Toast") || 
-               name.contains("Sandwich") || name.contains("Biscuit") ||
-               name.contains("Muffin") || "Breads".equals(category) ||
-               "Fresh Muffins".equals(category) || name.contains("Bread") ||
-               name.contains("Hamburger") || name.contains("Cheeseburger") ||
-               name.contains("Grilled Cheese") || name.contains("Hot Ham & Cheese");
+
+        String lowerName = name.toLowerCase();
+
+        // Category-based bread items
+        if ("Breads".equals(category) || "Fresh Muffins".equals(category)) {
+            return true;
+        }
+
+        // Name-based bread items
+        return lowerName.contains("toast") || lowerName.contains("french toast") ||
+                lowerName.contains("sandwich") || lowerName.contains("biscuit") ||
+                lowerName.contains("muffin") || lowerName.contains("bread") ||
+                lowerName.contains("hamburger") || lowerName.contains("cheeseburger") ||
+                lowerName.contains("grilled cheese") || lowerName.contains("hot ham & cheese") ||
+                lowerName.contains("bagel") || lowerName.contains("english muffin") ||
+                lowerName.contains("pancake") || lowerName.contains("waffle") ||
+                lowerName.contains("croissant") || lowerName.contains("roll") ||
+                lowerName.contains("cracker") || lowerName.contains("breadstick");
     }
 
     @Override
     public String toString() {
         return name + (sizeML != null ? " (" + sizeML + "ml)" : "");
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Item item = (Item) obj;
+        return itemId == item.itemId;
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(itemId);
     }
 }

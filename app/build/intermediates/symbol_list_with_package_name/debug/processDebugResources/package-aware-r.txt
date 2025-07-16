@@ -3118,6 +3118,8 @@ id action_text
 id actions
 id activity_chooser_view_content
 id add
+id addItemButton
+id adminPasswordInput
 id alertTitle
 id aligned
 id all
@@ -3135,6 +3137,7 @@ id auto
 id autoComplete
 id autoCompleteToEnd
 id autoCompleteToStart
+id backButton
 id barrier
 id baseline
 id beginOnFirstDraw
@@ -3162,6 +3165,7 @@ id cache_measures
 id callMeasure
 id cancel_button
 id carryVelocity
+id categoryFilterSpinner
 id center
 id centerCrop
 id centerInside
@@ -3202,6 +3206,7 @@ id decelerate
 id decelerateAndComplete
 id decor_content_parent
 id default_activity_button
+id deleteItemButton
 id deltaRelative
 id dependency_ordering
 id design_bottom_sheet
@@ -3239,6 +3244,7 @@ id easeInOut
 id easeOut
 id east
 id edge
+id editItemButton
 id edit_query
 id elastic
 id embed
@@ -3294,7 +3300,15 @@ id info
 id invisible
 id inward
 id italic
+id itemAdaCheckBox
+id itemCategorySpinner
+id itemDetailsText
+id itemNameInput
+id itemNameText
+id itemSizeInput
+id itemSodaCheckBox
 id item_touch_helper_previous_elevation
+id itemsListView
 id jumpToEnd
 id jumpToStart
 id labeled
@@ -3454,6 +3468,7 @@ id scrollIndicatorDown
 id scrollIndicatorUp
 id scrollView
 id scrollable
+id searchEditText
 id search_badge
 id search_bar
 id search_button
@@ -3689,6 +3704,7 @@ layout abc_search_dropdown_item_icons_2line
 layout abc_search_view
 layout abc_select_dialog_material
 layout abc_tooltip
+layout activity_admin
 layout activity_main
 layout custom_dialog
 layout design_bottom_navigation_item
@@ -3706,7 +3722,10 @@ layout design_navigation_menu
 layout design_navigation_menu_item
 layout design_text_input_end_icon
 layout design_text_input_start_icon
+layout dialog_add_edit_item
+layout dialog_admin_access
 layout drink_item
+layout item_admin_row
 layout m3_alert_dialog
 layout m3_alert_dialog_actions
 layout m3_alert_dialog_title
