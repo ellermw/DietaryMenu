@@ -8,9 +8,9 @@ import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import com.hospital.dietary.dao.PatientDAO;
 import com.hospital.dietary.models.Patient;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.ArrayList;
 
 public class NewPatientActivity extends AppCompatActivity {
     
@@ -37,13 +37,11 @@ public class NewPatientActivity extends AppCompatActivity {
     private Button backButton;
     private Button clearFormButton;
     
-    // Data lists
-    private List<String> wings = Arrays.asList("1 South", "2 North", "Labor and Delivery", 
-                                              "2 West", "3 North", "ICU");
-    private List<String> diets = Arrays.asList("Regular", "ADA", "Cardiac", "Renal", 
-                                              "Puree", "Full Liquid", "Clear Liquid");
-    private List<String> fluidRestrictions = Arrays.asList("None", "1000ml", "1200ml", 
-                                                          "1500ml", "2000ml", "2500ml");
+    // Data arrays
+    private List<String> wings = Arrays.asList("Labor & Delivery", "2 West", "3 North", "ICU");
+    private List<String> diets = Arrays.asList("Regular", "Diabetic", "Low Sodium", "Renal", 
+                                              "Cardiac", "Soft", "Full Liquid", "Clear Liquid");
+    private List<String> fluidRestrictions = Arrays.asList("None", "1000ml", "1500ml", "2000ml");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,7 +106,7 @@ public class NewPatientActivity extends AppCompatActivity {
         dietSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selectedDiet = diets.get(position);
+                String selectedDiet = (String) parent.getItemAtPosition(position);
                 if ("Full Liquid".equals(selectedDiet) || "Clear Liquid".equals(selectedDiet)) {
                     adaFriendlyCB.setVisibility(View.VISIBLE);
                 } else {
@@ -126,6 +124,9 @@ public class NewPatientActivity extends AppCompatActivity {
         loadWings();
         loadDiets();
         loadFluidRestrictions();
+        
+        // Hide ADA checkbox initially
+        adaFriendlyCB.setVisibility(View.GONE);
     }
     
     private void loadWings() {
@@ -137,27 +138,15 @@ public class NewPatientActivity extends AppCompatActivity {
     }
     
     private void updateRoomNumbers() {
-        String selectedWing = (String) wingSpinner.getSelectedItem();
         List<String> rooms = new ArrayList<>();
         
-        if (selectedWing != null && !selectedWing.equals("Select Wing")) {
-            // Generate room numbers based on wing
+        if (wingSpinner.getSelectedItemPosition() > 0) {
+            String selectedWing = (String) wingSpinner.getSelectedItem();
+            
             switch (selectedWing) {
-                case "1 South":
-                    // Rooms 106 through 122
-                    for (int i = 106; i <= 122; i++) {
-                        rooms.add(String.valueOf(i));
-                    }
-                    break;
-                case "2 North":
-                    // Rooms 250 through 264
-                    for (int i = 250; i <= 264; i++) {
-                        rooms.add(String.valueOf(i));
-                    }
-                    break;
-                case "Labor and Delivery":
-                    // Rooms LDR1 through LDR6
-                    for (int i = 1; i <= 6; i++) {
+                case "Labor & Delivery":
+                    // Rooms LDR1 through LDR5
+                    for (int i = 1; i <= 5; i++) {
                         rooms.add("LDR" + i);
                     }
                     break;
@@ -209,53 +198,43 @@ public class NewPatientActivity extends AppCompatActivity {
             return;
         }
         
-        // Get form data
-        String patientName = patientNameInput.getText().toString().trim();
-        String wing = (String) wingSpinner.getSelectedItem();
-        String roomNumber = (String) roomSpinner.getSelectedItem();
-        String diet = (String) dietSpinner.getSelectedItem();
-        String fluidRestriction = (String) fluidRestrictionSpinner.getSelectedItem();
-        
-        // Build texture modifications string
-        StringBuilder textureModifications = new StringBuilder();
-        if (mechanicalGroundCB.isChecked()) {
-            textureModifications.append("Mechanical Ground, ");
-        }
-        if (mechanicalChoppedCB.isChecked()) {
-            textureModifications.append("Mechanical Chopped, ");
-        }
-        if (biteSizeCB.isChecked()) {
-            textureModifications.append("Bite Size, ");
-        }
-        if (breadOKCB.isChecked()) {
-            textureModifications.append("Bread OK, ");
-        }
-        
-        // Remove trailing comma and space
-        String textureModificationsStr = textureModifications.toString();
-        if (textureModificationsStr.endsWith(", ")) {
-            textureModificationsStr = textureModificationsStr.substring(0, textureModificationsStr.length() - 2);
-        }
-        
-        // Handle ADA-friendly for Full Liquid and Clear Liquid
-        if (adaFriendlyCB.isChecked() && adaFriendlyCB.getVisibility() == View.VISIBLE) {
-            diet = diet + " (ADA)";
-        }
-        
-        // Create patient object
-        Patient patient = new Patient();
-        patient.setName(patientName);
-        patient.setWing(wing);
-        patient.setRoomNumber(roomNumber);
-        patient.setDiet(diet);
-        patient.setFluidRestriction(fluidRestriction);
-        patient.setTextureModifications(textureModificationsStr);
-        
-        // Save to database
         try {
-            long result = patientDAO.addPatient(patient);
-            if (result > 0) {
-                Toast.makeText(this, "Patient information saved successfully!", Toast.LENGTH_SHORT).show();
+            // Create patient object
+            Patient patient = new Patient();
+            patient.setName(patientNameInput.getText().toString().trim());
+            patient.setWing((String) wingSpinner.getSelectedItem());
+            patient.setRoomNumber((String) roomSpinner.getSelectedItem());
+            patient.setDiet((String) dietSpinner.getSelectedItem());
+            patient.setFluidRestriction((String) fluidRestrictionSpinner.getSelectedItem());
+            
+            // Set texture modifications
+            StringBuilder textureModifications = new StringBuilder();
+            if (mechanicalGroundCB.isChecked()) textureModifications.append("Mechanical Ground, ");
+            if (mechanicalChoppedCB.isChecked()) textureModifications.append("Mechanical Chopped, ");
+            if (biteSizeCB.isChecked()) textureModifications.append("Bite Size, ");
+            if (breadOKCB.isChecked()) textureModifications.append("Bread OK, ");
+            if (adaFriendlyCB.isChecked()) textureModifications.append("ADA Friendly, ");
+            
+            if (textureModifications.length() > 0) {
+                // Remove trailing comma and space
+                textureModifications.setLength(textureModifications.length() - 2);
+            }
+            patient.setTextureModifications(textureModifications.toString());
+            
+            // FIXED: Set meal statuses to false so patient appears in pending orders
+            patient.setBreakfastComplete(false);
+            patient.setLunchComplete(false);
+            patient.setDinnerComplete(false);
+            patient.setBreakfastNPO(false);
+            patient.setLunchNPO(false);
+            patient.setDinnerNPO(false);
+            
+            // Save patient
+            long patientId = patientDAO.addPatient(patient);
+            
+            if (patientId > 0) {
+                patient.setPatientId((int) patientId);
+                Toast.makeText(this, "Patient saved successfully!", Toast.LENGTH_SHORT).show();
                 
                 // Clear form for next patient
                 clearForm();
@@ -331,6 +310,8 @@ public class NewPatientActivity extends AppCompatActivity {
                 intent.putExtra("wing", patient.getWing());
                 intent.putExtra("room", patient.getRoomNumber());
                 intent.putExtra("diet", patient.getDiet());
+                intent.putExtra("fluid_restriction", patient.getFluidRestriction());
+                intent.putExtra("texture_modifications", patient.getTextureModifications());
                 intent.putExtra("current_user", currentUsername);
                 intent.putExtra("user_role", currentUserRole);
                 intent.putExtra("user_full_name", currentUserFullName);
@@ -338,5 +319,13 @@ public class NewPatientActivity extends AppCompatActivity {
             })
             .setNegativeButton("No", null)
             .show();
+    }
+    
+    @Override
+    protected void onDestroy() {
+        if (dbHelper != null) {
+            dbHelper.close();
+        }
+        super.onDestroy();
     }
 }
