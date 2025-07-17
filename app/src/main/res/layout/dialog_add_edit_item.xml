@@ -25,7 +25,7 @@
             android:layout_height="48dp"
             android:hint="Enter item name"
             android:padding="12dp"
-            android:background="@drawable/edit_text_background"
+            android:background="@android:drawable/edit_text"
             android:layout_marginBottom="16dp"
             android:inputType="textCapWords" />
 
@@ -43,7 +43,7 @@
             android:id="@+id/itemCategorySpinner"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:background="@drawable/edit_text_background"
+            android:background="@android:drawable/edit_text"
             android:layout_marginBottom="16dp" />
 
         <!-- Size (Optional) -->
@@ -62,7 +62,7 @@
             android:layout_height="48dp"
             android:hint="e.g., 240, 355, 500"
             android:padding="12dp"
-            android:background="@drawable/edit_text_background"
+            android:background="@android:drawable/edit_text"
             android:layout_marginBottom="16dp"
             android:inputType="number" />
 

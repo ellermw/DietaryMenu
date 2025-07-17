@@ -192,7 +192,7 @@
                     android:layout_weight="1"
                     android:hint="Search users..."
                     android:padding="12dp"
-                    android:background="@drawable/edit_text_background"
+                    android:background="@android:drawable/edit_text"
                     android:layout_marginEnd="12dp"
                     android:inputType="text" />
 
@@ -204,8 +204,7 @@
                     android:textSize="14sp"
                     android:textColor="@android:color/white"
                     android:background="#27ae60"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="16dp" />
+                    android:padding="12dp" />
 
             </LinearLayout>
 
@@ -220,53 +219,13 @@
             android:background="@android:color/white"
             android:elevation="2dp">
 
-            <!-- List Header -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:background="#ecf0f1"
-                android:padding="12dp">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="User"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:textColor="#2c3e50" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Role"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:textColor="#2c3e50"
-                    android:gravity="center" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Status"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:textColor="#2c3e50"
-                    android:gravity="end" />
-
-            </LinearLayout>
-
-            <!-- Users ListView -->
             <ListView
                 android:id="@+id/usersListView"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="match_parent"
                 android:divider="#ecf0f1"
-                android:dividerHeight="1dp" />
+                android:dividerHeight="1dp"
+                android:scrollbars="vertical" />
 
         </LinearLayout>
 
@@ -291,7 +250,7 @@
             android:layout_marginBottom="16dp"
             android:elevation="2dp">
 
-            <!-- Search and Filter Row -->
+            <!-- Filter and Search Row -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -301,10 +260,11 @@
 
                 <Spinner
                     android:id="@+id/categoryFilterSpinner"
-                    android:layout_width="140dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="48dp"
-                    android:background="@drawable/edit_text_background"
-                    android:layout_marginEnd="8dp" />
+                    android:minWidth="120dp"
+                    android:background="@android:drawable/edit_text"
+                    android:layout_marginEnd="12dp" />
 
                 <EditText
                     android:id="@+id/itemSearchEditText"
@@ -313,7 +273,7 @@
                     android:layout_weight="1"
                     android:hint="Search items..."
                     android:padding="12dp"
-                    android:background="@drawable/edit_text_background"
+                    android:background="@android:drawable/edit_text"
                     android:layout_marginEnd="12dp"
                     android:inputType="text" />
 
@@ -325,8 +285,7 @@
                     android:textSize="14sp"
                     android:textColor="@android:color/white"
                     android:background="#27ae60"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="16dp" />
+                    android:padding="12dp" />
 
             </LinearLayout>
 
@@ -341,53 +300,13 @@
             android:background="@android:color/white"
             android:elevation="2dp">
 
-            <!-- List Header -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:background="#ecf0f1"
-                android:padding="12dp">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:text="Item Name"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:textColor="#2c3e50" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Category"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:textColor="#2c3e50"
-                    android:gravity="center" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Size"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:textColor="#2c3e50"
-                    android:gravity="end" />
-
-            </LinearLayout>
-
-            <!-- Items ListView -->
             <ListView
                 android:id="@+id/itemsListView"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="match_parent"
                 android:divider="#ecf0f1"
-                android:dividerHeight="1dp" />
+                android:dividerHeight="1dp"
+                android:scrollbars="vertical" />
 
         </LinearLayout>
 

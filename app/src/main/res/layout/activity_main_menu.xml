@@ -3,10 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#f8f9fa"
+    android:background="#f5f7fa"
     android:padding="16dp">
 
-    <!-- Header -->
+    <!-- Header with Hospital Logo -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -16,15 +16,34 @@
         android:layout_marginBottom="20dp"
         android:elevation="4dp">
 
+        <!-- Logo placeholder - replace with actual logo -->
+        <ImageView
+            android:id="@+id/hospitalLogo"
+            android:layout_width="120dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:src="@android:drawable/ic_menu_gallery"
+            android:layout_marginBottom="16dp"
+            android:scaleType="fitCenter" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="🏥 Hospital Dietary System"
-            android:textSize="28sp"
+            android:text="McAlester Regional Health Center"
+            android:textSize="22sp"
             android:textStyle="bold"
-            android:textColor="#2c3e50"
+            android:textColor="#1e3a8a"
             android:gravity="center"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Dietary Management System"
+            android:textSize="16sp"
+            android:textColor="#64748b"
+            android:gravity="center"
+            android:layout_marginBottom="12dp" />
 
         <TextView
             android:id="@+id/welcomeText"
@@ -32,85 +51,126 @@
             android:layout_height="wrap_content"
             android:text="Welcome!"
             android:textSize="18sp"
-            android:textColor="#7f8c8d"
-            android:gravity="center" />
+            android:textColor="#1e3a8a"
+            android:gravity="center"
+            android:textStyle="bold" />
 
     </LinearLayout>
 
-    <!-- Menu Options -->
+    <!-- Menu Options Grid -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:orientation="vertical"
-        android:gravity="center">
+        android:orientation="vertical">
 
-        <Button
-            android:id="@+id/patientInfoButton"
+        <!-- First Row: Patient Information and Pending Orders -->
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:text="👤 Patient Information"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/white"
-            android:background="#3498db"
-            android:layout_marginBottom="12dp"
-            android:elevation="2dp" />
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="12dp">
 
-        <Button
-            android:id="@+id/finishedOrdersButton"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:text="✅ Finished Orders"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/white"
-            android:background="#27ae60"
-            android:layout_marginBottom="12dp"
-            android:elevation="2dp" />
+            <Button
+                android:id="@+id/patientInfoButton"
+                android:layout_width="0dp"
+                android:layout_height="80dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:text="👤 Patient Information"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#1e3a8a"
+                android:background="#f0f9ff"
+                android:elevation="2dp" />
 
-        <Button
-            android:id="@+id/pendingOrdersButton"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:text="⏳ Pending Orders"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/white"
-            android:background="#f39c12"
-            android:layout_marginBottom="12dp"
-            android:elevation="2dp" />
+            <Button
+                android:id="@+id/pendingOrdersButton"
+                android:layout_width="0dp"
+                android:layout_height="80dp"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:text="⏳ Pending Orders"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#dc2626"
+                android:background="#fef2f2"
+                android:elevation="2dp" />
 
-        <Button
-            android:id="@+id/userManagementButton"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:text="👥 User Management"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/white"
-            android:background="#9b59b6"
-            android:layout_marginBottom="12dp"
-            android:elevation="2dp"
-            android:visibility="gone" />
+        </LinearLayout>
 
-        <Button
-            android:id="@+id/itemManagementButton"
+        <!-- Second Row: Finished Orders and Admin (if applicable) -->
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:text="🍽️ Item Management"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/white"
-            android:background="#e67e22"
-            android:layout_marginBottom="12dp"
-            android:elevation="2dp"
-            android:visibility="gone" />
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="12dp">
+
+            <Button
+                android:id="@+id/finishedOrdersButton"
+                android:layout_width="0dp"
+                android:layout_height="80dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:text="✅ Finished Orders"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#16a34a"
+                android:background="#f0fdf4"
+                android:elevation="2dp" />
+
+            <Button
+                android:id="@+id/adminButton"
+                android:layout_width="0dp"
+                android:layout_height="80dp"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:text="⚙️ Admin Panel"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#7c3aed"
+                android:background="#faf5ff"
+                android:elevation="2dp"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+        <!-- Third Row: Additional buttons if needed -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="12dp">
+
+            <Button
+                android:id="@+id/userManagementButton"
+                android:layout_width="0dp"
+                android:layout_height="80dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:text="👥 User Management"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#7c3aed"
+                android:background="#faf5ff"
+                android:elevation="2dp"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/itemManagementButton"
+                android:layout_width="0dp"
+                android:layout_height="80dp"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:text="🍽️ Item Management"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#ea580c"
+                android:background="#fff7ed"
+                android:elevation="2dp"
+                android:visibility="gone" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
@@ -121,8 +181,9 @@
         android:layout_height="56dp"
         android:text="🚪 Logout"
         android:textSize="16sp"
+        android:textStyle="bold"
         android:textColor="@android:color/white"
-        android:background="#e74c3c"
+        android:background="#dc2626"
         android:layout_marginTop="16dp"
         android:elevation="2dp" />
 

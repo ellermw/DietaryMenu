@@ -20,7 +20,7 @@
         android:layout_height="48dp"
         android:hint="Enter username"
         android:padding="12dp"
-        android:background="@drawable/edit_text_background"
+        android:background="@android:drawable/edit_text"
         android:inputType="text"
         android:layout_marginBottom="16dp" />
 
@@ -40,7 +40,7 @@
         android:layout_height="48dp"
         android:hint="Enter password"
         android:padding="12dp"
-        android:background="@drawable/edit_text_background"
+        android:background="@android:drawable/edit_text"
         android:inputType="textPassword"
         android:layout_marginBottom="16dp" />
 
@@ -59,7 +59,7 @@
         android:layout_height="48dp"
         android:hint="Enter full name"
         android:padding="12dp"
-        android:background="@drawable/edit_text_background"
+        android:background="@android:drawable/edit_text"
         android:inputType="textPersonName"
         android:layout_marginBottom="16dp" />
 
@@ -78,7 +78,7 @@
         android:layout_height="48dp"
         android:hint="Enter email address"
         android:padding="12dp"
-        android:background="@drawable/edit_text_background"
+        android:background="@android:drawable/edit_text"
         android:inputType="textEmailAddress"
         android:layout_marginBottom="16dp" />
 
@@ -95,7 +95,7 @@
         android:id="@+id/roleSpinner"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:background="@drawable/edit_text_background"
+        android:background="@android:drawable/edit_text"
         android:layout_marginBottom="16dp" />
 
     <!-- Active Status -->

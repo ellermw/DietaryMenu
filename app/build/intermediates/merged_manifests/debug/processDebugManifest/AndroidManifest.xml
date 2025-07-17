@@ -21,7 +21,6 @@
         android:extractNativeLibs="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:testOnly="true"
         android:theme="@style/Theme.DietaryMenu" >
 
         <!-- Login Activity - Entry Point -->
@@ -36,19 +35,37 @@
             </intent-filter>
         </activity>
 
-        <!-- Main Menu Activity - New main menu with options -->
+        <!-- Main Menu Activity - Updated main menu with new design -->
         <activity
             android:name="com.hospital.dietary.MainMenuActivity"
             android:exported="false"
             android:parentActivityName="com.hospital.dietary.LoginActivity" />
 
-        <!-- Patient Information Activity -->
+        <!-- Patient Information Menu Activity - New submenu -->
         <activity
-            android:name="com.hospital.dietary.PatientInfoActivity"
+            android:name="com.hospital.dietary.PatientInfoMenuActivity"
             android:exported="false"
             android:parentActivityName="com.hospital.dietary.MainMenuActivity" />
 
-        <!-- Pending Orders Activity -->
+        <!-- New Patient Activity - Create new patient -->
+        <activity
+            android:name="com.hospital.dietary.NewPatientActivity"
+            android:exported="false"
+            android:parentActivityName="com.hospital.dietary.PatientInfoMenuActivity" />
+
+        <!-- Existing Patient Activity - View existing patients -->
+        <activity
+            android:name="com.hospital.dietary.ExistingPatientActivity"
+            android:exported="false"
+            android:parentActivityName="com.hospital.dietary.PatientInfoMenuActivity" />
+
+        <!-- Patient Detail Activity - View patient details -->
+        <activity
+            android:name="com.hospital.dietary.PatientDetailActivity"
+            android:exported="false"
+            android:parentActivityName="com.hospital.dietary.ExistingPatientActivity" />
+
+        <!-- Pending Orders Activity - Now appears before Finished Orders -->
         <activity
             android:name="com.hospital.dietary.PendingOrdersActivity"
             android:exported="false"
@@ -83,6 +100,12 @@
             android:name="com.hospital.dietary.ViewOrdersActivity"
             android:exported="false"
             android:parentActivityName="com.hospital.dietary.MainActivity" />
+
+        <!-- Original Patient Info Activity - Keep for backward compatibility -->
+        <activity
+            android:name="com.hospital.dietary.PatientInfoActivity"
+            android:exported="false"
+            android:parentActivityName="com.hospital.dietary.MainMenuActivity" />
 
         <provider
             android:name="androidx.startup.InitializationProvider"

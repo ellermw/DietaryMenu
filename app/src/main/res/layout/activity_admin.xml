@@ -60,7 +60,7 @@
                 android:layout_weight="1"
                 android:hint="Search items..."
                 android:padding="12dp"
-                android:background="@drawable/edit_text_background"
+                android:background="@android:drawable/edit_text"
                 android:layout_marginEnd="8dp"
                 android:drawableStart="@android:drawable/ic_menu_search"
                 android:drawablePadding="8dp" />
@@ -70,7 +70,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
                 android:minWidth="120dp"
-                android:background="@drawable/edit_text_background" />
+                android:background="@android:drawable/edit_text" />
 
         </LinearLayout>
 

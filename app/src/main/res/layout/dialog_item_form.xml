@@ -24,7 +24,7 @@
             android:layout_height="48dp"
             android:hint="Enter item name"
             android:padding="12dp"
-            android:background="@drawable/edit_text_background"
+            android:background="@android:drawable/edit_text"
             android:inputType="text"
             android:layout_marginBottom="16dp" />
 
@@ -41,7 +41,7 @@
             android:id="@+id/itemCategorySpinner"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:background="@drawable/edit_text_background"
+            android:background="@android:drawable/edit_text"
             android:layout_marginBottom="16dp" />
 
         <!-- Size (Optional) -->
@@ -59,7 +59,7 @@
             android:layout_height="48dp"
             android:hint="Enter size in milliliters"
             android:padding="12dp"
-            android:background="@drawable/edit_text_background"
+            android:background="@android:drawable/edit_text"
             android:inputType="number"
             android:layout_marginBottom="16dp" />
 

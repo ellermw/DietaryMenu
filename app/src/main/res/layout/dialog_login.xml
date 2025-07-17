@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:hint="Username"
-        android:background="@drawable/edit_text_background"
+        android:background="@android:drawable/edit_text"
         android:padding="12dp"
         android:layout_marginBottom="12dp" />
 
@@ -19,7 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:hint="Password"
-        android:background="@drawable/edit_text_background"
+        android:background="@android:drawable/edit_text"
         android:inputType="textPassword"
         android:padding="12dp" />
 

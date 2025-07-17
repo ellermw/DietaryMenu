@@ -65,7 +65,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:hint="Enter patient name"
-                android:background="@drawable/edit_text_background"
+                android:background="@android:drawable/edit_text"
                 android:padding="12dp"
                 android:layout_marginBottom="16dp"
                 android:inputType="textPersonName" />
@@ -84,7 +84,7 @@
                 android:id="@+id/wingSpinner"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:background="@drawable/edit_text_background"
+                android:background="@android:drawable/edit_text"
                 android:layout_marginBottom="16dp" />
 
             <!-- Room Number -->
@@ -102,7 +102,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:hint="Enter room number"
-                android:background="@drawable/edit_text_background"
+                android:background="@android:drawable/edit_text"
                 android:padding="12dp"
                 android:layout_marginBottom="16dp"
                 android:inputType="text" />
@@ -121,7 +121,7 @@
                 android:id="@+id/dietSpinner"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:background="@drawable/edit_text_background"
+                android:background="@android:drawable/edit_text"
                 android:layout_marginBottom="8dp" />
 
             <!-- ADA Friendly Checkbox (shown only for Full Liquid and Clear Liquid) -->
@@ -149,7 +149,7 @@
                 android:id="@+id/fluidRestrictionSpinner"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:background="@drawable/edit_text_background"
+                android:background="@android:drawable/edit_text"
                 android:layout_marginBottom="16dp" />
 
             <!-- Texture Modifications -->

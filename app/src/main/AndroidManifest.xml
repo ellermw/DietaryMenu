@@ -19,19 +19,37 @@
             </intent-filter>
         </activity>
 
-        <!-- Main Menu Activity - New main menu with options -->
+        <!-- Main Menu Activity - Updated main menu with new design -->
         <activity
             android:name=".MainMenuActivity"
             android:exported="false"
             android:parentActivityName=".LoginActivity" />
 
-        <!-- Patient Information Activity -->
+        <!-- Patient Information Menu Activity - New submenu -->
         <activity
-            android:name=".PatientInfoActivity"
+            android:name=".PatientInfoMenuActivity"
             android:exported="false"
             android:parentActivityName=".MainMenuActivity" />
 
-        <!-- Pending Orders Activity -->
+        <!-- New Patient Activity - Create new patient -->
+        <activity
+            android:name=".NewPatientActivity"
+            android:exported="false"
+            android:parentActivityName=".PatientInfoMenuActivity" />
+
+        <!-- Existing Patient Activity - View existing patients -->
+        <activity
+            android:name=".ExistingPatientActivity"
+            android:exported="false"
+            android:parentActivityName=".PatientInfoMenuActivity" />
+
+        <!-- Patient Detail Activity - View patient details -->
+        <activity
+            android:name=".PatientDetailActivity"
+            android:exported="false"
+            android:parentActivityName=".ExistingPatientActivity" />
+
+        <!-- Pending Orders Activity - Now appears before Finished Orders -->
         <activity
             android:name=".PendingOrdersActivity"
             android:exported="false"
@@ -66,6 +84,12 @@
             android:name=".ViewOrdersActivity"
             android:exported="false"
             android:parentActivityName=".MainActivity" />
+
+        <!-- Original Patient Info Activity - Keep for backward compatibility -->
+        <activity
+            android:name=".PatientInfoActivity"
+            android:exported="false"
+            android:parentActivityName=".MainMenuActivity" />
 
     </application>
 
