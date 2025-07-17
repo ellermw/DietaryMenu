@@ -28,106 +28,102 @@
 19-->[androidx.core:core:1.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\5418d86f9bf51acc009e025a9c494d67\transformed\core-1.9.0\AndroidManifest.xml:26:22-94
 20
 21    <application
-21-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:9:5-52:19
-22        android:allowBackup="true"
-22-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:10:9-35
+21-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:9:5-50:19
+22        android:allowBackup="false"
+22-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:10:9-36
 23        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
 23-->[androidx.core:core:1.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\5418d86f9bf51acc009e025a9c494d67\transformed\core-1.9.0\AndroidManifest.xml:28:18-86
-24        android:dataExtractionRules="@xml/data_extraction_rules"
-24-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:11:9-65
-25        android:debuggable="true"
-26        android:extractNativeLibs="true"
-27        android:fullBackupContent="@xml/backup_rules"
-27-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:12:9-54
-28        android:icon="@mipmap/ic_launcher"
-28-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:13:9-43
-29        android:label="@string/app_name"
-29-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:14:9-41
-30        android:roundIcon="@mipmap/ic_launcher_round"
-30-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:15:9-54
-31        android:supportsRtl="true"
-31-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:16:9-35
-32        android:theme="@style/Theme.DietaryMenu" >
-32-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:17:9-49
-33
-34        <!-- Login Activity - LAUNCHER -->
-35        <activity
-35-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:21:9-29:20
-36            android:name="com.hospital.dietary.LoginActivity"
-36-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:22:13-42
-37            android:exported="true"
-37-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:23:13-36
-38            android:theme="@style/Theme.DietaryMenu.NoActionBar" >
-38-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:24:13-65
-39            <intent-filter>
-39-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:25:13-28:29
-40                <action android:name="android.intent.action.MAIN" />
-40-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:26:17-69
-40-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:26:25-66
-41
-42                <category android:name="android.intent.category.LAUNCHER" />
-42-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:27:17-77
-42-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:27:27-74
-43            </intent-filter>
-44        </activity>
-45
-46        <!-- Main Activity -->
-47        <activity
-47-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:32:9-36:56
-48            android:name="com.hospital.dietary.MainActivity"
-48-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:33:13-41
-49            android:exported="false"
-49-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:34:13-37
-50            android:label="@string/app_name"
-50-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:35:13-45
-51            android:theme="@style/Theme.DietaryMenu" />
-51-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:36:13-53
-52
-53        <!-- Admin Activity -->
-54        <activity
-54-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:39:9-43:56
-55            android:name="com.hospital.dietary.AdminActivity"
-55-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:40:13-42
-56            android:exported="false"
-56-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:41:13-37
-57            android:label="Admin Panel"
-57-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:42:13-40
-58            android:theme="@style/Theme.DietaryMenu" />
-58-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:43:13-53
-59
-60        <!-- View Orders Activity -->
-61        <activity
-61-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:46:9-50:56
-62            android:name="com.hospital.dietary.ViewOrdersActivity"
-62-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:47:13-47
-63            android:exported="false"
-63-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:48:13-37
-64            android:label="View Orders"
-64-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:49:13-40
-65            android:theme="@style/Theme.DietaryMenu" />
-65-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:50:13-53
-66
-67        <provider
-67-->[androidx.emoji2:emoji2:1.2.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\44489c516bd83bb675a4c6c7b436daa8\transformed\emoji2-1.2.0\AndroidManifest.xml:24:9-32:20
-68            android:name="androidx.startup.InitializationProvider"
-68-->[androidx.emoji2:emoji2:1.2.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\44489c516bd83bb675a4c6c7b436daa8\transformed\emoji2-1.2.0\AndroidManifest.xml:25:13-67
-69            android:authorities="com.hospital.dietary.androidx-startup"
-69-->[androidx.emoji2:emoji2:1.2.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\44489c516bd83bb675a4c6c7b436daa8\transformed\emoji2-1.2.0\AndroidManifest.xml:26:13-68
-70            android:exported="false" >
-70-->[androidx.emoji2:emoji2:1.2.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\44489c516bd83bb675a4c6c7b436daa8\transformed\emoji2-1.2.0\AndroidManifest.xml:27:13-37
-71            <meta-data
-71-->[androidx.emoji2:emoji2:1.2.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\44489c516bd83bb675a4c6c7b436daa8\transformed\emoji2-1.2.0\AndroidManifest.xml:29:13-31:52
-72                android:name="androidx.emoji2.text.EmojiCompatInitializer"
-72-->[androidx.emoji2:emoji2:1.2.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\44489c516bd83bb675a4c6c7b436daa8\transformed\emoji2-1.2.0\AndroidManifest.xml:30:17-75
-73                android:value="androidx.startup" />
-73-->[androidx.emoji2:emoji2:1.2.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\44489c516bd83bb675a4c6c7b436daa8\transformed\emoji2-1.2.0\AndroidManifest.xml:31:17-49
-74            <meta-data
-74-->[androidx.lifecycle:lifecycle-process:2.4.1] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\0059a540c33058511248e1ad9532520f\transformed\lifecycle-process-2.4.1\AndroidManifest.xml:31:13-33:52
-75                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
-75-->[androidx.lifecycle:lifecycle-process:2.4.1] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\0059a540c33058511248e1ad9532520f\transformed\lifecycle-process-2.4.1\AndroidManifest.xml:32:17-78
-76                android:value="androidx.startup" />
-76-->[androidx.lifecycle:lifecycle-process:2.4.1] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\0059a540c33058511248e1ad9532520f\transformed\lifecycle-process-2.4.1\AndroidManifest.xml:33:17-49
-77        </provider>
-78    </application>
-79
-80</manifest>
+24        android:debuggable="true"
+25        android:extractNativeLibs="true"
+26        android:icon="@mipmap/ic_launcher"
+26-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:11:9-43
+27        android:label="@string/app_name"
+27-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:12:9-41
+28        android:roundIcon="@mipmap/ic_launcher_round"
+28-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:13:9-54
+29        android:supportsRtl="true"
+29-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:14:9-35
+30        android:theme="@style/AppTheme" >
+30-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:15:9-40
+31
+32        <!-- Login Activity - LAUNCHER -->
+33        <activity
+33-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:19:9-27:20
+34            android:name="com.hospital.dietary.LoginActivity"
+34-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:20:13-42
+35            android:exported="true"
+35-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:21:13-36
+36            android:theme="@style/Theme.DietaryMenu.NoActionBar" >
+36-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:22:13-65
+37            <intent-filter>
+37-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:23:13-26:29
+38                <action android:name="android.intent.action.MAIN" />
+38-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:24:17-69
+38-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:24:25-66
+39
+40                <category android:name="android.intent.category.LAUNCHER" />
+40-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:25:17-77
+40-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:25:27-74
+41            </intent-filter>
+42        </activity>
+43
+44        <!-- Main Activity -->
+45        <activity
+45-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:30:9-34:56
+46            android:name="com.hospital.dietary.MainActivity"
+46-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:31:13-41
+47            android:exported="false"
+47-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:32:13-37
+48            android:label="@string/app_name"
+48-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:33:13-45
+49            android:theme="@style/Theme.DietaryMenu" />
+49-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:34:13-53
+50
+51        <!-- Admin Activity -->
+52        <activity
+52-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:37:9-41:56
+53            android:name="com.hospital.dietary.AdminActivity"
+53-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:38:13-42
+54            android:exported="false"
+54-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:39:13-37
+55            android:label="Admin Panel"
+55-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:40:13-40
+56            android:theme="@style/Theme.DietaryMenu" />
+56-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:41:13-53
+57
+58        <!-- View Orders Activity -->
+59        <activity
+59-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:44:9-48:56
+60            android:name="com.hospital.dietary.ViewOrdersActivity"
+60-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:45:13-47
+61            android:exported="false"
+61-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:46:13-37
+62            android:label="View Orders"
+62-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:47:13-40
+63            android:theme="@style/Theme.DietaryMenu" />
+63-->C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\app\src\main\AndroidManifest.xml:48:13-53
+64
+65        <provider
+65-->[androidx.emoji2:emoji2:1.2.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\44489c516bd83bb675a4c6c7b436daa8\transformed\emoji2-1.2.0\AndroidManifest.xml:24:9-32:20
+66            android:name="androidx.startup.InitializationProvider"
+66-->[androidx.emoji2:emoji2:1.2.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\44489c516bd83bb675a4c6c7b436daa8\transformed\emoji2-1.2.0\AndroidManifest.xml:25:13-67
+67            android:authorities="com.hospital.dietary.androidx-startup"
+67-->[androidx.emoji2:emoji2:1.2.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\44489c516bd83bb675a4c6c7b436daa8\transformed\emoji2-1.2.0\AndroidManifest.xml:26:13-68
+68            android:exported="false" >
+68-->[androidx.emoji2:emoji2:1.2.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\44489c516bd83bb675a4c6c7b436daa8\transformed\emoji2-1.2.0\AndroidManifest.xml:27:13-37
+69            <meta-data
+69-->[androidx.emoji2:emoji2:1.2.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\44489c516bd83bb675a4c6c7b436daa8\transformed\emoji2-1.2.0\AndroidManifest.xml:29:13-31:52
+70                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+70-->[androidx.emoji2:emoji2:1.2.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\44489c516bd83bb675a4c6c7b436daa8\transformed\emoji2-1.2.0\AndroidManifest.xml:30:17-75
+71                android:value="androidx.startup" />
+71-->[androidx.emoji2:emoji2:1.2.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\44489c516bd83bb675a4c6c7b436daa8\transformed\emoji2-1.2.0\AndroidManifest.xml:31:17-49
+72            <meta-data
+72-->[androidx.lifecycle:lifecycle-process:2.4.1] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\0059a540c33058511248e1ad9532520f\transformed\lifecycle-process-2.4.1\AndroidManifest.xml:31:13-33:52
+73                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+73-->[androidx.lifecycle:lifecycle-process:2.4.1] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\0059a540c33058511248e1ad9532520f\transformed\lifecycle-process-2.4.1\AndroidManifest.xml:32:17-78
+74                android:value="androidx.startup" />
+74-->[androidx.lifecycle:lifecycle-process:2.4.1] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\0059a540c33058511248e1ad9532520f\transformed\lifecycle-process-2.4.1\AndroidManifest.xml:33:17-49
+75        </provider>
+76    </application>
+77
+78</manifest>

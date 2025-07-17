@@ -33,7 +33,6 @@
             android:textSize="16sp"
             android:textColor="#7f8c8d"
             android:gravity="center" />
-
     </LinearLayout>
 
     <!-- Date Selection and Controls -->
@@ -80,8 +79,13 @@
                 android:background="#3498db"
                 android:textColor="@android:color/white"
                 android:paddingStart="16dp"
-                android:paddingEnd="16dp" />
+                android:paddingEnd="16dp"
+                android:layout_marginEnd="8dp" />
 
+            <Spinner
+                android:id="@+id/dateSpinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
         </LinearLayout>
 
         <!-- Order Count and Print Controls -->
@@ -111,9 +115,7 @@
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
                 android:enabled="false" />
-
         </LinearLayout>
-
     </LinearLayout>
 
     <!-- Orders List -->
@@ -161,7 +163,6 @@
                 android:textStyle="bold"
                 android:textColor="#2c3e50"
                 android:gravity="end" />
-
         </LinearLayout>
 
         <!-- Orders ListView -->
@@ -208,9 +209,7 @@
                 android:textSize="14sp"
                 android:textColor="#7f8c8d"
                 android:gravity="center" />
-
         </LinearLayout>
-
     </LinearLayout>
 
     <!-- Bottom Controls -->
@@ -221,17 +220,28 @@
         android:layout_marginTop="16dp"
         android:gravity="end">
 
-        <Button
-            android:id="@+id/backButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="← Back"
-            android:textSize="14sp"
-            android:background="#95a5a6"
-            android:textColor="@android:color/white"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp" />
+		<Button
+			android:id="@+id/printSelectedButton"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="🖨️ Print Selected"
+			android:textSize="14sp"
+			android:background="#f39c12"
+			android:textColor="@android:color/white"
+			android:paddingStart="20dp"
+			android:paddingEnd="20dp"
+			android:layout_marginEnd="8dp"
+			android:enabled="false" />
 
+		<Button
+			android:id="@+id/backButton"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="← Back"
+			android:textSize="14sp"
+			android:background="#95a5a6"
+			android:textColor="@android:color/white"
+			android:paddingStart="20dp"
+			android:paddingEnd="20dp" />
     </LinearLayout>
-
 </LinearLayout>
