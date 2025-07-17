@@ -5,26 +5,10 @@
     android:orientation="horizontal"
     android:background="#f8f9fa"
     android:padding="8dp"
-    android:layout_marginBottom="8dp"
+    android:layout_marginBottom="4dp"
     android:elevation="1dp">
 
-    <CheckBox
-        android:id="@+id/drinkCheckBox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:focusable="false"
-        android:focusableInTouchMode="false" />
-
-    <TextView
-        android:id="@+id/drinkSize"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:gravity="center"
-        android:text="8oz"
-        android:textSize="14sp"
-        android:layout_marginEnd="8dp" />
-
+    <!-- Drink Selection Spinner -->
     <Spinner
         android:id="@+id/drinkSpinner"
         android:layout_width="0dp"
@@ -32,17 +16,18 @@
         android:layout_weight="1"
         android:layout_marginEnd="8dp" />
 
-    <EditText
-        android:id="@+id/amountInput"
-        android:layout_width="80dp"
+    <!-- Size Display -->
+    <TextView
+        android:id="@+id/drinkSize"
+        android:layout_width="60dp"
         android:layout_height="40dp"
-        android:hint="ml"
-        android:inputType="number"
         android:gravity="center"
-        android:layout_marginEnd="8dp"
-        android:background="@drawable/edit_text_background"
-        android:enabled="false" />
+        android:text="250ml"
+        android:textSize="12sp"
+        android:textColor="#7f8c8d"
+        android:background="#ecf0f1" />
 
+    <!-- Remove Button -->
     <Button
         android:id="@+id/removeButton"
         android:layout_width="40dp"
@@ -51,6 +36,7 @@
         android:background="#e74c3c"
         android:textColor="@android:color/white"
         android:textSize="18sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:layout_marginStart="8dp" />
 
 </LinearLayout>

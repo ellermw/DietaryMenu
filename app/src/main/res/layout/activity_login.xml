@@ -6,14 +6,14 @@
     android:background="#f8f9fa"
     android:padding="24dp"
     android:gravity="center">
-	
-	<ProgressBar
-    android:id="@+id/loginProgress"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center"
-    android:visibility="gone" />
 
+    <!-- Loading Progress Bar -->
+    <ProgressBar
+        android:id="@+id/loginProgress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone" />
 
     <!-- Hospital Logo/Header -->
     <LinearLayout
@@ -51,7 +51,7 @@
 
     </LinearLayout>
 
-    <!-- Login Form -->
+    <!-- Login Form Container -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -60,26 +60,7 @@
         android:padding="32dp"
         android:elevation="4dp">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Sign In"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="#2c3e50"
-            android:gravity="center"
-            android:layout_marginBottom="24dp" />
-
-        <!-- Username -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Username:"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:textColor="#2c3e50"
-            android:layout_marginBottom="8dp" />
-
+        <!-- Username Input -->
         <EditText
             android:id="@+id/usernameInput"
             android:layout_width="match_parent"
@@ -88,19 +69,11 @@
             android:padding="16dp"
             android:background="@drawable/edit_text_background"
             android:inputType="text"
-            android:layout_marginBottom="20dp"
-            android:textSize="16sp" />
+            android:layout_marginBottom="16dp"
+            android:textSize="16sp"
+            android:imeOptions="actionNext" />
 
-        <!-- Password -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Password:"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:textColor="#2c3e50"
-            android:layout_marginBottom="8dp" />
-
+        <!-- Password Input -->
         <EditText
             android:id="@+id/passwordInput"
             android:layout_width="match_parent"
@@ -125,16 +98,8 @@
             android:background="#3498db"
             android:layout_marginBottom="16dp" />
 
-        <!-- Default Credentials Info -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Default Admin: admin / admin123\nDefault User: user / user123"
-            android:textSize="12sp"
-            android:textColor="#7f8c8d"
-            android:gravity="center"
-            android:background="#f8f9fa"
-            android:padding="12dp" />
+        <!-- REMOVED: Default Credentials Info -->
+        <!-- The TextView displaying default username/password has been removed for security -->
 
     </LinearLayout>
 

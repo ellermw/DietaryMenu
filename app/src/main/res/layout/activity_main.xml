@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
-    android:background="#f8f9fa">
+    android:background="#f8f9fa"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="16dp">
 
         <!-- Header -->
         <LinearLayout
@@ -24,12 +24,20 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="🍽️ MRHC Dietary Management"
+                android:text="🍽️ Dietary Menu Order"
                 android:textSize="24sp"
                 android:textStyle="bold"
                 android:textColor="#2c3e50"
                 android:gravity="center"
                 android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Complete the patient dietary requirements below"
+                android:textSize="16sp"
+                android:textColor="#7f8c8d"
+                android:gravity="center" />
 
         </LinearLayout>
 
@@ -46,7 +54,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Select Day"
+                android:text="Day Selection"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="#2c3e50"
@@ -60,60 +68,22 @@
                 android:gravity="center">
 
                 <RadioButton
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Sun"
-                    android:gravity="center"
-                    android:padding="8dp" />
+                    android:text="Today"
+                    android:checked="true"
+                    android:layout_marginEnd="16dp" />
 
                 <RadioButton
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Mon"
-                    android:gravity="center"
-                    android:padding="8dp" />
+                    android:text="Tomorrow"
+                    android:layout_marginEnd="16dp" />
 
                 <RadioButton
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Tue"
-                    android:gravity="center"
-                    android:padding="8dp" />
-
-                <RadioButton
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Wed"
-                    android:gravity="center"
-                    android:padding="8dp" />
-
-                <RadioButton
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Thu"
-                    android:gravity="center"
-                    android:padding="8dp" />
-
-                <RadioButton
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Fri"
-                    android:gravity="center"
-                    android:padding="8dp" />
-
-                <RadioButton
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Sat"
-                    android:gravity="center"
-                    android:padding="8dp" />
+                    android:text="Next Day" />
 
             </RadioGroup>
 
@@ -138,21 +108,31 @@
                 android:textColor="#2c3e50"
                 android:layout_marginBottom="12dp" />
 
+            <!-- Patient Name -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Patient Name *"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="4dp" />
+
             <EditText
                 android:id="@+id/patientNameInput"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Patient Name *"
-                android:layout_marginBottom="12dp"
+                android:layout_height="48dp"
+                android:hint="Enter patient full name"
                 android:padding="12dp"
-                android:background="@drawable/edit_text_background" />
+                android:background="@drawable/edit_text_background"
+                android:layout_marginBottom="16dp"
+                android:inputType="textPersonName" />
 
-            <!-- Wing and Room Selection -->
+            <!-- Location Row -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginBottom="12dp">
+                android:layout_marginBottom="16dp">
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -164,7 +144,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Wing:"
+                        android:text="Wing *"
                         android:textSize="14sp"
                         android:textStyle="bold"
                         android:layout_marginBottom="4dp" />
@@ -186,7 +166,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Room:"
+                        android:text="Room *"
                         android:textSize="14sp"
                         android:textStyle="bold"
                         android:layout_marginBottom="4dp" />
@@ -200,33 +180,11 @@
 
             </LinearLayout>
 
-        </LinearLayout>
-
-        <!-- Dietary Requirements Section -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@android:color/white"
-            android:padding="16dp"
-            android:layout_marginBottom="16dp"
-            android:elevation="2dp">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Dietary Requirements"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="#2c3e50"
-                android:layout_marginBottom="12dp" />
-
-            <!-- Diet Type Row -->
+            <!-- Diet and Fluid Restriction Row -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="12dp">
+                android:orientation="horizontal">
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -238,7 +196,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Diet Type:"
+                        android:text="Diet Type *"
                         android:textSize="14sp"
                         android:textStyle="bold"
                         android:layout_marginBottom="4dp" />
@@ -260,7 +218,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Fluid Restriction:"
+                        android:text="Fluid Restriction"
                         android:textSize="14sp"
                         android:textStyle="bold"
                         android:layout_marginBottom="4dp" />
@@ -289,7 +247,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Texture Modifications (Optional)"
+                android:text="Texture Modifications"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="#2c3e50"
@@ -298,61 +256,46 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="horizontal">
 
-                <TextView
-                    android:layout_width="match_parent"
+                <CheckBox
+                    android:id="@+id/mechanicalGroundCB"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Select Texture Modification:"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="8dp" />
+                    android:layout_weight="1"
+                    android:text="Mechanical Ground"
+                    android:textSize="12sp" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <CheckBox
+                    android:id="@+id/mechanicalChoppedCB"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:layout_weight="1"
+                    android:text="Mechanical Chopped"
+                    android:textSize="12sp" />
 
-                    <CheckBox
-                        android:id="@+id/mechanicalGroundCB"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Mechanical Ground"
-                        android:textSize="12sp" />
+            </LinearLayout>
 
-                    <CheckBox
-                        android:id="@+id/mechanicalChoppedCB"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Mechanical Chopped"
-                        android:textSize="12sp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <CheckBox
+                    android:id="@+id/biteSizeCB"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:layout_weight="1"
+                    android:text="Bite Size"
+                    android:textSize="12sp" />
 
-                    <CheckBox
-                        android:id="@+id/biteSizeCB"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Bite Size"
-                        android:textSize="12sp" />
-
-                    <CheckBox
-                        android:id="@+id/breadOKCB"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Bread OK"
-                        android:textSize="12sp" />
-
-                </LinearLayout>
+                <CheckBox
+                    android:id="@+id/breadOKCB"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Bread OK"
+                    android:textSize="12sp" />
 
             </LinearLayout>
 
@@ -380,170 +323,172 @@
                 android:padding="12dp"
                 android:layout_marginBottom="16dp" />
 
-            <!-- Breakfast Items Grid -->
+            <!-- Breakfast Food Items Grid -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
 
-                <!-- Row 1 -->
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="12dp">
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginEnd="4dp">
 
-                    <LinearLayout
-                        android:layout_width="0dp"
+                    <TextView
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:layout_marginEnd="4dp">
+                        android:text="Cold Cereal:"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="4dp" />
 
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Cold Cereal:"
-                            android:textSize="12sp"
-                            android:textStyle="bold"
-                            android:layout_marginBottom="4dp" />
-
-                        <Spinner
-                            android:id="@+id/breakfastColdCereal"
-                            android:layout_width="match_parent"
-                            android:layout_height="40dp" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:layout_marginStart="4dp"
-                        android:layout_marginEnd="4dp">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Hot Cereal:"
-                            android:textSize="12sp"
-                            android:textStyle="bold"
-                            android:layout_marginBottom="4dp" />
-
-                        <Spinner
-                            android:id="@+id/breakfastHotCereal"
-                            android:layout_width="match_parent"
-                            android:layout_height="40dp" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:layout_marginStart="4dp">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Bread:"
-                            android:textSize="12sp"
-                            android:textStyle="bold"
-                            android:layout_marginBottom="4dp" />
-
-                        <Spinner
-                            android:id="@+id/breakfastBread"
-                            android:layout_width="match_parent"
-                            android:layout_height="40dp" />
-
-                    </LinearLayout>
+                    <Spinner
+                        android:id="@+id/breakfastColdCereal"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp" />
 
                 </LinearLayout>
 
-                <!-- Row 2 -->
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="12dp">
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginEnd="4dp">
 
-                    <LinearLayout
-                        android:layout_width="0dp"
+                    <TextView
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:layout_marginEnd="4dp">
+                        android:text="Hot Cereal:"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="4dp" />
 
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Fresh Muffin:"
-                            android:textSize="12sp"
-                            android:textStyle="bold"
-                            android:layout_marginBottom="4dp" />
-
-                        <Spinner
-                            android:id="@+id/breakfastMuffin"
-                            android:layout_width="match_parent"
-                            android:layout_height="40dp" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:layout_marginStart="4dp"
-                        android:layout_marginEnd="4dp">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Main Course:"
-                            android:textSize="12sp"
-                            android:textStyle="bold"
-                            android:layout_marginBottom="4dp" />
-
-                        <Spinner
-                            android:id="@+id/breakfastMain"
-                            android:layout_width="match_parent"
-                            android:layout_height="40dp" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:layout_marginStart="4dp">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Fruit:"
-                            android:textSize="12sp"
-                            android:textStyle="bold"
-                            android:layout_marginBottom="4dp" />
-
-                        <Spinner
-                            android:id="@+id/breakfastFruit"
-                            android:layout_width="match_parent"
-                            android:layout_height="40dp" />
-
-                    </LinearLayout>
+                    <Spinner
+                        android:id="@+id/breakfastHotCereal"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp" />
 
                 </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginStart="4dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Bread:"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="4dp" />
+
+                    <Spinner
+                        android:id="@+id/breakfastBread"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- Breakfast Second Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginEnd="4dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Muffin:"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="4dp" />
+
+                    <Spinner
+                        android:id="@+id/breakfastMuffin"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginEnd="4dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Main Course:"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="4dp" />
+
+                    <Spinner
+                        android:id="@+id/breakfastMain"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginStart="4dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Fruit:"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="4dp" />
+
+                    <Spinner
+                        android:id="@+id/breakfastFruit"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- Breakfast Drinks Section -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
 
                 <!-- Juices Section -->
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:orientation="vertical"
-                    android:layout_marginBottom="12dp">
+                    android:layout_marginEnd="8dp">
 
                     <TextView
                         android:layout_width="match_parent"
@@ -563,7 +508,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="+ Add Juice"
-                        android:onClick="addJuice"
+                        android:onClick="addBreakfastJuice"
                         android:background="#3498db"
                         android:textColor="@android:color/white"
                         android:padding="8dp"
@@ -573,23 +518,26 @@
 
                 <!-- Drinks Section -->
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginStart="8dp">
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Additional Drink(s):"
+                        android:text="Drink(s):"
                         android:textSize="12sp"
                         android:textStyle="bold"
                         android:layout_marginBottom="4dp" />
 
+                    <!-- Fluid Tracker -->
                     <TextView
                         android:id="@+id/breakfastFluidTracker"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Fluid Used: 0ml / 0ml"
+                        android:text="Fluid Used: 0ml / Unlimited"
                         android:textSize="11sp"
                         android:textColor="@android:color/holo_green_dark"
                         android:background="#e8f5e8"
@@ -641,7 +589,7 @@
                 android:padding="12dp"
                 android:layout_marginBottom="16dp" />
 
-            <!-- Lunch Items Grid -->
+            <!-- Lunch Food Items -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -658,7 +606,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Main Course:"
+                        android:text="Protein:"
                         android:textSize="12sp"
                         android:textStyle="bold"
                         android:layout_marginBottom="4dp" />
@@ -717,18 +665,42 @@
 
             </LinearLayout>
 
-            <!-- Lunch Drinks and Dessert -->
+            <!-- Lunch Second Row -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_marginBottom="16dp">
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="2"
+                    android:layout_weight="1"
                     android:orientation="vertical"
                     android:layout_marginEnd="8dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Dessert:"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="4dp" />
+
+                    <Spinner
+                        android:id="@+id/lunchDessert"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp" />
+
+                </LinearLayout>
+
+                <!-- Lunch Drinks -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginStart="8dp">
 
                     <TextView
                         android:layout_width="match_parent"
@@ -738,11 +710,12 @@
                         android:textStyle="bold"
                         android:layout_marginBottom="4dp" />
 
+                    <!-- Lunch Fluid Tracker -->
                     <TextView
                         android:id="@+id/lunchFluidTracker"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Fluid Used: 0ml / 0ml"
+                        android:text="Fluid Used: 0ml / Unlimited"
                         android:textSize="11sp"
                         android:textColor="@android:color/holo_green_dark"
                         android:background="#e8f5e8"
@@ -765,28 +738,6 @@
                         android:textColor="@android:color/white"
                         android:padding="8dp"
                         android:layout_marginTop="4dp" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:layout_marginStart="8dp">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Dessert:"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="4dp" />
-
-                    <Spinner
-                        android:id="@+id/lunchDessert"
-                        android:layout_width="match_parent"
-                        android:layout_height="40dp" />
 
                 </LinearLayout>
 
@@ -816,7 +767,7 @@
                 android:padding="12dp"
                 android:layout_marginBottom="16dp" />
 
-            <!-- Dinner Items Grid -->
+            <!-- Dinner Food Items -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -833,7 +784,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Main Course:"
+                        android:text="Protein:"
                         android:textSize="12sp"
                         android:textStyle="bold"
                         android:layout_marginBottom="4dp" />
@@ -892,18 +843,42 @@
 
             </LinearLayout>
 
-            <!-- Dinner Drinks and Dessert -->
+            <!-- Dinner Second Row -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_marginBottom="16dp">
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="2"
+                    android:layout_weight="1"
                     android:orientation="vertical"
                     android:layout_marginEnd="8dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Dessert:"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="4dp" />
+
+                    <Spinner
+                        android:id="@+id/dinnerDessert"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp" />
+
+                </LinearLayout>
+
+                <!-- Dinner Drinks -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginStart="8dp">
 
                     <TextView
                         android:layout_width="match_parent"
@@ -913,11 +888,12 @@
                         android:textStyle="bold"
                         android:layout_marginBottom="4dp" />
 
+                    <!-- Dinner Fluid Tracker -->
                     <TextView
                         android:id="@+id/dinnerFluidTracker"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Fluid Used: 0ml / 0ml"
+                        android:text="Fluid Used: 0ml / Unlimited"
                         android:textSize="11sp"
                         android:textColor="@android:color/holo_green_dark"
                         android:background="#e8f5e8"
@@ -940,28 +916,6 @@
                         android:textColor="@android:color/white"
                         android:padding="8dp"
                         android:layout_marginTop="4dp" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:layout_marginStart="8dp">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Dessert:"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="4dp" />
-
-                    <Spinner
-                        android:id="@+id/dinnerDessert"
-                        android:layout_width="match_parent"
-                        android:layout_height="40dp" />
 
                 </LinearLayout>
 

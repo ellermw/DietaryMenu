@@ -986,7 +986,6 @@ id alertTitle
 id aligned
 id allStates
 id always
-id amountInput
 id animateToEnd
 id animateToStart
 id antiClockwise
@@ -1077,7 +1076,6 @@ id dragLeft
 id dragRight
 id dragStart
 id dragUp
-id drinkCheckBox
 id drinkSize
 id drinkSpinner
 id easeIn
