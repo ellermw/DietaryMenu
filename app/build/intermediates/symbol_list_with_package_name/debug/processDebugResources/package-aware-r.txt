@@ -891,6 +891,7 @@ drawable btn_radio_off_mtrl
 drawable btn_radio_off_to_on_mtrl_animation
 drawable btn_radio_on_mtrl
 drawable btn_radio_on_to_off_mtrl_animation
+drawable clear_liquid_item_background
 drawable edit_text_background
 drawable ic_launcher_background
 drawable ic_launcher_foreground
@@ -1196,6 +1197,7 @@ id printAllButton
 id printSelectedButton
 id progress_circular
 id progress_horizontal
+id quantitySpinner
 id radio
 id radioFriday
 id radioMonday
@@ -1380,6 +1382,7 @@ layout dialog_item_form
 layout dialog_login
 layout dialog_user_form
 layout drink_item
+layout drink_item_layout
 layout item_admin_row
 layout item_order_row
 layout item_patient_order
@@ -1391,6 +1394,7 @@ layout notification_template_custom_big
 layout notification_template_icon_group
 layout notification_template_part_chronometer
 layout notification_template_part_time
+layout quantity_dialog
 layout select_dialog_item_material
 layout select_dialog_multichoice_material
 layout select_dialog_singlechoice_material
