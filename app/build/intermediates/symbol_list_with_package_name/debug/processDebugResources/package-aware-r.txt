@@ -979,6 +979,7 @@ id action_text
 id actions
 id activeCheckBox
 id activity_chooser_view_content
+id adaFriendlyCB
 id adaFriendlyCheckBox
 id add
 id addItemButton
@@ -1020,9 +1021,12 @@ id breakfastDrinksContainer
 id breakfastFluidTracker
 id breakfastFruit
 id breakfastHotCereal
+id breakfastItemsContainer
 id breakfastJuicesContainer
 id breakfastMain
 id breakfastMuffin
+id breakfastNPOCheckbox
+id breakfastSection
 id buttonPanel
 id cache_measures
 id callMeasure
@@ -1039,6 +1043,7 @@ id chronometer
 id clockwise
 id closest
 id collapseActionView
+id completedDateText
 id constraint
 id content
 id contentPanel
@@ -1063,7 +1068,10 @@ id dimensions
 id dinnerDessert
 id dinnerDrinksContainer
 id dinnerFluidTracker
+id dinnerItemsContainer
+id dinnerNPOCheckbox
 id dinnerProtein
+id dinnerSection
 id dinnerStarch
 id dinnerVegetable
 id direct
@@ -1094,6 +1102,8 @@ id emptyStateContainer
 id end
 id expand_activities_button
 id expanded_menu
+id finishedOrdersButton
+id finishedOrdersListView
 id flip
 id fluidRestrictionSpinner
 id forever
@@ -1125,6 +1135,7 @@ id itemAdaCheckBox
 id itemCategorySpinner
 id itemCountText
 id itemDetailsText
+id itemManagementButton
 id itemNameInput
 id itemNameText
 id itemSearchEditText
@@ -1146,10 +1157,14 @@ id list_item
 id locationText
 id loginButton
 id loginProgress
+id logoutButton
 id lunchDessert
 id lunchDrinksContainer
 id lunchFluidTracker
+id lunchItemsContainer
+id lunchNPOCheckbox
 id lunchProtein
+id lunchSection
 id lunchStarch
 id lunchVegetable
 id mainMenuContainer
@@ -1164,6 +1179,8 @@ id multiply
 id never
 id neverCompleteToEnd
 id neverCompleteToStart
+id noFinishedOrdersText
+id noPendingOrdersText
 id noState
 id none
 id normal
@@ -1188,8 +1205,12 @@ id passwordLabel
 id path
 id pathRelative
 id patientDetailsText
+id patientInfoButton
+id patientInfoText
 id patientNameInput
 id patientNameText
+id pendingOrdersButton
+id pendingOrdersListView
 id percent
 id position
 id postLayout
@@ -1208,6 +1229,7 @@ id radioTuesday
 id radioWednesday
 id ratio
 id rectangles
+id refreshButton
 id removeButton
 id removeDrinkButton
 id restrictionsText
@@ -1216,7 +1238,10 @@ id right
 id right_icon
 id right_side
 id roleSpinner
+id roomNumberInput
 id roomSpinner
+id saveOrderButton
+id savePatientButton
 id sawtooth
 id screen
 id scrollIndicatorDown
@@ -1263,6 +1288,7 @@ id startHorizontal
 id startVertical
 id staticLayout
 id staticPostLayout
+id statusText
 id stop
 id submenuarrow
 id submit_area
@@ -1305,6 +1331,7 @@ id userCountText
 id userEmail
 id userFullName
 id userIcon
+id userManagementButton
 id userRole
 id userSearchEditText
 id userStatusIndicator
@@ -1321,6 +1348,7 @@ id view_tree_saved_state_registry_owner
 id view_tree_view_model_store_owner
 id visible
 id visible_removing_fragment_view_tag
+id welcomeText
 id west
 id wingSpinner
 id withText
@@ -1372,8 +1400,13 @@ layout abc_tooltip
 layout activity_admin
 layout activity_admin_menu
 layout activity_admin_new
+layout activity_finished_orders
 layout activity_login
 layout activity_main
+layout activity_main_menu
+layout activity_meal_planning
+layout activity_patient_info
+layout activity_pending_orders
 layout activity_view_orders
 layout custom_dialog
 layout dialog_add_edit_item
@@ -1384,8 +1417,10 @@ layout dialog_user_form
 layout drink_item
 layout drink_item_layout
 layout item_admin_row
+layout item_finished_order
 layout item_order_row
 layout item_patient_order
+layout item_pending_order
 layout item_user_row
 layout main_course_item
 layout notification_action

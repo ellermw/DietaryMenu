@@ -1,51 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
-
-    <!-- Permissions -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    package="com.hospital.dietary">
 
     <application
-        android:allowBackup="false"
+        android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        tools:targetApi="31">
+        android:theme="@style/Theme.DietaryMenu">
 
-        <!-- Login Activity - LAUNCHER -->
+        <!-- Login Activity - Entry Point -->
         <activity
             android:name=".LoginActivity"
             android:exported="true"
-            android:theme="@style/Theme.DietaryMenu.NoActionBar">
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <!-- Main Activity -->
+        <!-- Main Menu Activity - New main menu with options -->
         <activity
-            android:name=".MainActivity"
+            android:name=".MainMenuActivity"
             android:exported="false"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.DietaryMenu" />
+            android:parentActivityName=".LoginActivity" />
 
-        <!-- Admin Activity -->
+        <!-- Patient Information Activity -->
+        <activity
+            android:name=".PatientInfoActivity"
+            android:exported="false"
+            android:parentActivityName=".MainMenuActivity" />
+
+        <!-- Pending Orders Activity -->
+        <activity
+            android:name=".PendingOrdersActivity"
+            android:exported="false"
+            android:parentActivityName=".MainMenuActivity" />
+
+        <!-- Finished Orders Activity -->
+        <activity
+            android:name=".FinishedOrdersActivity"
+            android:exported="false"
+            android:parentActivityName=".MainMenuActivity" />
+
+        <!-- Meal Planning Activity -->
+        <activity
+            android:name=".MealPlanningActivity"
+            android:exported="false"
+            android:parentActivityName=".PendingOrdersActivity" />
+
+        <!-- Admin Activity - For user and item management -->
         <activity
             android:name=".AdminActivity"
             android:exported="false"
-            android:label="Admin Panel"
-            android:theme="@style/Theme.DietaryMenu" />
+            android:parentActivityName=".MainMenuActivity" />
 
-        <!-- View Orders Activity -->
+        <!-- Original MainActivity - Keep for backward compatibility -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="false"
+            android:parentActivityName=".MainMenuActivity" />
+
+        <!-- View Orders Activity - Legacy -->
         <activity
             android:name=".ViewOrdersActivity"
             android:exported="false"
-            android:label="View Orders"
-            android:theme="@style/Theme.DietaryMenu" />
+            android:parentActivityName=".MainActivity" />
 
     </application>
 

@@ -8,10 +8,6 @@
         android:minSdkVersion="21"
         android:targetSdkVersion="34" />
 
-    <!-- Permissions -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-
     <permission
         android:name="com.hospital.dietary.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
         android:protectionLevel="signature" />
@@ -19,22 +15,20 @@
     <uses-permission android:name="com.hospital.dietary.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
 
     <application
-        android:allowBackup="false"
+        android:allowBackup="true"
         android:appComponentFactory="androidx.core.app.CoreComponentFactory"
         android:debuggable="true"
         android:extractNativeLibs="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
         android:testOnly="true"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/Theme.DietaryMenu" >
 
-        <!-- Login Activity - LAUNCHER -->
+        <!-- Login Activity - Entry Point -->
         <activity
             android:name="com.hospital.dietary.LoginActivity"
             android:exported="true"
-            android:theme="@style/Theme.DietaryMenu.NoActionBar" >
+            android:windowSoftInputMode="adjustResize" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -42,26 +36,53 @@
             </intent-filter>
         </activity>
 
-        <!-- Main Activity -->
+        <!-- Main Menu Activity - New main menu with options -->
         <activity
-            android:name="com.hospital.dietary.MainActivity"
+            android:name="com.hospital.dietary.MainMenuActivity"
             android:exported="false"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.DietaryMenu" />
+            android:parentActivityName="com.hospital.dietary.LoginActivity" />
 
-        <!-- Admin Activity -->
+        <!-- Patient Information Activity -->
+        <activity
+            android:name="com.hospital.dietary.PatientInfoActivity"
+            android:exported="false"
+            android:parentActivityName="com.hospital.dietary.MainMenuActivity" />
+
+        <!-- Pending Orders Activity -->
+        <activity
+            android:name="com.hospital.dietary.PendingOrdersActivity"
+            android:exported="false"
+            android:parentActivityName="com.hospital.dietary.MainMenuActivity" />
+
+        <!-- Finished Orders Activity -->
+        <activity
+            android:name="com.hospital.dietary.FinishedOrdersActivity"
+            android:exported="false"
+            android:parentActivityName="com.hospital.dietary.MainMenuActivity" />
+
+        <!-- Meal Planning Activity -->
+        <activity
+            android:name="com.hospital.dietary.MealPlanningActivity"
+            android:exported="false"
+            android:parentActivityName="com.hospital.dietary.PendingOrdersActivity" />
+
+        <!-- Admin Activity - For user and item management -->
         <activity
             android:name="com.hospital.dietary.AdminActivity"
             android:exported="false"
-            android:label="Admin Panel"
-            android:theme="@style/Theme.DietaryMenu" />
+            android:parentActivityName="com.hospital.dietary.MainMenuActivity" />
 
-        <!-- View Orders Activity -->
+        <!-- Original MainActivity - Keep for backward compatibility -->
+        <activity
+            android:name="com.hospital.dietary.MainActivity"
+            android:exported="false"
+            android:parentActivityName="com.hospital.dietary.MainMenuActivity" />
+
+        <!-- View Orders Activity - Legacy -->
         <activity
             android:name="com.hospital.dietary.ViewOrdersActivity"
             android:exported="false"
-            android:label="View Orders"
-            android:theme="@style/Theme.DietaryMenu" />
+            android:parentActivityName="com.hospital.dietary.MainActivity" />
 
         <provider
             android:name="androidx.startup.InitializationProvider"

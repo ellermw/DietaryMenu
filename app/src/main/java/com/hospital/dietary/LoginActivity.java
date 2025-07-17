@@ -1,12 +1,7 @@
-// ================================================================================================
-// FILE: app/src/main/java/com/hospital/dietary/LoginActivity.java
-// ================================================================================================
-
 package com.hospital.dietary;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import com.hospital.dietary.dao.UserDAO;
@@ -89,8 +84,8 @@ public class LoginActivity extends AppCompatActivity {
                     setLoading(false);
                     
                     if (user != null && user.isActive()) {
-                        // Login successful
-                        proceedToMainApp(user);
+                        // Login successful - redirect to MainMenuActivity
+                        proceedToMainMenu(user);
                     } else if (user != null && !user.isActive()) {
                         // User exists but is inactive
                         showError("Account is inactive. Please contact administrator.");
@@ -103,40 +98,34 @@ public class LoginActivity extends AppCompatActivity {
             } catch (Exception e) {
                 runOnUiThread(() -> {
                     setLoading(false);
-                    showError("Login failed. Please try again.");
+                    showError("Login failed: " + e.getMessage());
                 });
             }
         }).start();
     }
     
-    private void proceedToMainApp(User user) {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("user_id", user.getUserId());
-        intent.putExtra("username", user.getUsername());
-        intent.putExtra("full_name", user.getFullName());
-        intent.putExtra("role", user.getRole());
-        intent.putExtra("is_admin", user.isAdmin());
+    private void proceedToMainMenu(User user) {
+        // Create intent for MainMenuActivity
+        Intent intent = new Intent(this, MainMenuActivity.class);
+        intent.putExtra("current_user", user.getUsername());
+        intent.putExtra("user_role", user.getRole());
+        intent.putExtra("user_full_name", user.getFullName());
+        
+        // Clear login activity from stack
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         
         startActivity(intent);
-        finish(); // Prevent going back to login
+        finish();
     }
     
     private void setLoading(boolean loading) {
-        loginProgress.setVisibility(loading ? View.VISIBLE : View.GONE);
+        loginProgress.setVisibility(loading ? ProgressBar.VISIBLE : ProgressBar.GONE);
         loginButton.setEnabled(!loading);
         usernameInput.setEnabled(!loading);
         passwordInput.setEnabled(!loading);
-        
-        if (loading) {
-            loginButton.setText("Logging in...");
-        } else {
-            loginButton.setText("LOGIN");
-        }
     }
     
     private void showError(String message) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-        passwordInput.selectAll();
-        passwordInput.requestFocus();
     }
 }
