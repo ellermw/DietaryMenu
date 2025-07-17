@@ -906,6 +906,8 @@ drawable notification_template_icon_bg
 drawable notification_template_icon_low_bg
 drawable notification_tile_bg
 drawable notify_panel_notification_icon_bg
+drawable remove_button_background
+drawable rounded_border
 drawable test_level_drawable
 drawable tooltip_frame_dark
 drawable tooltip_frame_light
@@ -1076,8 +1078,9 @@ id dragLeft
 id dragRight
 id dragStart
 id dragUp
-id drinkCheckBox
-id drinkSize
+id drinkFluidML
+id drinkItemName
+id drinkQuantity
 id drinkSpinner
 id easeIn
 id easeInOut
@@ -1204,6 +1207,7 @@ id radioWednesday
 id ratio
 id rectangles
 id removeButton
+id removeDrinkButton
 id restrictionsText
 id reverseSawtooth
 id right

@@ -60,6 +60,10 @@
         "source": "com.hospital.dietary.app-main-23:/layout/main_course_item.xml"
     },
     {
+        "merged": "com.hospital.dietary.app-debug-21:/drawable_rounded_border.xml.flat",
+        "source": "com.hospital.dietary.app-main-23:/drawable/rounded_border.xml"
+    },
+    {
         "merged": "com.hospital.dietary.app-debug-21:/layout_activity_main.xml.flat",
         "source": "com.hospital.dietary.app-main-23:/layout/activity_main.xml"
     },
@@ -130,6 +134,10 @@
     {
         "merged": "com.hospital.dietary.app-debug-21:/mipmap-hdpi_ic_launcher_round.webp.flat",
         "source": "com.hospital.dietary.app-main-23:/mipmap-hdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "com.hospital.dietary.app-debug-21:/drawable_remove_button_background.xml.flat",
+        "source": "com.hospital.dietary.app-main-23:/drawable/remove_button_background.xml"
     },
     {
         "merged": "com.hospital.dietary.app-debug-21:/drawable_ic_launcher_background.xml.flat",

@@ -1,50 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- app/src/main/res/layout/drink_item_layout.xml -->
+<!-- Layout file for individual drink items in the Clear Liquid diet and other drink containers -->
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:background="#f8f9fa"
     android:padding="8dp"
     android:layout_marginBottom="4dp"
-    android:elevation="1dp">
+    android:background="@drawable/rounded_border"
+    android:gravity="center_vertical">
 
-    <!-- Drink Selection Spinner -->
-    <Spinner
-        android:id="@+id/drinkSpinner"
-        android:layout_width="0dp"
-        android:layout_height="40dp"
-        android:layout_weight="1"
-        android:layout_marginEnd="8dp" />
-
-    <!-- Size Display -->
+    <!-- Drink Item Name -->
     <TextView
-        android:id="@+id/drinkSize"
-        android:layout_width="60dp"
-        android:layout_height="40dp"
+        android:id="@+id/drinkItemName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:text="Drink Name"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        android:paddingEnd="8dp" />
+
+    <!-- Quantity -->
+    <TextView
+        android:id="@+id/drinkQuantity"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.5"
+        android:text="1"
+        android:textSize="14sp"
         android:gravity="center"
-        android:text="250ml"
+        android:textColor="@android:color/black" />
+
+    <!-- Fluid Volume -->
+    <TextView
+        android:id="@+id/drinkFluidML"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="200 ml"
         android:textSize="12sp"
-        android:textColor="#7f8c8d"
-        android:background="#ecf0f1" />
-		
-	<CheckBox
-		android:id="@+id/drinkCheckBox"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_marginEnd="8dp"
-		android:focusable="false"
-		android:focusableInTouchMode="false" />
+        android:gravity="center"
+        android:textColor="@android:color/darker_gray" />
 
     <!-- Remove Button -->
     <Button
-        android:id="@+id/removeButton"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:id="@+id/removeDrinkButton"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
         android:text="×"
-        android:background="#e74c3c"
-        android:textColor="@android:color/white"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:layout_marginStart="8dp" />
+        android:background="@drawable/remove_button_background"
+        android:textColor="@android:color/white"
+        android:layout_marginStart="8dp"
+        android:padding="0dp" />
 
 </LinearLayout>
