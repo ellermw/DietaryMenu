@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#f8f9fa"
+    android:padding="24dp"
+    android:gravity="center">
+
+    <!-- Hospital Logo/Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@android:color/white"
+        android:padding="32dp"
+        android:layout_marginBottom="32dp"
+        android:elevation="4dp"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🏥"
+            android:textSize="48sp"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hospital Dietary System"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="#2c3e50"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Menu Management Application"
+            android:textSize="16sp"
+            android:textColor="#7f8c8d" />
+
+    </LinearLayout>
+
+    <!-- Login Form -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@android:color/white"
+        android:padding="32dp"
+        android:elevation="4dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Sign In"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#2c3e50"
+            android:gravity="center"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Username -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Username:"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#2c3e50"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/usernameInput"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:hint="Enter your username"
+            android:padding="16dp"
+            android:background="@drawable/edit_text_background"
+            android:inputType="text"
+            android:layout_marginBottom="20dp"
+            android:textSize="16sp" />
+
+        <!-- Password -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Password:"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#2c3e50"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/passwordInput"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:hint="Enter your password"
+            android:padding="16dp"
+            android:background="@drawable/edit_text_background"
+            android:inputType="textPassword"
+            android:layout_marginBottom="24dp"
+            android:textSize="16sp"
+            android:imeOptions="actionDone" />
+
+        <!-- Login Button -->
+        <Button
+            android:id="@+id/loginButton"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="Sign In"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:background="#3498db"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Default Credentials Info -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Default Admin: admin / admin123\nDefault User: user / user123"
+            android:textSize="12sp"
+            android:textColor="#7f8c8d"
+            android:gravity="center"
+            android:background="#f8f9fa"
+            android:padding="12dp" />
+
+    </LinearLayout>
+
+    <!-- Footer -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="© 2025 Hospital Dietary Management System"
+        android:textSize="12sp"
+        android:textColor="#bdc3c7"
+        android:gravity="center"
+        android:layout_marginTop="24dp" />
+
+</LinearLayout>

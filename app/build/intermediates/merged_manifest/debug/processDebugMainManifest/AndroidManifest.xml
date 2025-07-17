@@ -8,6 +8,10 @@
         android:minSdkVersion="21"
         android:targetSdkVersion="34" />
 
+    <!-- Permissions -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <permission
         android:name="com.hospital.dietary.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
         android:protectionLevel="signature" />
@@ -17,41 +21,48 @@
     <application
         android:allowBackup="true"
         android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+        android:dataExtractionRules="@xml/data_extraction_rules"
         android:debuggable="true"
         android:extractNativeLibs="true"
+        android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.DietaryMenu" >
+
+        <!-- Login Activity - LAUNCHER -->
         <activity
-            android:name="com.hospital.dietary.MainActivity"
+            android:name="com.hospital.dietary.LoginActivity"
             android:exported="true"
-            android:screenOrientation="portrait" >
+            android:theme="@style/Theme.DietaryMenu.NoActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Main Activity -->
+        <activity
+            android:name="com.hospital.dietary.MainActivity"
+            android:exported="false"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.DietaryMenu" />
+
+        <!-- Admin Activity -->
         <activity
             android:name="com.hospital.dietary.AdminActivity"
             android:exported="false"
             android:label="Admin Panel"
-            android:parentActivityName="com.hospital.dietary.MainActivity"
-            android:screenOrientation="portrait" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
-        </activity>
+            android:theme="@style/Theme.DietaryMenu" />
+
+        <!-- View Orders Activity -->
         <activity
             android:name="com.hospital.dietary.ViewOrdersActivity"
             android:exported="false"
             android:label="View Orders"
-            android:parentActivityName="com.hospital.dietary.MainActivity"
-            android:screenOrientation="portrait" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
-        </activity>
+            android:theme="@style/Theme.DietaryMenu" />
 
         <provider
             android:name="androidx.startup.InitializationProvider"

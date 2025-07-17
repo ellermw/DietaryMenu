@@ -4,311 +4,448 @@
 
 package com.hospital.dietary;
 
+import android.app.AlertDialog;
 import android.content.Context;
-import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.pdf.PdfDocument;
 import android.os.Bundle;
 import android.print.PrintAttributes;
 import android.print.PrintDocumentAdapter;
+import android.print.PrintJob;
 import android.print.PrintManager;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.webkit.WebView;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AlertDialog;
-import com.hospital.dietary.dao.FinalizedOrderDAO;
-import com.hospital.dietary.models.FinalizedOrder;
+import com.hospital.dietary.dao.OrderDAO;
+import com.hospital.dietary.models.Order;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class ViewOrdersActivity extends AppCompatActivity {
     
     private DatabaseHelper dbHelper;
-    private FinalizedOrderDAO finalizedOrderDAO;
+    private OrderDAO orderDAO;
+    
+    private Spinner dateSpinner;
     private ListView ordersListView;
-    private Spinner dateFilterSpinner;
-    private Button printSelectedButton, printAllButton, backButton;
-    private OrderAdapter orderAdapter;
-    private List<FinalizedOrder> allOrders = new ArrayList<>();
-    private List<FinalizedOrder> filteredOrders = new ArrayList<>();
+    private TextView orderCountText;
+    private Button printAllButton, printSelectedButton;
+    
+    private List<Order> allOrders = new ArrayList<>();
+    private ArrayAdapter<Order> ordersAdapter;
     private List<String> availableDates = new ArrayList<>();
+    
+    private boolean isAdmin = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_orders);
         
-        initializeDatabase();
+        // Get user info
+        isAdmin = getIntent().getBooleanExtra("is_admin", false);
+        String username = getIntent().getStringExtra("current_username");
+        
+        setTitle("View Orders - " + username);
+        
+        // Initialize database
+        dbHelper = new DatabaseHelper(this);
+        orderDAO = new OrderDAO(dbHelper);
+        
+        // Initialize UI
         initializeUI();
         setupListeners();
-        loadOrders();
-    }
-    
-    private void initializeDatabase() {
-        dbHelper = new DatabaseHelper(this);
-        finalizedOrderDAO = new FinalizedOrderDAO(dbHelper);
+        loadAvailableDates();
     }
     
     private void initializeUI() {
+        dateSpinner = findViewById(R.id.dateSpinner);
         ordersListView = findViewById(R.id.ordersListView);
-        dateFilterSpinner = findViewById(R.id.dateFilterSpinner);
-        printSelectedButton = findViewById(R.id.printSelectedButton);
+        orderCountText = findViewById(R.id.orderCountText);
         printAllButton = findViewById(R.id.printAllButton);
-        backButton = findViewById(R.id.backButton);
+        printSelectedButton = findViewById(R.id.printSelectedButton);
         
-        // Setup adapter
-        orderAdapter = new OrderAdapter(this, filteredOrders);
-        ordersListView.setAdapter(orderAdapter);
+        // Setup ListView for multiple selection
         ordersListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+        
+        // Setup orders adapter
+        ordersAdapter = new ArrayAdapter<Order>(this, R.layout.item_order_row, allOrders) {
+            @Override
+            public View getView(int position, View convertView, android.view.ViewGroup parent) {
+                if (convertView == null) {
+                    convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_order_row, parent, false);
+                }
+                
+                Order order = getItem(position);
+                
+                TextView patientName = convertView.findViewById(R.id.patientNameText);
+                TextView patientDetails = convertView.findViewById(R.id.patientDetailsText);
+                TextView orderTime = convertView.findViewById(R.id.orderTimeText);
+                
+                patientName.setText(order.getPatientName());
+                
+                String details = order.getWingRoom() + " • " + order.getDiet();
+                if (order.getFluidRestriction() != null && !order.getFluidRestriction().isEmpty()) {
+                    details += " • " + order.getFluidRestriction();
+                }
+                if (order.getTextureModifications() != null && !order.getTextureModifications().isEmpty()) {
+                    details += " • " + order.getTextureModifications();
+                }
+                
+                patientDetails.setText(details);
+                orderTime.setText("Ordered: " + order.getOrderTime());
+                
+                return convertView;
+            }
+        };
+        ordersListView.setAdapter(ordersAdapter);
     }
     
     private void setupListeners() {
-        dateFilterSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        dateSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                filterOrdersByDate();
+                if (position > 0) { // Skip "Select Date" option
+                    String selectedDate = availableDates.get(position - 1);
+                    loadOrdersForDate(selectedDate);
+                }
             }
             
             @Override
             public void onNothingSelected(AdapterView<?> parent) {}
         });
         
-        printSelectedButton.setOnClickListener(v -> printSelectedOrders());
         printAllButton.setOnClickListener(v -> printAllOrders());
-        backButton.setOnClickListener(v -> finish());
+        printSelectedButton.setOnClickListener(v -> printSelectedOrders());
+        
+        // Update print button states when selection changes
+        ordersListView.setOnItemClickListener((parent, view, position, id) -> updatePrintButtonStates());
     }
     
-    private void loadOrders() {
-        // Load all orders
-        allOrders = finalizedOrderDAO.getAllFinalizedOrders();
+    private void loadAvailableDates() {
+        availableDates = orderDAO.getAvailableDates();
         
-        // Load available dates
-        availableDates = finalizedOrderDAO.getDistinctOrderDates();
-        availableDates.add(0, "All Dates");
+        List<String> spinnerItems = new ArrayList<>();
+        spinnerItems.add("Select Date");
+        spinnerItems.addAll(availableDates);
         
-        // Setup date filter spinner
-        ArrayAdapter<String> dateAdapter = new ArrayAdapter<>(this, 
-            android.R.layout.simple_spinner_item, availableDates);
-        dateAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        dateFilterSpinner.setAdapter(dateAdapter);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, 
+                android.R.layout.simple_spinner_item, spinnerItems);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        dateSpinner.setAdapter(adapter);
         
-        // Initially show all orders
-        filteredOrders.clear();
-        filteredOrders.addAll(allOrders);
-        orderAdapter.notifyDataSetChanged();
-        
-        updateButtonStates();
-    }
-    
-    private void filterOrdersByDate() {
-        String selectedDate = (String) dateFilterSpinner.getSelectedItem();
-        filteredOrders.clear();
-        
-        if (selectedDate == null || selectedDate.equals("All Dates")) {
-            filteredOrders.addAll(allOrders);
-        } else {
-            for (FinalizedOrder order : allOrders) {
-                if (order.getOrderDate().equals(selectedDate)) {
-                    filteredOrders.add(order);
-                }
-            }
-        }
-        
-        orderAdapter.notifyDataSetChanged();
-        updateButtonStates();
-        
-        // Clear all selections when filter changes
-        ordersListView.clearChoices();
-        for (int i = 0; i < ordersListView.getChildCount(); i++) {
-            ordersListView.setItemChecked(i, false);
+        if (availableDates.isEmpty()) {
+            orderCountText.setText("No finalized orders found");
+            printAllButton.setEnabled(false);
+            printSelectedButton.setEnabled(false);
         }
     }
     
-    private void updateButtonStates() {
-        boolean hasOrders = !filteredOrders.isEmpty();
+    private void loadOrdersForDate(String date) {
+        allOrders.clear();
+        allOrders.addAll(orderDAO.getOrdersByDate(date));
+        ordersAdapter.notifyDataSetChanged();
+        
+        orderCountText.setText(allOrders.size() + " orders for " + date);
+        
+        updatePrintButtonStates();
+    }
+    
+    private void updatePrintButtonStates() {
+        boolean hasOrders = !allOrders.isEmpty();
+        boolean hasSelection = ordersListView.getCheckedItemCount() > 0;
+        
         printAllButton.setEnabled(hasOrders);
-        updatePrintSelectedButton();
-    }
-    
-    private void updatePrintSelectedButton() {
-        int selectedCount = ordersListView.getCheckedItemCount();
-        printSelectedButton.setEnabled(selectedCount > 0);
-        printSelectedButton.setText("Print Selected (" + selectedCount + ")");
-    }
-    
-    private void printSelectedOrders() {
-        List<FinalizedOrder> selectedOrders = new ArrayList<>();
-        SparseBooleanArray checked = ordersListView.getCheckedItemPositions();
-        
-        for (int i = 0; i < checked.size(); i++) {
-            if (checked.valueAt(i)) {
-                selectedOrders.add(filteredOrders.get(checked.keyAt(i)));
-            }
-        }
-        
-        if (!selectedOrders.isEmpty()) {
-            generateAndPrint(selectedOrders);
-        }
+        printSelectedButton.setEnabled(hasSelection);
     }
     
     private void printAllOrders() {
-        if (!filteredOrders.isEmpty()) {
-            generateAndPrint(filteredOrders);
-        }
-    }
-    
-    private void generateAndPrint(List<FinalizedOrder> ordersToPrint) {
-        String html = generatePrintHTML(ordersToPrint);
-        
-        WebView webView = new WebView(this);
-        webView.loadDataWithBaseURL(null, html, "text/html", "UTF-8", null);
-        
-        // Create print job
-        PrintManager printManager = (PrintManager) getSystemService(Context.PRINT_SERVICE);
-        String jobName = "Dietary Orders - " + ordersToPrint.size() + " orders";
-        
-        PrintDocumentAdapter printAdapter = webView.createPrintDocumentAdapter(jobName);
-        
-        PrintAttributes.Builder builder = new PrintAttributes.Builder();
-        builder.setMediaSize(PrintAttributes.MediaSize.NA_LETTER);
-        builder.setResolution(new PrintAttributes.Resolution("id", PRINT_SERVICE, 300, 300));
-        builder.setMinMargins(PrintAttributes.Margins.NO_MARGINS);
-        builder.setColorMode(PrintAttributes.COLOR_MODE_MONOCHROME);
-        
-        printManager.print(jobName, printAdapter, builder.build());
-    }
-    
-    private String generatePrintHTML(List<FinalizedOrder> orders) {
-        StringBuilder html = new StringBuilder();
-        
-        html.append("<!DOCTYPE html><html><head>");
-        html.append("<style>");
-        html.append("@page { size: landscape; margin: 0.5in; }");
-        html.append("body { font-family: Arial, sans-serif; font-size: 8pt; margin: 0; }");
-        html.append(".order-container { display: flex; width: 100%; border: 2px solid #000; margin-bottom: 10px; page-break-inside: avoid; }");
-        html.append(".meal-section { flex: 1; border-right: 1px solid #000; padding: 5px; }");
-        html.append(".meal-section:last-child { border-right: none; }");
-        html.append(".meal-header { background-color: #f0f0f0; font-weight: bold; text-align: center; padding: 3px; border-bottom: 1px solid #000; }");
-        html.append(".patient-info { background-color: #e8e8e8; padding: 3px; margin-bottom: 3px; font-size: 7pt; }");
-        html.append(".diet-info { background-color: #f8f8f8; padding: 2px; margin-bottom: 3px; font-size: 6pt; }");
-        html.append(".items-list { font-size: 7pt; line-height: 1.2; }");
-        html.append(".items-list div { margin-bottom: 1px; }");
-        html.append(".cut-line { border-top: 1px dashed #666; margin: 2px 0; }");
-        html.append("</style>");
-        html.append("</head><body>");
-        
-        for (FinalizedOrder order : orders) {
-            html.append("<div class='order-container'>");
-            
-            // Breakfast Section
-            html.append("<div class='meal-section'>");
-            html.append("<div class='meal-header'>BREAKFAST</div>");
-            appendPatientInfo(html, order);
-            appendMealItems(html, "Breakfast", order.getBreakfastItems(), order.getBreakfastJuices(), order.getBreakfastDrinks());
-            html.append("</div>");
-            
-            // Lunch Section
-            html.append("<div class='meal-section'>");
-            html.append("<div class='meal-header'>LUNCH</div>");
-            appendPatientInfo(html, order);
-            appendMealItems(html, "Lunch", order.getLunchItems(), order.getLunchJuices(), order.getLunchDrinks());
-            html.append("</div>");
-            
-            // Dinner Section
-            html.append("<div class='meal-section'>");
-            html.append("<div class='meal-header'>DINNER</div>");
-            appendPatientInfo(html, order);
-            appendMealItems(html, "Dinner", order.getDinnerItems(), order.getDinnerJuices(), order.getDinnerDrinks());
-            html.append("</div>");
-            
-            html.append("</div>");
+        if (allOrders.isEmpty()) {
+            Toast.makeText(this, "No orders to print", Toast.LENGTH_SHORT).show();
+            return;
         }
         
-        html.append("</body></html>");
-        return html.toString();
+        new AlertDialog.Builder(this)
+            .setTitle("Print All Orders")
+            .setMessage("Print all " + allOrders.size() + " orders for the selected date?")
+            .setPositiveButton("Print", (dialog, which) -> {
+                generateAndPrintOrders(allOrders);
+            })
+            .setNegativeButton("Cancel", null)
+            .show();
     }
     
-    private void appendPatientInfo(StringBuilder html, FinalizedOrder order) {
-        html.append("<div class='patient-info'>");
-        html.append("<strong>").append(order.getPatientName()).append("</strong><br>");
-        html.append(order.getWing()).append(" - Room ").append(order.getRoom()).append("<br>");
-        html.append("Date: ").append(order.getOrderDate());
-        html.append("</div>");
+    private void printSelectedOrders() {
+        SparseBooleanArray checked = ordersListView.getCheckedItemPositions();
+        List<Order> selectedOrders = new ArrayList<>();
         
-        html.append("<div class='diet-info'>");
-        html.append("<strong>Diet:</strong> ").append(order.getDietType()).append("<br>");
-        if (order.getFluidRestriction() != null && !order.getFluidRestriction().equals("No Restriction")) {
-            html.append("<strong>Fluid:</strong> ").append(order.getFluidRestriction()).append("<br>");
-        }
-        String textures = order.getTextureModificationsString();
-        if (!textures.equals("None")) {
-            html.append("<strong>Texture:</strong> ").append(textures);
-        }
-        html.append("</div>");
-    }
-    
-    private void appendMealItems(StringBuilder html, String mealType, List<String> items, List<String> juices, List<String> drinks) {
-        html.append("<div class='items-list'>");
-        
-        // Main items
-        for (String item : items) {
-            if (item != null && !item.trim().isEmpty()) {
-                html.append("<div>• ").append(item).append("</div>");
+        for (int i = 0; i < checked.size(); i++) {
+            int position = checked.keyAt(i);
+            if (checked.valueAt(i)) {
+                selectedOrders.add(allOrders.get(position));
             }
         }
         
-        // Juices
-        for (String juice : juices) {
-            if (juice != null && !juice.trim().isEmpty()) {
-                html.append("<div>• ").append(juice).append("</div>");
-            }
+        if (selectedOrders.isEmpty()) {
+            Toast.makeText(this, "No orders selected", Toast.LENGTH_SHORT).show();
+            return;
         }
         
-        // Drinks
-        for (String drink : drinks) {
-            if (drink != null && !drink.trim().isEmpty()) {
-                html.append("<div>• ").append(drink).append("</div>");
-            }
-        }
-        
-        html.append("</div>");
+        new AlertDialog.Builder(this)
+            .setTitle("Print Selected Orders")
+            .setMessage("Print " + selectedOrders.size() + " selected orders?")
+            .setPositiveButton("Print", (dialog, which) -> {
+                generateAndPrintOrders(selectedOrders);
+            })
+            .setNegativeButton("Cancel", null)
+            .show();
     }
     
-    // Custom adapter for orders list
-    private class OrderAdapter extends ArrayAdapter<FinalizedOrder> {
-        public OrderAdapter(Context context, List<FinalizedOrder> orders) {
-            super(context, 0, orders);
-        }
-        
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            if (convertView == null) {
-                convertView = LayoutInflater.from(getContext()).inflate(android.R.layout.simple_list_item_multiple_choice, parent, false);
+    private void generateAndPrintOrders(List<Order> orders) {
+        try {
+            // Create PDF document
+            PdfDocument document = new PdfDocument();
+            
+            for (int i = 0; i < orders.size(); i++) {
+                Order order = orders.get(i);
+                
+                // Create page info (landscape orientation)
+                PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(792, 612, i + 1).create();
+                PdfDocument.Page page = document.startPage(pageInfo);
+                
+                // Draw order on page
+                drawOrderOnPage(page, order);
+                
+                document.finishPage(page);
             }
             
-            FinalizedOrder order = getItem(position);
-            CheckedTextView textView = (CheckedTextView) convertView;
+            // Save and print document
+            printPdfDocument(document, orders.size());
             
-            String displayText = order.getOrderDate() + " | " + order.getWing() + " - Room " + order.getRoom() + 
-                               " | " + order.getPatientName() + " (" + order.getDietType() + ")";
-            textView.setText(displayText);
+        } catch (Exception e) {
+            Toast.makeText(this, "Error generating print document: " + e.getMessage(), 
+                    Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        }
+    }
+    
+    private void drawOrderOnPage(PdfDocument.Page page, Order order) {
+        android.graphics.Canvas canvas = page.getCanvas();
+        Paint paint = new Paint();
+        
+        // Set up paint for headers
+        Paint headerPaint = new Paint();
+        headerPaint.setTextSize(18);
+        headerPaint.setColor(Color.BLACK);
+        headerPaint.setFakeBoldText(true);
+        
+        // Set up paint for content
+        Paint contentPaint = new Paint();
+        contentPaint.setTextSize(14);
+        contentPaint.setColor(Color.BLACK);
+        
+        // Set up paint for meal headers
+        Paint mealHeaderPaint = new Paint();
+        mealHeaderPaint.setTextSize(16);
+        mealHeaderPaint.setColor(Color.BLACK);
+        mealHeaderPaint.setFakeBoldText(true);
+        
+        int x = 50;
+        int y = 50;
+        int lineHeight = 25;
+        
+        // Title
+        canvas.drawText("DIETARY ORDER - " + order.getOrderDate(), x, y, headerPaint);
+        y += lineHeight * 2;
+        
+        // Patient info
+        canvas.drawText("Patient: " + order.getPatientName(), x, y, headerPaint);
+        y += lineHeight;
+        canvas.drawText("Location: " + order.getWingRoom(), x, y, contentPaint);
+        y += lineHeight;
+        canvas.drawText("Diet: " + order.getDiet(), x, y, contentPaint);
+        y += lineHeight;
+        
+        if (order.getFluidRestriction() != null && !order.getFluidRestriction().isEmpty()) {
+            canvas.drawText("Fluid Restriction: " + order.getFluidRestriction(), x, y, contentPaint);
+            y += lineHeight;
+        }
+        
+        if (order.getTextureModifications() != null && !order.getTextureModifications().isEmpty()) {
+            canvas.drawText("Texture Modifications: " + order.getTextureModifications(), x, y, contentPaint);
+            y += lineHeight;
+        }
+        
+        y += lineHeight;
+        
+        // Draw meals in columns
+        int col1X = x;
+        int col2X = x + 250;
+        int col3X = x + 500;
+        int startY = y;
+        
+        // Breakfast
+        y = drawMeal(canvas, "BREAKFAST", order.getBreakfastItems(), order.getBreakfastDrinks(), 
+                col1X, startY, mealHeaderPaint, contentPaint, lineHeight);
+        
+        // Lunch
+        y = drawMeal(canvas, "LUNCH", order.getLunchItems(), order.getLunchDrinks(), 
+                col2X, startY, mealHeaderPaint, contentPaint, lineHeight);
+        
+        // Dinner
+        y = drawMeal(canvas, "DINNER", order.getDinnerItems(), order.getDinnerDrinks(), 
+                col3X, startY, mealHeaderPaint, contentPaint, lineHeight);
+        
+        // Add footer
+        canvas.drawText("Order Time: " + order.getOrderTime(), x, 580, contentPaint);
+        canvas.drawText("Generated: " + new SimpleDateFormat("MM/dd/yyyy HH:mm", Locale.getDefault())
+                .format(new Date()), x + 400, 580, contentPaint);
+    }
+    
+    private int drawMeal(android.graphics.Canvas canvas, String mealName, List<String> items, List<String> drinks,
+                        int x, int y, Paint headerPaint, Paint contentPaint, int lineHeight) {
+        
+        canvas.drawText(mealName, x, y, headerPaint);
+        y += lineHeight;
+        
+        // Draw food items
+        if (items != null && !items.isEmpty()) {
+            for (String item : items) {
+                canvas.drawText("• " + item, x, y, contentPaint);
+                y += lineHeight;
+            }
+        }
+        
+        // Draw drinks
+        if (drinks != null && !drinks.isEmpty()) {
+            canvas.drawText("Drinks:", x, y, headerPaint);
+            y += lineHeight;
+            for (String drink : drinks) {
+                canvas.drawText("• " + drink, x, y, contentPaint);
+                y += lineHeight;
+            }
+        }
+        
+        if ((items == null || items.isEmpty()) && (drinks == null || drinks.isEmpty())) {
+            canvas.drawText("No items selected", x, y, contentPaint);
+            y += lineHeight;
+        }
+        
+        return y;
+    }
+    
+    private void printPdfDocument(PdfDocument document, int orderCount) {
+        try {
+            // Create temporary file
+            File cacheDir = getCacheDir();
+            File pdfFile = new File(cacheDir, "dietary_orders_" + System.currentTimeMillis() + ".pdf");
             
-            // Update print button when items are checked/unchecked
-            textView.setOnClickListener(v -> {
-                updatePrintSelectedButton();
-            });
+            FileOutputStream fos = new FileOutputStream(pdfFile);
+            document.writeTo(fos);
+            fos.close();
+            document.close();
             
-            return convertView;
+            // Print using Android Print Framework
+            PrintManager printManager = (PrintManager) getSystemService(Context.PRINT_SERVICE);
+            
+            PrintDocumentAdapter adapter = new MenuPrintDocumentAdapter(pdfFile.getAbsolutePath());
+            
+            PrintAttributes.Builder builder = new PrintAttributes.Builder();
+            builder.setMediaSize(PrintAttributes.MediaSize.NA_LETTER.asLandscape());
+            builder.setResolution(new PrintAttributes.Resolution("id", "label", 300, 300));
+            builder.setMinMargins(PrintAttributes.Margins.NO_MARGINS);
+            
+            String jobName = "Dietary Orders (" + orderCount + " orders)";
+            PrintJob printJob = printManager.print(jobName, adapter, builder.build());
+            
+            Toast.makeText(this, "Print job started: " + jobName, Toast.LENGTH_SHORT).show();
+            
+        } catch (Exception e) {
+            Toast.makeText(this, "Error printing: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            e.printStackTrace();
         }
     }
     
     @Override
-    protected void onDestroy() {
-        if (dbHelper != null) {
-            dbHelper.close();
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(0, 1, 0, "Refresh")
+                .setIcon(android.R.drawable.ic_menu_rotate)
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        return true;
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case 1: // Refresh
+                loadAvailableDates();
+                return true;
+            case android.R.id.home:
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        super.onDestroy();
+    }
+    
+    // Custom PrintDocumentAdapter for PDF printing
+    private class MenuPrintDocumentAdapter extends PrintDocumentAdapter {
+        private String filePath;
+        
+        public MenuPrintDocumentAdapter(String filePath) {
+            this.filePath = filePath;
+        }
+        
+        @Override
+        public void onLayout(PrintAttributes oldAttributes, PrintAttributes newAttributes,
+                android.os.CancellationSignal cancellationSignal,
+                LayoutResultCallback callback, Bundle extras) {
+            
+            if (cancellationSignal.isCanceled()) {
+                callback.onLayoutCancelled();
+                return;
+            }
+            
+            PrintDocumentInfo info = new PrintDocumentInfo.Builder("dietary_orders.pdf")
+                    .setContentType(PrintDocumentInfo.CONTENT_TYPE_DOCUMENT)
+                    .build();
+            
+            callback.onLayoutFinished(info, true);
+        }
+        
+        @Override
+        public void onWrite(PageRange[] pages, android.os.ParcelFileDescriptor destination,
+                android.os.CancellationSignal cancellationSignal, WriteResultCallback callback) {
+            
+            try {
+                // Copy PDF file to destination
+                java.io.InputStream input = new java.io.FileInputStream(filePath);
+                java.io.OutputStream output = new java.io.FileOutputStream(destination.getFileDescriptor());
+                
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = input.read(buffer)) != -1) {
+                    output.write(buffer, 0, bytesRead);
+                }
+                
+                input.close();
+                output.close();
+                
+                callback.onWriteFinished(new PageRange[]{PageRange.ALL_PAGES});
+                
+            } catch (Exception e) {
+                callback.onWriteFailed(e.toString());
+            }
+        }
     }
 }

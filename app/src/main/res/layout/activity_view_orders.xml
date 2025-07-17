@@ -3,120 +3,235 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp"
-    android:background="#f5f5f5">
+    android:background="#f8f9fa"
+    android:padding="16dp">
 
     <!-- Header -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@android:color/white"
+        android:padding="20dp"
+        android:layout_marginBottom="16dp"
+        android:elevation="2dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="📋 View Orders"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="#2c3e50"
+            android:gravity="center"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="View and print finalized dietary orders"
+            android:textSize="16sp"
+            android:textColor="#7f8c8d"
+            android:gravity="center" />
+
+    </LinearLayout>
+
+    <!-- Date Selection and Controls -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@android:color/white"
+        android:padding="16dp"
+        android:layout_marginBottom="16dp"
+        android:elevation="2dp">
+
+        <!-- Date Selection Row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="📅"
+                android:textSize="24sp"
+                android:layout_marginEnd="12dp" />
+
+            <TextView
+                android:id="@+id/selectedDateText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Orders for Today"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#2c3e50" />
+
+            <Button
+                android:id="@+id/selectDateButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Change Date"
+                android:textSize="14sp"
+                android:background="#3498db"
+                android:textColor="@android:color/white"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp" />
+
+        </LinearLayout>
+
+        <!-- Order Count and Print Controls -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/orderCountText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="0 orders found"
+                android:textSize="14sp"
+                android:textColor="#7f8c8d" />
+
+            <Button
+                android:id="@+id/printAllButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🖨️ Print All"
+                android:textSize="14sp"
+                android:background="#27ae60"
+                android:textColor="@android:color/white"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:enabled="false" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Orders List -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:background="@android:color/white"
+        android:elevation="2dp">
+
+        <!-- List Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="#ecf0f1"
+            android:padding="12dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Patient"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="#2c3e50" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Location"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="#2c3e50"
+                android:gravity="center" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Diet"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="#2c3e50"
+                android:gravity="end" />
+
+        </LinearLayout>
+
+        <!-- Orders ListView -->
+        <ListView
+            android:id="@+id/ordersListView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:divider="#ecf0f1"
+            android:dividerHeight="1dp"
+            android:choiceMode="none" />
+
+        <!-- Empty State -->
+        <LinearLayout
+            android:id="@+id/emptyStateContainer"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="32dp"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="📭"
+                android:textSize="48sp"
+                android:layout_marginBottom="16dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No orders found"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#2c3e50"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No dietary orders have been submitted for the selected date."
+                android:textSize="14sp"
+                android:textColor="#7f8c8d"
+                android:gravity="center" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Bottom Controls -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginBottom="16dp">
+        android:layout_marginTop="16dp"
+        android:gravity="end">
 
         <Button
             android:id="@+id/backButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="← Back"
-            android:background="#6c757d"
-            android:textColor="@android:color/white"
-            android:padding="8dp" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Finalized Orders"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:textColor="#2c3e50" />
-
-        <View
-            android:layout_width="80dp"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
-
-    <!-- Filter Section -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:background="@android:color/white"
-        android:padding="12dp"
-        android:layout_marginBottom="12dp"
-        android:elevation="2dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Filter by Date:"
             android:textSize="14sp"
-            android:textStyle="bold"
-            android:layout_marginEnd="12dp" />
+            android:background="#95a5a6"
+            android:textColor="@android:color/white"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp" />
 
-        <Spinner
-            android:id="@+id/dateFilterSpinner"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_weight="1" />
     </LinearLayout>
 
-    <!-- Orders List -->
-    <ListView
-        android:id="@+id/ordersListView"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="@android:color/white"
-        android:divider="#e0e0e0"
-        android:dividerHeight="1dp"
-        android:elevation="2dp"
-        android:layout_marginBottom="12dp" />
-
-    <!-- Instructions -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="📝 Orders are sorted by Date → Wing (A-Z) → Room (High to Low)
-✅ Check orders to print specific ones, or print all visible orders
-🖨️ Prints will be in landscape format with cutting lines for individual meals"
-        android:textSize="12sp"
-        android:textColor="#7f8c8d"
-        android:background="#ecf0f1"
-        android:padding="8dp"
-        android:layout_marginBottom="12dp" />
-
-    <!-- Action Buttons -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center">
-
-        <Button
-            android:id="@+id/printSelectedButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Print Selected (0)"
-            android:background="#3498db"
-            android:textColor="@android:color/white"
-            android:padding="12dp"
-            android:layout_marginEnd="8dp"
-            android:enabled="false" />
-
-        <Button
-            android:id="@+id/printAllButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Print All Visible"
-            android:background="#27ae60"
-            android:textColor="@android:color/white"
-            android:padding="12dp"
-            android:layout_marginStart="8dp" />
-    </LinearLayout>
 </LinearLayout>

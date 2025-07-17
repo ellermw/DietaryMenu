@@ -44,6 +44,44 @@
         android:inputType="textPassword"
         android:layout_marginBottom="16dp" />
 
+    <!-- Full Name -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Full Name:"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="4dp" />
+
+    <EditText
+        android:id="@+id/fullNameInput"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="Enter full name"
+        android:padding="12dp"
+        android:background="@drawable/edit_text_background"
+        android:inputType="textPersonName"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Email -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Email (optional):"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="4dp" />
+
+    <EditText
+        android:id="@+id/emailInput"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="Enter email address"
+        android:padding="12dp"
+        android:background="@drawable/edit_text_background"
+        android:inputType="textEmailAddress"
+        android:layout_marginBottom="16dp" />
+
     <!-- Role -->
     <TextView
         android:layout_width="match_parent"
