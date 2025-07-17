@@ -755,7 +755,7 @@ public class MainActivity extends AppCompatActivity {
     // NEW: Helper method for adding default drink items
     private void addDefaultDrinkItem(String meal, String itemName, int volumeML, LinearLayout container, boolean editable) {
         // Create the drink item layout
-        View drinkItemLayout = getLayoutInflater().inflate(R.layout.drink_item_layout, container, false);
+        View drinkItemLayout = getLayoutInflater().inflate(R.layout.drink_item, container, false);
         TextView itemNameView = drinkItemLayout.findViewById(R.id.drinkItemName);
         TextView quantityView = drinkItemLayout.findViewById(R.id.drinkQuantity);
         TextView fluidMLView = drinkItemLayout.findViewById(R.id.drinkFluidML);
@@ -774,7 +774,7 @@ public class MainActivity extends AppCompatActivity {
         if (!editable) {
             removeButton.setVisibility(View.GONE);
             // Change background color to indicate it's a default item
-            drinkItemLayout.setBackgroundResource(R.drawable.clear_liquid_item_background);
+            drinkItemLayout.setBackgroundResource(android.R.drawable.edit_text);
         } else {
             // Set up remove button functionality for editable items
             removeButton.setOnClickListener(v -> {
@@ -946,7 +946,7 @@ public class MainActivity extends AppCompatActivity {
     
     private void addDrinkToContainer(Item drink, int quantity, LinearLayout container, String meal) {
         // Create the drink item layout
-        View drinkItemLayout = getLayoutInflater().inflate(R.layout.drink_item_layout, container, false);
+        View drinkItemLayout = getLayoutInflater().inflate(R.layout.drink_item, container, false);
         TextView itemNameView = drinkItemLayout.findViewById(R.id.drinkItemName);
         TextView quantityView = drinkItemLayout.findViewById(R.id.drinkQuantity);
         TextView fluidMLView = drinkItemLayout.findViewById(R.id.drinkFluidML);

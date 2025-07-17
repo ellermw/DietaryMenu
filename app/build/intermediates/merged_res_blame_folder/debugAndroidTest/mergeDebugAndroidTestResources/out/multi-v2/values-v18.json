@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.hospital.dietary.test.app-mergeDebugAndroidTestResources-3:/values-v18/values-v18.xml",
+            "outputFile": "com.hospital.dietary.test.app-mergeDebugAndroidTestResources-1:/values-v18/values-v18.xml",
             "map": [
                 {
                     "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\caches\\8.13\\transforms\\b47e415439e55505c9f51794c815e9da\\transformed\\core-1.5.0\\res\\values-v18\\values.xml",

@@ -79,7 +79,7 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="imagePath" value="C:\Users\mieks\Desktop\DietaryMenuProject\DietaryMenu\DietaryLogo.png" />
+                                                <entry key="imagePath" value="C:\DietaryMenu\icon.png" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -107,6 +107,13 @@
                                           </PersistentState>
                                         </value>
                                       </entry>
+                                    </map>
+                                  </option>
+                                  <option name="values">
+                                    <map>
+                                      <entry key="backgroundAssetType" value="COLOR" />
+                                      <entry key="backgroundColor" value="ffffff" />
+                                      <entry key="generateWebpIcons" value="false" />
                                     </map>
                                   </option>
                                 </PersistentState>

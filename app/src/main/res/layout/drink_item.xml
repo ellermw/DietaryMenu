@@ -8,7 +8,7 @@
     android:orientation="horizontal"
     android:padding="8dp"
     android:layout_marginBottom="4dp"
-    android:background="@drawable/rounded_border"
+    android:background="@android:drawable/edit_text"
     android:gravity="center_vertical">
 
     <!-- Drink Item Name -->
@@ -53,7 +53,7 @@
         android:text="×"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:background="@drawable/remove_button_background"
+        android:background="@android:drawable/btn_default"
         android:textColor="@android:color/white"
         android:layout_marginStart="8dp"
         android:padding="0dp" />
