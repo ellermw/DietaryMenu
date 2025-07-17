@@ -72,7 +72,7 @@ public class AdminActivity extends AppCompatActivity {
         itemDAO = new ItemDAO(dbHelper);
         userDAO = new UserDAO(dbHelper);
         
-        // Get current user details
+        // FIXED: Get current user details BEFORE initializing UI
         if (username != null) {
             currentUser = userDAO.getUserByUsername(username);
         }
@@ -83,7 +83,12 @@ public class AdminActivity extends AppCompatActivity {
         // Setup listeners
         setupListeners();
         
-        // FIXED: Handle intent extras for direct navigation
+        // FIXED: Ensure admin menu is configured before any navigation
+        if (currentUser != null && isUserAdmin()) {
+            configureAdminMenu();
+        }
+        
+        // Handle intent extras for direct navigation
         boolean showUsers = getIntent().getBooleanExtra("show_users", false);
         boolean showItems = getIntent().getBooleanExtra("show_items", false);
         
@@ -93,6 +98,34 @@ public class AdminActivity extends AppCompatActivity {
             showItemsManagement();
         } else {
             showMainMenu();
+        }
+    }
+    
+    // FIXED: Add onResume to handle state management
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Ensure proper state when returning to activity
+        if (currentUser != null && isUserAdmin()) {
+            // Restore admin menu if we're on the main screen
+            if (mainMenuContainer.getVisibility() == View.VISIBLE) {
+                configureAdminMenu();
+            }
+        }
+    }
+
+    // FIXED: Add helper methods for admin state management
+    private boolean isUserAdmin() {
+        return currentUser != null && "admin".equalsIgnoreCase(currentUser.getRole());
+    }
+
+    private void configureAdminMenu() {
+        // Ensure admin buttons are visible for admin users
+        if (usersMenuButton != null) {
+            usersMenuButton.setVisibility(View.VISIBLE);
+        }
+        if (itemsMenuButton != null) {
+            itemsMenuButton.setVisibility(View.VISIBLE);
         }
     }
     
@@ -199,11 +232,17 @@ public class AdminActivity extends AppCompatActivity {
         });
     }
     
+    // FIXED: Update showMainMenu to properly restore admin menu
     private void showMainMenu() {
         mainMenuContainer.setVisibility(View.VISIBLE);
         usersContainer.setVisibility(View.GONE);
         itemsContainer.setVisibility(View.GONE);
         backToMenuButton.setVisibility(View.GONE);
+        
+        // CRITICAL: Restore admin menu buttons for admin users
+        if (currentUser != null && isUserAdmin()) {
+            configureAdminMenu();
+        }
         
         updateMenuStats();
     }
@@ -226,16 +265,17 @@ public class AdminActivity extends AppCompatActivity {
         loadAllItems();
     }
     
-    // FIXED: Use correct method for counting items
     private void updateMenuStats() {
         TextView userCountText = findViewById(R.id.userCountText);
         TextView itemCountText = findViewById(R.id.itemCountText);
         
-        int userCount = userDAO.getUserCount();
-        int itemCount = itemDAO.getAllItems().size(); // Fixed method
-        
-        userCountText.setText(userCount + " Active Users");
-        itemCountText.setText(itemCount + " Food Items");
+        if (userCountText != null && itemCountText != null) {
+            int userCount = userDAO.getUserCount();
+            int itemCount = itemDAO.getAllItems().size();
+            
+            userCountText.setText(userCount + " Active Users");
+            itemCountText.setText(itemCount + " Food Items");
+        }
     }
     
     // ===== USER MANAGEMENT METHODS =====
@@ -291,7 +331,6 @@ public class AdminActivity extends AppCompatActivity {
             .show();
     }
     
-    // FIXED: Use correct layout name
     private void showUserDialog(User user) {
         boolean isEdit = (user != null);
         String title = isEdit ? "Edit User" : "Add New User";
@@ -344,7 +383,6 @@ public class AdminActivity extends AppCompatActivity {
         dialog.show();
     }
     
-    // FIXED: Handle long return types properly
     private boolean saveUser(EditText usernameInput, EditText passwordInput, EditText fullNameInput,
                            EditText emailInput, Spinner roleSpinner, CheckBox activeCheckBox,
                            User existingUser, boolean isEdit) {
@@ -395,14 +433,12 @@ public class AdminActivity extends AppCompatActivity {
         user.setRole(role);
         user.setActive(isActive);
         
-        // FIXED: Handle long return types properly
+        // Handle long return types properly
         boolean success;
         if (isEdit) {
-            // updateUser returns long (number of rows affected)
             long result = userDAO.updateUser(user);
             success = result > 0;
         } else {
-            // addUser returns long (user ID)
             long userId = userDAO.addUser(user);
             success = userId > 0;
             if (success) {
@@ -434,7 +470,7 @@ public class AdminActivity extends AppCompatActivity {
                        "This will deactivate the user account.")
             .setPositiveButton("Delete", (dialog, which) -> {
                 if (userDAO.deleteUser(user.getUserId())) {
-                    loadAllUsers(); // Reload to reflect changes
+                    loadAllUsers();
                     Toast.makeText(this, "User deleted successfully", Toast.LENGTH_SHORT).show();
                 } else {
                     showError("Failed to delete user");
@@ -499,7 +535,6 @@ public class AdminActivity extends AppCompatActivity {
             .show();
     }
     
-    // FIXED: Create dialog programmatically to avoid layout issues
     private void showItemDialog(Item item) {
         boolean isEdit = (item != null);
         String title = isEdit ? "Edit Item" : "Add New Item";
@@ -555,7 +590,6 @@ public class AdminActivity extends AppCompatActivity {
         builder.setTitle(title);
         builder.setView(layout);
         
-        // FIXED: Handle ItemDAO return types properly
         builder.setPositiveButton(isEdit ? "Update" : "Add", (dialog, which) -> {
             String name = nameInput.getText().toString().trim();
             String category = (String) categorySpinner.getSelectedItem();
@@ -586,14 +620,12 @@ public class AdminActivity extends AppCompatActivity {
             newItem.setAdaFriendly(adaFriendly);
             newItem.setSoda(isSoda);
             
-            // FIXED: Handle long return types properly
+            // Handle long return types properly
             boolean success;
             if (isEdit) {
-                // updateItem returns long (number of rows affected)
                 long result = itemDAO.updateItem(newItem);
                 success = result > 0;
             } else {
-                // insertItem returns long (item ID)
                 long itemId = itemDAO.insertItem(newItem);
                 success = itemId > 0;
                 if (success) {
@@ -620,7 +652,7 @@ public class AdminActivity extends AppCompatActivity {
             .setMessage("Are you sure you want to delete '" + item.getName() + "'?")
             .setPositiveButton("Delete", (dialog, which) -> {
                 if (itemDAO.deleteItem(item.getItemId())) {
-                    loadAllItems(); // Reload to reflect changes
+                    loadAllItems();
                     Toast.makeText(this, "Item deleted successfully", Toast.LENGTH_SHORT).show();
                 } else {
                     showError("Failed to delete item. It may be used in existing orders.");
@@ -672,34 +704,18 @@ public class AdminActivity extends AppCompatActivity {
             View userStatusIndicator = convertView.findViewById(R.id.userStatusIndicator);
             
             // Set user icon based on role
-            userIcon.setText(user.isAdmin() ? "👨‍💼" : "👤");
+            userIcon.setText(user.isAdmin() ? "🔐" : "👤");
             
             // Set user information
             userFullName.setText(user.getFullName());
             userUsername.setText("@" + user.getUsername());
-            
-            // Show/hide email
-            if (user.getEmail() != null && !user.getEmail().isEmpty()) {
-                userEmail.setText(user.getEmail());
-                userEmail.setVisibility(View.VISIBLE);
-            } else {
-                userEmail.setVisibility(View.GONE);
-            }
-            
-            // Set role badge
+            userEmail.setText(user.getEmail() != null ? user.getEmail() : "No email");
             userRole.setText(user.getRole().toUpperCase());
-            if (user.isAdmin()) {
-                userRole.setBackgroundColor(getResources().getColor(android.R.color.holo_orange_dark));
-            } else {
-                userRole.setBackgroundColor(getResources().getColor(android.R.color.holo_blue_bright));
-            }
             
-            // Set status indicator
-            if (user.isActive()) {
-                userStatusIndicator.setBackgroundColor(getResources().getColor(android.R.color.holo_green_dark));
-            } else {
-                userStatusIndicator.setBackgroundColor(getResources().getColor(android.R.color.holo_red_dark));
-            }
+            // Set status indicator color
+            userStatusIndicator.setBackgroundColor(user.isActive() ? 
+                getResources().getColor(android.R.color.holo_green_light) : 
+                getResources().getColor(android.R.color.holo_red_light));
             
             return convertView;
         }
