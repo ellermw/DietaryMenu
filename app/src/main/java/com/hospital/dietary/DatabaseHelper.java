@@ -16,10 +16,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         // Enable foreign keys
         db.execSQL("PRAGMA foreign_keys = ON;");
-        
+
         // Create tables
         createTables(db);
-        
+
         // Insert initial data
         insertInitialData(db);
     }
@@ -91,13 +91,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "category_id INTEGER PRIMARY KEY," +
                 "name TEXT NOT NULL UNIQUE)");
 
-        // Item table - FIXED: Use is_ada_friendly instead of ada_friendly
+        // Item table
         db.execSQL("CREATE TABLE IF NOT EXISTS Item (" +
                 "item_id INTEGER PRIMARY KEY," +
                 "category_id INTEGER," +
                 "name TEXT NOT NULL," +
                 "size_ml INTEGER," +
-                "is_ada_friendly BOOLEAN NOT NULL DEFAULT 0," +
+                "ada_friendly BOOLEAN NOT NULL DEFAULT 0," +
                 "is_soda BOOLEAN NOT NULL DEFAULT 0," +
                 "is_clear_liquid BOOLEAN NOT NULL DEFAULT 0," +
                 "FOREIGN KEY (category_id) REFERENCES Category(category_id))");
@@ -276,29 +276,33 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("INSERT OR IGNORE INTO Item VALUES (16, 1, 'Scrambled Eggs', 0, 1, 0, 0)");
         db.execSQL("INSERT OR IGNORE INTO Item VALUES (17, 1, 'Pancakes', 0, 0, 0, 0)");
         db.execSQL("INSERT OR IGNORE INTO Item VALUES (18, 1, 'French Toast', 0, 0, 0, 0)");
-        db.execSQL("INSERT OR IGNORE INTO Item VALUES (19, 1, 'Bacon', 0, 1, 0, 0)");
-        db.execSQL("INSERT OR IGNORE INTO Item VALUES (20, 1, 'Sausage', 0, 1, 0, 0)");
+        db.execSQL("INSERT OR IGNORE INTO Item VALUES (19, 1, 'Waffles', 0, 0, 0, 0)");
+        db.execSQL("INSERT OR IGNORE INTO Item VALUES (20, 1, 'Bacon', 0, 1, 0, 0)");
+        db.execSQL("INSERT OR IGNORE INTO Item VALUES (21, 1, 'Sausage', 0, 1, 0, 0)");
 
         // Fruits (category 16)
-        db.execSQL("INSERT OR IGNORE INTO Item VALUES (21, 16, 'Apple', 0, 1, 0, 0)");
-        db.execSQL("INSERT OR IGNORE INTO Item VALUES (22, 16, 'Banana', 0, 1, 0, 0)");
-        db.execSQL("INSERT OR IGNORE INTO Item VALUES (23, 16, 'Orange', 0, 1, 0, 0)");
-        db.execSQL("INSERT OR IGNORE INTO Item VALUES (24, 16, 'Grapes', 0, 1, 0, 0)");
+        db.execSQL("INSERT OR IGNORE INTO Item VALUES (22, 16, 'Apple Slices', 0, 1, 0, 0)");
+        db.execSQL("INSERT OR IGNORE INTO Item VALUES (23, 16, 'Orange Slices', 0, 1, 0, 0)");
+        db.execSQL("INSERT OR IGNORE INTO Item VALUES (24, 16, 'Banana', 0, 1, 0, 0)");
+        db.execSQL("INSERT OR IGNORE INTO Item VALUES (25, 16, 'Grapes', 0, 1, 0, 0)");
+        db.execSQL("INSERT OR IGNORE INTO Item VALUES (26, 16, 'Cantaloupe', 0, 1, 0, 0)");
 
         // Protein/Entrée items (category 2)
-        db.execSQL("INSERT OR IGNORE INTO Item VALUES (25, 2, 'Grilled Chicken', 0, 1, 0, 0)");
-        db.execSQL("INSERT OR IGNORE INTO Item VALUES (26, 2, 'Baked Fish', 0, 1, 0, 0)");
-        db.execSQL("INSERT OR IGNORE INTO Item VALUES (27, 2, 'Roast Beef', 0, 1, 0, 0)");
-        db.execSQL("INSERT OR IGNORE INTO Item VALUES (28, 2, 'Pork Chop', 0, 1, 0, 0)");
-        db.execSQL("INSERT OR IGNORE INTO Item VALUES (29, 2, 'Turkey', 0, 1, 0, 0)");
-        db.execSQL("INSERT OR IGNORE INTO Item VALUES (30, 2, 'Meatloaf', 0, 1, 0, 0)");
+        db.execSQL("INSERT OR IGNORE INTO Item VALUES (27, 2, 'Grilled Chicken', 0, 1, 0, 0)");
+        db.execSQL("INSERT OR IGNORE INTO Item VALUES (28, 2, 'Baked Fish', 0, 1, 0, 0)");
+        db.execSQL("INSERT OR IGNORE INTO Item VALUES (29, 2, 'Beef Patty', 0, 1, 0, 0)");
+        db.execSQL("INSERT OR IGNORE INTO Item VALUES (30, 2, 'Pork Chop', 0, 1, 0, 0)");
+        db.execSQL("INSERT OR IGNORE INTO Item VALUES (31, 2, 'Turkey Slices', 0, 1, 0, 0)");
+        db.execSQL("INSERT OR IGNORE INTO Item VALUES (32, 2, 'Meatloaf', 0, 1, 0, 0)");
+        db.execSQL("INSERT OR IGNORE INTO Item VALUES (33, 2, 'Salmon', 0, 1, 0, 0)");
 
         // Starch items (category 3)
-        db.execSQL("INSERT OR IGNORE INTO Item VALUES (31, 3, 'Mashed Potatoes', 0, 1, 0, 0)");
-        db.execSQL("INSERT OR IGNORE INTO Item VALUES (32, 3, 'Baked Potato', 0, 1, 0, 0)");
-        db.execSQL("INSERT OR IGNORE INTO Item VALUES (33, 3, 'Rice', 0, 1, 0, 0)");
-        db.execSQL("INSERT OR IGNORE INTO Item VALUES (34, 3, 'Pasta', 0, 1, 0, 0)");
-        db.execSQL("INSERT OR IGNORE INTO Item VALUES (35, 3, 'French Fries', 0, 0, 0, 0)");
+        db.execSQL("INSERT OR IGNORE INTO Item VALUES (34, 3, 'Mashed Potatoes', 0, 1, 0, 0)");
+        db.execSQL("INSERT OR IGNORE INTO Item VALUES (35, 3, 'Baked Potato', 0, 1, 0, 0)");
+        db.execSQL("INSERT OR IGNORE INTO Item VALUES (36, 3, 'Rice Pilaf', 0, 1, 0, 0)");
+        db.execSQL("INSERT OR IGNORE INTO Item VALUES (37, 3, 'Pasta', 0, 1, 0, 0)");
+        db.execSQL("INSERT OR IGNORE INTO Item VALUES (38, 3, 'Sweet Potato', 0, 1, 0, 0)");
+        db.execSQL("INSERT OR IGNORE INTO Item VALUES (39, 3, 'French Fries', 0, 0, 0, 0)");
 
         // Vegetable items (category 4)
         db.execSQL("INSERT OR IGNORE INTO Item VALUES (40, 4, 'Green Beans', 0, 1, 0, 0)");

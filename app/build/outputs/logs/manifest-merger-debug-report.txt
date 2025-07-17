@@ -64,7 +64,7 @@ MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\mi
 	android:label
 		ADDED from C:\DietaryMenu\app\src\main\AndroidManifest.xml:8:9-41
 	android:icon
-		ADDED from C:\DietaryMenu\app\src\main\AndroidManifest.xml:7:9-58
+		ADDED from C:\DietaryMenu\app\src\main\AndroidManifest.xml:7:9-43
 	android:allowBackup
 		ADDED from C:\DietaryMenu\app\src\main\AndroidManifest.xml:6:9-35
 	android:theme
