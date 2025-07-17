@@ -1076,6 +1076,7 @@ id dragLeft
 id dragRight
 id dragStart
 id dragUp
+id drinkCheckBox
 id drinkSize
 id drinkSpinner
 id easeIn
@@ -1193,6 +1194,13 @@ id printSelectedButton
 id progress_circular
 id progress_horizontal
 id radio
+id radioFriday
+id radioMonday
+id radioSaturday
+id radioSunday
+id radioThursday
+id radioTuesday
+id radioWednesday
 id ratio
 id rectangles
 id removeButton

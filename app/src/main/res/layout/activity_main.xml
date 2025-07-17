@@ -41,7 +41,7 @@
 
         </LinearLayout>
 
-        <!-- Day Selection -->
+<!-- Day Selection -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -54,7 +54,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Day Selection"
+                android:text="Select Day"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="#2c3e50"
@@ -68,22 +68,67 @@
                 android:gravity="center">
 
                 <RadioButton
-                    android:layout_width="wrap_content"
+                    android:id="@+id/radioSunday"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Today"
-                    android:checked="true"
-                    android:layout_marginEnd="16dp" />
+                    android:layout_weight="1"
+                    android:text="Sun"
+                    android:gravity="center"
+                    android:padding="8dp" />
 
                 <RadioButton
-                    android:layout_width="wrap_content"
+                    android:id="@+id/radioMonday"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Tomorrow"
-                    android:layout_marginEnd="16dp" />
+                    android:layout_weight="1"
+                    android:text="Mon"
+                    android:gravity="center"
+                    android:padding="8dp" />
 
                 <RadioButton
-                    android:layout_width="wrap_content"
+                    android:id="@+id/radioTuesday"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Next Day" />
+                    android:layout_weight="1"
+                    android:text="Tue"
+                    android:gravity="center"
+                    android:padding="8dp" />
+
+                <RadioButton
+                    android:id="@+id/radioWednesday"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Wed"
+                    android:gravity="center"
+                    android:padding="8dp" />
+
+                <RadioButton
+                    android:id="@+id/radioThursday"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Thu"
+                    android:gravity="center"
+                    android:padding="8dp" />
+
+                <RadioButton
+                    android:id="@+id/radioFriday"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Fri"
+                    android:gravity="center"
+                    android:padding="8dp" />
+
+                <RadioButton
+                    android:id="@+id/radioSaturday"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Sat"
+                    android:gravity="center"
+                    android:padding="8dp" />
 
             </RadioGroup>
 
