@@ -1,162 +1,158 @@
 [
     {
-        "merged": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-debug-21:\\layout_main_course_item.xml.flat",
-        "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-main-23:\\layout\\main_course_item.xml"
+        "merged": "com.hospital.dietary.app-debug-21:/mipmap-hdpi_ic_launcher_foreground.webp.flat",
+        "source": "com.hospital.dietary.app-main-23:/mipmap-hdpi/ic_launcher_foreground.webp"
     },
     {
         "merged": "com.hospital.dietary.app-debug-21:/layout_activity_view_orders.xml.flat",
         "source": "com.hospital.dietary.app-main-23:/layout/activity_view_orders.xml"
     },
     {
-        "merged": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-debug-21:\\layout_dialog_login.xml.flat",
-        "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-main-23:\\layout\\dialog_login.xml"
+        "merged": "com.hospital.dietary.app-debug-21:/layout_activity_admin_new.xml.flat",
+        "source": "com.hospital.dietary.app-main-23:/layout/activity_admin_new.xml"
     },
     {
-        "merged": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-debug-21:\\drawable-anydpi-v24_ic_launcher_foreground.xml.flat",
-        "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-pngs-17:\\drawable-anydpi-v24\\ic_launcher_foreground.xml"
+        "merged": "com.hospital.dietary.app-debug-21:/layout_dialog_add_edit_item.xml.flat",
+        "source": "com.hospital.dietary.app-main-23:/layout/dialog_add_edit_item.xml"
     },
     {
-        "merged": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-debug-21:\\layout_item_admin_row.xml.flat",
-        "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-main-23:\\layout\\item_admin_row.xml"
+        "merged": "com.hospital.dietary.app-debug-21:/layout_dialog_login.xml.flat",
+        "source": "com.hospital.dietary.app-main-23:/layout/dialog_login.xml"
     },
     {
-        "merged": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-debug-21:\\drawable_ic_launcher_background.xml.flat",
-        "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-main-23:\\drawable\\ic_launcher_background.xml"
+        "merged": "com.hospital.dietary.app-debug-21:/mipmap-xxxhdpi_ic_launcher_round.webp.flat",
+        "source": "com.hospital.dietary.app-main-23:/mipmap-xxxhdpi/ic_launcher_round.webp"
     },
     {
-        "merged": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-debug-21:\\mipmap-hdpi_ic_launcher_foreground.webp.flat",
-        "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-main-23:\\mipmap-hdpi\\ic_launcher_foreground.webp"
+        "merged": "com.hospital.dietary.app-debug-21:/mipmap-mdpi_ic_launcher_foreground.webp.flat",
+        "source": "com.hospital.dietary.app-main-23:/mipmap-mdpi/ic_launcher_foreground.webp"
     },
     {
-        "merged": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-debug-21:\\layout_activity_admin_menu.xml.flat",
-        "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-main-23:\\layout\\activity_admin_menu.xml"
+        "merged": "com.hospital.dietary.app-debug-21:/layout_activity_admin_menu.xml.flat",
+        "source": "com.hospital.dietary.app-main-23:/layout/activity_admin_menu.xml"
     },
     {
-        "merged": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-debug-21:\\mipmap-xxhdpi_ic_launcher_round.webp.flat",
-        "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-main-23:\\mipmap-xxhdpi\\ic_launcher_round.webp"
+        "merged": "com.hospital.dietary.app-debug-21:/mipmap-mdpi_ic_launcher_round.webp.flat",
+        "source": "com.hospital.dietary.app-main-23:/mipmap-mdpi/ic_launcher_round.webp"
     },
     {
-        "merged": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-debug-21:\\layout_drink_item.xml.flat",
-        "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-main-23:\\layout\\drink_item.xml"
+        "merged": "com.hospital.dietary.app-debug-21:/drawable-anydpi-v24_ic_launcher_foreground.xml.flat",
+        "source": "com.hospital.dietary.app-pngs-17:/drawable-anydpi-v24/ic_launcher_foreground.xml"
     },
     {
-        "merged": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-debug-21:\\mipmap-xxhdpi_ic_launcher_foreground.webp.flat",
-        "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-main-23:\\mipmap-xxhdpi\\ic_launcher_foreground.webp"
+        "merged": "com.hospital.dietary.app-debug-21:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "com.hospital.dietary.app-main-23:/mipmap-anydpi-v26/ic_launcher.xml"
     },
     {
-        "merged": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-debug-21:\\mipmap-xhdpi_ic_launcher.webp.flat",
-        "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-main-23:\\mipmap-xhdpi\\ic_launcher.webp"
+        "merged": "com.hospital.dietary.app-debug-21:/layout_drink_item.xml.flat",
+        "source": "com.hospital.dietary.app-main-23:/layout/drink_item.xml"
     },
     {
-        "merged": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-debug-21:\\mipmap-xxhdpi_ic_launcher.webp.flat",
-        "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-main-23:\\mipmap-xxhdpi\\ic_launcher.webp"
+        "merged": "com.hospital.dietary.app-debug-21:/mipmap-xxhdpi_ic_launcher.webp.flat",
+        "source": "com.hospital.dietary.app-main-23:/mipmap-xxhdpi/ic_launcher.webp"
     },
     {
-        "merged": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-debug-21:\\layout_activity_login.xml.flat",
-        "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-main-23:\\layout\\activity_login.xml"
+        "merged": "com.hospital.dietary.app-debug-21:/layout_item_admin_row.xml.flat",
+        "source": "com.hospital.dietary.app-main-23:/layout/item_admin_row.xml"
     },
     {
-        "merged": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-debug-21:\\xml_data_extraction_rules.xml.flat",
-        "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-main-23:\\xml\\data_extraction_rules.xml"
+        "merged": "com.hospital.dietary.app-debug-21:/layout_main_course_item.xml.flat",
+        "source": "com.hospital.dietary.app-main-23:/layout/main_course_item.xml"
     },
     {
-        "merged": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-debug-21:\\mipmap-hdpi_ic_launcher_round.webp.flat",
-        "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-main-23:\\mipmap-hdpi\\ic_launcher_round.webp"
+        "merged": "com.hospital.dietary.app-debug-21:/layout_activity_main.xml.flat",
+        "source": "com.hospital.dietary.app-main-23:/layout/activity_main.xml"
     },
     {
-        "merged": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-debug-21:\\layout_item_user_row.xml.flat",
-        "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-main-23:\\layout\\item_user_row.xml"
+        "merged": "com.hospital.dietary.app-debug-21:/mipmap-hdpi_ic_launcher.webp.flat",
+        "source": "com.hospital.dietary.app-main-23:/mipmap-hdpi/ic_launcher.webp"
     },
     {
-        "merged": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-debug-21:\\layout_activity_main.xml.flat",
-        "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-main-23:\\layout\\activity_main.xml"
+        "merged": "com.hospital.dietary.app-debug-21:/layout_item_order_row.xml.flat",
+        "source": "com.hospital.dietary.app-main-23:/layout/item_order_row.xml"
     },
     {
-        "merged": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-debug-21:\\mipmap-hdpi_ic_launcher.webp.flat",
-        "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-main-23:\\mipmap-hdpi\\ic_launcher.webp"
+        "merged": "com.hospital.dietary.app-debug-21:/xml_data_extraction_rules.xml.flat",
+        "source": "com.hospital.dietary.app-main-23:/xml/data_extraction_rules.xml"
     },
     {
-        "merged": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-debug-21:\\layout_dialog_user_form.xml.flat",
-        "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-main-23:\\layout\\dialog_user_form.xml"
+        "merged": "com.hospital.dietary.app-debug-21:/layout_dialog_item_form.xml.flat",
+        "source": "com.hospital.dietary.app-main-23:/layout/dialog_item_form.xml"
     },
     {
-        "merged": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-debug-21:\\mipmap-xxxhdpi_ic_launcher_round.webp.flat",
-        "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-main-23:\\mipmap-xxxhdpi\\ic_launcher_round.webp"
+        "merged": "com.hospital.dietary.app-debug-21:/mipmap-xhdpi_ic_launcher_round.webp.flat",
+        "source": "com.hospital.dietary.app-main-23:/mipmap-xhdpi/ic_launcher_round.webp"
     },
     {
-        "merged": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-debug-21:\\xml_backup_rules.xml.flat",
-        "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-main-23:\\xml\\backup_rules.xml"
+        "merged": "com.hospital.dietary.app-debug-21:/mipmap-xxxhdpi_ic_launcher_foreground.webp.flat",
+        "source": "com.hospital.dietary.app-main-23:/mipmap-xxxhdpi/ic_launcher_foreground.webp"
     },
     {
-        "merged": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-debug-21:\\mipmap-mdpi_ic_launcher_round.webp.flat",
-        "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-main-23:\\mipmap-mdpi\\ic_launcher_round.webp"
+        "merged": "com.hospital.dietary.app-debug-21:/mipmap-xhdpi_ic_launcher_foreground.webp.flat",
+        "source": "com.hospital.dietary.app-main-23:/mipmap-xhdpi/ic_launcher_foreground.webp"
     },
     {
-        "merged": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-debug-21:\\mipmap-anydpi-v26_ic_launcher.xml.flat",
-        "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-main-23:\\mipmap-anydpi-v26\\ic_launcher.xml"
+        "merged": "com.hospital.dietary.app-debug-21:/layout_dialog_user_form.xml.flat",
+        "source": "com.hospital.dietary.app-main-23:/layout/dialog_user_form.xml"
     },
     {
-        "merged": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-debug-21:\\mipmap-xxxhdpi_ic_launcher.webp.flat",
-        "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-main-23:\\mipmap-xxxhdpi\\ic_launcher.webp"
+        "merged": "com.hospital.dietary.app-debug-21:/layout_activity_login.xml.flat",
+        "source": "com.hospital.dietary.app-main-23:/layout/activity_login.xml"
     },
     {
-        "merged": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-debug-21:\\mipmap-xxxhdpi_ic_launcher_foreground.webp.flat",
-        "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-main-23:\\mipmap-xxxhdpi\\ic_launcher_foreground.webp"
+        "merged": "com.hospital.dietary.app-debug-21:/drawable_edit_text_background.xml.flat",
+        "source": "com.hospital.dietary.app-main-23:/drawable/edit_text_background.xml"
     },
     {
-        "merged": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-debug-21:\\drawable_edit_text_background.xml.flat",
-        "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-main-23:\\drawable\\edit_text_background.xml"
+        "merged": "com.hospital.dietary.app-debug-21:/mipmap-xxhdpi_ic_launcher_foreground.webp.flat",
+        "source": "com.hospital.dietary.app-main-23:/mipmap-xxhdpi/ic_launcher_foreground.webp"
     },
     {
-        "merged": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-debug-21:\\layout_activity_admin.xml.flat",
-        "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-main-23:\\layout\\activity_admin.xml"
+        "merged": "com.hospital.dietary.app-debug-21:/layout_dialog_admin_access.xml.flat",
+        "source": "com.hospital.dietary.app-main-23:/layout/dialog_admin_access.xml"
     },
     {
-        "merged": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-debug-21:\\mipmap-xhdpi_ic_launcher_foreground.webp.flat",
-        "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-main-23:\\mipmap-xhdpi\\ic_launcher_foreground.webp"
+        "merged": "com.hospital.dietary.app-debug-21:/mipmap-xhdpi_ic_launcher.webp.flat",
+        "source": "com.hospital.dietary.app-main-23:/mipmap-xhdpi/ic_launcher.webp"
     },
     {
-        "merged": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-debug-21:\\layout_dialog_admin_access.xml.flat",
-        "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-main-23:\\layout\\dialog_admin_access.xml"
+        "merged": "com.hospital.dietary.app-debug-21:/layout_item_user_row.xml.flat",
+        "source": "com.hospital.dietary.app-main-23:/layout/item_user_row.xml"
     },
     {
-        "merged": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-debug-21:\\mipmap-anydpi-v26_ic_launcher_round.xml.flat",
-        "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-main-23:\\mipmap-anydpi-v26\\ic_launcher_round.xml"
+        "merged": "com.hospital.dietary.app-debug-21:/layout_activity_admin.xml.flat",
+        "source": "com.hospital.dietary.app-main-23:/layout/activity_admin.xml"
     },
     {
-        "merged": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-debug-21:\\layout_dialog_item_form.xml.flat",
-        "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-main-23:\\layout\\dialog_item_form.xml"
+        "merged": "com.hospital.dietary.app-debug-21:/layout_item_patient_order.xml.flat",
+        "source": "com.hospital.dietary.app-main-23:/layout/item_patient_order.xml"
     },
     {
-        "merged": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-debug-21:\\mipmap-xhdpi_ic_launcher_round.webp.flat",
-        "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-main-23:\\mipmap-xhdpi\\ic_launcher_round.webp"
+        "merged": "com.hospital.dietary.app-debug-21:/mipmap-hdpi_ic_launcher_round.webp.flat",
+        "source": "com.hospital.dietary.app-main-23:/mipmap-hdpi/ic_launcher_round.webp"
     },
     {
-        "merged": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-debug-21:\\mipmap-mdpi_ic_launcher_foreground.webp.flat",
-        "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-main-23:\\mipmap-mdpi\\ic_launcher_foreground.webp"
+        "merged": "com.hospital.dietary.app-debug-21:/drawable_ic_launcher_background.xml.flat",
+        "source": "com.hospital.dietary.app-main-23:/drawable/ic_launcher_background.xml"
     },
     {
-        "merged": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-debug-21:\\layout_activity_admin_new.xml.flat",
-        "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-main-23:\\layout\\activity_admin_new.xml"
+        "merged": "com.hospital.dietary.app-debug-21:/mipmap-xxhdpi_ic_launcher_round.webp.flat",
+        "source": "com.hospital.dietary.app-main-23:/mipmap-xxhdpi/ic_launcher_round.webp"
     },
     {
-        "merged": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-debug-21:\\layout_dialog_add_edit_item.xml.flat",
-        "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-main-23:\\layout\\dialog_add_edit_item.xml"
+        "merged": "com.hospital.dietary.app-debug-21:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "com.hospital.dietary.app-main-23:/mipmap-anydpi-v26/ic_launcher_round.xml"
     },
     {
-        "merged": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-debug-21:\\layout_activity_view_orders.xml.flat",
-        "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-main-23:\\layout\\activity_view_orders.xml"
+        "merged": "com.hospital.dietary.app-debug-21:/mipmap-mdpi_ic_launcher.webp.flat",
+        "source": "com.hospital.dietary.app-main-23:/mipmap-mdpi/ic_launcher.webp"
     },
     {
-        "merged": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-debug-21:\\mipmap-mdpi_ic_launcher.webp.flat",
-        "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-main-23:\\mipmap-mdpi\\ic_launcher.webp"
+        "merged": "com.hospital.dietary.app-debug-21:/mipmap-xxxhdpi_ic_launcher.webp.flat",
+        "source": "com.hospital.dietary.app-main-23:/mipmap-xxxhdpi/ic_launcher.webp"
     },
     {
-        "merged": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-debug-21:\\layout_item_order_row.xml.flat",
-        "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-main-23:\\layout\\item_order_row.xml"
-    },
-    {
-        "merged": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-debug-21:\\layout_item_patient_order.xml.flat",
-        "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\daemon\\8.13\\com.hospital.dietary.app-main-23:\\layout\\item_patient_order.xml"
+        "merged": "com.hospital.dietary.app-debug-21:/xml_backup_rules.xml.flat",
+        "source": "com.hospital.dietary.app-main-23:/xml/backup_rules.xml"
     }
 ]

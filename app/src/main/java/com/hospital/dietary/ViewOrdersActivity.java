@@ -31,6 +31,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import android.print.PageRange;
+import android.print.PrintDocumentInfo;
 
 public class ViewOrdersActivity extends AppCompatActivity {
     

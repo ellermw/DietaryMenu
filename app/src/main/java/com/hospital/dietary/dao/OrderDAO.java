@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import com.hospital.dietary.DatabaseHelper;
 import com.hospital.dietary.models.PatientOrder;
+import com.hospital.dietary.models.Order;  // <-- ADD THIS LINE
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -282,4 +283,64 @@ public class OrderDAO {
         cursor.close();
         return count;
     }
+	/**
+	* Get all available dates that have orders
+	*/
+	public List<String> getAvailableDates() {
+		List<String> dates = new ArrayList<>();
+		SQLiteDatabase db = dbHelper.getReadableDatabase();
+    
+		String query = "SELECT DISTINCT DATE(mo.timestamp) as order_date " +
+				"FROM MealOrder mo " +
+                "ORDER BY order_date DESC";
+    
+		Cursor cursor = db.rawQuery(query, null);
+    
+		if (cursor.moveToFirst()) {
+			do {
+				dates.add(cursor.getString(0));
+			} while (cursor.moveToNext());
+		}
+    
+		cursor.close();
+		return dates;
+	}
+
+	/**
+	* Get orders by specific date - returns Order objects for ViewOrdersActivity
+	*/
+	public List<Order> getOrdersByDate(String date) {
+		List<Order> orders = new ArrayList<>();
+		SQLiteDatabase db = dbHelper.getReadableDatabase();
+    
+		String query = "SELECT DISTINCT " +
+				"p.patient_id, p.name, p.room_number, p.wing, d.name as diet_name, " +
+				"mo.timestamp, p.fluid_restriction, p.texture_modifications " +
+				"FROM Patient p " +
+				"JOIN MealOrder mo ON p.patient_id = mo.patient_id " +
+				"JOIN Diet d ON p.diet_id = d.diet_id " +
+				"WHERE DATE(mo.timestamp) = ? " +
+				"ORDER BY p.wing, p.room_number";
+    
+		Cursor cursor = db.rawQuery(query, new String[]{date});
+    
+		if (cursor.moveToFirst()) {
+			do {
+				Order order = new Order();
+				order.setPatientName(cursor.getString(cursor.getColumnIndexOrThrow("name")));
+				order.setWing(cursor.getString(cursor.getColumnIndexOrThrow("wing")));
+				order.setRoom(cursor.getString(cursor.getColumnIndexOrThrow("room_number")));
+				order.setDiet(cursor.getString(cursor.getColumnIndexOrThrow("diet_name")));
+				order.setOrderTime(cursor.getString(cursor.getColumnIndexOrThrow("timestamp")));
+				order.setFluidRestriction(cursor.getString(cursor.getColumnIndex("fluid_restriction")));
+				order.setTextureModifications(cursor.getString(cursor.getColumnIndex("texture_modifications")));
+				order.setOrderDate(date);
+            
+				orders.add(order);
+			} while (cursor.moveToNext());
+		}
+    
+		cursor.close();
+		return orders;
+	}
 }
