@@ -1024,7 +1024,11 @@ id activity_chooser_view_content
 id adaFriendlyCB
 id adaFriendlyCheckBox
 id add
+id addBreakfastDrinkButton
+id addBreakfastJuiceButton
+id addDinnerDrinkButton
 id addItemButton
+id addLunchDrinkButton
 id addUserButton
 id adminButton
 id adminPasswordInput
@@ -1061,7 +1065,7 @@ id breadOKCB
 id breakfastBread
 id breakfastColdCereal
 id breakfastDrinksContainer
-id breakfastFluidTracker
+id breakfastFluidDisplay
 id breakfastFruit
 id breakfastHotCereal
 id breakfastItemsContainer
@@ -1098,12 +1102,12 @@ id currentState
 id custom
 id customPanel
 id dateSpinner
-id dayGroup
 id decelerate
 id decelerateAndComplete
 id decor_content_parent
 id default_activity_button
 id deleteItemButton
+id deletePatientButton
 id deltaRelative
 id dependency_ordering
 id dialog_button
@@ -1112,7 +1116,7 @@ id dietText
 id dimensions
 id dinnerDessert
 id dinnerDrinksContainer
-id dinnerFluidTracker
+id dinnerFluidDisplay
 id dinnerItemsContainer
 id dinnerItemsText
 id dinnerNPOCheckbox
@@ -1210,7 +1214,7 @@ id loginProgress
 id logoutButton
 id lunchDessert
 id lunchDrinksContainer
-id lunchFluidTracker
+id lunchFluidDisplay
 id lunchItemsContainer
 id lunchItemsText
 id lunchNPOCheckbox
@@ -1260,9 +1264,10 @@ id passwordLabel
 id path
 id pathRelative
 id patientDetailsText
+id patientFirstNameInput
 id patientInfoButton
 id patientInfoText
-id patientNameInput
+id patientLastNameInput
 id patientNameText
 id patientsListView
 id pendingOrdersButton
@@ -1277,13 +1282,6 @@ id progress_circular
 id progress_horizontal
 id quantitySpinner
 id radio
-id radioFriday
-id radioMonday
-id radioSaturday
-id radioSunday
-id radioThursday
-id radioTuesday
-id radioWednesday
 id ratio
 id rectangles
 id refreshButton
@@ -1350,6 +1348,7 @@ id staticPostLayout
 id statusText
 id stop
 id submenuarrow
+id submitOrderButton
 id submit_area
 id supportScrollUp
 id tabMode

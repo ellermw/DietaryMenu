@@ -2,82 +2,82 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#f5f7fa">
+    android:padding="16dp"
+    android:background="#f5f5f5">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:orientation="vertical">
 
         <!-- Header -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Add New Patient"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="#2c3e50"
+            android:gravity="center"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Patient Information Form -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:background="@android:color/white"
-            android:padding="20dp"
-            android:layout_marginBottom="16dp"
-            android:elevation="2dp">
+            android:padding="16dp"
+            android:layout_marginBottom="16dp">
 
+            <!-- FIXED: Split Patient Name Fields -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="📝 New Patient"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:textColor="#1e3a8a"
-                android:gravity="center"
-                android:layout_marginBottom="8dp" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Create a new patient profile for meal planning"
-                android:textSize="16sp"
-                android:textColor="#64748b"
-                android:gravity="center" />
-
-        </LinearLayout>
-
-        <!-- Patient Form -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@android:color/white"
-            android:padding="20dp"
-            android:layout_marginBottom="16dp"
-            android:elevation="2dp">
-
-            <!-- Patient Name -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Patient Name *"
+                android:text="Patient Name"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:textColor="#1e3a8a"
+                android:textColor="#2c3e50"
                 android:layout_marginBottom="8dp" />
 
-            <EditText
-                android:id="@+id/patientNameInput"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:hint="Enter patient name"
-                android:background="@android:drawable/edit_text"
-                android:padding="12dp"
-                android:layout_marginBottom="16dp"
-                android:inputType="textPersonName" />
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="16dp">
+
+                <EditText
+                    android:id="@+id/patientFirstNameInput"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:hint="First Name"
+                    android:background="@android:drawable/edit_text"
+                    android:padding="12dp"
+                    android:layout_marginEnd="8dp"
+                    android:inputType="textPersonName|textCapWords" />
+
+                <EditText
+                    android:id="@+id/patientLastNameInput"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:hint="Last Name"
+                    android:background="@android:drawable/edit_text"
+                    android:padding="12dp"
+                    android:layout_marginStart="8dp"
+                    android:inputType="textPersonName|textCapWords" />
+
+            </LinearLayout>
 
             <!-- Wing Selection -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Wing *"
+                android:text="Wing"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:textColor="#1e3a8a"
+                android:textColor="#2c3e50"
                 android:layout_marginBottom="8dp" />
 
             <Spinner
@@ -91,10 +91,10 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Room Number *"
+                android:text="Room"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:textColor="#1e3a8a"
+                android:textColor="#2c3e50"
                 android:layout_marginBottom="8dp" />
 
             <Spinner
@@ -108,10 +108,10 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Diet Type *"
+                android:text="Diet Type"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:textColor="#1e3a8a"
+                android:textColor="#2c3e50"
                 android:layout_marginBottom="8dp" />
 
             <Spinner
@@ -125,10 +125,10 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Fluid Restriction *"
+                android:text="Fluid Restriction"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:textColor="#1e3a8a"
+                android:textColor="#2c3e50"
                 android:layout_marginBottom="8dp" />
 
             <Spinner
@@ -145,7 +145,7 @@
                 android:text="Texture Modifications"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:textColor="#1e3a8a"
+                android:textColor="#2c3e50"
                 android:layout_marginBottom="8dp" />
 
             <LinearLayout
@@ -159,32 +159,28 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Mechanical Ground"
-                    android:textSize="14sp"
-                    android:textColor="#374151" />
+                    android:textSize="14sp" />
 
                 <CheckBox
                     android:id="@+id/mechanicalChoppedCB"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Mechanical Chopped"
-                    android:textSize="14sp"
-                    android:textColor="#374151" />
+                    android:textSize="14sp" />
 
                 <CheckBox
                     android:id="@+id/biteSizeCB"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Bite Size"
-                    android:textSize="14sp"
-                    android:textColor="#374151" />
+                    android:textSize="14sp" />
 
                 <CheckBox
                     android:id="@+id/breadOKCB"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Bread OK"
-                    android:textSize="14sp"
-                    android:textColor="#374151" />
+                    android:textSize="14sp" />
 
                 <CheckBox
                     android:id="@+id/adaFriendlyCB"
@@ -192,7 +188,6 @@
                     android:layout_height="wrap_content"
                     android:text="ADA Friendly"
                     android:textSize="14sp"
-                    android:textColor="#374151"
                     android:visibility="gone" />
 
             </LinearLayout>
@@ -204,47 +199,52 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginBottom="16dp">
+            android:layout_marginTop="8dp">
 
             <Button
                 android:id="@+id/clearFormButton"
                 android:layout_width="0dp"
-                android:layout_height="56dp"
+                android:layout_height="48dp"
                 android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                android:text="🧹 Clear Form"
+                android:text="Clear Form"
                 android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="#dc2626"
-                android:background="#fef2f2"
-                android:elevation="2dp" />
+                android:background="#95a5a6"
+                android:textColor="@android:color/white"
+                android:layout_marginEnd="8dp" />
 
             <Button
                 android:id="@+id/savePatientButton"
                 android:layout_width="0dp"
-                android:layout_height="56dp"
+                android:layout_height="48dp"
                 android:layout_weight="1"
-                android:layout_marginStart="8dp"
-                android:text="💾 Save Patient"
+                android:text="Save Patient"
                 android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="#16a34a"
-                android:background="#f0fdf4"
-                android:elevation="2dp" />
+                android:background="#27ae60"
+                android:textColor="@android:color/white"
+                android:layout_marginStart="8dp" />
 
         </LinearLayout>
 
-        <!-- Back Button -->
         <Button
             android:id="@+id/backButton"
             android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:text="← Back to Patient Menu"
+            android:layout_height="48dp"
+            android:text="← Back to Patient List"
             android:textSize="16sp"
-            android:textStyle="bold"
+            android:background="#34495e"
             android:textColor="@android:color/white"
-            android:background="#dc2626"
-            android:elevation="2dp" />
+            android:layout_marginTop="8dp" />
+
+        <!-- Help Text -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="• Fill in all required fields to add a new patient\n• First Name and Last Name are required\n• Select appropriate wing and room\n• Choose diet type and fluid restrictions as needed\n• Check texture modifications if applicable"
+            android:textSize="12sp"
+            android:textColor="#7f8c8d"
+            android:background="#f8f9fa"
+            android:padding="12dp"
+            android:layout_marginTop="16dp" />
 
     </LinearLayout>
 

@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- app/src/main/res/layout/drink_item_layout.xml -->
-<!-- Layout file for individual drink items in the Clear Liquid diet and other drink containers -->
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:padding="8dp"
-    android:layout_marginBottom="4dp"
     android:background="@android:drawable/edit_text"
-    android:gravity="center_vertical">
+    android:layout_marginBottom="4dp">
 
     <!-- Drink Item Name -->
     <TextView
@@ -17,33 +13,46 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="2"
-        android:text="Drink Name"
+        android:text="Coffee"
         android:textSize="14sp"
         android:textStyle="bold"
-        android:textColor="@android:color/black"
-        android:paddingEnd="8dp" />
+        android:textColor="#2c3e50"
+        android:gravity="start|center_vertical" />
 
     <!-- Quantity -->
     <TextView
-        android:id="@+id/drinkQuantity"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="0.5"
+        android:text="Qty:"
+        android:textSize="12sp"
+        android:textColor="#7f8c8d"
+        android:layout_marginEnd="4dp"
+        android:gravity="center_vertical" />
+
+    <TextView
+        android:id="@+id/drinkQuantity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="1"
         android:textSize="14sp"
+        android:textStyle="bold"
+        android:textColor="#2c3e50"
+        android:minWidth="24dp"
         android:gravity="center"
-        android:textColor="@android:color/black" />
+        android:layout_marginEnd="8dp" />
 
     <!-- Fluid Volume -->
     <TextView
         android:id="@+id/drinkFluidML"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="200 ml"
+        android:text="240ml"
         android:textSize="12sp"
+        android:textColor="#e74c3c"
+        android:textStyle="bold"
+        android:minWidth="48dp"
         android:gravity="center"
-        android:textColor="@android:color/darker_gray" />
+        android:layout_marginEnd="8dp" />
 
     <!-- Remove Button -->
     <Button
@@ -53,9 +62,8 @@
         android:text="×"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:background="@android:drawable/btn_default"
         android:textColor="@android:color/white"
-        android:layout_marginStart="8dp"
-        android:padding="0dp" />
+        android:background="#e74c3c"
+        android:gravity="center" />
 
 </LinearLayout>

@@ -3,6 +3,8 @@ package com.hospital.dietary;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,8 +23,10 @@ public class PatientInfoActivity extends AppCompatActivity {
     private String currentUserRole;
     private String currentUserFullName;
     
-    // UI Components
-    private EditText patientNameInput;
+    // UI Components - FIXED: Split patient name into first and last
+    private EditText patientFirstNameInput;
+    private EditText patientLastNameInput;
+    private EditText searchInput;
     private Spinner wingSpinner;
     private EditText roomNumberInput;
     private Spinner dietSpinner;
@@ -33,15 +37,22 @@ public class PatientInfoActivity extends AppCompatActivity {
     private CheckBox breadOKCB;
     private CheckBox adaFriendlyCB;
     private Button savePatientButton;
+    private Button newPatientButton;
+    private Button deletePatientButton;
     private Button backButton;
+    private ListView patientsListView;
     
-    // Data lists - Updated diet types as requested
+    // Data lists - FIXED: Updated with correct values
     private List<String> wings = Arrays.asList("1 South", "2 North", "Labor and Delivery", 
                                               "2 West", "3 North", "ICU");
     private List<String> diets = Arrays.asList("Regular", "ADA", "Cardiac", "Renal", 
                                               "Puree", "Full Liquid", "Clear Liquid");
-    private List<String> fluidRestrictions = Arrays.asList("None", "1000ml", "1200ml", 
-                                                          "1500ml", "2000ml", "2500ml");
+    private List<String> fluidRestrictions = Arrays.asList("None", "1000ml", "1500ml", "2000ml");
+    
+    private List<Patient> allPatients;
+    private List<Patient> filteredPatients;
+    private ArrayAdapter<Patient> patientsAdapter;
+    private Patient selectedPatient = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,15 +71,19 @@ public class PatientInfoActivity extends AppCompatActivity {
         // Initialize UI
         initializeUI();
         
+        // Load data
+        loadPatients();
+        loadSpinnerData();
+        
         // Setup listeners
         setupListeners();
-        
-        // Load initial data
-        loadInitialData();
     }
     
     private void initializeUI() {
-        patientNameInput = findViewById(R.id.patientNameInput);
+        // FIXED: Initialize split name inputs
+        patientFirstNameInput = findViewById(R.id.patientFirstNameInput);
+        patientLastNameInput = findViewById(R.id.patientLastNameInput);
+        searchInput = findViewById(R.id.searchInput);
         wingSpinner = findViewById(R.id.wingSpinner);
         roomNumberInput = findViewById(R.id.roomNumberInput);
         dietSpinner = findViewById(R.id.dietSpinner);
@@ -79,147 +94,175 @@ public class PatientInfoActivity extends AppCompatActivity {
         breadOKCB = findViewById(R.id.breadOKCB);
         adaFriendlyCB = findViewById(R.id.adaFriendlyCB);
         savePatientButton = findViewById(R.id.savePatientButton);
+        newPatientButton = findViewById(R.id.newPatientButton);
+        deletePatientButton = findViewById(R.id.deletePatientButton);
         backButton = findViewById(R.id.backButton);
+        patientsListView = findViewById(R.id.patientsListView);
         
-        // Set title
-        setTitle("Patient Information");
+        // Initially disable save and delete buttons
+        savePatientButton.setEnabled(false);
+        deletePatientButton.setEnabled(false);
     }
     
-    private void setupListeners() {
-        savePatientButton.setOnClickListener(v -> savePatientInfo());
+    private void loadPatients() {
+        allPatients = patientDAO.getAllPatients();
+        filteredPatients = allPatients;
         
-        backButton.setOnClickListener(v -> finish());
-        
-        // Show/hide ADA checkbox based on diet selection
-        dietSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        // FIXED: Custom adapter to display full name (first + last)
+        patientsAdapter = new ArrayAdapter<Patient>(this, android.R.layout.simple_list_item_1, filteredPatients) {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selectedDiet = diets.get(position);
-                if ("Full Liquid".equals(selectedDiet) || "Clear Liquid".equals(selectedDiet)) {
-                    adaFriendlyCB.setVisibility(View.VISIBLE);
-                } else {
-                    adaFriendlyCB.setVisibility(View.GONE);
-                    adaFriendlyCB.setChecked(false);
+            public View getView(int position, View convertView, android.view.ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                Patient patient = getItem(position);
+                TextView textView = (TextView) view;
+                if (patient != null) {
+                    String displayText = patient.getPatientName() + " - " + patient.getRoomInfo();
+                    textView.setText(displayText);
                 }
+                return view;
             }
-            
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
+        };
+        
+        patientsListView.setAdapter(patientsAdapter);
     }
     
-    private void loadInitialData() {
-        // Setup Wing Spinner
-        ArrayAdapter<String> wingAdapter = new ArrayAdapter<>(this, 
-            android.R.layout.simple_spinner_item, wings);
+    private void loadSpinnerData() {
+        // Load wings
+        ArrayAdapter<String> wingAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, wings);
         wingAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         wingSpinner.setAdapter(wingAdapter);
         
-        // Setup Diet Spinner
-        ArrayAdapter<String> dietAdapter = new ArrayAdapter<>(this, 
-            android.R.layout.simple_spinner_item, diets);
+        // FIXED: Load only the 7 specified diet types
+        ArrayAdapter<String> dietAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, diets);
         dietAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         dietSpinner.setAdapter(dietAdapter);
         
-        // Setup Fluid Restriction Spinner
-        ArrayAdapter<String> fluidAdapter = new ArrayAdapter<>(this, 
-            android.R.layout.simple_spinner_item, fluidRestrictions);
+        // FIXED: Load only the 3 specified fluid restriction values (plus None)
+        ArrayAdapter<String> fluidAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, fluidRestrictions);
         fluidAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         fluidRestrictionSpinner.setAdapter(fluidAdapter);
-        
-        // Hide ADA checkbox initially
-        adaFriendlyCB.setVisibility(View.GONE);
     }
     
-    private void savePatientInfo() {
-        // Validate input
-        if (!validateInput()) {
-            return;
-        }
-        
-        // Get form data
-        String patientName = patientNameInput.getText().toString().trim();
-        String wing = wings.get(wingSpinner.getSelectedItemPosition());
-        String roomNumber = roomNumberInput.getText().toString().trim();
-        String diet = diets.get(dietSpinner.getSelectedItemPosition());
-        String fluidRestriction = fluidRestrictions.get(fluidRestrictionSpinner.getSelectedItemPosition());
-        
-        // Build texture modifications string
-        StringBuilder textureModifications = new StringBuilder();
-        if (mechanicalGroundCB.isChecked()) {
-            textureModifications.append("Mechanical Ground, ");
-        }
-        if (mechanicalChoppedCB.isChecked()) {
-            textureModifications.append("Mechanical Chopped, ");
-        }
-        if (biteSizeCB.isChecked()) {
-            textureModifications.append("Bite Size, ");
-        }
-        if (breadOKCB.isChecked()) {
-            textureModifications.append("Bread OK, ");
-        }
-        
-        // Remove trailing comma and space
-        String textureModificationsStr = textureModifications.toString();
-        if (textureModificationsStr.endsWith(", ")) {
-            textureModificationsStr = textureModificationsStr.substring(0, textureModificationsStr.length() - 2);
-        }
-        
-        // Handle ADA-friendly for Full Liquid and Clear Liquid
-        if (adaFriendlyCB.isChecked() && adaFriendlyCB.getVisibility() == View.VISIBLE) {
-            diet = diet + " (ADA)";
-        }
-        
-        // Create patient object
-        Patient patient = new Patient();
-        patient.setName(patientName);
-        patient.setWing(wing);
-        patient.setRoomNumber(roomNumber);
-        patient.setDiet(diet);
-        patient.setFluidRestriction(fluidRestriction);
-        patient.setTextureModifications(textureModificationsStr);
-        
-        // Save to database
-        try {
-            long result = patientDAO.addPatient(patient);
-            if (result > 0) {
-                Toast.makeText(this, "Patient information saved successfully!", Toast.LENGTH_SHORT).show();
-                
-                // Clear form for next patient
-                clearForm();
-                
-                // Option to go to meal planning
-                showMealPlanningOption(patient);
-            } else {
-                Toast.makeText(this, "Failed to save patient information", Toast.LENGTH_SHORT).show();
+    private void setupListeners() {
+        // FIXED: Enhanced search to work with first name, last name, or full name
+        searchInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                filterPatients(s.toString());
             }
-        } catch (Exception e) {
-            Toast.makeText(this, "Error saving patient: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+        
+        patientsListView.setOnItemClickListener((parent, view, position, id) -> {
+            selectedPatient = filteredPatients.get(position);
+            populatePatientDetails(selectedPatient);
+            savePatientButton.setEnabled(true);
+            deletePatientButton.setEnabled(true);
+        });
+        
+        savePatientButton.setOnClickListener(v -> savePatient());
+        
+        newPatientButton.setOnClickListener(v -> {
+            Intent intent = new Intent(this, NewPatientActivity.class);
+            intent.putExtra("current_user", currentUsername);
+            intent.putExtra("user_role", currentUserRole);
+            intent.putExtra("user_full_name", currentUserFullName);
+            startActivity(intent);
+        });
+        
+        deletePatientButton.setOnClickListener(v -> confirmDeletePatient());
+        
+        backButton.setOnClickListener(v -> {
+            Intent intent = new Intent(this, MainMenuActivity.class);
+            intent.putExtra("current_user", currentUsername);
+            intent.putExtra("user_role", currentUserRole);
+            intent.putExtra("user_full_name", currentUserFullName);
+            startActivity(intent);
+            finish();
+        });
+    }
+    
+    // FIXED: Enhanced search to handle split names
+    private void filterPatients(String searchText) {
+        filteredPatients.clear();
+        
+        if (searchText.isEmpty()) {
+            filteredPatients.addAll(allPatients);
+        } else {
+            String searchLower = searchText.toLowerCase();
+            for (Patient patient : allPatients) {
+                // Search in first name, last name, full name, wing, or room number
+                if ((patient.getPatientFirstName() != null && patient.getPatientFirstName().toLowerCase().contains(searchLower)) ||
+                    (patient.getPatientLastName() != null && patient.getPatientLastName().toLowerCase().contains(searchLower)) ||
+                    patient.getPatientName().toLowerCase().contains(searchLower) ||
+                    patient.getWing().toLowerCase().contains(searchLower) ||
+                    patient.getRoomNumber().toLowerCase().contains(searchLower)) {
+                    filteredPatients.add(patient);
+                }
+            }
+        }
+        
+        patientsAdapter.notifyDataSetChanged();
+        
+        // Clear selection if current patient is no longer in filtered list
+        if (selectedPatient != null && !filteredPatients.contains(selectedPatient)) {
+            clearPatientDetails();
         }
     }
     
-    private boolean validateInput() {
-        // Validate patient name
-        if (patientNameInput.getText().toString().trim().isEmpty()) {
-            patientNameInput.setError("Patient name is required");
-            patientNameInput.requestFocus();
-            return false;
+    // FIXED: Populate form with split names
+    private void populatePatientDetails(Patient patient) {
+        patientFirstNameInput.setText(patient.getPatientFirstName() != null ? patient.getPatientFirstName() : "");
+        patientLastNameInput.setText(patient.getPatientLastName() != null ? patient.getPatientLastName() : "");
+        
+        // Set wing spinner
+        int wingPosition = wings.indexOf(patient.getWing());
+        if (wingPosition >= 0) {
+            wingSpinner.setSelection(wingPosition);
         }
         
-        // Validate room number
-        if (roomNumberInput.getText().toString().trim().isEmpty()) {
-            roomNumberInput.setError("Room number is required");
-            roomNumberInput.requestFocus();
-            return false;
+        roomNumberInput.setText(patient.getRoomNumber());
+        
+        // Set diet spinner
+        int dietPosition = diets.indexOf(patient.getDiet());
+        if (dietPosition >= 0) {
+            dietSpinner.setSelection(dietPosition);
         }
         
-        return true;
+        // Set fluid restriction spinner
+        String fluidRestriction = patient.getFluidRestriction();
+        if (fluidRestriction == null || fluidRestriction.isEmpty()) {
+            fluidRestriction = "None";
+        }
+        int fluidPosition = fluidRestrictions.indexOf(fluidRestriction);
+        if (fluidPosition >= 0) {
+            fluidRestrictionSpinner.setSelection(fluidPosition);
+        } else {
+            fluidRestrictionSpinner.setSelection(0); // Default to "None"
+        }
+        
+        // Set texture modifications
+        String textureModifications = patient.getTextureModifications();
+        mechanicalGroundCB.setChecked(textureModifications != null && textureModifications.contains("Mechanical Ground"));
+        mechanicalChoppedCB.setChecked(textureModifications != null && textureModifications.contains("Mechanical Chopped"));
+        biteSizeCB.setChecked(textureModifications != null && textureModifications.contains("Bite Size"));
+        breadOKCB.setChecked(textureModifications != null && textureModifications.contains("Bread OK"));
+        
+        // Set ADA friendly (if applicable)
+        adaFriendlyCB.setChecked(patient.isADADiet());
     }
     
-    private void clearForm() {
-        patientNameInput.setText("");
-        roomNumberInput.setText("");
+    private void clearPatientDetails() {
+        selectedPatient = null;
+        patientFirstNameInput.setText("");
+        patientLastNameInput.setText("");
         wingSpinner.setSelection(0);
+        roomNumberInput.setText("");
         dietSpinner.setSelection(0);
         fluidRestrictionSpinner.setSelection(0);
         mechanicalGroundCB.setChecked(false);
@@ -227,27 +270,114 @@ public class PatientInfoActivity extends AppCompatActivity {
         biteSizeCB.setChecked(false);
         breadOKCB.setChecked(false);
         adaFriendlyCB.setChecked(false);
-        adaFriendlyCB.setVisibility(View.GONE);
+        savePatientButton.setEnabled(false);
+        deletePatientButton.setEnabled(false);
     }
     
-    private void showMealPlanningOption(Patient patient) {
+    // FIXED: Save patient with split names
+    private void savePatient() {
+        if (selectedPatient == null) {
+            Toast.makeText(this, "No patient selected", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        
+        String firstName = patientFirstNameInput.getText().toString().trim();
+        String lastName = patientLastNameInput.getText().toString().trim();
+        String wing = (String) wingSpinner.getSelectedItem();
+        String roomNumber = roomNumberInput.getText().toString().trim();
+        String diet = (String) dietSpinner.getSelectedItem();
+        String fluidRestriction = (String) fluidRestrictionSpinner.getSelectedItem();
+        
+        // Validation
+        if (firstName.isEmpty()) {
+            patientFirstNameInput.setError("First name is required");
+            patientFirstNameInput.requestFocus();
+            return;
+        }
+        
+        if (lastName.isEmpty()) {
+            patientLastNameInput.setError("Last name is required");
+            patientLastNameInput.requestFocus();
+            return;
+        }
+        
+        if (roomNumber.isEmpty()) {
+            roomNumberInput.setError("Room number is required");
+            roomNumberInput.requestFocus();
+            return;
+        }
+        
+        // Check for room conflicts (excluding current patient)
+        for (Patient patient : allPatients) {
+            if (patient.getPatientId() != selectedPatient.getPatientId() &&
+                patient.getWing().equals(wing) && patient.getRoomNumber().equals(roomNumber)) {
+                Toast.makeText(this, "Room " + roomNumber + " in " + wing + " is already occupied", Toast.LENGTH_LONG).show();
+                return;
+            }
+        }
+        
+        // FIXED: Update patient with split names
+        selectedPatient.setPatientFirstName(firstName);
+        selectedPatient.setPatientLastName(lastName);
+        selectedPatient.setWing(wing);
+        selectedPatient.setRoomNumber(roomNumber);
+        selectedPatient.setDiet(diet);
+        selectedPatient.setFluidRestriction(fluidRestriction.equals("None") ? null : fluidRestriction);
+        
+        // Set texture modifications
+        StringBuilder textureModifications = new StringBuilder();
+        if (mechanicalGroundCB.isChecked()) textureModifications.append("Mechanical Ground, ");
+        if (mechanicalChoppedCB.isChecked()) textureModifications.append("Mechanical Chopped, ");
+        if (biteSizeCB.isChecked()) textureModifications.append("Bite Size, ");
+        if (breadOKCB.isChecked()) textureModifications.append("Bread OK, ");
+        
+        String textureModsStr = textureModifications.toString();
+        if (textureModsStr.endsWith(", ")) {
+            textureModsStr = textureModsStr.substring(0, textureModsStr.length() - 2);
+        }
+        selectedPatient.setTextureModifications(textureModsStr.isEmpty() ? null : textureModsStr);
+        
+        // Save to database
+        boolean success = patientDAO.updatePatient(selectedPatient);
+        
+        if (success) {
+            Toast.makeText(this, "Patient updated successfully", Toast.LENGTH_SHORT).show();
+            loadPatients(); // Reload to reflect changes
+            clearPatientDetails();
+        } else {
+            Toast.makeText(this, "Error updating patient", Toast.LENGTH_SHORT).show();
+        }
+    }
+    
+    private void confirmDeletePatient() {
+        if (selectedPatient == null) {
+            Toast.makeText(this, "No patient selected", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        
         new AlertDialog.Builder(this)
-            .setTitle("Patient Saved")
-            .setMessage("Would you like to plan meals for " + patient.getName() + " now?")
-            .setPositiveButton("Yes", (dialog, which) -> {
-                // Go to meal planning activity
-                Intent intent = new Intent(this, MealPlanningActivity.class);
-                intent.putExtra("patient_id", patient.getPatientId());
-                intent.putExtra("patient_name", patient.getName());
-                intent.putExtra("wing", patient.getWing());
-                intent.putExtra("room", patient.getRoomNumber());
-                intent.putExtra("diet", patient.getDiet());
-                intent.putExtra("current_user", currentUsername);
-                intent.putExtra("user_role", currentUserRole);
-                intent.putExtra("user_full_name", currentUserFullName);
-                startActivity(intent);
+            .setTitle("Delete Patient")
+            .setMessage("Are you sure you want to delete " + selectedPatient.getPatientName() + "?\n\n" +
+                       "This action cannot be undone.")
+            .setPositiveButton("Delete", (dialog, which) -> {
+                boolean success = patientDAO.deletePatient(selectedPatient.getPatientId());
+                if (success) {
+                    Toast.makeText(this, "Patient deleted successfully", Toast.LENGTH_SHORT).show();
+                    loadPatients(); // Reload to reflect changes
+                    clearPatientDetails();
+                } else {
+                    Toast.makeText(this, "Error deleting patient", Toast.LENGTH_SHORT).show();
+                }
             })
-            .setNegativeButton("No", null)
+            .setNegativeButton("Cancel", null)
             .show();
+    }
+    
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Reload patients when returning to this activity
+        loadPatients();
+        clearPatientDetails();
     }
 }
