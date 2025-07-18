@@ -28,7 +28,7 @@ public class NewPatientActivity extends AppCompatActivity {
     private Spinner dietSpinner;
     private Spinner fluidRestrictionSpinner;
     
-    // FIXED: Texture modification checkboxes
+    // Texture modification checkboxes
     private CheckBox mechanicalGroundCB;
     private CheckBox mechanicalChoppedCB;
     private CheckBox biteSizeCB;
@@ -60,14 +60,11 @@ public class NewPatientActivity extends AppCompatActivity {
         setupSpinners();
         setupListeners();
         
-        // FIXED: Initialize texture modification validation
-        initializeTextureValidation();
-        
         setTitle("Add New Patient");
     }
     
     private void initializeUI() {
-        // Patient Information - FIXED: Match layout XML IDs
+        // Patient Information - Match layout XML IDs
         patientFirstNameEditText = findViewById(R.id.patientFirstNameEditText);
         patientLastNameEditText = findViewById(R.id.patientLastNameEditText);
         wingSpinner = findViewById(R.id.wingSpinner);
@@ -75,7 +72,7 @@ public class NewPatientActivity extends AppCompatActivity {
         dietSpinner = findViewById(R.id.dietSpinner);
         fluidRestrictionSpinner = findViewById(R.id.fluidRestrictionSpinner);
         
-        // FIXED: Texture modification checkboxes
+        // Texture modification checkboxes
         mechanicalGroundCB = findViewById(R.id.mechanicalGroundCB);
         mechanicalChoppedCB = findViewById(R.id.mechanicalChoppedCB);
         biteSizeCB = findViewById(R.id.biteSizeCB);
@@ -104,56 +101,8 @@ public class NewPatientActivity extends AppCompatActivity {
     }
     
     private void setupListeners() {
-        savePatientButton.setOnClickListener(v -> {
-            // FIXED: Validate texture modifications before saving
-            if (validateTextureModifications()) {
-                savePatient();
-            }
-        });
-        
+        savePatientButton.setOnClickListener(v -> savePatient());
         backButton.setOnClickListener(v -> finish());
-    }
-    
-    // FIXED: Texture modification validation logic
-    private void initializeTextureValidation() {
-        setupTextureModificationListeners();
-    }
-    
-    private void setupTextureModificationListeners() {
-        mechanicalGroundCB.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked) {
-                validateTextureModifications();
-            }
-        });
-        
-        mechanicalChoppedCB.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked) {
-                validateTextureModifications();
-            }
-        });
-        
-        breadOKCB.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            // No special action needed here - just keep for consistency
-        });
-    }
-    
-    private boolean validateTextureModifications() {
-        boolean mechanicalGround = mechanicalGroundCB.isChecked();
-        boolean mechanicalChopped = mechanicalChoppedCB.isChecked();
-        boolean breadOK = breadOKCB.isChecked();
-        
-        // No validation needed during patient creation since no bread items are being selected yet
-        // This will be enforced during meal planning
-        return true;
-    }
-    
-    private void showTextureValidationDialog(String message) {
-        new AlertDialog.Builder(this)
-            .setTitle("Texture Modification Info")
-            .setMessage(message)
-            .setPositiveButton("OK", null)
-            .setIcon(android.R.drawable.ic_dialog_info)
-            .show();
     }
     
     private void savePatient() {
@@ -163,13 +112,23 @@ public class NewPatientActivity extends AppCompatActivity {
         
         String firstName = patientFirstNameEditText.getText().toString().trim();
         String lastName = patientLastNameEditText.getText().toString().trim();
-        String wing = (String) wingSpinner.getSelectedItem();
+        String wing = wingSpinner.getSelectedItem().toString();
         String roomNumber = roomNumberEditText.getText().toString().trim();
-        String diet = (String) dietSpinner.getSelectedItem();
-        String fluidRestriction = (String) fluidRestrictionSpinner.getSelectedItem();
-        
-        // Build texture modifications string from checkboxes
+        String diet = dietSpinner.getSelectedItem().toString();
+        String fluidRestriction = fluidRestrictionSpinner.getSelectedItem().toString();
         String textureModifications = getTextureModifications();
+        
+        // Check if patient already exists in the same room
+        if (patientDAO.isRoomOccupied(wing, roomNumber)) {
+            new AlertDialog.Builder(this)
+                .setTitle("Room Occupied")
+                .setMessage("A patient already exists in " + wing + " - Room " + roomNumber + ". Please choose a different room.")
+                .setPositiveButton("OK", null)
+                .show();
+            roomNumberEditText.setError("Room already occupied");
+            roomNumberEditText.requestFocus();
+            return;
+        }
         
         // Create patient object
         Patient patient = new Patient();
@@ -178,22 +137,14 @@ public class NewPatientActivity extends AppCompatActivity {
         patient.setWing(wing);
         patient.setRoomNumber(roomNumber);
         patient.setDiet(diet);
-        patient.setFluidRestriction(fluidRestriction.equals("None") ? null : fluidRestriction);
-        patient.setTextureModifications(textureModifications.equals("None") ? null : textureModifications);
+        patient.setFluidRestriction(fluidRestriction.equals("None") ? "" : fluidRestriction);
+        patient.setTextureModifications(textureModifications);
         
-        // Set meal completion status to false (new patient)
-        patient.setBreakfastComplete(false);
-        patient.setLunchComplete(false);
-        patient.setDinnerComplete(false);
-        patient.setBreakfastNPO(false);
-        patient.setLunchNPO(false);
-        patient.setDinnerNPO(false);
-        
-        // Check for room conflicts
-        if (patientDAO.isRoomOccupied(wing, roomNumber)) {
+        // Validate patient data
+        if (patient.getPatientFirstName().isEmpty() || patient.getPatientLastName().isEmpty()) {
             new AlertDialog.Builder(this)
-                .setTitle("Room Conflict")
-                .setMessage("Room " + roomNumber + " in " + wing + " wing is already occupied.\n\nPlease select a different room.")
+                .setTitle("Validation Error")
+                .setMessage("Patient name cannot be empty. Please check all fields.")
                 .setPositiveButton("OK", null)
                 .show();
             return;
@@ -245,10 +196,17 @@ public class NewPatientActivity extends AppCompatActivity {
             return false;
         }
         
+        // Validate room number format (basic validation)
+        if (!roomNumber.matches("\\d+[A-Z]?")) {
+            roomNumberEditText.setError("Invalid room number format");
+            roomNumberEditText.requestFocus();
+            return false;
+        }
+        
         return true;
     }
     
-    // FIXED: Build texture modifications from checkboxes
+    // Build texture modifications from checkboxes
     private String getTextureModifications() {
         List<String> modifications = new ArrayList<>();
         
@@ -273,6 +231,11 @@ public class NewPatientActivity extends AppCompatActivity {
         mechanicalChoppedCB.setChecked(false);
         biteSizeCB.setChecked(false);
         breadOKCB.setChecked(false);
+        
+        // Clear any errors
+        patientFirstNameEditText.setError(null);
+        patientLastNameEditText.setError(null);
+        roomNumberEditText.setError(null);
         
         // Focus on first field
         patientFirstNameEditText.requestFocus();

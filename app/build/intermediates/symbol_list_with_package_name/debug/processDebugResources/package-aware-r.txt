@@ -1166,9 +1166,7 @@ id expand_activities_button
 id expanded_menu
 id finishedOrdersButton
 id finishedOrdersListView
-id firstNameEditText
 id flip
-id fluidRestrictionEditText
 id fluidRestrictionSpinner
 id fluidText
 id forever
@@ -1217,7 +1215,6 @@ id itemsListView
 id itemsMenuButton
 id jumpToEnd
 id jumpToStart
-id lastNameEditText
 id layout
 id left
 id legacy
@@ -1289,9 +1286,11 @@ id path
 id pathRelative
 id patientCountText
 id patientDetailsText
+id patientFirstNameEditText
 id patientFirstNameInput
 id patientInfoButton
 id patientInfoText
+id patientLastNameEditText
 id patientLastNameInput
 id patientNameText
 id patientsListView
@@ -1324,6 +1323,7 @@ id right_icon
 id right_side
 id roleSpinner
 id roleText
+id roomNumberEditText
 id roomNumberInput
 id roomSpinner
 id saveOrderButton
@@ -1403,7 +1403,6 @@ id text2
 id textSpacerNoButtons
 id textSpacerNoTitle
 id textureContainer
-id textureModificationsEditText
 id textureText
 id time
 id title
