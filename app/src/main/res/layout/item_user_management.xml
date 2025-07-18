@@ -1,0 +1,72 @@
+<!-- ================================================================================================ -->
+<!-- FILE: app/src/main/res/layout/item_user_management.xml -->
+<!-- ================================================================================================ -->
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="?android:attr/selectableItemBackground">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="4dp">
+
+        <TextView
+            android:id="@+id/fullNameText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Full Name"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#1f2937" />
+
+        <TextView
+            android:id="@+id/statusText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="✅ Active"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/usernameText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@username"
+        android:textSize="14sp"
+        android:textColor="#6b7280"
+        android:layout_marginBottom="4dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/roleText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="👑 Role"
+            android:textSize="14sp"
+            android:textColor="#374151" />
+
+        <TextView
+            android:id="@+id/createdDateText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="📅 Created Date"
+            android:textSize="12sp"
+            android:textColor="#9ca3af" />
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -31,7 +31,7 @@ public class NewPatientActivity extends AppCompatActivity {
     private Button savePatientButton;
     private Button backButton;
     
-    // Wing to room mapping
+    // Wing to room mapping with correct hospital layout
     private Map<String, List<String>> wingRoomMap = new HashMap<>();
 
     @Override
@@ -70,18 +70,62 @@ public class NewPatientActivity extends AppCompatActivity {
     }
     
     private void setupWingRoomMapping() {
-        // Define wing to room mappings - customize based on your hospital layout
-        wingRoomMap.put("North Wing", Arrays.asList("101", "102", "103", "104", "105", "106", "107", "108", "109", "110"));
-        wingRoomMap.put("South Wing", Arrays.asList("201", "202", "203", "204", "205", "206", "207", "208", "209", "210"));
-        wingRoomMap.put("East Wing", Arrays.asList("301", "302", "303", "304", "305", "306", "307", "308", "309", "310"));
-        wingRoomMap.put("West Wing", Arrays.asList("401", "402", "403", "404", "405", "406", "407", "408", "409", "410"));
-        wingRoomMap.put("ICU", Arrays.asList("ICU-1", "ICU-2", "ICU-3", "ICU-4", "ICU-5", "ICU-6", "ICU-7", "ICU-8"));
-        wingRoomMap.put("Pediatrics", Arrays.asList("P101", "P102", "P103", "P104", "P105", "P106", "P107", "P108"));
+        // Define wing to room mappings based on hospital layout
+        
+        // 1 South - 106 through 122
+        List<String> oneSouthRooms = new ArrayList<>();
+        for (int i = 106; i <= 122; i++) {
+            oneSouthRooms.add(String.valueOf(i));
+        }
+        wingRoomMap.put("1 South", oneSouthRooms);
+        
+        // 2 North - 250 through 264
+        List<String> twoNorthRooms = new ArrayList<>();
+        for (int i = 250; i <= 264; i++) {
+            twoNorthRooms.add(String.valueOf(i));
+        }
+        wingRoomMap.put("2 North", twoNorthRooms);
+        
+        // Labor and Delivery - LDR1 through LDR6
+        List<String> laborDeliveryRooms = new ArrayList<>();
+        for (int i = 1; i <= 6; i++) {
+            laborDeliveryRooms.add("LDR" + i);
+        }
+        wingRoomMap.put("Labor and Delivery", laborDeliveryRooms);
+        
+        // 2 West - 225 through 248
+        List<String> twoWestRooms = new ArrayList<>();
+        for (int i = 225; i <= 248; i++) {
+            twoWestRooms.add(String.valueOf(i));
+        }
+        wingRoomMap.put("2 West", twoWestRooms);
+        
+        // 3 North - 349 through 371
+        List<String> threeNorthRooms = new ArrayList<>();
+        for (int i = 349; i <= 371; i++) {
+            threeNorthRooms.add(String.valueOf(i));
+        }
+        wingRoomMap.put("3 North", threeNorthRooms);
+        
+        // ICU - ICU1 through ICU13
+        List<String> icuRooms = new ArrayList<>();
+        for (int i = 1; i <= 13; i++) {
+            icuRooms.add("ICU" + i);
+        }
+        wingRoomMap.put("ICU", icuRooms);
     }
     
     private void setupSpinners() {
-        // Wing spinner
-        List<String> wings = new ArrayList<>(wingRoomMap.keySet());
+        // Wing spinner - in the specified order
+        List<String> wings = Arrays.asList(
+            "1 South", 
+            "2 North", 
+            "Labor and Delivery", 
+            "2 West", 
+            "3 North", 
+            "ICU"
+        );
+        
         ArrayAdapter<String> wingAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, wings);
         wingAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         wingSpinner.setAdapter(wingAdapter);
@@ -92,7 +136,7 @@ public class NewPatientActivity extends AppCompatActivity {
         dietAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         dietSpinner.setAdapter(dietAdapter);
         
-        // Set initial room options
+        // Set initial room options for the first wing
         updateRoomSpinner((String) wingSpinner.getSelectedItem());
     }
     

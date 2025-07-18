@@ -2,7 +2,9 @@ package com.hospital.dietary;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -17,6 +19,12 @@ public class MainMenuActivity extends AppCompatActivity {
     private Button finishedOrdersButton;
     private Button retiredOrdersButton;
     private Button logoutButton;
+    
+    // Admin-only buttons
+    private Button userManagementButton;
+    private Button itemManagementButton;
+    private LinearLayout adminSection;
+    
     private TextView welcomeText;
 
     @Override
@@ -31,6 +39,7 @@ public class MainMenuActivity extends AppCompatActivity {
         
         initializeUI();
         setupListeners();
+        configureAdminAccess();
     }
     
     private void initializeUI() {
@@ -39,12 +48,27 @@ public class MainMenuActivity extends AppCompatActivity {
         finishedOrdersButton = findViewById(R.id.finishedOrdersButton);
         retiredOrdersButton = findViewById(R.id.retiredOrdersButton);
         logoutButton = findViewById(R.id.logoutButton);
+        
+        // Admin-only UI elements
+        adminSection = findViewById(R.id.adminSection);
+        userManagementButton = findViewById(R.id.userManagementButton);
+        itemManagementButton = findViewById(R.id.itemManagementButton);
+        
         welcomeText = findViewById(R.id.welcomeText);
         
         // Set welcome text
         welcomeText.setText("Welcome, " + (currentUserFullName != null ? currentUserFullName : currentUsername) + "!");
         
         setTitle("Dietary Menu - Main Menu");
+    }
+    
+    private void configureAdminAccess() {
+        // Show/hide admin options based on user role
+        if ("admin".equalsIgnoreCase(currentUserRole)) {
+            adminSection.setVisibility(View.VISIBLE);
+        } else {
+            adminSection.setVisibility(View.GONE);
+        }
     }
     
     private void setupListeners() {
@@ -79,6 +103,27 @@ public class MainMenuActivity extends AppCompatActivity {
             intent.putExtra("user_full_name", currentUserFullName);
             startActivity(intent);
         });
+        
+        // Admin-only button listeners
+        if (userManagementButton != null) {
+            userManagementButton.setOnClickListener(v -> {
+                Intent intent = new Intent(this, UserManagementActivity.class);
+                intent.putExtra("current_user", currentUsername);
+                intent.putExtra("user_role", currentUserRole);
+                intent.putExtra("user_full_name", currentUserFullName);
+                startActivity(intent);
+            });
+        }
+        
+        if (itemManagementButton != null) {
+            itemManagementButton.setOnClickListener(v -> {
+                Intent intent = new Intent(this, ItemManagementActivity.class);
+                intent.putExtra("current_user", currentUsername);
+                intent.putExtra("user_role", currentUserRole);
+                intent.putExtra("user_full_name", currentUserFullName);
+                startActivity(intent);
+            });
+        }
         
         logoutButton.setOnClickListener(v -> {
             // Return to login screen

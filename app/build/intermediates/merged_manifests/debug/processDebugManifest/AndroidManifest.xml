@@ -21,7 +21,6 @@
         android:extractNativeLibs="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:testOnly="true"
         android:theme="@style/Theme.DietaryMenu" >
 
         <!-- Login Activity - Entry Point -->
@@ -36,7 +35,7 @@
             </intent-filter>
         </activity>
 
-        <!-- Main Menu Activity - Updated main menu with new design -->
+        <!-- Main Menu Activity - Updated main menu with admin options -->
         <activity
             android:name="com.hospital.dietary.MainMenuActivity"
             android:exported="false"
@@ -66,7 +65,7 @@
             android:exported="false"
             android:parentActivityName="com.hospital.dietary.ExistingPatientActivity" />
 
-        <!-- Pending Orders Activity - Now appears before Finished Orders -->
+        <!-- Pending Orders Activity -->
         <activity
             android:name="com.hospital.dietary.PendingOrdersActivity"
             android:exported="false"
@@ -78,9 +77,19 @@
             android:exported="false"
             android:parentActivityName="com.hospital.dietary.MainMenuActivity" />
 
-        <!-- Retired Orders Activity - NEW: Orders older than 6 days -->
+        <!-- Retired Orders Activity - Orders older than 6 days -->
         <activity
             android:name="com.hospital.dietary.RetiredOrdersActivity"
+            android:exported="false"
+            android:parentActivityName="com.hospital.dietary.MainMenuActivity" />
+
+        <!-- Admin Activities - Only accessible by admin users -->
+        <activity
+            android:name="com.hospital.dietary.UserManagementActivity"
+            android:exported="false"
+            android:parentActivityName="com.hospital.dietary.MainMenuActivity" />
+        <activity
+            android:name="com.hospital.dietary.ItemManagementActivity"
             android:exported="false"
             android:parentActivityName="com.hospital.dietary.MainMenuActivity" />
 

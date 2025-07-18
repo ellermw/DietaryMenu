@@ -249,48 +249,45 @@ public class PatientDAO {
     }
 
     /**
-     * Get available room numbers for a wing
+     * Get available room numbers for a wing - Updated with correct hospital layout
      */
     public List<String> getAvailableRooms(String wing) {
         List<String> availableRooms = new ArrayList<>();
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
         
-        // This would typically come from a Room table, but for now we'll generate based on wing
-        // You can customize this based on your hospital's room layout
-        if ("North Wing".equals(wing)) {
-            for (int i = 101; i <= 110; i++) {
+        if ("1 South".equals(wing)) {
+            for (int i = 106; i <= 122; i++) {
                 if (!isRoomOccupied(wing, String.valueOf(i))) {
                     availableRooms.add(String.valueOf(i));
                 }
             }
-        } else if ("South Wing".equals(wing)) {
-            for (int i = 201; i <= 210; i++) {
+        } else if ("2 North".equals(wing)) {
+            for (int i = 250; i <= 264; i++) {
                 if (!isRoomOccupied(wing, String.valueOf(i))) {
                     availableRooms.add(String.valueOf(i));
                 }
             }
-        } else if ("East Wing".equals(wing)) {
-            for (int i = 301; i <= 310; i++) {
+        } else if ("Labor and Delivery".equals(wing)) {
+            for (int i = 1; i <= 6; i++) {
+                String room = "LDR" + i;
+                if (!isRoomOccupied(wing, room)) {
+                    availableRooms.add(room);
+                }
+            }
+        } else if ("2 West".equals(wing)) {
+            for (int i = 225; i <= 248; i++) {
                 if (!isRoomOccupied(wing, String.valueOf(i))) {
                     availableRooms.add(String.valueOf(i));
                 }
             }
-        } else if ("West Wing".equals(wing)) {
-            for (int i = 401; i <= 410; i++) {
+        } else if ("3 North".equals(wing)) {
+            for (int i = 349; i <= 371; i++) {
                 if (!isRoomOccupied(wing, String.valueOf(i))) {
                     availableRooms.add(String.valueOf(i));
                 }
             }
         } else if ("ICU".equals(wing)) {
-            for (int i = 1; i <= 8; i++) {
-                String room = "ICU-" + i;
-                if (!isRoomOccupied(wing, room)) {
-                    availableRooms.add(room);
-                }
-            }
-        } else if ("Pediatrics".equals(wing)) {
-            for (int i = 101; i <= 108; i++) {
-                String room = "P" + i;
+            for (int i = 1; i <= 13; i++) {
+                String room = "ICU" + i;
                 if (!isRoomOccupied(wing, room)) {
                     availableRooms.add(room);
                 }
