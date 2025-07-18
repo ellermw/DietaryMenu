@@ -23,49 +23,46 @@ public class UserDAO {
      * Add a new user
      */
     public long addUser(User user) {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
+		SQLiteDatabase db = dbHelper.getWritableDatabase();
+		ContentValues values = new ContentValues();
 
-        values.put("username", user.getUsername());
-        values.put("password", user.getPassword());
-        values.put("role", user.getRole());
-        values.put("full_name", user.getFullName());
-        
-        if (user.getEmail() != null) {
-            values.put("email", user.getEmail());
-        } else {
-            values.putNull("email");
-        }
-        
-        values.put("is_active", user.isActive() ? 1 : 0);
-        values.put("created_date", getCurrentTimestamp());
+		values.put("username", user.getUsername());
+		values.put("password", user.getPassword());
+		values.put("role", user.getRole());
+		values.put("full_name", user.getFullName());
+    
+		// Remove these lines:
+		// if (user.getEmail() != null) {
+		//     values.put("email", user.getEmail());
+		// } else {
+		//     values.putNull("email");
+		// }
+    
+		values.put("is_active", user.isActive() ? 1 : 0);
+		values.put("created_date", getCurrentTimestamp());
 
-        return db.insert("User", null, values);
-    }
+		return db.insert("User", null, values);
+	}
 
     /**
      * Update an existing user
      */
-    public long updateUser(User user) {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
+	public long updateUser(User user) {
+		SQLiteDatabase db = dbHelper.getWritableDatabase();
+		ContentValues values = new ContentValues();
 
-        values.put("username", user.getUsername());
-        values.put("password", user.getPassword());
-        values.put("role", user.getRole());
-        values.put("full_name", user.getFullName());
-        
-        if (user.getEmail() != null) {
-            values.put("email", user.getEmail());
-        } else {
-            values.putNull("email");
-        }
-        
-        values.put("is_active", user.isActive() ? 1 : 0);
+		values.put("username", user.getUsername());
+		values.put("password", user.getPassword());
+		values.put("role", user.getRole());
+		values.put("full_name", user.getFullName());
+    
+		// Remove email handling here too
+    
+		values.put("is_active", user.isActive() ? 1 : 0);
 
-        return db.update("User", values, "user_id = ?", 
-                        new String[]{String.valueOf(user.getUserId())});
-    }
+		return db.update("User", values, "user_id = ?", 
+						new String[]{String.valueOf(user.getUserId())});
+	}
 
     /**
      * Get user by username

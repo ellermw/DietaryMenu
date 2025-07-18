@@ -12,6 +12,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText usernameInput, passwordInput;
     private Button loginButton;
     private ProgressBar loginProgress;
+    private TextView copyrightText;
     private DatabaseHelper dbHelper;
     private UserDAO userDAO;
 
@@ -34,6 +35,12 @@ public class LoginActivity extends AppCompatActivity {
         passwordInput = findViewById(R.id.passwordInput);
         loginButton = findViewById(R.id.loginButton);
         loginProgress = findViewById(R.id.loginProgress);
+        copyrightText = findViewById(R.id.copyrightText);
+        
+        // ADDED: Set copyright message with version
+        String version = getString(R.string.app_version);
+        String copyrightMessage = getString(R.string.copyright_message);
+        copyrightText.setText(copyrightMessage);
         
         // Auto-focus username
         usernameInput.requestFocus();
@@ -127,5 +134,13 @@ public class LoginActivity extends AppCompatActivity {
     
     private void showError(String message) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+    }
+    
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (dbHelper != null) {
+            dbHelper.close();
+        }
     }
 }

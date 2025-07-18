@@ -99,16 +99,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ")";
 
     // User table for authentication - FIXED PASSWORD COLUMN NAME
-    private static final String CREATE_USER_TABLE = 
-        "CREATE TABLE IF NOT EXISTS User (" +
-        "user_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-        "username TEXT NOT NULL UNIQUE, " +
-        "password TEXT NOT NULL, " +  // CHANGED FROM password_hash TO password
-        "full_name TEXT NOT NULL, " +
-        "role TEXT NOT NULL, " +
-        "is_active INTEGER DEFAULT 1, " +
-        "created_date TEXT NOT NULL" +
-        ")";
+	private static final String CREATE_USER_TABLE = 
+		"CREATE TABLE IF NOT EXISTS User (" +
+		"user_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+		"username TEXT NOT NULL UNIQUE, " +
+		"password TEXT NOT NULL, " +
+		"full_name TEXT NOT NULL, " +
+		"role TEXT NOT NULL, " +
+		"email TEXT, " +  // Add this line
+		"is_active INTEGER DEFAULT 1, " +
+		"created_date TEXT NOT NULL" +
+		")";
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -129,40 +130,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         insertDefaultData(db);
     }
 
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if (oldVersion < 4) {
-            // Add new columns to existing tables if upgrading from older version
-            
-            // Add created_date to PatientInfo if it doesn't exist
-            try {
-                db.execSQL("ALTER TABLE PatientInfo ADD COLUMN created_date TEXT DEFAULT CURRENT_TIMESTAMP");
-            } catch (Exception e) {
-                // Column already exists or table doesn't exist
-            }
-            
-            // Create FinalizedOrder table if it doesn't exist
-            db.execSQL(CREATE_FINALIZED_ORDER_TABLE);
-            
-            // Add unique constraint to PatientInfo if not exists
-            try {
-                db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS idx_patient_location ON PatientInfo(wing, room_number)");
-            } catch (Exception e) {
-                // Index already exists
-            }
-            
-            // Fix User table column name if needed
-            try {
-                // Check if password_hash column exists and rename it to password
-                db.execSQL("ALTER TABLE User RENAME COLUMN password_hash TO password");
-            } catch (Exception e) {
-                // Column doesn't exist or already correctly named
-            }
-        }
+	@Override
+	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+		if (oldVersion < 4) {
+			// ... existing upgrade code ...
         
-        // Insert any missing default data
-        insertDefaultData(db);
-    }
+			// Add email column to User table if it doesn't exist
+			try {
+				db.execSQL("ALTER TABLE User ADD COLUMN email TEXT");
+			} catch (Exception e) {
+				// Column already exists or other error
+				android.util.Log.d("DatabaseHelper", "Email column may already exist: " + e.getMessage());
+			}
+		}
+    
+		// Increment DATABASE_VERSION to 5 at the top of the class
+		// private static final int DATABASE_VERSION = 5;
+    
+		insertDefaultData(db);
+	}
 
     private void insertDefaultData(SQLiteDatabase db) {
         // Insert default diets

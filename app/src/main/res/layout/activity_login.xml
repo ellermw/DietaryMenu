@@ -103,11 +103,12 @@
 
     </LinearLayout>
 
-    <!-- Footer -->
+    <!-- Footer with Version -->
     <TextView
+        android:id="@+id/copyrightText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="© 2025 Hospital Dietary Management System"
+        android:text="@string/copyright_message"
         android:textSize="12sp"
         android:textColor="#bdc3c7"
         android:gravity="center"
