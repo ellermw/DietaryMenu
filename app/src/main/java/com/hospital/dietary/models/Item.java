@@ -1,24 +1,25 @@
 package com.hospital.dietary.models;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Item {
     private int itemId;
     private int categoryId;
     private String name;
-    private String description; // Added for admin functionality
+    private String description;
     private Integer sizeML;
     private boolean isAdaFriendly;
     private boolean isSoda;
-    private boolean isClearLiquid;  // FIXED: Added clear liquid property
-    private String categoryName;
+    private boolean isClearLiquid;
+    private String mealType;
+    private boolean isDefault;
+    private String categoryName; // For display purposes, populated by JOIN queries
 
     // Default constructor
     public Item() {
         this.isAdaFriendly = false;
         this.isSoda = false;
         this.isClearLiquid = false;
+        this.isDefault = false;
+        this.mealType = "General";
         this.description = "";
     }
 
@@ -35,18 +36,27 @@ public class Item {
         this.sizeML = sizeML;
     }
 
+    // Constructor with meal type
+    public Item(String name, int categoryId, String mealType) {
+        this(name, categoryId);
+        this.mealType = mealType;
+    }
+
     // Full constructor
-    public Item(String name, int categoryId, Integer sizeML, boolean isAdaFriendly, boolean isSoda, boolean isClearLiquid) {
+    public Item(String name, int categoryId, Integer sizeML, boolean isAdaFriendly, 
+                boolean isSoda, boolean isClearLiquid, String mealType, boolean isDefault) {
         this.name = name;
         this.categoryId = categoryId;
         this.sizeML = sizeML;
         this.isAdaFriendly = isAdaFriendly;
         this.isSoda = isSoda;
         this.isClearLiquid = isClearLiquid;
+        this.mealType = mealType != null ? mealType : "General";
+        this.isDefault = isDefault;
         this.description = "";
     }
 
-    // Getters and Setters
+    // Primary Getters and Setters
     public int getItemId() {
         return itemId;
     }
@@ -71,7 +81,6 @@ public class Item {
         this.name = name;
     }
 
-    // Added description methods for admin functionality
     public String getDescription() {
         return description != null ? description : "";
     }
@@ -93,16 +102,7 @@ public class Item {
     }
 
     public void setAdaFriendly(boolean adaFriendly) {
-        isAdaFriendly = adaFriendly;
-    }
-
-    // Added alias methods for admin functionality
-    public boolean isAdaCompliant() {
-        return isAdaFriendly();
-    }
-
-    public void setAdaCompliant(boolean adaCompliant) {
-        setAdaFriendly(adaCompliant);
+        this.isAdaFriendly = adaFriendly;
     }
 
     public boolean isSoda() {
@@ -110,16 +110,31 @@ public class Item {
     }
 
     public void setSoda(boolean soda) {
-        isSoda = soda;
+        this.isSoda = soda;
     }
 
-    // FIXED: Clear liquid property getter/setter
     public boolean isClearLiquid() {
         return isClearLiquid;
     }
 
     public void setClearLiquid(boolean clearLiquid) {
-        isClearLiquid = clearLiquid;
+        this.isClearLiquid = clearLiquid;
+    }
+
+    public String getMealType() {
+        return mealType != null ? mealType : "General";
+    }
+
+    public void setMealType(String mealType) {
+        this.mealType = mealType;
+    }
+
+    public boolean isDefault() {
+        return isDefault;
+    }
+
+    public void setDefault(boolean defaultItem) {
+        this.isDefault = defaultItem;
     }
 
     public String getCategoryName() {
@@ -130,147 +145,141 @@ public class Item {
         this.categoryName = categoryName;
     }
 
-    // Added alias method for admin functionality
-    public String getCategory() {
-        return getCategoryName();
-    }
-
-    public void setCategory(String category) {
-        setCategoryName(category);
-    }
-
-    // Helper methods
+    // Utility methods
     public boolean hasSize() {
         return sizeML != null && sizeML > 0;
     }
 
     public String getSizeDisplay() {
-        if (hasSize()) {
-            return sizeML + " ml";
-        }
-        return "";
+        return hasSize() ? sizeML + "ml" : "N/A";
     }
 
-    public boolean isBread() {
-        return categoryName != null && (
-            categoryName.equalsIgnoreCase("Breads") ||
-            categoryName.equalsIgnoreCase("Fresh Muffins") ||
-            name.toLowerCase().contains("bread") ||
-            name.toLowerCase().contains("muffin") ||
-            name.toLowerCase().contains("roll")
-        );
+    public String getPropertiesDisplay() {
+        StringBuilder props = new StringBuilder();
+        if (isAdaFriendly) props.append("ADA Friendly, ");
+        if (isSoda) props.append("Carbonated, ");
+        if (isClearLiquid) props.append("Clear Liquid, ");
+        if (isDefault) props.append("Default Item, ");
+        
+        String result = props.toString();
+        return result.endsWith(", ") ? result.substring(0, result.length() - 2) : result;
     }
 
-    public boolean isDrink() {
-        return categoryName != null && (
-            categoryName.equalsIgnoreCase("Drink") ||
-            categoryName.equalsIgnoreCase("Soda") ||
-            categoryName.equalsIgnoreCase("Juices") ||
-            categoryName.equalsIgnoreCase("Supplement") ||
-            isSoda
-        );
-    }
-
-    public boolean isGrillItem() {
-        return categoryName != null && categoryName.equalsIgnoreCase("Grill Item");
-    }
-
-    // Diet compatibility methods
-    public boolean isCompatibleWithDiet(String dietType) {
-        if (dietType == null) {
+    public boolean matchesFilter(String filter) {
+        if (filter == null || filter.trim().isEmpty()) {
             return true;
         }
-
-        switch (dietType.toLowerCase()) {
-            case "ada":
-            case "diabetic":
-                return isAdaFriendly;
-            case "clear liquid":
-                return isClearLiquid;
-            case "cardiac":
-            case "renal":
-                // These diets typically require ADA-friendly items
-                return isAdaFriendly;
-            case "regular":
-            case "full liquid":
-            case "puree":
-            default:
-                return true; // Most items are compatible with regular diets
-        }
+        
+        String lowerFilter = filter.toLowerCase();
+        return name.toLowerCase().contains(lowerFilter) ||
+               (description != null && description.toLowerCase().contains(lowerFilter)) ||
+               (categoryName != null && categoryName.toLowerCase().contains(lowerFilter)) ||
+               mealType.toLowerCase().contains(lowerFilter);
     }
 
-    // Display methods
-    public String getDisplayName() {
-        StringBuilder display = new StringBuilder(name);
+    public boolean isValidForDiet(String diet) {
+        if (diet == null) return true;
         
-        if (hasSize()) {
-            display.append(" (").append(getSizeDisplay()).append(")");
+        // ADA Diabetic diet restrictions
+        if ("ADA Diabetic".equalsIgnoreCase(diet)) {
+            return isAdaFriendly;
         }
         
-        List<String> tags = new ArrayList<>();
-        if (isAdaFriendly) tags.add("ADA");
-        if (isSoda) tags.add("Soda");
-        if (isClearLiquid) tags.add("Clear");
-        
-        if (!tags.isEmpty()) {
-            display.append(" [").append(String.join(", ", tags)).append("]");
+        // Liquid diet restrictions  
+        if ("Liquid".equalsIgnoreCase(diet)) {
+            return isClearLiquid || hasSize();
         }
         
-        return display.toString();
+        // Clear liquid diet restrictions
+        if ("Clear Liquid".equalsIgnoreCase(diet)) {
+            return isClearLiquid;
+        }
+        
+        // All other diets accept all items
+        return true;
     }
 
-    public String getFullDescription() {
-        StringBuilder desc = new StringBuilder();
-        desc.append("Name: ").append(name).append("\n");
-        desc.append("Category: ").append(categoryName != null ? categoryName : "Unknown").append("\n");
-        
-        if (description != null && !description.isEmpty()) {
-            desc.append("Description: ").append(description).append("\n");
-        }
-        
-        if (hasSize()) {
-            desc.append("Size: ").append(getSizeDisplay()).append("\n");
-        }
-        
-        desc.append("ADA Friendly: ").append(isAdaFriendly ? "Yes" : "No").append("\n");
-        desc.append("Is Soda: ").append(isSoda ? "Yes" : "No").append("\n");
-        desc.append("Clear Liquid: ").append(isClearLiquid ? "Yes" : "No");
-        
-        return desc.toString();
+    // Validation methods
+    public boolean isValid() {
+        return name != null && !name.trim().isEmpty() && categoryId > 0;
     }
 
+    public String getValidationErrors() {
+        StringBuilder errors = new StringBuilder();
+        
+        if (name == null || name.trim().isEmpty()) {
+            errors.append("Name is required. ");
+        }
+        
+        if (categoryId <= 0) {
+            errors.append("Valid category is required. ");
+        }
+        
+        if (sizeML != null && sizeML <= 0) {
+            errors.append("Size must be greater than 0. ");
+        }
+        
+        return errors.toString().trim();
+    }
+
+    // Override methods
     @Override
     public String toString() {
-        return getDisplayName();
+        StringBuilder sb = new StringBuilder();
+        sb.append(name);
+        
+        if (hasSize()) {
+            sb.append(" (").append(getSizeDisplay()).append(")");
+        }
+        
+        if (categoryName != null) {
+            sb.append(" - ").append(categoryName);
+        }
+        
+        return sb.toString();
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Item item = (Item) o;
-
-        if (itemId != item.itemId) return false;
-        if (categoryId != item.categoryId) return false;
-        if (isAdaFriendly != item.isAdaFriendly) return false;
-        if (isSoda != item.isSoda) return false;
-        if (isClearLiquid != item.isClearLiquid) return false;
-        if (name != null ? !name.equals(item.name) : item.name != null) return false;
-        if (description != null ? !description.equals(item.description) : item.description != null) return false;
-        return sizeML != null ? sizeML.equals(item.sizeML) : item.sizeML == null;
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        
+        Item item = (Item) obj;
+        return itemId == item.itemId;
     }
 
     @Override
     public int hashCode() {
-        int result = itemId;
-        result = 31 * result + categoryId;
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (description != null ? description.hashCode() : 0);
-        result = 31 * result + (sizeML != null ? sizeML.hashCode() : 0);
-        result = 31 * result + (isAdaFriendly ? 1 : 0);
-        result = 31 * result + (isSoda ? 1 : 0);
-        result = 31 * result + (isClearLiquid ? 1 : 0);
-        return result;
+        return Integer.hashCode(itemId);
+    }
+
+    // Copy methods for editing
+    public Item copy() {
+        Item copy = new Item();
+        copy.itemId = this.itemId;
+        copy.categoryId = this.categoryId;
+        copy.name = this.name;
+        copy.description = this.description;
+        copy.sizeML = this.sizeML;
+        copy.isAdaFriendly = this.isAdaFriendly;
+        copy.isSoda = this.isSoda;
+        copy.isClearLiquid = this.isClearLiquid;
+        copy.mealType = this.mealType;
+        copy.isDefault = this.isDefault;
+        copy.categoryName = this.categoryName;
+        return copy;
+    }
+
+    public void copyFrom(Item other) {
+        this.categoryId = other.categoryId;
+        this.name = other.name;
+        this.description = other.description;
+        this.sizeML = other.sizeML;
+        this.isAdaFriendly = other.isAdaFriendly;
+        this.isSoda = other.isSoda;
+        this.isClearLiquid = other.isClearLiquid;
+        this.mealType = other.mealType;
+        this.isDefault = other.isDefault;
+        this.categoryName = other.categoryName;
     }
 }

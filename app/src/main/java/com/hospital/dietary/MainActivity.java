@@ -80,11 +80,33 @@ public class MainActivity extends AppCompatActivity {
     private Map<String, Integer> fluidLimits = new HashMap<>();
     
     // Data arrays - FIXED: Updated with correct values
-    private List<String> wings = Arrays.asList("1 South", "2 North", "Labor and Delivery", 
-                                              "2 West", "3 North", "ICU");
-    private List<String> diets = Arrays.asList("Regular", "ADA", "Cardiac", "Renal", 
-                                              "Puree", "Full Liquid", "Clear Liquid");
-    private List<String> fluidRestrictions = Arrays.asList("None", "1000ml", "1200ml", "1500ml", "1800ml", "2000ml", "2500ml");
+    private String[] wings = {"North", "South", "East", "West", "ICU", "ER"};
+    private String[] rooms = {"101", "102", "103", "104", "105", "106", "107", "108", "109", "110",
+                             "201", "202", "203", "204", "205", "206", "207", "208", "209", "210",
+                             "301", "302", "303", "304", "305", "306", "307", "308", "309", "310"};
+    private String[] diets = {"Regular", "ADA Diabetic", "Cardiac", "Renal", "Soft", "Liquid", "NPO", "Pureed", "Mechanical Soft"};
+    private String[] fluidRestrictions = {"None", "1000ml", "1500ml", "2000ml", "2500ml"};
+    
+    // Meal item arrays
+    private String[] breakfastColdCereals = {"None", "Cornflakes", "Rice Krispies", "Cheerios", "Bran Flakes"};
+    private String[] breakfastHotCereals = {"None", "Oatmeal", "Cream of Wheat", "Grits"};
+    private String[] breakfastBreads = {"None", "White Toast", "Wheat Toast", "English Muffin", "Bagel"};
+    private String[] breakfastMuffins = {"None", "Blueberry Muffin", "Bran Muffin", "Banana Muffin"};
+    private String[] breakfastMains = {"None", "Scrambled Eggs", "Pancakes", "French Toast", "Bacon", "Sausage"};
+    private String[] breakfastFruits = {"None", "Fresh Fruit", "Banana", "Orange", "Apple", "Fruit Cup"};
+    
+    private String[] lunchProteins = {"None", "Grilled Chicken", "Turkey Sandwich", "Beef Stew", "Fish"};
+    private String[] lunchStarches = {"None", "Rice", "Mashed Potatoes", "Pasta", "Bread Roll"};
+    private String[] lunchVegetables = {"None", "Steamed Vegetables", "Garden Salad", "Green Beans", "Carrots"};
+    private String[] lunchDesserts = {"None", "Ice Cream", "Pudding", "Jello", "Fruit Cup"};
+    
+    private String[] dinnerProteins = {"None", "Baked Fish", "Grilled Chicken", "Beef", "Pork"};
+    private String[] dinnerStarches = {"None", "Mashed Potatoes", "Rice", "Pasta", "Baked Potato"};
+    private String[] dinnerVegetables = {"None", "Green Beans", "Broccoli", "Carrots", "Corn"};
+    private String[] dinnerDesserts = {"None", "Ice Cream", "Cake", "Pudding", "Pie"};
+    
+    private String[] juices = {"Orange Juice", "Apple Juice", "Cranberry Juice", "Grape Juice", "Tomato Juice"};
+    private String[] drinks = {"Water", "Coffee", "Tea", "Milk", "Soda", "Iced Tea"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,27 +117,33 @@ public class MainActivity extends AppCompatActivity {
         currentUsername = getIntent().getStringExtra("current_user");
         currentUserRole = getIntent().getStringExtra("user_role");
         currentUserFullName = getIntent().getStringExtra("user_full_name");
-        isAdmin = "admin".equalsIgnoreCase(currentUserRole);
+        isAdmin = "admin".equals(currentUserRole);
         
         // Initialize database
         dbHelper = new DatabaseHelper(this);
         itemDAO = new ItemDAO(dbHelper);
         
-        // Initialize UI
-        initializeUI();
+        // Initialize UI elements
+        initializeUIElements();
         
-        // Load data
-        loadSpinnerData();
+        // Setup spinners
+        setupSpinners();
         
-        // Setup listeners
-        setupListeners();
+        // Setup button listeners
+        setupButtonListeners();
+        
+        // FIXED: Initialize texture modification validation
+        initializeTextureValidation();
         
         // Initialize fluid tracking
         initializeFluidTracking();
+        
+        // Set initial form state
+        clearForm();
     }
     
-    private void initializeUI() {
-        // FIXED: Patient information with split names
+    private void initializeUIElements() {
+        // Patient Information
         patientFirstNameInput = findViewById(R.id.patientFirstNameInput);
         patientLastNameInput = findViewById(R.id.patientLastNameInput);
         wingSpinner = findViewById(R.id.wingSpinner);
@@ -127,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
         biteSizeCB = findViewById(R.id.biteSizeCB);
         breadOKCB = findViewById(R.id.breadOKCB);
         
-        // Breakfast items
+        // Breakfast Items
         breakfastColdCereal = findViewById(R.id.breakfastColdCereal);
         breakfastHotCereal = findViewById(R.id.breakfastHotCereal);
         breakfastBread = findViewById(R.id.breakfastBread);
@@ -135,13 +163,13 @@ public class MainActivity extends AppCompatActivity {
         breakfastMain = findViewById(R.id.breakfastMain);
         breakfastFruit = findViewById(R.id.breakfastFruit);
         
-        // Lunch items
+        // Lunch Items
         lunchProtein = findViewById(R.id.lunchProtein);
         lunchStarch = findViewById(R.id.lunchStarch);
         lunchVegetable = findViewById(R.id.lunchVegetable);
         lunchDessert = findViewById(R.id.lunchDessert);
         
-        // Dinner items
+        // Dinner Items
         dinnerProtein = findViewById(R.id.dinnerProtein);
         dinnerStarch = findViewById(R.id.dinnerStarch);
         dinnerVegetable = findViewById(R.id.dinnerVegetable);
@@ -168,399 +196,169 @@ public class MainActivity extends AppCompatActivity {
         dinnerFluidDisplay = findViewById(R.id.dinnerFluidDisplay);
     }
     
-    private void loadSpinnerData() {
-        loadWings();
-        loadDiets();
-        loadFluidRestrictions();
-        loadMenuItems();
+    private void setupSpinners() {
+        // Setup spinner adapters
+        ArrayAdapter<String> wingAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, wings);
+        wingAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        wingSpinner.setAdapter(wingAdapter);
+        
+        ArrayAdapter<String> roomAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, rooms);
+        roomAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        roomSpinner.setAdapter(roomAdapter);
+        
+        ArrayAdapter<String> dietAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, diets);
+        dietAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        dietSpinner.setAdapter(dietAdapter);
+        
+        ArrayAdapter<String> fluidRestrictionAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, fluidRestrictions);
+        fluidRestrictionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        fluidRestrictionSpinner.setAdapter(fluidRestrictionAdapter);
+        
+        // Breakfast spinners
+        setupSpinnerAdapter(breakfastColdCereal, breakfastColdCereals);
+        setupSpinnerAdapter(breakfastHotCereal, breakfastHotCereals);
+        setupSpinnerAdapter(breakfastBread, breakfastBreads);
+        setupSpinnerAdapter(breakfastMuffin, breakfastMuffins);
+        setupSpinnerAdapter(breakfastMain, breakfastMains);
+        setupSpinnerAdapter(breakfastFruit, breakfastFruits);
+        
+        // Lunch spinners
+        setupSpinnerAdapter(lunchProtein, lunchProteins);
+        setupSpinnerAdapter(lunchStarch, lunchStarches);
+        setupSpinnerAdapter(lunchVegetable, lunchVegetables);
+        setupSpinnerAdapter(lunchDessert, lunchDesserts);
+        
+        // Dinner spinners
+        setupSpinnerAdapter(dinnerProtein, dinnerProteins);
+        setupSpinnerAdapter(dinnerStarch, dinnerStarches);
+        setupSpinnerAdapter(dinnerVegetable, dinnerVegetables);
+        setupSpinnerAdapter(dinnerDessert, dinnerDesserts);
     }
     
-    private void loadWings() {
-        List<String> wingList = new ArrayList<>(wings);
-        wingList.add(0, "Select Wing");
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, wingList);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        wingSpinner.setAdapter(adapter);
-    }
-    
-    private void updateRoomSpinner(String wing) {
-        List<String> rooms = new ArrayList<>();
-        
-        if (!wing.equals("Select Wing")) {
-            switch (wing) {
-                case "1 South":
-                    for (int i = 106; i <= 120; i++) {
-                        rooms.add(String.valueOf(i));
-                    }
-                    break;
-                case "2 North":
-                    for (int i = 250; i <= 264; i++) {
-                        rooms.add(String.valueOf(i));
-                    }
-                    break;
-                case "Labor and Delivery":
-                    for (int i = 1; i <= 6; i++) {
-                        rooms.add("L&D" + (i - 1));
-                    }
-                    break;
-                case "2 West":
-                    for (int i = 225; i <= 248; i++) {
-                        rooms.add(String.valueOf(i));
-                    }
-                    break;
-                case "3 North":
-                    for (int i = 349; i <= 371; i++) {
-                        rooms.add(String.valueOf(i));
-                    }
-                    break;
-                case "ICU":
-                    for (int i = 1; i <= 13; i++) {
-                        rooms.add("ICU" + i);
-                    }
-                    break;
-            }
-        }
-        
-        rooms.add(0, "Select Room");
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, rooms);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        roomSpinner.setAdapter(adapter);
-    }
-    
-    private void loadDiets() {
-        List<String> dietList = new ArrayList<>(diets);
-        dietList.add(0, "Select Diet");
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, dietList);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        dietSpinner.setAdapter(adapter);
-    }
-    
-    // FIXED: Load only the 3 specified fluid restriction values
-    private void loadFluidRestrictions() {
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, fluidRestrictions);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        fluidRestrictionSpinner.setAdapter(adapter);
-    }
-    
-    private void loadMenuItems() {
-        // Load all menu spinners based on diet selection
-        String selectedDiet = (String) dietSpinner.getSelectedItem();
-        
-        if (selectedDiet != null && selectedDiet.equals("Clear Liquid")) {
-            setClearLiquidSpinners();
-        } else {
-            loadSpinnerItems(breakfastColdCereal, "Cold Cereals", true);
-            loadSpinnerItems(breakfastHotCereal, "Hot Cereals", true);
-            loadSpinnerItems(breakfastBread, "Breads", true);
-            loadSpinnerItems(breakfastMuffin, "Fresh Muffins", true);
-            loadSpinnerItems(breakfastMain, "Breakfast", true);
-            loadSpinnerItems(breakfastFruit, "Fruits", true);
-            loadSpinnerItems(lunchProtein, "Protein/Entrée", true);
-            loadSpinnerItems(lunchStarch, "Starch", true);
-            loadSpinnerItems(lunchVegetable, "Vegetable", true);
-            loadSpinnerItems(lunchDessert, "Dessert", true);
-            loadSpinnerItems(dinnerProtein, "Protein/Entrée", true);
-            loadSpinnerItems(dinnerStarch, "Starch", true);
-            loadSpinnerItems(dinnerVegetable, "Vegetable", true);
-            loadSpinnerItems(dinnerDessert, "Dessert", true);
-        }
-    }
-    
-    // FIXED: Set all food spinners to "None" only for Clear Liquid diet
-    private void setClearLiquidSpinners() {
-        List<String> noneOnly = Arrays.asList("None");
-        
-        ArrayAdapter<String> noneAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, noneOnly);
-        noneAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        
-        breakfastColdCereal.setAdapter(noneAdapter);
-        breakfastColdCereal.setSelection(0);
-        breakfastColdCereal.setEnabled(false);
-        
-        breakfastHotCereal.setAdapter(noneAdapter);
-        breakfastHotCereal.setSelection(0);
-        breakfastHotCereal.setEnabled(false);
-        
-        breakfastBread.setAdapter(noneAdapter);
-        breakfastBread.setSelection(0);
-        breakfastBread.setEnabled(false);
-        
-        breakfastMuffin.setAdapter(noneAdapter);
-        breakfastMuffin.setSelection(0);
-        breakfastMuffin.setEnabled(false);
-        
-        breakfastMain.setAdapter(noneAdapter);
-        breakfastMain.setSelection(0);
-        breakfastMain.setEnabled(false);
-        
-        breakfastFruit.setAdapter(noneAdapter);
-        breakfastFruit.setSelection(0);
-        breakfastFruit.setEnabled(false);
-        
-        // Lunch food items - all set to "None" only
-        lunchProtein.setAdapter(noneAdapter);
-        lunchProtein.setSelection(0);
-        lunchProtein.setEnabled(false);
-        
-        lunchStarch.setAdapter(noneAdapter);
-        lunchStarch.setSelection(0);
-        lunchStarch.setEnabled(false);
-        
-        lunchVegetable.setAdapter(noneAdapter);
-        lunchVegetable.setSelection(0);
-        lunchVegetable.setEnabled(false);
-        
-        lunchDessert.setAdapter(noneAdapter);
-        lunchDessert.setSelection(0);
-        lunchDessert.setEnabled(false);
-        
-        // Dinner food items - all set to "None" only
-        dinnerProtein.setAdapter(noneAdapter);
-        dinnerProtein.setSelection(0);
-        dinnerProtein.setEnabled(false);
-        
-        dinnerStarch.setAdapter(noneAdapter);
-        dinnerStarch.setSelection(0);
-        dinnerStarch.setEnabled(false);
-        
-        dinnerVegetable.setAdapter(noneAdapter);
-        dinnerVegetable.setSelection(0);
-        dinnerVegetable.setEnabled(false);
-        
-        dinnerDessert.setAdapter(noneAdapter);
-        dinnerDessert.setSelection(0);
-        dinnerDessert.setEnabled(false);
-    }
-    
-    private void loadSpinnerItems(Spinner spinner, String category, boolean includeNone) {
-        List<Item> items = itemDAO.getItemsByCategory(category);
-        List<String> itemNames = new ArrayList<>();
-        
-        if (includeNone) {
-            itemNames.add("None");
-        }
-        
-        for (Item item : items) {
-            itemNames.add(item.getName());
-        }
-        
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, itemNames);
+    private void setupSpinnerAdapter(Spinner spinner, String[] items) {
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, items);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
     }
     
-    private void setupListeners() {
-        wingSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selectedWing = (String) parent.getItemAtPosition(position);
-                updateRoomSpinner(selectedWing);
+    private void setupButtonListeners() {
+        addBreakfastJuiceButton.setOnClickListener(v -> showDrinkSelectionDialog("Breakfast Juice", breakfastJuicesContainer, "breakfast"));
+        addBreakfastDrinkButton.setOnClickListener(v -> showDrinkSelectionDialog("Breakfast Drink", breakfastDrinksContainer, "breakfast"));
+        addLunchDrinkButton.setOnClickListener(v -> showDrinkSelectionDialog("Lunch Drink", lunchDrinksContainer, "lunch"));
+        addDinnerDrinkButton.setOnClickListener(v -> showDrinkSelectionDialog("Dinner Drink", dinnerDrinksContainer, "dinner"));
+        
+        submitOrderButton.setOnClickListener(v -> {
+            // FIXED: Validate texture modifications before submitting
+            if (validateTextureModifications()) {
+                confirmOrder();
             }
-            
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
         });
         
-        dietSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selectedDiet = (String) parent.getItemAtPosition(position);
-                handleDietSelection(selectedDiet);
-            }
-            
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
-        
-        fluidRestrictionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                updateFluidLimits();
-            }
-            
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
-        
-        addBreakfastJuiceButton.setOnClickListener(v -> addDrinkItem("breakfast", "Juices", breakfastJuicesContainer));
-        addBreakfastDrinkButton.setOnClickListener(v -> addDrinkItem("breakfast", "Drink", breakfastDrinksContainer));
-        addLunchDrinkButton.setOnClickListener(v -> addDrinkItem("lunch", "Drink", lunchDrinksContainer));
-        addDinnerDrinkButton.setOnClickListener(v -> addDrinkItem("dinner", "Drink", dinnerDrinksContainer));
-        
-        submitOrderButton.setOnClickListener(v -> confirmOrder());
         clearFormButton.setOnClickListener(v -> clearForm());
-        backButton.setOnClickListener(v -> {
-            Intent intent = new Intent(this, MainMenuActivity.class);
-            intent.putExtra("current_user", currentUsername);
-            intent.putExtra("user_role", currentUserRole);
-            intent.putExtra("user_full_name", currentUserFullName);
-            startActivity(intent);
-            finish();
+        backButton.setOnClickListener(v -> finish());
+    }
+    
+    // FIXED: Texture modification validation logic
+    private void initializeTextureValidation() {
+        setupTextureModificationListeners();
+    }
+    
+    private void setupTextureModificationListeners() {
+        mechanicalGroundCB.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                validateTextureModifications();
+            }
+        });
+        
+        mechanicalChoppedCB.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                validateTextureModifications();
+            }
+        });
+        
+        breadOKCB.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            // If bread OK is unchecked while mechanical restrictions are active,
+            // clear any bread selections
+            if (!isChecked && (mechanicalGroundCB.isChecked() || mechanicalChoppedCB.isChecked())) {
+                clearBreadSelections();
+            }
+        });
+        
+        // Add listeners to bread-related spinners to validate in real-time
+        breakfastBread.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position > 0) { // Not "None"
+                    validateTextureModifications();
+                }
+            }
+            
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+        
+        breakfastMuffin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position > 0) { // Not "None"
+                    validateTextureModifications();
+                }
+            }
+            
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
         });
     }
     
-    private void handleDietSelection(String diet) {
-        if (diet != null) {
-            loadMenuItems();
-            applyDefaults(diet);
-        }
-    }
-    
-    // FIXED: Apply defaults including Clear Liquid
-    private void applyDefaults(String diet) {
-        if (!isAdmin) {
-            return;
-        }
+    private boolean validateTextureModifications() {
+        boolean mechanicalGround = mechanicalGroundCB.isChecked();
+        boolean mechanicalChopped = mechanicalChoppedCB.isChecked();
+        boolean biteSize = biteSizeCB.isChecked();
+        boolean breadOK = breadOKCB.isChecked();
         
-        if (diet.equals("Clear Liquid")) {
-            applyClearLiquidDefaults();
-        }
-    }
-    
-    // FIXED: Apply Clear Liquid defaults
-    private void applyClearLiquidDefaults() {
-        // Clear all existing drinks first
-        breakfastJuicesContainer.removeAllViews();
-        breakfastDrinksContainer.removeAllViews();
-        lunchDrinksContainer.removeAllViews();
-        dinnerDrinksContainer.removeAllViews();
-        
-        // Reset fluid tracking
-        fluidUsed.put("breakfast", 0);
-        fluidUsed.put("lunch", 0);
-        fluidUsed.put("dinner", 0);
-        
-        // Apply Clear Liquid defaults for breakfast
-        addClearLiquidBreakfastDefaults();
-        
-        // Apply Clear Liquid defaults for lunch  
-        addClearLiquidLunchDefaults();
-        
-        // Apply Clear Liquid defaults for dinner
-        addClearLiquidDinnerDefaults();
-        
-        updateFluidDisplay();
-    }
-    
-    // Clear Liquid breakfast defaults
-    private void addClearLiquidBreakfastDefaults() {
-        String selectedDiet = (String) dietSpinner.getSelectedItem();
-        boolean isADA = selectedDiet != null && selectedDiet.contains("ADA");
-        
-        addDefaultDrinkItem("breakfast", "Coffee", 200, breakfastDrinksContainer, false);
-        addDefaultDrinkItem("breakfast", "Chicken Broth", 200, breakfastDrinksContainer, false);
-        
-        String juiceChoice = isADA ? "Apple Juice" : "Orange Juice";
-        addDefaultDrinkItem("breakfast", juiceChoice, 120, breakfastJuicesContainer, false);
-        
-        String jelloChoice = isADA ? "Sugar Free Jello" : "Jello";
-        addDefaultDrinkItem("breakfast", jelloChoice, 0, breakfastDrinksContainer, false);
-        
-        String spriteChoice = isADA ? "Sprite Zero" : "Sprite";
-        addDefaultDrinkItem("breakfast", spriteChoice, 240, breakfastDrinksContainer, false);
-    }
-    
-    // Clear Liquid lunch defaults
-    private void addClearLiquidLunchDefaults() {
-        String selectedDiet = (String) dietSpinner.getSelectedItem();
-        boolean isADA = selectedDiet != null && selectedDiet.contains("ADA");
-        
-        addDefaultDrinkItem("lunch", "Beef Broth", 200, lunchDrinksContainer, false);
-        addDefaultDrinkItem("lunch", "Ice Tea", 200, lunchDrinksContainer, false);
-        
-        String jelloChoice = isADA ? "Sugar Free Jello" : "Jello";
-        addDefaultDrinkItem("lunch", jelloChoice, 0, lunchDrinksContainer, false);
-        
-        String spriteChoice = isADA ? "Sprite Zero" : "Sprite";
-        addDefaultDrinkItem("lunch", spriteChoice, 240, lunchDrinksContainer, false);
-    }
-    
-    // Clear Liquid dinner defaults
-    private void addClearLiquidDinnerDefaults() {
-        String selectedDiet = (String) dietSpinner.getSelectedItem();
-        boolean isADA = selectedDiet != null && selectedDiet.contains("ADA");
-        
-        addDefaultDrinkItem("dinner", "Chicken Broth", 200, dinnerDrinksContainer, false);
-        
-        String jelloChoice = isADA ? "Sugar Free Jello" : "Jello";
-        addDefaultDrinkItem("dinner", jelloChoice, 0, dinnerDrinksContainer, false);
-        
-        addDefaultDrinkItem("dinner", "Ice Tea", 200, dinnerDrinksContainer, false);
-        
-        String spriteChoice = isADA ? "Sprite Zero" : "Sprite";
-        addDefaultDrinkItem("dinner", spriteChoice, 240, dinnerDrinksContainer, false);
-    }
-    
-    // Helper method for adding default drink items
-    private void addDefaultDrinkItem(String meal, String itemName, int volumeML, LinearLayout container, boolean editable) {
-        View drinkItemLayout = getLayoutInflater().inflate(R.layout.drink_item, container, false);
-        TextView itemNameView = drinkItemLayout.findViewById(R.id.drinkItemName);
-        TextView quantityView = drinkItemLayout.findViewById(R.id.drinkQuantity);
-        TextView fluidMLView = drinkItemLayout.findViewById(R.id.drinkFluidML);
-        Button removeButton = drinkItemLayout.findViewById(R.id.removeDrinkButton);
-        
-        itemNameView.setText(itemName);
-        quantityView.setText("1");
-        if (volumeML > 0) {
-            fluidMLView.setText(volumeML + " ml");
-        } else {
-            fluidMLView.setText("0 ml");
+        // Check if user is trying to select bread items when mechanical restrictions apply
+        if ((mechanicalGround || mechanicalChopped) && !breadOK) {
+            // If mechanical ground or chopped is selected but bread OK is NOT selected,
+            // we need to validate that no bread items are selected
+            
+            if (isBreakfastBreadSelected()) {
+                showTextureValidationDialog("Bread items cannot be selected with Mechanical Ground or Mechanical Chopped unless 'Bread OK' is checked.\n\nPlease either:\n1. Check 'Bread OK' to allow bread items, or\n2. Remove bread selections");
+                return false;
+            }
         }
         
-        if (!editable) {
-            removeButton.setVisibility(View.GONE);
-            drinkItemLayout.setBackgroundResource(android.R.drawable.edit_text);
-        } else {
-            removeButton.setOnClickListener(v -> {
-                container.removeView(drinkItemLayout);
-                updateFluidUsage(meal, -volumeML);
-            });
-        }
-        
-        container.addView(drinkItemLayout);
-        updateFluidUsage(meal, volumeML);
+        return true;
     }
     
-    private void addDrinkItem(String meal, String category, LinearLayout container) {
-        List<Item> drinks = itemDAO.getItemsByCategory(category);
-        if (drinks.isEmpty()) {
-            Toast.makeText(this, "No " + category.toLowerCase() + " items available", Toast.LENGTH_SHORT).show();
-            return;
+    private boolean isBreakfastBreadSelected() {
+        // Check if breakfast bread spinner has bread item selected
+        if (breakfastBread.getSelectedItemPosition() > 0) {
+            return true;
         }
         
-        String[] drinkNames = new String[drinks.size()];
-        for (int i = 0; i < drinks.size(); i++) {
-            drinkNames[i] = drinks.get(i).getName();
+        // Check if breakfast muffin is selected (also bread-like)
+        if (breakfastMuffin.getSelectedItemPosition() > 0) {
+            return true;
         }
         
+        return false;
+    }
+    
+    private void showTextureValidationDialog(String message) {
         new AlertDialog.Builder(this)
-            .setTitle("Select " + category)
-            .setItems(drinkNames, (dialog, which) -> {
-                Item selectedDrink = drinks.get(which);
-                addDrinkToContainer(meal, selectedDrink, container);
-            })
+            .setTitle("Texture Modification Conflict")
+            .setMessage(message)
+            .setPositiveButton("OK", null)
+            .setIcon(android.R.drawable.ic_dialog_alert)
             .show();
     }
     
-    private void addDrinkToContainer(String meal, Item drink, LinearLayout container) {
-        View drinkItemLayout = getLayoutInflater().inflate(R.layout.drink_item, container, false);
-        TextView itemNameView = drinkItemLayout.findViewById(R.id.drinkItemName);
-        TextView quantityView = drinkItemLayout.findViewById(R.id.drinkQuantity);
-        TextView fluidMLView = drinkItemLayout.findViewById(R.id.drinkFluidML);
-        Button removeButton = drinkItemLayout.findViewById(R.id.removeDrinkButton);
+    private void clearBreadSelections() {
+        // Clear breakfast bread selections
+        breakfastBread.setSelection(0);
+        breakfastMuffin.setSelection(0);
         
-        itemNameView.setText(drink.getName());
-        quantityView.setText("1");
-        int volumeML = drink.getSizeML() != null ? drink.getSizeML() : 0;
-        fluidMLView.setText(volumeML + " ml");
-        
-        removeButton.setOnClickListener(v -> {
-            container.removeView(drinkItemLayout);
-            updateFluidUsage(meal, -volumeML);
-        });
-        
-        container.addView(drinkItemLayout);
-        updateFluidUsage(meal, volumeML);
+        Toast.makeText(this, "Bread selections cleared due to texture restrictions", Toast.LENGTH_SHORT).show();
     }
     
     private void initializeFluidTracking() {
@@ -568,130 +366,98 @@ public class MainActivity extends AppCompatActivity {
         fluidUsed.put("lunch", 0);
         fluidUsed.put("dinner", 0);
         
-        fluidLimits.put("breakfast", 9999);
-        fluidLimits.put("lunch", 9999);
-        fluidLimits.put("dinner", 9999);
+        // Set default fluid limits
+        fluidLimits.put("breakfast", 500);
+        fluidLimits.put("lunch", 500);
+        fluidLimits.put("dinner", 500);
         
-        updateFluidDisplay();
+        updateFluidDisplays();
     }
     
-    // FIXED: Update fluid limits based on selected restriction with specific distributions
-    private void updateFluidLimits() {
-        String restriction = (String) fluidRestrictionSpinner.getSelectedItem();
+    private void updateFluidDisplays() {
+        breakfastFluidDisplay.setText("Fluids: " + fluidUsed.get("breakfast") + "/" + fluidLimits.get("breakfast") + "ml");
+        lunchFluidDisplay.setText("Fluids: " + fluidUsed.get("lunch") + "/" + fluidLimits.get("lunch") + "ml");
+        dinnerFluidDisplay.setText("Fluids: " + fluidUsed.get("dinner") + "/" + fluidLimits.get("dinner") + "ml");
+    }
+    
+    private void showDrinkSelectionDialog(String title, LinearLayout container, String meal) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(title);
         
-        if (restriction == null || restriction.equals("None")) {
-            fluidLimits.put("breakfast", 9999);
-            fluidLimits.put("lunch", 9999);
-            fluidLimits.put("dinner", 9999);
-        } else {
-            // FIXED: Use specific fluid distributions as provided
-            switch (restriction) {
-                case "1000ml":
-                    fluidLimits.put("breakfast", 120);
-                    fluidLimits.put("lunch", 120);
-                    fluidLimits.put("dinner", 160);
-                    break;
-                case "1200ml":
-                    fluidLimits.put("breakfast", 250);
-                    fluidLimits.put("lunch", 170);
-                    fluidLimits.put("dinner", 180);
-                    break;
-                case "1500ml":
-                    fluidLimits.put("breakfast", 350);
-                    fluidLimits.put("lunch", 170);
-                    fluidLimits.put("dinner", 180);
-                    break;
-                case "1800ml":
-                    fluidLimits.put("breakfast", 360);
-                    fluidLimits.put("lunch", 240);
-                    fluidLimits.put("dinner", 240);
-                    break;
-                case "2000ml":
-                    fluidLimits.put("breakfast", 320);
-                    fluidLimits.put("lunch", 240);
-                    fluidLimits.put("dinner", 240);
-                    break;
-                case "2500ml":
-                    fluidLimits.put("breakfast", 400);
-                    fluidLimits.put("lunch", 400);
-                    fluidLimits.put("dinner", 400);
-                    break;
-                default:
-                    // Fallback to no limits if unknown restriction
-                    fluidLimits.put("breakfast", 9999);
-                    fluidLimits.put("lunch", 9999);
-                    fluidLimits.put("dinner", 9999);
-                    break;
-            }
+        String[] drinkOptions = title.contains("Juice") ? juices : drinks;
+        
+        builder.setItems(drinkOptions, (dialog, which) -> {
+            String selectedDrink = drinkOptions[which];
+            addDrinkToContainer(selectedDrink, container, meal);
+        });
+        
+        builder.setNegativeButton("Cancel", null);
+        builder.show();
+    }
+    
+    private void addDrinkToContainer(String drinkName, LinearLayout container, String meal) {
+        View drinkView = getLayoutInflater().inflate(R.layout.drink_item, container, false);
+        
+        TextView itemName = drinkView.findViewById(R.id.drinkItemName);
+        TextView quantity = drinkView.findViewById(R.id.drinkQuantity);
+        TextView fluidML = drinkView.findViewById(R.id.drinkFluidML);
+        Button removeButton = drinkView.findViewById(R.id.removeDrinkButton);
+        
+        itemName.setText(drinkName);
+        quantity.setText("1");
+        
+        // Set fluid amount based on drink type
+        int fluidAmount = getFluidAmount(drinkName);
+        fluidML.setText(fluidAmount + "ml");
+        
+        // Update fluid tracking
+        fluidUsed.put(meal, fluidUsed.get(meal) + fluidAmount);
+        updateFluidDisplays();
+        
+        removeButton.setOnClickListener(v -> {
+            container.removeView(drinkView);
+            fluidUsed.put(meal, fluidUsed.get(meal) - fluidAmount);
+            updateFluidDisplays();
+        });
+        
+        container.addView(drinkView);
+    }
+    
+    private int getFluidAmount(String drinkName) {
+        // Default fluid amounts in ml
+        switch (drinkName) {
+            case "Water":
+            case "Coffee":
+            case "Tea":
+            case "Milk":
+            case "Soda":
+            case "Iced Tea":
+                return 240; // 8 oz
+            case "Orange Juice":
+            case "Apple Juice":
+            case "Cranberry Juice":
+            case "Grape Juice":
+            case "Tomato Juice":
+                return 120; // 4 oz
+            default:
+                return 240;
         }
-        
-        updateFluidDisplay();
     }
     
-    private void updateFluidUsage(String meal, int volumeChange) {
-        int currentUsage = fluidUsed.get(meal);
-        fluidUsed.put(meal, currentUsage + volumeChange);
-        updateFluidDisplay();
-    }
-    
-    private void updateFluidDisplay() {
-        updateMealFluidDisplay("breakfast", breakfastFluidDisplay);
-        updateMealFluidDisplay("lunch", lunchFluidDisplay);
-        updateMealFluidDisplay("dinner", dinnerFluidDisplay);
-    }
-    
-    private void updateMealFluidDisplay(String meal, TextView displayView) {
-        int used = fluidUsed.get(meal);
-        int limit = fluidLimits.get(meal);
-        
-        String displayText;
-        if (limit == 9999) {
-            displayText = "Fluid: " + used + " ml (No limit)";
-        } else {
-            displayText = "Fluid: " + used + " / " + limit + " ml";
-            if (used > limit) {
-                displayView.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
-            } else {
-                displayView.setTextColor(getResources().getColor(android.R.color.black));
-            }
-        }
-        
-        displayView.setText(displayText);
-    }
-    
-    // FIXED: Confirm order with split patient names
     private void confirmOrder() {
+        if (!validateForm()) {
+            return;
+        }
+        
         String firstName = patientFirstNameInput.getText().toString().trim();
         String lastName = patientLastNameInput.getText().toString().trim();
         String wing = (String) wingSpinner.getSelectedItem();
         String room = (String) roomSpinner.getSelectedItem();
         String diet = (String) dietSpinner.getSelectedItem();
         
-        if (firstName.isEmpty() || lastName.isEmpty()) {
-            Toast.makeText(this, "Please enter patient first and last name", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        
-        if (wing == null || wing.equals("Select Wing")) {
-            Toast.makeText(this, "Please select a wing", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        
-        if (room == null || room.equals("Select Room")) {
-            Toast.makeText(this, "Please select a room", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        
-        if (diet == null || diet.equals("Select Diet")) {
-            Toast.makeText(this, "Please select a diet", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        
-        // Build order summary
         StringBuilder summary = new StringBuilder();
-        summary.append("PATIENT INFORMATION:\n");
-        summary.append("Name: ").append(firstName).append(" ").append(lastName).append("\n");
-        summary.append("Location: ").append(wing).append(" - Room ").append(room).append("\n");
+        summary.append("Patient: ").append(firstName).append(" ").append(lastName).append("\n");
+        summary.append("Location: ").append(wing).append(" Wing, Room ").append(room).append("\n");
         summary.append("Diet: ").append(diet).append("\n");
         
         String fluidRestriction = (String) fluidRestrictionSpinner.getSelectedItem();
@@ -704,10 +470,7 @@ public class MainActivity extends AppCompatActivity {
             summary.append("Texture Modifications: ").append(textureModifications).append("\n");
         }
         
-        summary.append("\n=== MEAL SELECTIONS ===\n\n");
-        
-        // Add breakfast items
-        summary.append("BREAKFAST:\n");
+        summary.append("\nBREAKFAST:\n");
         addSelectedItem(summary, breakfastColdCereal, "Cold Cereal");
         addSelectedItem(summary, breakfastHotCereal, "Hot Cereal");
         addSelectedItem(summary, breakfastBread, "Bread");
@@ -740,6 +503,25 @@ public class MainActivity extends AppCompatActivity {
             })
             .setNegativeButton("Cancel", null)
             .show();
+    }
+    
+    private boolean validateForm() {
+        String firstName = patientFirstNameInput.getText().toString().trim();
+        String lastName = patientLastNameInput.getText().toString().trim();
+        
+        if (firstName.isEmpty()) {
+            patientFirstNameInput.setError("First name is required");
+            patientFirstNameInput.requestFocus();
+            return false;
+        }
+        
+        if (lastName.isEmpty()) {
+            patientLastNameInput.setError("Last name is required");
+            patientLastNameInput.requestFocus();
+            return false;
+        }
+        
+        return true;
     }
     
     private String getTextureModifications() {
@@ -778,8 +560,7 @@ public class MainActivity extends AppCompatActivity {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         
-        values.put("patient_first_name", firstName);
-        values.put("patient_last_name", lastName);
+        values.put("patient_name", firstName + " " + lastName);
         values.put("wing", wing);
         values.put("room", room);
         values.put("order_date", getCurrentTimestamp());
@@ -806,70 +587,76 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "Order submitted successfully!", Toast.LENGTH_LONG).show();
             clearForm();
         } else {
-            Toast.makeText(this, "Error submitting order. Please try again.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Error submitting order. Please try again.", Toast.LENGTH_LONG).show();
         }
     }
     
     private void addMealItems(ContentValues values, String meal) {
-        StringBuilder items = new StringBuilder();
-        StringBuilder juices = new StringBuilder();
-        StringBuilder drinks = new StringBuilder();
+        List<String> items = new ArrayList<>();
+        List<String> mealJuices = new ArrayList<>();
+        List<String> mealDrinks = new ArrayList<>();
         
-        // Add food items based on meal
-        if (meal.equals("breakfast")) {
-            addSpinnerItem(items, breakfastColdCereal);
-            addSpinnerItem(items, breakfastHotCereal);
-            addSpinnerItem(items, breakfastBread);
-            addSpinnerItem(items, breakfastMuffin);
-            addSpinnerItem(items, breakfastMain);
-            addSpinnerItem(items, breakfastFruit);
-            
-            addContainerItems(juices, breakfastJuicesContainer);
-            addContainerItems(drinks, breakfastDrinksContainer);
-        } else if (meal.equals("lunch")) {
-            addSpinnerItem(items, lunchProtein);
-            addSpinnerItem(items, lunchStarch);
-            addSpinnerItem(items, lunchVegetable);
-            addSpinnerItem(items, lunchDessert);
-            
-            addContainerItems(drinks, lunchDrinksContainer);
-        } else if (meal.equals("dinner")) {
-            addSpinnerItem(items, dinnerProtein);
-            addSpinnerItem(items, dinnerStarch);
-            addSpinnerItem(items, dinnerVegetable);
-            addSpinnerItem(items, dinnerDessert);
-            
-            addContainerItems(drinks, dinnerDrinksContainer);
+        // Add main meal items
+        switch (meal) {
+            case "breakfast":
+                addItemIfSelected(items, breakfastColdCereal);
+                addItemIfSelected(items, breakfastHotCereal);
+                addItemIfSelected(items, breakfastBread);
+                addItemIfSelected(items, breakfastMuffin);
+                addItemIfSelected(items, breakfastMain);
+                addItemIfSelected(items, breakfastFruit);
+                addDrinksFromContainer(mealJuices, breakfastJuicesContainer);
+                addDrinksFromContainer(mealDrinks, breakfastDrinksContainer);
+                break;
+            case "lunch":
+                addItemIfSelected(items, lunchProtein);
+                addItemIfSelected(items, lunchStarch);
+                addItemIfSelected(items, lunchVegetable);
+                addItemIfSelected(items, lunchDessert);
+                addDrinksFromContainer(mealDrinks, lunchDrinksContainer);
+                break;
+            case "dinner":
+                addItemIfSelected(items, dinnerProtein);
+                addItemIfSelected(items, dinnerStarch);
+                addItemIfSelected(items, dinnerVegetable);
+                addItemIfSelected(items, dinnerDessert);
+                addDrinksFromContainer(mealDrinks, dinnerDrinksContainer);
+                break;
         }
         
-        values.put(meal + "_items", items.toString());
-        values.put(meal + "_juices", juices.toString());
-        values.put(meal + "_drinks", drinks.toString());
+        // Save to database
+        if (!items.isEmpty()) {
+            values.put(meal + "_items", String.join(",", items));
+        }
+        if (!mealJuices.isEmpty()) {
+            values.put(meal + "_juices", String.join(",", mealJuices));
+        }
+        if (!mealDrinks.isEmpty()) {
+            values.put(meal + "_drinks", String.join(",", mealDrinks));
+        }
     }
     
-    private void addSpinnerItem(StringBuilder items, Spinner spinner) {
+    private void addItemIfSelected(List<String> items, Spinner spinner) {
         String selected = (String) spinner.getSelectedItem();
         if (selected != null && !selected.equals("None")) {
-            if (items.length() > 0) items.append(", ");
-            items.append(selected);
+            items.add(selected);
         }
     }
     
-    private void addContainerItems(StringBuilder items, LinearLayout container) {
+    private void addDrinksFromContainer(List<String> drinks, LinearLayout container) {
         for (int i = 0; i < container.getChildCount(); i++) {
             View child = container.getChildAt(i);
             TextView itemName = child.findViewById(R.id.drinkItemName);
             TextView quantity = child.findViewById(R.id.drinkQuantity);
             
             if (itemName != null) {
-                if (items.length() > 0) items.append(", ");
-                items.append(itemName.getText()).append(" (").append(quantity.getText()).append(")");
+                drinks.add(itemName.getText().toString() + " x" + quantity.getText().toString());
             }
         }
     }
     
     private void clearForm() {
-        // FIXED: Clear split name fields
+        // Clear patient information
         patientFirstNameInput.setText("");
         patientLastNameInput.setText("");
         wingSpinner.setSelection(0);
@@ -877,28 +664,29 @@ public class MainActivity extends AppCompatActivity {
         dietSpinner.setSelection(0);
         fluidRestrictionSpinner.setSelection(0);
         
+        // Clear texture modifications
         mechanicalGroundCB.setChecked(false);
         mechanicalChoppedCB.setChecked(false);
         biteSizeCB.setChecked(false);
         breadOKCB.setChecked(false);
         
-        // Clear all spinners
-        if (breakfastColdCereal.getAdapter() != null) breakfastColdCereal.setSelection(0);
-        if (breakfastHotCereal.getAdapter() != null) breakfastHotCereal.setSelection(0);
-        if (breakfastBread.getAdapter() != null) breakfastBread.setSelection(0);
-        if (breakfastMuffin.getAdapter() != null) breakfastMuffin.setSelection(0);
-        if (breakfastMain.getAdapter() != null) breakfastMain.setSelection(0);
-        if (breakfastFruit.getAdapter() != null) breakfastFruit.setSelection(0);
+        // Clear meal selections
+        breakfastColdCereal.setSelection(0);
+        breakfastHotCereal.setSelection(0);
+        breakfastBread.setSelection(0);
+        breakfastMuffin.setSelection(0);
+        breakfastMain.setSelection(0);
+        breakfastFruit.setSelection(0);
         
-        if (lunchProtein.getAdapter() != null) lunchProtein.setSelection(0);
-        if (lunchStarch.getAdapter() != null) lunchStarch.setSelection(0);
-        if (lunchVegetable.getAdapter() != null) lunchVegetable.setSelection(0);
-        if (lunchDessert.getAdapter() != null) lunchDessert.setSelection(0);
+        lunchProtein.setSelection(0);
+        lunchStarch.setSelection(0);
+        lunchVegetable.setSelection(0);
+        lunchDessert.setSelection(0);
         
-        if (dinnerProtein.getAdapter() != null) dinnerProtein.setSelection(0);
-        if (dinnerStarch.getAdapter() != null) dinnerStarch.setSelection(0);
-        if (dinnerVegetable.getAdapter() != null) dinnerVegetable.setSelection(0);
-        if (dinnerDessert.getAdapter() != null) dinnerDessert.setSelection(0);
+        dinnerProtein.setSelection(0);
+        dinnerStarch.setSelection(0);
+        dinnerVegetable.setSelection(0);
+        dinnerDessert.setSelection(0);
         
         // Clear drink containers
         breakfastJuicesContainer.removeAllViews();
@@ -908,13 +696,18 @@ public class MainActivity extends AppCompatActivity {
         
         // Reset fluid tracking
         initializeFluidTracking();
-        
-        // Focus on first name input
-        patientFirstNameInput.requestFocus();
     }
     
     private String getCurrentTimestamp() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
         return sdf.format(new Date());
+    }
+    
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (dbHelper != null) {
+            dbHelper.close();
+        }
     }
 }

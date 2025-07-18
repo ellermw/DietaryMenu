@@ -1080,6 +1080,7 @@ id cache_measures
 id callMeasure
 id carryVelocity
 id categoryFilterSpinner
+id categorySpinner
 id center
 id center_vertical
 id chain
@@ -1106,6 +1107,7 @@ id currentState
 id custom
 id customPanel
 id dateSpinner
+id dayFilterSpinner
 id decelerate
 id decelerateAndComplete
 id decor_content_parent
@@ -1114,6 +1116,7 @@ id deleteItemButton
 id deletePatientButton
 id deltaRelative
 id dependency_ordering
+id descriptionEditText
 id dialog_button
 id dietSpinner
 id dietText
@@ -1194,12 +1197,16 @@ id immediateStop
 id included
 id info
 id invisible
+id isClearLiquidCheckBox
+id isDefaultCheckBox
+id isSodaCheckBox
 id italic
 id itemAdaCheckBox
 id itemCategorySpinner
 id itemCountText
 id itemDetailsText
 id itemManagementButton
+id itemNameEditText
 id itemNameInput
 id itemNameText
 id itemSearchEditText
@@ -1348,6 +1355,7 @@ id showCustom
 id showHome
 id showTitle
 id sin
+id sizeMlEditText
 id skipped
 id sodaCheckBox
 id south
@@ -1502,6 +1510,8 @@ layout activity_view_orders
 layout custom_dialog
 layout dialog_add_edit_item
 layout dialog_add_edit_user
+layout dialog_add_item
+layout dialog_add_user
 layout dialog_admin_access
 layout dialog_change_password
 layout dialog_item_form

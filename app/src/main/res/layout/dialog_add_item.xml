@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <!-- Item Name -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Item Name *"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#2c3e50"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/itemNameEditText"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="Enter item name"
+            android:background="@android:drawable/edit_text"
+            android:padding="12dp"
+            android:textSize="16sp"
+            android:inputType="textCapWords"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Category -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Category *"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#2c3e50"
+            android:layout_marginBottom="8dp" />
+
+        <Spinner
+            android:id="@+id/categorySpinner"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@android:drawable/edit_text"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Description -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Description (Optional)"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#2c3e50"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/descriptionEditText"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:hint="Enter item description"
+            android:background="@android:drawable/edit_text"
+            android:padding="12dp"
+            android:textSize="16sp"
+            android:inputType="textMultiLine|textCapSentences"
+            android:gravity="top"
+            android:maxLines="3"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Size in ML -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Size in ml (Optional)"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#2c3e50"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/sizeMlEditText"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="e.g., 240, 355, 500"
+            android:background="@android:drawable/edit_text"
+            android:padding="12dp"
+            android:textSize="16sp"
+            android:inputType="number"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Properties Section -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Item Properties"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#2c3e50"
+            android:layout_marginBottom="12dp" />
+
+        <!-- ADA Friendly -->
+        <CheckBox
+            android:id="@+id/adaFriendlyCheckBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ADA Friendly (Diabetic-safe)"
+            android:textSize="16sp"
+            android:textColor="#2c3e50"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Is Soda -->
+        <CheckBox
+            android:id="@+id/isSodaCheckBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Is Soda/Carbonated"
+            android:textSize="16sp"
+            android:textColor="#2c3e50"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Is Clear Liquid -->
+        <CheckBox
+            android:id="@+id/isClearLiquidCheckBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Is Clear Liquid"
+            android:textSize="16sp"
+            android:textColor="#2c3e50"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Is Default -->
+        <CheckBox
+            android:id="@+id/isDefaultCheckBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Default item for meal type"
+            android:textSize="16sp"
+            android:textColor="#2c3e50"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Required Fields Note -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="* Required fields"
+            android:textSize="12sp"
+            android:textColor="#7f8c8d"
+            android:textStyle="italic"
+            android:layout_marginTop="8dp" />
+
+    </LinearLayout>
+
+</ScrollView>
