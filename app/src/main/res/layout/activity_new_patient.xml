@@ -2,8 +2,8 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
-    android:background="#f5f5f5">
+    android:background="#f5f7fa"
+    android:padding="16dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -11,15 +11,34 @@
         android:orientation="vertical">
 
         <!-- Header -->
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Add New Patient"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:textColor="#2c3e50"
-            android:gravity="center"
-            android:layout_marginBottom="24dp" />
+            android:orientation="vertical"
+            android:background="@android:color/white"
+            android:padding="20dp"
+            android:layout_marginBottom="20dp"
+            android:elevation="4dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="👤➕ Add New Patient"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="#1e3a8a"
+                android:gravity="center"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Enter patient information and assign location"
+                android:textSize="14sp"
+                android:textColor="#64748b"
+                android:gravity="center" />
+
+        </LinearLayout>
 
         <!-- Patient Information Form -->
         <LinearLayout
@@ -27,170 +46,142 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:background="@android:color/white"
-            android:padding="16dp"
-            android:layout_marginBottom="16dp">
+            android:padding="20dp"
+            android:layout_marginBottom="20dp"
+            android:elevation="2dp">
 
-            <!-- FIXED: Split Patient Name Fields -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Patient Name"
-                android:textSize="16sp"
+                android:text="Patient Details"
+                android:textSize="18sp"
                 android:textStyle="bold"
-                android:textColor="#2c3e50"
-                android:layout_marginBottom="8dp" />
+                android:textColor="#1f2937"
+                android:layout_marginBottom="16dp" />
 
-            <LinearLayout
+            <!-- First Name -->
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="16dp">
+                android:text="First Name *"
+                android:textSize="14sp"
+                android:textColor="#374151"
+                android:layout_marginBottom="4dp" />
 
-                <EditText
-                    android:id="@+id/patientFirstNameInput"
-                    android:layout_width="0dp"
-                    android:layout_height="48dp"
-                    android:layout_weight="1"
-                    android:hint="First Name"
-                    android:background="@android:drawable/edit_text"
-                    android:padding="12dp"
-                    android:layout_marginEnd="8dp"
-                    android:inputType="textPersonName|textCapWords" />
+            <EditText
+                android:id="@+id/firstNameEditText"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:hint="Enter first name"
+                android:background="?android:attr/editTextBackground"
+                android:padding="12dp"
+                android:textSize="16sp"
+                android:layout_marginBottom="16dp" />
 
-                <EditText
-                    android:id="@+id/patientLastNameInput"
-                    android:layout_width="0dp"
-                    android:layout_height="48dp"
-                    android:layout_weight="1"
-                    android:hint="Last Name"
-                    android:background="@android:drawable/edit_text"
-                    android:padding="12dp"
-                    android:layout_marginStart="8dp"
-                    android:inputType="textPersonName|textCapWords" />
+            <!-- Last Name -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Last Name *"
+                android:textSize="14sp"
+                android:textColor="#374151"
+                android:layout_marginBottom="4dp" />
 
-            </LinearLayout>
+            <EditText
+                android:id="@+id/lastNameEditText"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:hint="Enter last name"
+                android:background="?android:attr/editTextBackground"
+                android:padding="12dp"
+                android:textSize="16sp"
+                android:layout_marginBottom="16dp" />
 
             <!-- Wing Selection -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Wing"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="#2c3e50"
-                android:layout_marginBottom="8dp" />
+                android:text="Wing *"
+                android:textSize="14sp"
+                android:textColor="#374151"
+                android:layout_marginBottom="4dp" />
 
             <Spinner
                 android:id="@+id/wingSpinner"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:background="@android:drawable/edit_text"
+                android:background="?android:attr/editTextBackground"
                 android:layout_marginBottom="16dp" />
 
             <!-- Room Selection -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Room"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="#2c3e50"
-                android:layout_marginBottom="8dp" />
+                android:text="Room Number *"
+                android:textSize="14sp"
+                android:textColor="#374151"
+                android:layout_marginBottom="4dp" />
 
             <Spinner
                 android:id="@+id/roomSpinner"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:background="@android:drawable/edit_text"
+                android:background="?android:attr/editTextBackground"
                 android:layout_marginBottom="16dp" />
 
-            <!-- Diet Type -->
+            <!-- Diet Selection -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Diet Type"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="#2c3e50"
-                android:layout_marginBottom="8dp" />
+                android:text="Diet Type *"
+                android:textSize="14sp"
+                android:textColor="#374151"
+                android:layout_marginBottom="4dp" />
 
             <Spinner
                 android:id="@+id/dietSpinner"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:background="@android:drawable/edit_text"
+                android:background="?android:attr/editTextBackground"
                 android:layout_marginBottom="16dp" />
 
             <!-- Fluid Restriction -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Fluid Restriction"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="#2c3e50"
-                android:layout_marginBottom="8dp" />
+                android:text="Fluid Restriction (optional)"
+                android:textSize="14sp"
+                android:textColor="#374151"
+                android:layout_marginBottom="4dp" />
 
-            <Spinner
-                android:id="@+id/fluidRestrictionSpinner"
+            <EditText
+                android:id="@+id/fluidRestrictionEditText"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:background="@android:drawable/edit_text"
+                android:hint="e.g., 2000ml/day"
+                android:background="?android:attr/editTextBackground"
+                android:padding="12dp"
+                android:textSize="16sp"
                 android:layout_marginBottom="16dp" />
 
             <!-- Texture Modifications -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Texture Modifications"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="#2c3e50"
-                android:layout_marginBottom="8dp" />
+                android:text="Texture Modifications (optional)"
+                android:textSize="14sp"
+                android:textColor="#374151"
+                android:layout_marginBottom="4dp" />
 
-            <LinearLayout
+            <EditText
+                android:id="@+id/textureModificationsEditText"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginBottom="16dp">
-
-                <CheckBox
-                    android:id="@+id/mechanicalGroundCB"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Mechanical Ground"
-                    android:textSize="14sp" />
-
-                <CheckBox
-                    android:id="@+id/mechanicalChoppedCB"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Mechanical Chopped"
-                    android:textSize="14sp" />
-
-                <CheckBox
-                    android:id="@+id/biteSizeCB"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Bite Size"
-                    android:textSize="14sp" />
-
-                <CheckBox
-                    android:id="@+id/breadOKCB"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Bread OK"
-                    android:textSize="14sp" />
-
-                <CheckBox
-                    android:id="@+id/adaFriendlyCB"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="ADA Friendly"
-                    android:textSize="14sp"
-                    android:visibility="gone" />
-
-            </LinearLayout>
+                android:layout_height="48dp"
+                android:hint="e.g., Mechanical soft, pureed"
+                android:background="?android:attr/editTextBackground"
+                android:padding="12dp"
+                android:textSize="16sp"
+                android:layout_marginBottom="16dp" />
 
         </LinearLayout>
 
@@ -198,53 +189,33 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="8dp">
+            android:orientation="horizontal">
 
             <Button
-                android:id="@+id/clearFormButton"
+                android:id="@+id/backButton"
                 android:layout_width="0dp"
-                android:layout_height="48dp"
+                android:layout_height="50dp"
                 android:layout_weight="1"
-                android:text="Clear Form"
+                android:layout_marginEnd="8dp"
+                android:text="← Cancel"
                 android:textSize="16sp"
-                android:background="#95a5a6"
+                android:textStyle="bold"
                 android:textColor="@android:color/white"
-                android:layout_marginEnd="8dp" />
+                android:background="#6b7280" />
 
             <Button
                 android:id="@+id/savePatientButton"
                 android:layout_width="0dp"
-                android:layout_height="48dp"
+                android:layout_height="50dp"
                 android:layout_weight="1"
-                android:text="Save Patient"
+                android:layout_marginStart="8dp"
+                android:text="💾 Save Patient"
                 android:textSize="16sp"
-                android:background="#27ae60"
+                android:textStyle="bold"
                 android:textColor="@android:color/white"
-                android:layout_marginStart="8dp" />
+                android:background="#059669" />
 
         </LinearLayout>
-
-        <Button
-            android:id="@+id/backButton"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:text="← Back to Patient List"
-            android:textSize="16sp"
-            android:background="#34495e"
-            android:textColor="@android:color/white"
-            android:layout_marginTop="8dp" />
-
-        <!-- Help Text -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="• Fill in all required fields to add a new patient\n• First Name and Last Name are required\n• Select appropriate wing and room\n• Choose diet type and fluid restrictions as needed\n• Check texture modifications if applicable"
-            android:textSize="12sp"
-            android:textColor="#7f8c8d"
-            android:background="#f8f9fa"
-            android:padding="12dp"
-            android:layout_marginTop="16dp" />
 
     </LinearLayout>
 

@@ -20,7 +20,7 @@
 15-->[androidx.core:core:1.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\5418d86f9bf51acc009e025a9c494d67\transformed\core-1.9.0\AndroidManifest.xml:26:22-94
 16
 17    <application
-17-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:5:5-94:19
+17-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:5:5-82:19
 18        android:allowBackup="true"
 18-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:6:9-35
 19        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
@@ -126,77 +126,57 @@
 79            android:parentActivityName="com.hospital.dietary.MainMenuActivity" />
 79-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:62:13-59
 80
-81        <!-- Meal Planning Activity -->
+81        <!-- Retired Orders Activity - NEW: Orders older than 6 days -->
 82        <activity
-82-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:65:9-68:67
-83            android:name="com.hospital.dietary.MealPlanningActivity"
-83-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:66:13-49
+82-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:65:9-68:62
+83            android:name="com.hospital.dietary.RetiredOrdersActivity"
+83-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:66:13-50
 84            android:exported="false"
 84-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:67:13-37
-85            android:parentActivityName="com.hospital.dietary.PendingOrdersActivity" />
-85-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:68:13-64
+85            android:parentActivityName="com.hospital.dietary.MainMenuActivity" />
+85-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:68:13-59
 86
-87        <!-- Admin Activity - For user and item management -->
+87        <!-- Meal Planning Activity -->
 88        <activity
-88-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:71:9-74:62
-89            android:name="com.hospital.dietary.AdminActivity"
-89-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:72:13-42
+88-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:71:9-74:67
+89            android:name="com.hospital.dietary.MealPlanningActivity"
+89-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:72:13-49
 90            android:exported="false"
 90-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:73:13-37
-91            android:parentActivityName="com.hospital.dietary.MainMenuActivity" />
-91-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:74:13-59
+91            android:parentActivityName="com.hospital.dietary.PatientDetailActivity" />
+91-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:74:13-64
 92
-93        <!-- Original MainActivity - Keep for backward compatibility -->
+93        <!-- View Orders Activity -->
 94        <activity
 94-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:77:9-80:62
-95            android:name="com.hospital.dietary.MainActivity"
-95-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:78:13-41
+95            android:name="com.hospital.dietary.ViewOrdersActivity"
+95-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:78:13-47
 96            android:exported="false"
 96-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:79:13-37
 97            android:parentActivityName="com.hospital.dietary.MainMenuActivity" />
 97-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:80:13-59
 98
-99        <!-- View Orders Activity - Legacy -->
-100        <activity
-100-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:83:9-86:58
-101            android:name="com.hospital.dietary.ViewOrdersActivity"
-101-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:84:13-47
-102            android:exported="false"
-102-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:85:13-37
-103            android:parentActivityName="com.hospital.dietary.MainActivity" />
-103-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:86:13-55
-104
-105        <!-- Original Patient Info Activity - Keep for backward compatibility -->
-106        <activity
-106-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:89:9-92:62
-107            android:name="com.hospital.dietary.PatientInfoActivity"
-107-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:90:13-48
-108            android:exported="false"
-108-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:91:13-37
-109            android:parentActivityName="com.hospital.dietary.MainMenuActivity" />
-109-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:92:13-59
-110
-111        <provider
-111-->[androidx.emoji2:emoji2:1.2.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\44489c516bd83bb675a4c6c7b436daa8\transformed\emoji2-1.2.0\AndroidManifest.xml:24:9-32:20
-112            android:name="androidx.startup.InitializationProvider"
-112-->[androidx.emoji2:emoji2:1.2.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\44489c516bd83bb675a4c6c7b436daa8\transformed\emoji2-1.2.0\AndroidManifest.xml:25:13-67
-113            android:authorities="com.hospital.dietary.androidx-startup"
-113-->[androidx.emoji2:emoji2:1.2.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\44489c516bd83bb675a4c6c7b436daa8\transformed\emoji2-1.2.0\AndroidManifest.xml:26:13-68
-114            android:exported="false" >
-114-->[androidx.emoji2:emoji2:1.2.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\44489c516bd83bb675a4c6c7b436daa8\transformed\emoji2-1.2.0\AndroidManifest.xml:27:13-37
-115            <meta-data
-115-->[androidx.emoji2:emoji2:1.2.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\44489c516bd83bb675a4c6c7b436daa8\transformed\emoji2-1.2.0\AndroidManifest.xml:29:13-31:52
-116                android:name="androidx.emoji2.text.EmojiCompatInitializer"
-116-->[androidx.emoji2:emoji2:1.2.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\44489c516bd83bb675a4c6c7b436daa8\transformed\emoji2-1.2.0\AndroidManifest.xml:30:17-75
-117                android:value="androidx.startup" />
-117-->[androidx.emoji2:emoji2:1.2.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\44489c516bd83bb675a4c6c7b436daa8\transformed\emoji2-1.2.0\AndroidManifest.xml:31:17-49
-118            <meta-data
-118-->[androidx.lifecycle:lifecycle-process:2.4.1] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\0059a540c33058511248e1ad9532520f\transformed\lifecycle-process-2.4.1\AndroidManifest.xml:31:13-33:52
-119                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
-119-->[androidx.lifecycle:lifecycle-process:2.4.1] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\0059a540c33058511248e1ad9532520f\transformed\lifecycle-process-2.4.1\AndroidManifest.xml:32:17-78
-120                android:value="androidx.startup" />
-120-->[androidx.lifecycle:lifecycle-process:2.4.1] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\0059a540c33058511248e1ad9532520f\transformed\lifecycle-process-2.4.1\AndroidManifest.xml:33:17-49
-121        </provider>
-122    </application>
-123
-124</manifest>
+99        <provider
+99-->[androidx.emoji2:emoji2:1.2.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\44489c516bd83bb675a4c6c7b436daa8\transformed\emoji2-1.2.0\AndroidManifest.xml:24:9-32:20
+100            android:name="androidx.startup.InitializationProvider"
+100-->[androidx.emoji2:emoji2:1.2.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\44489c516bd83bb675a4c6c7b436daa8\transformed\emoji2-1.2.0\AndroidManifest.xml:25:13-67
+101            android:authorities="com.hospital.dietary.androidx-startup"
+101-->[androidx.emoji2:emoji2:1.2.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\44489c516bd83bb675a4c6c7b436daa8\transformed\emoji2-1.2.0\AndroidManifest.xml:26:13-68
+102            android:exported="false" >
+102-->[androidx.emoji2:emoji2:1.2.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\44489c516bd83bb675a4c6c7b436daa8\transformed\emoji2-1.2.0\AndroidManifest.xml:27:13-37
+103            <meta-data
+103-->[androidx.emoji2:emoji2:1.2.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\44489c516bd83bb675a4c6c7b436daa8\transformed\emoji2-1.2.0\AndroidManifest.xml:29:13-31:52
+104                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+104-->[androidx.emoji2:emoji2:1.2.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\44489c516bd83bb675a4c6c7b436daa8\transformed\emoji2-1.2.0\AndroidManifest.xml:30:17-75
+105                android:value="androidx.startup" />
+105-->[androidx.emoji2:emoji2:1.2.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\44489c516bd83bb675a4c6c7b436daa8\transformed\emoji2-1.2.0\AndroidManifest.xml:31:17-49
+106            <meta-data
+106-->[androidx.lifecycle:lifecycle-process:2.4.1] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\0059a540c33058511248e1ad9532520f\transformed\lifecycle-process-2.4.1\AndroidManifest.xml:31:13-33:52
+107                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+107-->[androidx.lifecycle:lifecycle-process:2.4.1] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\0059a540c33058511248e1ad9532520f\transformed\lifecycle-process-2.4.1\AndroidManifest.xml:32:17-78
+108                android:value="androidx.startup" />
+108-->[androidx.lifecycle:lifecycle-process:2.4.1] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\0059a540c33058511248e1ad9532520f\transformed\lifecycle-process-2.4.1\AndroidManifest.xml:33:17-49
+109        </provider>
+110    </application>
+111
+112</manifest>

@@ -189,27 +189,27 @@ public class MainActivity extends AppCompatActivity {
         if (!wing.equals("Select Wing")) {
             switch (wing) {
                 case "1 South":
-                    for (int i = 101; i <= 120; i++) {
+                    for (int i = 106; i <= 120; i++) {
                         rooms.add(String.valueOf(i));
                     }
                     break;
                 case "2 North":
-                    for (int i = 201; i <= 220; i++) {
+                    for (int i = 250; i <= 264; i++) {
                         rooms.add(String.valueOf(i));
                     }
                     break;
                 case "Labor and Delivery":
-                    for (int i = 301; i <= 310; i++) {
-                        rooms.add("L&D" + (i - 300));
+                    for (int i = 1; i <= 6; i++) {
+                        rooms.add("L&D" + (i - 1));
                     }
                     break;
                 case "2 West":
-                    for (int i = 251; i <= 270; i++) {
+                    for (int i = 225; i <= 248; i++) {
                         rooms.add(String.valueOf(i));
                     }
                     break;
                 case "3 North":
-                    for (int i = 301; i <= 320; i++) {
+                    for (int i = 349; i <= 371; i++) {
                         rooms.add(String.valueOf(i));
                     }
                     break;

@@ -122,7 +122,7 @@ public class PendingOrdersActivity extends AppCompatActivity {
     private void openMealPlanning(Patient patient) {
         Intent intent = new Intent(this, MealPlanningActivity.class);
         intent.putExtra("patient_id", patient.getPatientId());
-        intent.putExtra("patient_name", patient.getName());
+        intent.putExtra("patient_name", patient.getFullName());
         intent.putExtra("wing", patient.getWing());
         intent.putExtra("room", patient.getRoomNumber());
         intent.putExtra("diet", patient.getDiet());
@@ -180,7 +180,7 @@ public class PendingOrdersActivity extends AppCompatActivity {
             TextView restrictionsText = convertView.findViewById(R.id.restrictionsText);
             TextView statusText = convertView.findViewById(R.id.statusText);
             
-            patientNameText.setText(patient.getName());
+            patientNameText.setText(patient.getFullName());
             locationText.setText(patient.getWing() + " - Room " + patient.getRoomNumber());
             dietText.setText(patient.getDiet());
             

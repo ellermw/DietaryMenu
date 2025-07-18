@@ -116,7 +116,7 @@ public class PatientInfoActivity extends AppCompatActivity {
                 Patient patient = getItem(position);
                 TextView textView = (TextView) view;
                 if (patient != null) {
-                    String displayText = patient.getPatientName() + " - " + patient.getRoomInfo();
+                    String displayText = patient.getFullName() + " - " + patient.getLocationString();
                     textView.setText(displayText);
                 }
                 return view;
@@ -199,7 +199,7 @@ public class PatientInfoActivity extends AppCompatActivity {
                 // Search in first name, last name, full name, wing, or room number
                 if ((patient.getPatientFirstName() != null && patient.getPatientFirstName().toLowerCase().contains(searchLower)) ||
                     (patient.getPatientLastName() != null && patient.getPatientLastName().toLowerCase().contains(searchLower)) ||
-                    patient.getPatientName().toLowerCase().contains(searchLower) ||
+                    patient.getFullName().toLowerCase().contains(searchLower) ||
                     patient.getWing().toLowerCase().contains(searchLower) ||
                     patient.getRoomNumber().toLowerCase().contains(searchLower)) {
                     filteredPatients.add(patient);
@@ -357,7 +357,7 @@ public class PatientInfoActivity extends AppCompatActivity {
         
         new AlertDialog.Builder(this)
             .setTitle("Delete Patient")
-            .setMessage("Are you sure you want to delete " + selectedPatient.getPatientName() + "?\n\n" +
+            .setMessage("Are you sure you want to delete " + selectedPatient.getFullName() + "?\n\n" +
                        "This action cannot be undone.")
             .setPositiveButton("Delete", (dialog, which) -> {
                 boolean success = patientDAO.deletePatient(selectedPatient.getPatientId());

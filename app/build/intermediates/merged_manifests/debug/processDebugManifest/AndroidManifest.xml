@@ -78,33 +78,21 @@
             android:exported="false"
             android:parentActivityName="com.hospital.dietary.MainMenuActivity" />
 
+        <!-- Retired Orders Activity - NEW: Orders older than 6 days -->
+        <activity
+            android:name="com.hospital.dietary.RetiredOrdersActivity"
+            android:exported="false"
+            android:parentActivityName="com.hospital.dietary.MainMenuActivity" />
+
         <!-- Meal Planning Activity -->
         <activity
             android:name="com.hospital.dietary.MealPlanningActivity"
             android:exported="false"
-            android:parentActivityName="com.hospital.dietary.PendingOrdersActivity" />
+            android:parentActivityName="com.hospital.dietary.PatientDetailActivity" />
 
-        <!-- Admin Activity - For user and item management -->
-        <activity
-            android:name="com.hospital.dietary.AdminActivity"
-            android:exported="false"
-            android:parentActivityName="com.hospital.dietary.MainMenuActivity" />
-
-        <!-- Original MainActivity - Keep for backward compatibility -->
-        <activity
-            android:name="com.hospital.dietary.MainActivity"
-            android:exported="false"
-            android:parentActivityName="com.hospital.dietary.MainMenuActivity" />
-
-        <!-- View Orders Activity - Legacy -->
+        <!-- View Orders Activity -->
         <activity
             android:name="com.hospital.dietary.ViewOrdersActivity"
-            android:exported="false"
-            android:parentActivityName="com.hospital.dietary.MainActivity" />
-
-        <!-- Original Patient Info Activity - Keep for backward compatibility -->
-        <activity
-            android:name="com.hospital.dietary.PatientInfoActivity"
             android:exported="false"
             android:parentActivityName="com.hospital.dietary.MainMenuActivity" />
 

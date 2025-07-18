@@ -8,16 +8,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class PatientInfoMenuActivity extends AppCompatActivity {
     
-    // User information
     private String currentUsername;
     private String currentUserRole;
     private String currentUserFullName;
     
-    // UI Components
-    private TextView welcomeText;
     private Button newPatientButton;
     private Button existingPatientButton;
     private Button backButton;
+    private TextView welcomeText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,25 +27,19 @@ public class PatientInfoMenuActivity extends AppCompatActivity {
         currentUserRole = getIntent().getStringExtra("user_role");
         currentUserFullName = getIntent().getStringExtra("user_full_name");
         
-        // Initialize UI
         initializeUI();
-        
-        // Setup listeners
         setupListeners();
     }
     
     private void initializeUI() {
-        welcomeText = findViewById(R.id.welcomeText);
         newPatientButton = findViewById(R.id.newPatientButton);
         existingPatientButton = findViewById(R.id.existingPatientButton);
         backButton = findViewById(R.id.backButton);
+        welcomeText = findViewById(R.id.welcomeText);
         
-        // Set welcome message
-        if (currentUserFullName != null) {
-            welcomeText.setText("Welcome, " + currentUserFullName + "!");
-        }
+        // Set welcome text
+        welcomeText.setText("Welcome, " + (currentUserFullName != null ? currentUserFullName : currentUsername) + "!");
         
-        // Set title
         setTitle("Patient Information");
     }
     

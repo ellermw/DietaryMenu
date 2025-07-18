@@ -14,19 +14,19 @@ import java.util.Locale;
 public class PatientDAO {
 
     private DatabaseHelper dbHelper;
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
 
     public PatientDAO(DatabaseHelper dbHelper) {
         this.dbHelper = dbHelper;
     }
 
     /**
-     * FIXED: Updated to handle split patient names
+     * Add a new patient
      */
     public long addPatient(Patient patient) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
 
-        // FIXED: Use split first and last names
         values.put("patient_first_name", patient.getPatientFirstName());
         values.put("patient_last_name", patient.getPatientLastName());
         values.put("wing", patient.getWing());
@@ -46,13 +46,12 @@ public class PatientDAO {
     }
 
     /**
-     * FIXED: Updated to handle split patient names
+     * Update an existing patient
      */
     public boolean updatePatient(Patient patient) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
 
-        // FIXED: Use split first and last names
         values.put("patient_first_name", patient.getPatientFirstName());
         values.put("patient_last_name", patient.getPatientLastName());
         values.put("wing", patient.getWing());
@@ -73,7 +72,28 @@ public class PatientDAO {
     }
 
     /**
-     * FIXED: Updated to handle split patient names
+     * Get all patients
+     */
+    public List<Patient> getAllPatients() {
+        List<Patient> patients = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String query = "SELECT * FROM PatientInfo ORDER BY created_date DESC, wing, CAST(room_number AS INTEGER)";
+        
+        Cursor cursor = db.rawQuery(query, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Patient patient = createPatientFromCursor(cursor);
+                patients.add(patient);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        return patients;
+    }
+
+    /**
+     * Get patient by ID
      */
     public Patient getPatientById(int patientId) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -90,74 +110,32 @@ public class PatientDAO {
     }
 
     /**
-     * FIXED: Updated to handle split patient names
+     * Get patient by location (wing and room)
      */
-    public List<Patient> getAllPatients() {
-        List<Patient> patients = new ArrayList<>();
+    public Patient getPatientByLocation(String wing, String roomNumber) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String query = "SELECT * FROM PatientInfo ORDER BY wing, CAST(room_number AS INTEGER)";
-        Cursor cursor = db.rawQuery(query, null);
+        String query = "SELECT * FROM PatientInfo WHERE wing = ? AND room_number = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{wing, roomNumber});
 
+        Patient patient = null;
         if (cursor.moveToFirst()) {
-            do {
-                Patient patient = createPatientFromCursor(cursor);
-                patients.add(patient);
-            } while (cursor.moveToNext());
+            patient = createPatientFromCursor(cursor);
         }
 
         cursor.close();
-        return patients;
+        return patient;
     }
 
     /**
-     * FIXED: Search by last name
+     * Search patients by name
      */
-    public List<Patient> searchPatientsByLastName(String lastName) {
+    public List<Patient> searchPatients(String searchTerm) {
         List<Patient> patients = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String query = "SELECT * FROM PatientInfo WHERE patient_last_name LIKE ? ORDER BY patient_last_name, patient_first_name";
-        Cursor cursor = db.rawQuery(query, new String[]{"%" + lastName + "%"});
-
-        if (cursor.moveToFirst()) {
-            do {
-                Patient patient = createPatientFromCursor(cursor);
-                patients.add(patient);
-            } while (cursor.moveToNext());
-        }
-
-        cursor.close();
-        return patients;
-    }
-
-    /**
-     * FIXED: Search by first name
-     */
-    public List<Patient> searchPatientsByFirstName(String firstName) {
-        List<Patient> patients = new ArrayList<>();
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String query = "SELECT * FROM PatientInfo WHERE patient_first_name LIKE ? ORDER BY patient_last_name, patient_first_name";
-        Cursor cursor = db.rawQuery(query, new String[]{"%" + firstName + "%"});
-
-        if (cursor.moveToFirst()) {
-            do {
-                Patient patient = createPatientFromCursor(cursor);
-                patients.add(patient);
-            } while (cursor.moveToNext());
-        }
-
-        cursor.close();
-        return patients;
-    }
-
-    /**
-     * FIXED: Search by full name (first + last)
-     */
-    public List<Patient> searchPatientsByFullName(String searchTerm) {
-        List<Patient> patients = new ArrayList<>();
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        
         String query = "SELECT * FROM PatientInfo WHERE " +
-                      "(patient_first_name LIKE ? OR patient_last_name LIKE ? OR " +
-                      "(patient_first_name || ' ' || patient_last_name) LIKE ?) " +
+                      "patient_first_name LIKE ? OR patient_last_name LIKE ? OR " +
+                      "(patient_first_name || ' ' || patient_last_name) LIKE ? " +
                       "ORDER BY patient_last_name, patient_first_name";
         String searchPattern = "%" + searchTerm + "%";
         Cursor cursor = db.rawQuery(query, new String[]{searchPattern, searchPattern, searchPattern});
@@ -230,6 +208,7 @@ public class PatientDAO {
         List<Patient> patients = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         String query = "SELECT * FROM PatientInfo WHERE wing = ? ORDER BY CAST(room_number AS INTEGER)";
+        
         Cursor cursor = db.rawQuery(query, new String[]{wing});
 
         if (cursor.moveToFirst()) {
@@ -244,134 +223,152 @@ public class PatientDAO {
     }
 
     /**
-     * Delete patient
+     * Delete a patient
      */
     public boolean deletePatient(int patientId) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        return db.delete("PatientInfo", "patient_id = ?", new String[]{String.valueOf(patientId)}) > 0;
-    }
-
-    /**
-     * Mark meal as complete
-     */
-    public boolean markMealComplete(int patientId, String meal) {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        
-        String columnName = meal.toLowerCase() + "_complete";
-        values.put(columnName, 1);
-        
-        int rowsAffected = db.update("PatientInfo", values, "patient_id = ?", 
+        int rowsAffected = db.delete("PatientInfo", "patient_id = ?", 
                                    new String[]{String.valueOf(patientId)});
         return rowsAffected > 0;
     }
 
     /**
-     * Mark meal as NPO (Nothing by Mouth)
+     * Get patient count
      */
-    public boolean markMealNPO(int patientId, String meal) {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
+    public int getPatientCount() {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String query = "SELECT COUNT(*) FROM PatientInfo";
+        Cursor cursor = db.rawQuery(query, null);
         
-        String columnName = meal.toLowerCase() + "_npo";
-        values.put(columnName, 1);
-        
-        int rowsAffected = db.update("PatientInfo", values, "patient_id = ?", 
-                                   new String[]{String.valueOf(patientId)});
-        return rowsAffected > 0;
+        int count = 0;
+        if (cursor.moveToFirst()) {
+            count = cursor.getInt(0);
+        }
+        cursor.close();
+        return count;
     }
 
     /**
-     * Reset all meals for a patient (for new day)
+     * Get available room numbers for a wing
      */
-    public boolean resetPatientMeals(int patientId) {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
+    public List<String> getAvailableRooms(String wing) {
+        List<String> availableRooms = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
         
-        values.put("breakfast_complete", 0);
-        values.put("lunch_complete", 0);
-        values.put("dinner_complete", 0);
-        values.put("breakfast_npo", 0);
-        values.put("lunch_npo", 0);
-        values.put("dinner_npo", 0);
+        // This would typically come from a Room table, but for now we'll generate based on wing
+        // You can customize this based on your hospital's room layout
+        if ("North Wing".equals(wing)) {
+            for (int i = 101; i <= 110; i++) {
+                if (!isRoomOccupied(wing, String.valueOf(i))) {
+                    availableRooms.add(String.valueOf(i));
+                }
+            }
+        } else if ("South Wing".equals(wing)) {
+            for (int i = 201; i <= 210; i++) {
+                if (!isRoomOccupied(wing, String.valueOf(i))) {
+                    availableRooms.add(String.valueOf(i));
+                }
+            }
+        } else if ("East Wing".equals(wing)) {
+            for (int i = 301; i <= 310; i++) {
+                if (!isRoomOccupied(wing, String.valueOf(i))) {
+                    availableRooms.add(String.valueOf(i));
+                }
+            }
+        } else if ("West Wing".equals(wing)) {
+            for (int i = 401; i <= 410; i++) {
+                if (!isRoomOccupied(wing, String.valueOf(i))) {
+                    availableRooms.add(String.valueOf(i));
+                }
+            }
+        } else if ("ICU".equals(wing)) {
+            for (int i = 1; i <= 8; i++) {
+                String room = "ICU-" + i;
+                if (!isRoomOccupied(wing, room)) {
+                    availableRooms.add(room);
+                }
+            }
+        } else if ("Pediatrics".equals(wing)) {
+            for (int i = 101; i <= 108; i++) {
+                String room = "P" + i;
+                if (!isRoomOccupied(wing, room)) {
+                    availableRooms.add(room);
+                }
+            }
+        }
         
-        int rowsAffected = db.update("PatientInfo", values, "patient_id = ?", 
-                                   new String[]{String.valueOf(patientId)});
-        return rowsAffected > 0;
+        return availableRooms;
     }
 
     /**
-     * FIXED: Helper method to create Patient from cursor with split names
+     * Check if a room is occupied
+     */
+    private boolean isRoomOccupied(String wing, String room) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String query = "SELECT COUNT(*) FROM PatientInfo WHERE wing = ? AND room_number = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{wing, room});
+        
+        boolean occupied = false;
+        if (cursor.moveToFirst()) {
+            occupied = cursor.getInt(0) > 0;
+        }
+        cursor.close();
+        return occupied;
+    }
+
+    /**
+     * Helper method to create Patient object from cursor
      */
     private Patient createPatientFromCursor(Cursor cursor) {
         Patient patient = new Patient();
         
-        int idxId = cursor.getColumnIndexOrThrow("patient_id");
-        int idxFirstName = cursor.getColumnIndex("patient_first_name");
-        int idxLastName = cursor.getColumnIndex("patient_last_name");
-        int idxName = cursor.getColumnIndex("name"); // Legacy fallback
-        int idxWing = cursor.getColumnIndexOrThrow("wing");
-        int idxRoom = cursor.getColumnIndexOrThrow("room_number");
-        int idxDiet = cursor.getColumnIndexOrThrow("diet");
-        int idxFluid = cursor.getColumnIndex("fluid_restriction");
-        int idxTexture = cursor.getColumnIndex("texture_modifications");
-        int idxBreakfastComplete = cursor.getColumnIndexOrThrow("breakfast_complete");
-        int idxLunchComplete = cursor.getColumnIndexOrThrow("lunch_complete");
-        int idxDinnerComplete = cursor.getColumnIndexOrThrow("dinner_complete");
-        int idxBreakfastNPO = cursor.getColumnIndexOrThrow("breakfast_npo");
-        int idxLunchNPO = cursor.getColumnIndexOrThrow("lunch_npo");
-        int idxDinnerNPO = cursor.getColumnIndexOrThrow("dinner_npo");
-        int idxCreated = cursor.getColumnIndexOrThrow("created_date");
-
-        patient.setPatientId(cursor.getInt(idxId));
+        patient.setPatientId(cursor.getInt(cursor.getColumnIndexOrThrow("patient_id")));
+        patient.setPatientFirstName(cursor.getString(cursor.getColumnIndexOrThrow("patient_first_name")));
+        patient.setPatientLastName(cursor.getString(cursor.getColumnIndexOrThrow("patient_last_name")));
+        patient.setWing(cursor.getString(cursor.getColumnIndexOrThrow("wing")));
+        patient.setRoomNumber(cursor.getString(cursor.getColumnIndexOrThrow("room_number")));
+        patient.setDiet(cursor.getString(cursor.getColumnIndexOrThrow("diet")));
         
-        // FIXED: Handle both new split names and legacy single name
-        if (idxFirstName >= 0 && !cursor.isNull(idxFirstName)) {
-            patient.setPatientFirstName(cursor.getString(idxFirstName));
-        }
-        if (idxLastName >= 0 && !cursor.isNull(idxLastName)) {
-            patient.setPatientLastName(cursor.getString(idxLastName));
+        // Handle nullable columns
+        int fluidIndex = cursor.getColumnIndex("fluid_restriction");
+        if (fluidIndex != -1 && !cursor.isNull(fluidIndex)) {
+            patient.setFluidRestriction(cursor.getString(fluidIndex));
         }
         
-        // Legacy fallback - if we have old "name" field but no first/last names
-        if (idxName >= 0 && !cursor.isNull(idxName) && 
-            (patient.getPatientFirstName() == null && patient.getPatientLastName() == null)) {
-            String fullName = cursor.getString(idxName);
-            String[] nameParts = fullName.trim().split("\\s+", 2);
-            if (nameParts.length >= 1) {
-                patient.setPatientFirstName(nameParts[0]);
+        int textureIndex = cursor.getColumnIndex("texture_modifications");
+        if (textureIndex != -1 && !cursor.isNull(textureIndex)) {
+            patient.setTextureModifications(cursor.getString(textureIndex));
+        }
+        
+        patient.setBreakfastComplete(cursor.getInt(cursor.getColumnIndexOrThrow("breakfast_complete")) == 1);
+        patient.setLunchComplete(cursor.getInt(cursor.getColumnIndexOrThrow("lunch_complete")) == 1);
+        patient.setDinnerComplete(cursor.getInt(cursor.getColumnIndexOrThrow("dinner_complete")) == 1);
+        patient.setBreakfastNPO(cursor.getInt(cursor.getColumnIndexOrThrow("breakfast_npo")) == 1);
+        patient.setLunchNPO(cursor.getInt(cursor.getColumnIndexOrThrow("lunch_npo")) == 1);
+        patient.setDinnerNPO(cursor.getInt(cursor.getColumnIndexOrThrow("dinner_npo")) == 1);
+        
+        // Handle created_date
+        int createdDateIndex = cursor.getColumnIndex("created_date");
+        if (createdDateIndex != -1 && !cursor.isNull(createdDateIndex)) {
+            String createdDateStr = cursor.getString(createdDateIndex);
+            try {
+                Date createdDate = dateFormat.parse(createdDateStr);
+                patient.setCreatedDate(createdDate);
+            } catch (Exception e) {
+                // If parsing fails, set to current date
+                patient.setCreatedDate(new Date());
             }
-            if (nameParts.length >= 2) {
-                patient.setPatientLastName(nameParts[1]);
-            } else {
-                patient.setPatientLastName(""); // Set empty last name if only one name part
-            }
+        } else {
+            patient.setCreatedDate(new Date());
         }
         
-        patient.setWing(cursor.getString(idxWing));
-        patient.setRoomNumber(cursor.getString(idxRoom));
-        patient.setDiet(cursor.getString(idxDiet));
-        
-        if (idxFluid >= 0 && !cursor.isNull(idxFluid)) {
-            patient.setFluidRestriction(cursor.getString(idxFluid));
-        }
-        if (idxTexture >= 0 && !cursor.isNull(idxTexture)) {
-            patient.setTextureModifications(cursor.getString(idxTexture));
-        }
-        
-        patient.setBreakfastComplete(cursor.getInt(idxBreakfastComplete) == 1);
-        patient.setLunchComplete(cursor.getInt(idxLunchComplete) == 1);
-        patient.setDinnerComplete(cursor.getInt(idxDinnerComplete) == 1);
-        patient.setBreakfastNPO(cursor.getInt(idxBreakfastNPO) == 1);
-        patient.setLunchNPO(cursor.getInt(idxLunchNPO) == 1);
-        patient.setDinnerNPO(cursor.getInt(idxDinnerNPO) == 1);
-        patient.setCreatedDate(cursor.getString(idxCreated));
-
         return patient;
     }
 
+    /**
+     * Get current timestamp
+     */
     private String getCurrentTimestamp() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-        return sdf.format(new Date());
+        return dateFormat.format(new Date());
     }
 }

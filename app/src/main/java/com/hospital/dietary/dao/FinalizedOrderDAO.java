@@ -74,13 +74,13 @@ public class FinalizedOrderDAO {
         return db.insert("FinalizedOrder", null, values);
     }
 
-    // Get all finalized orders
-    public List<FinalizedOrder> getAllOrders() {
+    // Get orders by location (wing and room)
+    public List<FinalizedOrder> getOrdersByLocation(String wing, String room) {
         List<FinalizedOrder> orders = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         
-        String query = "SELECT * FROM FinalizedOrder ORDER BY order_date DESC, wing, room";
-        Cursor cursor = db.rawQuery(query, null);
+        String query = "SELECT * FROM FinalizedOrder WHERE wing = ? AND room = ? ORDER BY order_date DESC";
+        Cursor cursor = db.rawQuery(query, new String[]{wing, room});
 
         if (cursor.moveToFirst()) {
             do {
@@ -92,14 +92,14 @@ public class FinalizedOrderDAO {
         cursor.close();
         return orders;
     }
-
+    
     // Get orders by location and date
-    public List<FinalizedOrder> getOrdersByLocation(String wing, String room, String orderDate) {
+    public List<FinalizedOrder> getOrdersByLocation(String wing, String room, String date) {
         List<FinalizedOrder> orders = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         
         String query = "SELECT * FROM FinalizedOrder WHERE wing = ? AND room = ? AND order_date = ?";
-        Cursor cursor = db.rawQuery(query, new String[]{wing, room, orderDate});
+        Cursor cursor = db.rawQuery(query, new String[]{wing, room, date});
 
         if (cursor.moveToFirst()) {
             do {
@@ -112,13 +112,13 @@ public class FinalizedOrderDAO {
         return orders;
     }
 
-    // Get orders by date
-    public List<FinalizedOrder> getOrdersByDate(String orderDate) {
+    // Get retired orders (older than cutoff date)
+    public List<FinalizedOrder> getRetiredOrders(String cutoffDate) {
         List<FinalizedOrder> orders = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         
-        String query = "SELECT * FROM FinalizedOrder WHERE order_date = ? ORDER BY wing, room";
-        Cursor cursor = db.rawQuery(query, new String[]{orderDate});
+        String query = "SELECT * FROM FinalizedOrder WHERE order_date < ? ORDER BY order_date DESC";
+        Cursor cursor = db.rawQuery(query, new String[]{cutoffDate});
 
         if (cursor.moveToFirst()) {
             do {
@@ -129,72 +129,150 @@ public class FinalizedOrderDAO {
 
         cursor.close();
         return orders;
+    }
+
+    // Get all orders for a specific date
+    public List<FinalizedOrder> getOrdersForDate(String date) {
+        List<FinalizedOrder> orders = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        
+        String query = "SELECT * FROM FinalizedOrder WHERE order_date = ? ORDER BY wing, CAST(room AS INTEGER)";
+        Cursor cursor = db.rawQuery(query, new String[]{date});
+
+        if (cursor.moveToFirst()) {
+            do {
+                FinalizedOrder order = createOrderFromCursor(cursor);
+                orders.add(order);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        return orders;
+    }
+
+    // Helper method to create FinalizedOrder from cursor
+    private FinalizedOrder createOrderFromCursor(Cursor cursor) {
+        FinalizedOrder order = new FinalizedOrder();
+        
+        order.setOrderId(cursor.getInt(cursor.getColumnIndexOrThrow("order_id")));
+        order.setPatientName(cursor.getString(cursor.getColumnIndexOrThrow("patient_name")));
+        order.setWing(cursor.getString(cursor.getColumnIndexOrThrow("wing")));
+        order.setRoom(cursor.getString(cursor.getColumnIndexOrThrow("room")));
+        order.setOrderDate(cursor.getString(cursor.getColumnIndexOrThrow("order_date")));
+        order.setDietType(cursor.getString(cursor.getColumnIndexOrThrow("diet_type")));
+        
+        // Handle nullable columns
+        int fluidIndex = cursor.getColumnIndex("fluid_restriction");
+        if (fluidIndex != -1 && !cursor.isNull(fluidIndex)) {
+            order.setFluidRestriction(cursor.getString(fluidIndex));
+        }
+        
+        // Texture modifications
+        order.setMechanicalGround(cursor.getInt(cursor.getColumnIndexOrThrow("mechanical_ground")) == 1);
+        order.setMechanicalChopped(cursor.getInt(cursor.getColumnIndexOrThrow("mechanical_chopped")) == 1);
+        order.setBiteSize(cursor.getInt(cursor.getColumnIndexOrThrow("bite_size")) == 1);
+        order.setBreadOK(cursor.getInt(cursor.getColumnIndexOrThrow("bread_ok")) == 1);
+        
+        // Meal items - convert comma-separated strings back to lists
+        String breakfastItems = cursor.getString(cursor.getColumnIndexOrThrow("breakfast_items"));
+        if (breakfastItems != null && !breakfastItems.isEmpty()) {
+            order.setBreakfastItems(Arrays.asList(breakfastItems.split(",")));
+        }
+        
+        String lunchItems = cursor.getString(cursor.getColumnIndexOrThrow("lunch_items"));
+        if (lunchItems != null && !lunchItems.isEmpty()) {
+            order.setLunchItems(Arrays.asList(lunchItems.split(",")));
+        }
+        
+        String dinnerItems = cursor.getString(cursor.getColumnIndexOrThrow("dinner_items"));
+        if (dinnerItems != null && !dinnerItems.isEmpty()) {
+            order.setDinnerItems(Arrays.asList(dinnerItems.split(",")));
+        }
+        
+        // Drink items
+        String breakfastJuices = cursor.getString(cursor.getColumnIndexOrThrow("breakfast_juices"));
+        if (breakfastJuices != null && !breakfastJuices.isEmpty()) {
+            order.setBreakfastJuices(Arrays.asList(breakfastJuices.split(",")));
+        }
+        
+        String lunchJuices = cursor.getString(cursor.getColumnIndexOrThrow("lunch_juices"));
+        if (lunchJuices != null && !lunchJuices.isEmpty()) {
+            order.setLunchJuices(Arrays.asList(lunchJuices.split(",")));
+        }
+        
+        String dinnerJuices = cursor.getString(cursor.getColumnIndexOrThrow("dinner_juices"));
+        if (dinnerJuices != null && !dinnerJuices.isEmpty()) {
+            order.setDinnerJuices(Arrays.asList(dinnerJuices.split(",")));
+        }
+        
+        String breakfastDrinks = cursor.getString(cursor.getColumnIndexOrThrow("breakfast_drinks"));
+        if (breakfastDrinks != null && !breakfastDrinks.isEmpty()) {
+            order.setBreakfastDrinks(Arrays.asList(breakfastDrinks.split(",")));
+        }
+        
+        String lunchDrinks = cursor.getString(cursor.getColumnIndexOrThrow("lunch_drinks"));
+        if (lunchDrinks != null && !lunchDrinks.isEmpty()) {
+            order.setLunchDrinks(Arrays.asList(lunchDrinks.split(",")));
+        }
+        
+        String dinnerDrinks = cursor.getString(cursor.getColumnIndexOrThrow("dinner_drinks"));
+        if (dinnerDrinks != null && !dinnerDrinks.isEmpty()) {
+            order.setDinnerDrinks(Arrays.asList(dinnerDrinks.split(",")));
+        }
+        
+        return order;
     }
 
     // Delete an order
     public boolean deleteOrder(int orderId) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        int rowsDeleted = db.delete("FinalizedOrder", "order_id = ?", 
-                                   new String[]{String.valueOf(orderId)});
-        return rowsDeleted > 0;
+        int rowsAffected = db.delete("FinalizedOrder", "order_id = ?", new String[]{String.valueOf(orderId)});
+        return rowsAffected > 0;
     }
 
-    // Helper method to create FinalizedOrder object from cursor
-    private FinalizedOrder createOrderFromCursor(Cursor cursor) {
-        FinalizedOrder order = new FinalizedOrder();
-        
-        order.setOrderId(cursor.getInt(cursor.getColumnIndex("order_id")));
-        order.setPatientName(cursor.getString(cursor.getColumnIndex("patient_name")));
-        order.setWing(cursor.getString(cursor.getColumnIndex("wing")));
-        order.setRoom(cursor.getString(cursor.getColumnIndex("room")));
-        order.setOrderDate(cursor.getString(cursor.getColumnIndex("order_date")));
-        order.setDietType(cursor.getString(cursor.getColumnIndex("diet_type")));
-        order.setFluidRestriction(cursor.getString(cursor.getColumnIndex("fluid_restriction")));
+    // Update an existing order
+    public boolean updateOrder(FinalizedOrder order) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put("patient_name", order.getPatientName());
+        values.put("wing", order.getWing());
+        values.put("room", order.getRoom());
+        values.put("order_date", order.getOrderDate());
+        values.put("diet_type", order.getDietType());
+        values.put("fluid_restriction", order.getFluidRestriction());
         
         // Texture modifications
-        order.setMechanicalGround(cursor.getInt(cursor.getColumnIndex("mechanical_ground")) == 1);
-        order.setMechanicalChopped(cursor.getInt(cursor.getColumnIndex("mechanical_chopped")) == 1);
-        order.setBiteSize(cursor.getInt(cursor.getColumnIndex("bite_size")) == 1);
-        order.setBreadOK(cursor.getInt(cursor.getColumnIndex("bread_ok")) == 1);
+        values.put("mechanical_ground", order.isMechanicalGround() ? 1 : 0);
+        values.put("mechanical_chopped", order.isMechanicalChopped() ? 1 : 0);
+        values.put("bite_size", order.isBiteSize() ? 1 : 0);
+        values.put("bread_ok", order.isBreadOK() ? 1 : 0);
         
-        // Parse meal items from comma-separated strings
-        String breakfastItems = cursor.getString(cursor.getColumnIndex("breakfast_items"));
-        order.setBreakfastItems(breakfastItems != null && !breakfastItems.isEmpty() ? 
-                               Arrays.asList(breakfastItems.split(",")) : new ArrayList<>());
+        // Meal items
+        values.put("breakfast_items", order.getBreakfastItems() != null ? 
+                  String.join(",", order.getBreakfastItems()) : "");
+        values.put("lunch_items", order.getLunchItems() != null ? 
+                  String.join(",", order.getLunchItems()) : "");
+        values.put("dinner_items", order.getDinnerItems() != null ? 
+                  String.join(",", order.getDinnerItems()) : "");
         
-        String lunchItems = cursor.getString(cursor.getColumnIndex("lunch_items"));
-        order.setLunchItems(lunchItems != null && !lunchItems.isEmpty() ? 
-                           Arrays.asList(lunchItems.split(",")) : new ArrayList<>());
+        // Drink items
+        values.put("breakfast_juices", order.getBreakfastJuices() != null ? 
+                  String.join(",", order.getBreakfastJuices()) : "");
+        values.put("lunch_juices", order.getLunchJuices() != null ? 
+                  String.join(",", order.getLunchJuices()) : "");
+        values.put("dinner_juices", order.getDinnerJuices() != null ? 
+                  String.join(",", order.getDinnerJuices()) : "");
         
-        String dinnerItems = cursor.getString(cursor.getColumnIndex("dinner_items"));
-        order.setDinnerItems(dinnerItems != null && !dinnerItems.isEmpty() ? 
-                            Arrays.asList(dinnerItems.split(",")) : new ArrayList<>());
-        
-        // Parse drink items
-        String breakfastJuices = cursor.getString(cursor.getColumnIndex("breakfast_juices"));
-        order.setBreakfastJuices(breakfastJuices != null && !breakfastJuices.isEmpty() ? 
-                                Arrays.asList(breakfastJuices.split(",")) : new ArrayList<>());
-        
-        String lunchJuices = cursor.getString(cursor.getColumnIndex("lunch_juices"));
-        order.setLunchJuices(lunchJuices != null && !lunchJuices.isEmpty() ? 
-                            Arrays.asList(lunchJuices.split(",")) : new ArrayList<>());
-        
-        String dinnerJuices = cursor.getString(cursor.getColumnIndex("dinner_juices"));
-        order.setDinnerJuices(dinnerJuices != null && !dinnerJuices.isEmpty() ? 
-                             Arrays.asList(dinnerJuices.split(",")) : new ArrayList<>());
-        
-        String breakfastDrinks = cursor.getString(cursor.getColumnIndex("breakfast_drinks"));
-        order.setBreakfastDrinks(breakfastDrinks != null && !breakfastDrinks.isEmpty() ? 
-                                Arrays.asList(breakfastDrinks.split(",")) : new ArrayList<>());
-        
-        String lunchDrinks = cursor.getString(cursor.getColumnIndex("lunch_drinks"));
-        order.setLunchDrinks(lunchDrinks != null && !lunchDrinks.isEmpty() ? 
-                            Arrays.asList(lunchDrinks.split(",")) : new ArrayList<>());
-        
-        String dinnerDrinks = cursor.getString(cursor.getColumnIndex("dinner_drinks"));
-        order.setDinnerDrinks(dinnerDrinks != null && !dinnerDrinks.isEmpty() ? 
-                             Arrays.asList(dinnerDrinks.split(",")) : new ArrayList<>());
-        
-        return order;
+        values.put("breakfast_drinks", order.getBreakfastDrinks() != null ? 
+                  String.join(",", order.getBreakfastDrinks()) : "");
+        values.put("lunch_drinks", order.getLunchDrinks() != null ? 
+                  String.join(",", order.getLunchDrinks()) : "");
+        values.put("dinner_drinks", order.getDinnerDrinks() != null ? 
+                  String.join(",", order.getDinnerDrinks()) : "");
+
+        int rowsAffected = db.update("FinalizedOrder", values, "order_id = ?", 
+                                   new String[]{String.valueOf(order.getOrderId())});
+        return rowsAffected > 0;
     }
 }

@@ -1030,7 +1030,6 @@ id addDinnerDrinkButton
 id addItemButton
 id addLunchDrinkButton
 id addUserButton
-id adminButton
 id adminPasswordInput
 id adminUsernameInput
 id alertTitle
@@ -1089,6 +1088,7 @@ id checkbox
 id checked
 id chronometer
 id clearFormButton
+id clearSearchButton
 id clockwise
 id closest
 id collapseActionView
@@ -1098,6 +1098,7 @@ id content
 id contentPanel
 id continuousVelocity
 id cos
+id createdDateText
 id currentState
 id custom
 id customPanel
@@ -1113,6 +1114,7 @@ id dependency_ordering
 id dialog_button
 id dietSpinner
 id dietText
+id dietTypeText
 id dimensions
 id dinnerDessert
 id dinnerDrinksContainer
@@ -1151,12 +1153,16 @@ id edit_query
 id emailInput
 id emptyStateContainer
 id end
+id existingOrdersContainer
+id existingOrdersCountText
 id existingPatientButton
 id expand_activities_button
 id expanded_menu
 id finishedOrdersButton
 id finishedOrdersListView
+id firstNameEditText
 id flip
+id fluidRestrictionEditText
 id fluidRestrictionSpinner
 id fluidText
 id forever
@@ -1173,7 +1179,6 @@ id home
 id homeAsUp
 id honorRequest
 id horizontal_only
-id hospitalLogo
 id icon
 id icon_group
 id ifRoom
@@ -1189,7 +1194,6 @@ id itemAdaCheckBox
 id itemCategorySpinner
 id itemCountText
 id itemDetailsText
-id itemManagementButton
 id itemNameInput
 id itemNameText
 id itemSearchEditText
@@ -1200,6 +1204,7 @@ id itemsListView
 id itemsMenuButton
 id jumpToEnd
 id jumpToStart
+id lastNameEditText
 id layout
 id left
 id legacy
@@ -1225,6 +1230,7 @@ id lunchVegetable
 id mainMenuContainer
 id match_constraint
 id match_parent
+id mealSummaryText
 id mechanicalChoppedCB
 id mechanicalGroundCB
 id menuDateText
@@ -1236,10 +1242,11 @@ id never
 id neverCompleteToEnd
 id neverCompleteToStart
 id newPatientButton
+id noExistingOrdersText
 id noFinishedOrdersText
-id noMenusText
 id noPatientsText
 id noPendingOrdersText
+id noRetiredOrdersText
 id noState
 id none
 id normal
@@ -1252,6 +1259,8 @@ id on
 id onInterceptTouchReturnSwipe
 id orderCheckBox
 id orderCountText
+id orderDateText
+id orderStatusText
 id orderTimeText
 id ordersListView
 id overshoot
@@ -1263,6 +1272,7 @@ id passwordInput
 id passwordLabel
 id path
 id pathRelative
+id patientCountText
 id patientDetailsText
 id patientFirstNameInput
 id patientInfoButton
@@ -1285,9 +1295,14 @@ id radio
 id ratio
 id rectangles
 id refreshButton
+id refreshOrdersButton
 id removeButton
 id removeDrinkButton
 id restrictionsText
+id retiredOrdersButton
+id retiredOrdersContainer
+id retiredOrdersCountText
+id retiredOrdersListView
 id reverseSawtooth
 id right
 id right_icon
@@ -1297,7 +1312,6 @@ id roomNumberInput
 id roomSpinner
 id saveOrderButton
 id savePatientButton
-id savedMenusContainer
 id sawtooth
 id screen
 id scrollIndicatorDown
@@ -1372,6 +1386,7 @@ id text2
 id textSpacerNoButtons
 id textSpacerNoTitle
 id textureContainer
+id textureModificationsEditText
 id textureText
 id time
 id title
@@ -1391,7 +1406,6 @@ id userCountText
 id userEmail
 id userFullName
 id userIcon
-id userManagementButton
 id userRole
 id userSearchEditText
 id userStatusIndicator
@@ -1471,6 +1485,7 @@ layout activity_patient_detail
 layout activity_patient_info
 layout activity_patient_info_menu
 layout activity_pending_orders
+layout activity_retired_orders
 layout activity_view_orders
 layout custom_dialog
 layout dialog_add_edit_item
@@ -1485,6 +1500,7 @@ layout item_finished_order
 layout item_order_row
 layout item_patient_order
 layout item_pending_order
+layout item_retired_order
 layout item_saved_menu
 layout item_user_row
 layout main_course_item

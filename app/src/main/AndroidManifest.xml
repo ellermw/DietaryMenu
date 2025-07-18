@@ -61,33 +61,21 @@
             android:exported="false"
             android:parentActivityName=".MainMenuActivity" />
 
+        <!-- Retired Orders Activity - NEW: Orders older than 6 days -->
+        <activity
+            android:name=".RetiredOrdersActivity"
+            android:exported="false"
+            android:parentActivityName=".MainMenuActivity" />
+
         <!-- Meal Planning Activity -->
         <activity
             android:name=".MealPlanningActivity"
             android:exported="false"
-            android:parentActivityName=".PendingOrdersActivity" />
+            android:parentActivityName=".PatientDetailActivity" />
 
-        <!-- Admin Activity - For user and item management -->
-        <activity
-            android:name=".AdminActivity"
-            android:exported="false"
-            android:parentActivityName=".MainMenuActivity" />
-
-        <!-- Original MainActivity - Keep for backward compatibility -->
-        <activity
-            android:name=".MainActivity"
-            android:exported="false"
-            android:parentActivityName=".MainMenuActivity" />
-
-        <!-- View Orders Activity - Legacy -->
+        <!-- View Orders Activity -->
         <activity
             android:name=".ViewOrdersActivity"
-            android:exported="false"
-            android:parentActivityName=".MainActivity" />
-
-        <!-- Original Patient Info Activity - Keep for backward compatibility -->
-        <activity
-            android:name=".PatientInfoActivity"
             android:exported="false"
             android:parentActivityName=".MainMenuActivity" />
 

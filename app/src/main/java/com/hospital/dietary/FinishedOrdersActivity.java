@@ -123,7 +123,7 @@ public class FinishedOrdersActivity extends AppCompatActivity {
     private void showOrderDetails(Patient patient) {
         // Show detailed view of the order (read-only)
         StringBuilder details = new StringBuilder();
-        details.append("Patient: ").append(patient.getName()).append("\n");
+        details.append("Patient: ").append(patient.getFullName()).append("\n");
         details.append("Location: ").append(patient.getLocationString()).append("\n");
         details.append("Diet: ").append(patient.getDiet()).append("\n");
         
@@ -204,7 +204,7 @@ public class FinishedOrdersActivity extends AppCompatActivity {
             TextView statusText = convertView.findViewById(R.id.statusText);
             TextView completedDateText = convertView.findViewById(R.id.completedDateText);
             
-            patientNameText.setText(patient.getName());
+            patientNameText.setText(patient.getFullName());
             locationText.setText(patient.getWing() + " - Room " + patient.getRoomNumber());
             dietText.setText(patient.getDiet());
             
@@ -223,7 +223,7 @@ public class FinishedOrdersActivity extends AppCompatActivity {
             
             // Show completion date
             if (patient.getCreatedDate() != null) {
-                completedDateText.setText("Completed: " + patient.getCreatedDate().substring(0, 10));
+                completedDateText.setText("Completed: " + patient.getCreatedDateString());
                 completedDateText.setVisibility(TextView.VISIBLE);
             } else {
                 completedDateText.setVisibility(TextView.GONE);
