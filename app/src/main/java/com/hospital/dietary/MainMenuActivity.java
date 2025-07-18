@@ -104,23 +104,25 @@ public class MainMenuActivity extends AppCompatActivity {
             startActivity(intent);
         });
         
-        // Admin-only button listeners
+        // Admin-only button listeners - FIXED: Route to AdminActivity instead of placeholder activities
         if (userManagementButton != null) {
             userManagementButton.setOnClickListener(v -> {
-                Intent intent = new Intent(this, UserManagementActivity.class);
+                Intent intent = new Intent(this, AdminActivity.class);
                 intent.putExtra("current_user", currentUsername);
                 intent.putExtra("user_role", currentUserRole);
                 intent.putExtra("user_full_name", currentUserFullName);
+                intent.putExtra("admin_mode", "users"); // Tell AdminActivity to show users management
                 startActivity(intent);
             });
         }
         
         if (itemManagementButton != null) {
             itemManagementButton.setOnClickListener(v -> {
-                Intent intent = new Intent(this, ItemManagementActivity.class);
+                Intent intent = new Intent(this, AdminActivity.class);
                 intent.putExtra("current_user", currentUsername);
                 intent.putExtra("user_role", currentUserRole);
                 intent.putExtra("user_full_name", currentUserFullName);
+                intent.putExtra("admin_mode", "items"); // Tell AdminActivity to show items management
                 startActivity(intent);
             });
         }

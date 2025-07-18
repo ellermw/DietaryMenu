@@ -89,6 +89,9 @@
             android:name=".ViewOrdersActivity"
             android:exported="false"
             android:parentActivityName=".MainMenuActivity" />
+		
+		<activity android:name="com.hospital.dietary.AdminActivity" />
+
 
     </application>
 

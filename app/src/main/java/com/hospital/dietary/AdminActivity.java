@@ -117,13 +117,14 @@ public class AdminActivity extends AppCompatActivity {
         // FIXED: Ensure admin menu is configured before any navigation
         configureAdminMenu();
         
-        // Handle intent extras for direct navigation
+        // FIXED: Handle intent extras for direct navigation - Updated to handle "admin_mode" parameter
+        String adminMode = getIntent().getStringExtra("admin_mode");
         boolean showUsers = getIntent().getBooleanExtra("show_users", false);
         boolean showItems = getIntent().getBooleanExtra("show_items", false);
         
-        if (showUsers) {
+        if ("users".equals(adminMode) || showUsers) {
             showUsersManagement();
-        } else if (showItems) {
+        } else if ("items".equals(adminMode) || showItems) {
             showItemsManagement();
         } else {
             showMainMenu();
@@ -152,49 +153,34 @@ public class AdminActivity extends AppCompatActivity {
                     finish();
                     return;
                 }
-                
-                // Restore admin menu if we're on the main screen
-                if (mainMenuContainer.getVisibility() == View.VISIBLE) {
-                    configureAdminMenu();
-                }
             } else {
                 Log.e(TAG, "User no longer exists: " + currentUsername);
                 redirectToLogin();
                 return;
             }
         }
-        
-        Log.d(TAG, "AdminActivity onResume completed - User: " + currentUsername);
-    }
-
-    // FIXED: Add helper methods for admin state management
-    private boolean isUserAdmin() {
-        return currentUser != null && "admin".equalsIgnoreCase(currentUser.getRole());
-    }
-
-    // FIXED: Enhanced admin menu configuration
-    private void configureAdminMenu() {
-        Log.d(TAG, "Configuring admin menu for user: " + currentUsername);
-        
-        // Ensure admin buttons are visible for admin users
-        if (usersMenuButton != null) {
-            usersMenuButton.setVisibility(View.VISIBLE);
-            Log.d(TAG, "Users menu button made visible");
-        }
-        if (itemsMenuButton != null) {
-            itemsMenuButton.setVisibility(View.VISIBLE);
-            Log.d(TAG, "Items menu button made visible");
-        }
     }
     
-    // FIXED: Redirect to login if session is invalid
     private void redirectToLogin() {
         Intent intent = new Intent(this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
     }
-
+    
+    private boolean isUserAdmin() {
+        return currentUser != null && "admin".equalsIgnoreCase(currentUser.getRole());
+    }
+    
+    private void configureAdminMenu() {
+        // FIXED: Ensure current user info is displayed correctly
+        if (currentUser != null) {
+            setTitle("Admin Panel - " + currentUser.getFullName());
+        } else {
+            setTitle("Admin Panel");
+        }
+    }
+    
     private void initializeUI() {
         mainMenuContainer = findViewById(R.id.mainMenuContainer);
         usersContainer = findViewById(R.id.usersContainer);
@@ -362,27 +348,20 @@ public class AdminActivity extends AppCompatActivity {
     private void filterItems() {
         filteredItems.clear();
         
+        String searchText = itemSearchEditText.getText().toString().toLowerCase();
         String selectedCategory = (String) categoryFilterSpinner.getSelectedItem();
-        String searchText = itemSearchEditText.getText().toString();
         
         for (Item item : allItems) {
-            // Category filter
-            if (selectedCategory != null && !selectedCategory.equals("All Categories")) {
-                if (!selectedCategory.equals(item.getCategoryName())) {
-                    continue;
-                }
-            }
+            boolean matchesSearch = searchText.isEmpty() || 
+                                   item.getName().toLowerCase().contains(searchText) ||
+                                   item.getDescription().toLowerCase().contains(searchText);
             
-            // Search filter
-            if (!searchText.isEmpty()) {
-                String searchLower = searchText.toLowerCase();
-                if (!item.getName().toLowerCase().contains(searchLower) &&
-                    !item.getCategoryName().toLowerCase().contains(searchLower)) {
-                    continue;
-                }
-            }
+            boolean matchesCategory = selectedCategory.equals("All Categories") || 
+                                     item.getCategory().equals(selectedCategory);
             
-            filteredItems.add(item);
+            if (matchesSearch && matchesCategory) {
+                filteredItems.add(item);
+            }
         }
         
         if (itemsAdapter != null) {
@@ -394,7 +373,6 @@ public class AdminActivity extends AppCompatActivity {
         boolean isEdit = user != null;
         String title = isEdit ? "Edit User" : "Add New User";
         
-        // Create dialog layout programmatically
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
         layout.setPadding(50, 40, 50, 10);
@@ -402,10 +380,7 @@ public class AdminActivity extends AppCompatActivity {
         // Username input
         EditText usernameInput = new EditText(this);
         usernameInput.setHint("Username");
-        if (isEdit) {
-            usernameInput.setText(user.getUsername());
-            usernameInput.setEnabled(false); // Don't allow username changes
-        }
+        if (isEdit) usernameInput.setText(user.getUsername());
         layout.addView(usernameInput);
         
         // Password input
@@ -423,21 +398,17 @@ public class AdminActivity extends AppCompatActivity {
         // Email input
         EditText emailInput = new EditText(this);
         emailInput.setHint("Email (optional)");
-        emailInput.setInputType(android.text.InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
         if (isEdit && user.getEmail() != null) emailInput.setText(user.getEmail());
         layout.addView(emailInput);
         
         // Role spinner
         Spinner roleSpinner = new Spinner(this);
-        List<String> roles = Arrays.asList("admin", "user");
-        ArrayAdapter<String> roleAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, roles);
+        ArrayAdapter<String> roleAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, 
+                                                              Arrays.asList("user", "admin"));
         roleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         roleSpinner.setAdapter(roleAdapter);
         if (isEdit) {
-            int rolePosition = roles.indexOf(user.getRole());
-            if (rolePosition >= 0) {
-                roleSpinner.setSelection(rolePosition);
-            }
+            roleSpinner.setSelection("admin".equals(user.getRole()) ? 1 : 0);
         }
         layout.addView(roleSpinner);
         
@@ -571,7 +542,6 @@ public class AdminActivity extends AppCompatActivity {
         boolean isEdit = item != null;
         String title = isEdit ? "Edit Item" : "Add New Item";
         
-        // Create dialog layout programmatically
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
         layout.setPadding(50, 40, 50, 10);
@@ -582,54 +552,37 @@ public class AdminActivity extends AppCompatActivity {
         if (isEdit) nameInput.setText(item.getName());
         layout.addView(nameInput);
         
+        // Description input
+        EditText descriptionInput = new EditText(this);
+        descriptionInput.setHint("Description");
+        if (isEdit) descriptionInput.setText(item.getDescription());
+        layout.addView(descriptionInput);
+        
         // Category spinner
         Spinner categorySpinner = new Spinner(this);
-        List<String> categoryList = new ArrayList<>(categories);
-        categoryList.remove("All Categories");
-        ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categoryList);
+        List<String> categoriesForDialog = new ArrayList<>(categories);
+        categoriesForDialog.remove("All Categories"); // Remove "All Categories" for editing
+        ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categoriesForDialog);
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         categorySpinner.setAdapter(categoryAdapter);
         if (isEdit) {
-            int categoryPosition = categoryList.indexOf(item.getCategoryName());
-            if (categoryPosition >= 0) {
-                categorySpinner.setSelection(categoryPosition);
-            }
+            int position = categoriesForDialog.indexOf(item.getCategory());
+            if (position >= 0) categorySpinner.setSelection(position);
         }
         layout.addView(categorySpinner);
         
-        // Size input
-        EditText sizeInput = new EditText(this);
-        sizeInput.setHint("Size (ml) - optional");
-        sizeInput.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
-        if (isEdit && item.getSizeML() != null && item.getSizeML() > 0) {
-            sizeInput.setText(String.valueOf(item.getSizeML()));
-        }
-        layout.addView(sizeInput);
-        
-        // FIXED: ADA friendly checkbox
-        CheckBox adaFriendlyCheckBox = new CheckBox(this);
-        adaFriendlyCheckBox.setText("ADA Friendly");
-        adaFriendlyCheckBox.setChecked(isEdit ? item.isAdaFriendly() : true);
-        layout.addView(adaFriendlyCheckBox);
-        
-        // Soda checkbox
-        CheckBox sodaCheckBox = new CheckBox(this);
-        sodaCheckBox.setText("Is Soda");
-        sodaCheckBox.setChecked(isEdit ? item.isSoda() : false);
-        layout.addView(sodaCheckBox);
-        
-        // FIXED: Clear liquid checkbox
-        CheckBox clearLiquidCheckBox = new CheckBox(this);
-        clearLiquidCheckBox.setText("Clear Liquid");
-        clearLiquidCheckBox.setChecked(isEdit ? item.isClearLiquid() : false);
-        layout.addView(clearLiquidCheckBox);
+        // ADA compliance checkbox
+        CheckBox adaCheckBox = new CheckBox(this);
+        adaCheckBox.setText("ADA Compliant");
+        adaCheckBox.setChecked(isEdit ? item.isAdaCompliant() : false);
+        layout.addView(adaCheckBox);
         
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(title);
         builder.setView(layout);
         
         builder.setPositiveButton(isEdit ? "Update" : "Add", (dialog, which) -> {
-            if (saveItem(item, nameInput, categorySpinner, sizeInput, adaFriendlyCheckBox, sodaCheckBox, clearLiquidCheckBox)) {
+            if (saveItem(item, nameInput, descriptionInput, categorySpinner, adaCheckBox)) {
                 dialog.dismiss();
             }
         });
@@ -645,16 +598,14 @@ public class AdminActivity extends AppCompatActivity {
         builder.show();
     }
     
-    private boolean saveItem(Item existingItem, EditText nameInput, Spinner categorySpinner, 
-                           EditText sizeInput, CheckBox adaFriendlyCheckBox, CheckBox sodaCheckBox, CheckBox clearLiquidCheckBox) {
+    private boolean saveItem(Item existingItem, EditText nameInput, EditText descriptionInput, 
+                           Spinner categorySpinner, CheckBox adaCheckBox) {
         
         boolean isEdit = existingItem != null;
         String name = nameInput.getText().toString().trim();
-        String categoryName = (String) categorySpinner.getSelectedItem();
-        String sizeText = sizeInput.getText().toString().trim();
-        boolean adaFriendly = adaFriendlyCheckBox.isChecked();
-        boolean isSoda = sodaCheckBox.isChecked();
-        boolean isClearLiquid = clearLiquidCheckBox.isChecked();
+        String description = descriptionInput.getText().toString().trim();
+        String category = (String) categorySpinner.getSelectedItem();
+        boolean isAda = adaCheckBox.isChecked();
         
         // Validation
         if (name.isEmpty()) {
@@ -662,42 +613,17 @@ public class AdminActivity extends AppCompatActivity {
             return false;
         }
         
-        if (categoryName == null) {
-            Toast.makeText(this, "Please select a category", Toast.LENGTH_SHORT).show();
+        if (description.isEmpty()) {
+            descriptionInput.setError("Description is required");
             return false;
-        }
-        
-        // Get category ID
-        int categoryId = categories.indexOf(categoryName);
-        if (categoryId <= 0) {
-            Toast.makeText(this, "Invalid category selected", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        
-        // Parse size
-        Integer sizeML = null;
-        if (!sizeText.isEmpty()) {
-            try {
-                sizeML = Integer.parseInt(sizeText);
-                if (sizeML <= 0) {
-                    sizeInput.setError("Size must be a positive number");
-                    return false;
-                }
-            } catch (NumberFormatException e) {
-                sizeInput.setError("Invalid size format");
-                return false;
-            }
         }
         
         // Create/update item
         Item item = isEdit ? existingItem : new Item();
         item.setName(name);
-        item.setCategoryId(categoryId);
-        item.setSizeML(sizeML);
-        item.setAdaFriendly(adaFriendly);
-        item.setSoda(isSoda);
-        item.setClearLiquid(isClearLiquid);
-        item.setCategoryName(categoryName);
+        item.setDescription(description);
+        item.setCategory(category);
+        item.setAdaCompliant(isAda);
         
         // Save to database
         boolean success;
@@ -723,12 +649,6 @@ public class AdminActivity extends AppCompatActivity {
     }
     
     private void confirmDeleteItem(Item item) {
-        if (itemDAO.isItemUsedInOrders(item.getItemId())) {
-            showError("Cannot delete item '" + item.getName() + "'.\n" +
-                     "This item is used in existing orders.");
-            return;
-        }
-        
         new AlertDialog.Builder(this)
             .setTitle("Delete Item")
             .setMessage("Are you sure you want to delete '" + item.getName() + "'?\n\n" +
@@ -797,8 +717,8 @@ public class AdminActivity extends AppCompatActivity {
                 TextView text2 = convertView.findViewById(android.R.id.text2);
                 
                 text1.setText(user.getFullName() + " (" + user.getUsername() + ")");
-                String status = user.isActive() ? "Active" : "Inactive";
-                text2.setText(user.getRole().toUpperCase() + " - " + status);
+                String status = user.isActive() ? "✅ Active" : "❌ Inactive";
+                text2.setText(status + " • " + user.getRole().toUpperCase());
             }
             
             return convertView;
