@@ -1185,6 +1185,7 @@ id grouping
 id groups
 id home
 id homeAsUp
+id homeButton
 id honorRequest
 id horizontal_only
 id icon

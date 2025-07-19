@@ -37,7 +37,9 @@
         android:layout_marginBottom="16dp"
         android:inputType="text"
         android:drawableStart="@android:drawable/ic_menu_search"
-        android:drawablePadding="8dp" />
+        android:drawablePadding="8dp"
+        android:importantForAutofill="no"
+        android:autofillHints="" />
 
     <!-- Patient List -->
     <TextView
@@ -81,7 +83,7 @@
                 android:textColor="#2c3e50"
                 android:layout_marginBottom="16dp" />
 
-            <!-- FIXED: Split Patient Name Fields -->
+            <!-- Split Patient Name Fields -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -106,7 +108,9 @@
                     android:background="@android:drawable/edit_text"
                     android:padding="12dp"
                     android:layout_marginEnd="8dp"
-                    android:inputType="textPersonName|textCapWords" />
+                    android:inputType="textPersonName|textCapWords"
+                    android:importantForAutofill="no"
+                    android:autofillHints="" />
 
                 <EditText
                     android:id="@+id/patientLastNameInput"
@@ -117,7 +121,9 @@
                     android:background="@android:drawable/edit_text"
                     android:padding="12dp"
                     android:layout_marginStart="8dp"
-                    android:inputType="textPersonName|textCapWords" />
+                    android:inputType="textPersonName|textCapWords"
+                    android:importantForAutofill="no"
+                    android:autofillHints="" />
 
             </LinearLayout>
 
@@ -138,28 +144,28 @@
                 android:background="@android:drawable/edit_text"
                 android:layout_marginBottom="16dp" />
 
-			<!-- Room Number -->
-			<TextView
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:text="Room Number *"
-				android:textSize="14sp"
-				android:textColor="#374151"
-				android:layout_marginBottom="4dp" />
-			
-			<Spinner
-				android:id="@+id/roomNumberSpinner"
-				android:layout_width="match_parent"
-				android:layout_height="48dp"
-				android:background="?android:attr/editTextBackground"
-				android:padding="12dp"
-				android:layout_marginBottom="16dp" />
-				
-            <!-- Diet Type -->
+            <!-- Room Number -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Diet Type"
+                android:text="Room Number"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#2c3e50"
+                android:layout_marginBottom="8dp" />
+
+            <Spinner
+                android:id="@+id/roomNumberSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@android:drawable/edit_text"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Diet -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Diet"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="#2c3e50"
@@ -238,8 +244,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="ADA Friendly"
-                    android:textSize="14sp"
-                    android:visibility="gone" />
+                    android:textSize="14sp" />
 
             </LinearLayout>
 

@@ -71,7 +71,9 @@
             android:inputType="text"
             android:layout_marginBottom="16dp"
             android:textSize="16sp"
-            android:imeOptions="actionNext" />
+            android:imeOptions="actionNext"
+            android:importantForAutofill="no"
+            android:autofillHints="" />
 
         <!-- Password Input -->
         <EditText
@@ -84,7 +86,9 @@
             android:inputType="textPassword"
             android:layout_marginBottom="24dp"
             android:textSize="16sp"
-            android:imeOptions="actionDone" />
+            android:imeOptions="actionDone"
+            android:importantForAutofill="no"
+            android:autofillHints="" />
 
         <!-- Login Button -->
         <Button
@@ -92,26 +96,23 @@
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:text="Sign In"
-            android:textSize="16sp"
+            android:textSize="18sp"
             android:textStyle="bold"
+            android:background="@color/primary_blue"
             android:textColor="@android:color/white"
-            android:background="#3498db"
             android:layout_marginBottom="16dp" />
-
-        <!-- REMOVED: Default Credentials Info -->
-        <!-- The TextView displaying default username/password has been removed for security -->
 
     </LinearLayout>
 
-    <!-- Footer with Version -->
+    <!-- Copyright Text -->
     <TextView
         android:id="@+id/copyrightText"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/copyright_message"
+        android:text="© 2025 Hospital Dietary Management System - V 1.0.0"
         android:textSize="12sp"
-        android:textColor="#bdc3c7"
-        android:gravity="center"
-        android:layout_marginTop="24dp" />
+        android:textColor="#7f8c8d"
+        android:layout_marginTop="24dp"
+        android:gravity="center" />
 
 </LinearLayout>
