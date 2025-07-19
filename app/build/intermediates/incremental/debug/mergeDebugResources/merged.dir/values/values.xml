@@ -710,28 +710,28 @@
     <string name="add_item">➕ Add Item</string>
     <string name="add_user">➕ Add User</string>
     <string name="admin_panel">⚙️ Admin Panel</string>
-    <string name="admin_privileges_required">Admin privileges required.</string>
-    <string name="admin_privileges_revoked">Admin privileges have been revoked.</string>
     <string name="administration">🔧 Administration</string>
     <string name="androidx_startup" translatable="false">androidx.startup</string>
-    <string name="app_name">Dietary Menu</string>
-    <string name="app_version">V 1.0.0</string>
-    <string name="authentication_error">Authentication error</string>
+    <string name="app_name">Dietary Management</string>
+    <string name="app_version">V 0.0.10</string>
     <string name="back">Back</string>
     <string name="back_to_main_menu">← Back to Main Menu</string>
     <string name="cancel">Cancel</string>
-    <string name="copyright_message">© 2025 Hospital Dietary Management System - V 1.0.0</string>
+    <string name="copyright_message">© 2025 Hospital Dietary Management System - V 0.0.10</string>
     <string name="delete">Delete</string>
+    <string name="diet_required">Please select a diet type</string>
     <string name="edit">Edit</string>
     <string name="error">Error</string>
     <string name="finished_orders">✅ Finished Orders</string>
+    <string name="first_name_required">First name is required</string>
     <string name="food_items">%d Food Items</string>
     <string name="invalid_credentials">Invalid username or password</string>
     <string name="item_management">🍽️ Item Management</string>
+    <string name="last_name_required">Last name is required</string>
     <string name="loading">Loading...</string>
-    <string name="login_failed">Login failed: %s</string>
-    <string name="login_subtitle">Menu Management Application</string>
-    <string name="login_title">Hospital Dietary System</string>
+    <string name="login_error">Login failed. Please try again.</string>
+    <string name="login_subtitle">Dietary Management Application</string>
+    <string name="login_title">Hospital Dietary Management</string>
     <string name="logout">🚪 Logout</string>
     <string name="manage_food_items">🍽️ Manage Food Items</string>
     <string name="manage_users">👥 Manage Users</string>
@@ -739,9 +739,13 @@
     <string name="ok">OK</string>
     <string name="password_hint">Enter your password</string>
     <string name="password_required">Password is required</string>
+    <string name="patient_added">Patient added successfully!</string>
+    <string name="patient_deleted">Patient deleted successfully!</string>
     <string name="patient_info">👤 Patient Info</string>
+    <string name="patient_updated">Patient updated successfully!</string>
     <string name="pending_orders">📋 Pending Orders</string>
     <string name="retired_orders">🗃️ Retired Orders</string>
+    <string name="room_required">Please select a room number</string>
     <string name="save">Save</string>
     <string name="search_items">🔍 Search items...</string>
     <string name="search_menu_title">Search</string>
@@ -750,10 +754,10 @@
     <string name="status_bar_notification_info_overflow">999+</string>
     <string name="success">Success</string>
     <string name="user_management">👥 User Management</string>
-    <string name="user_not_found">User not found</string>
     <string name="username_hint">Enter your username</string>
     <string name="username_required">Username is required</string>
     <string name="welcome_message">Welcome, %s!</string>
+    <string name="wing_required">Please select a wing</string>
     <style name="AlertDialog.AppCompat" parent="Base.AlertDialog.AppCompat"/>
     <style name="AlertDialog.AppCompat.Light" parent="Base.AlertDialog.AppCompat.Light"/>
     <style name="Animation.AppCompat.Dialog" parent="Base.Animation.AppCompat.Dialog"/>

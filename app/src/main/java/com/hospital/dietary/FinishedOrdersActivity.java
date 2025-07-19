@@ -64,15 +64,21 @@ public class FinishedOrdersActivity extends AppCompatActivity {
         // Load finished orders
         loadFinishedOrders();
     }
-    
+
     private void setupToolbar() {
-        toolbar = findViewById(R.id.toolbar);
-        if (toolbar != null) {
-            setSupportActionBar(toolbar);
-            if (getSupportActionBar() != null) {
-                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-                getSupportActionBar().setTitle("Finished Orders");
-            }
+        // toolbar = findViewById(R.id.toolbar);  // Comment this out
+        // if (toolbar != null) {
+        //     setSupportActionBar(toolbar);
+        //     if (getSupportActionBar() != null) {
+        //         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //         getSupportActionBar().setTitle("Finished Orders");
+        //     }
+        // }
+
+        // Use default action bar instead:
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle("Finished Orders");
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
     }
     
@@ -113,7 +119,7 @@ public class FinishedOrdersActivity extends AppCompatActivity {
         finishedOrdersListView = findViewById(R.id.finishedOrdersListView);
         noFinishedOrdersText = findViewById(R.id.noFinishedOrdersText);
         backButton = findViewById(R.id.backButton);
-        homeButton = findViewById(R.id.homeButton);
+     // homeButton = findViewById(R.id.homeButton);
         printAllButton = findViewById(R.id.printAllButton);
         printSelectedButton = findViewById(R.id.printSelectedButton);
         

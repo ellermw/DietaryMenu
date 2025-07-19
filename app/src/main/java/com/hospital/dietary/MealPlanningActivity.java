@@ -84,15 +84,21 @@ public class MealPlanningActivity extends AppCompatActivity {
         // Setup meal content based on diet type
         setupMealContent();
     }
-    
+
     private void setupToolbar() {
-        toolbar = findViewById(R.id.toolbar);
-        if (toolbar != null) {
-            setSupportActionBar(toolbar);
-            if (getSupportActionBar() != null) {
-                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-                getSupportActionBar().setTitle("Meal Planning");
-            }
+        // toolbar = findViewById(R.id.toolbar);  // Comment this out
+        // if (toolbar != null) {
+        //     setSupportActionBar(toolbar);
+        //     if (getSupportActionBar() != null) {
+        //         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //         getSupportActionBar().setTitle("Finished Orders");
+        //     }
+        // }
+
+        // Use default action bar instead:
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle("Finished Orders");
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
     }
     
@@ -147,7 +153,7 @@ public class MealPlanningActivity extends AppCompatActivity {
         patientInfoText = findViewById(R.id.patientInfoText);
         saveOrderButton = findViewById(R.id.saveOrderButton);
         backButton = findViewById(R.id.backButton);
-        homeButton = findViewById(R.id.homeButton);
+    //  homeButton = findViewById(R.id.homeButton);
         
         // Meal sections
         breakfastSection = findViewById(R.id.breakfastSection);
