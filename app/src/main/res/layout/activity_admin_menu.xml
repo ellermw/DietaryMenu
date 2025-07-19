@@ -6,57 +6,44 @@
     android:background="#f8f9fa"
     android:padding="16dp">
 
-    <!-- FIXED: Back Button moved outside mainMenuContainer so it can be shown independently -->
-    <Button
-        android:id="@+id/backToMenuButton"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:text="← Back to Main Menu"
-        android:textSize="14sp"
-        android:textColor="@android:color/white"
-        android:background="#95a5a6"
-        android:visibility="gone"
-        android:layout_marginBottom="8dp" />
-
-    <!-- Header -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@android:color/white"
-        android:padding="20dp"
-        android:layout_marginBottom="16dp"
-        android:elevation="2dp">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="⚙️ Admin Panel"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:textColor="#2c3e50"
-            android:gravity="center"
-            android:layout_marginBottom="8dp" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Manage Users and Food Items"
-            android:textSize="16sp"
-            android:textColor="#7f8c8d"
-            android:gravity="center" />
-
-    </LinearLayout>
-
     <!-- Main Menu Container -->
     <LinearLayout
         android:id="@+id/mainMenuContainer"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Stats Section -->
+        <!-- Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@android:color/white"
+            android:padding="20dp"
+            android:layout_marginBottom="16dp"
+            android:elevation="2dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="⚙️ Admin Panel"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="#2c3e50"
+                android:gravity="center"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Manage Users and Food Items"
+                android:textSize="16sp"
+                android:textColor="#7f8c8d"
+                android:gravity="center" />
+
+        </LinearLayout>
+
+        <!-- Statistics -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -66,6 +53,7 @@
             android:layout_marginBottom="16dp"
             android:elevation="2dp">
 
+            <!-- Users Count -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -76,12 +64,14 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="👥"
-                    android:textSize="32sp"
-                    android:layout_marginBottom="8dp" />
+                    android:text="👥 Users"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#3498db"
+                    android:layout_marginBottom="4dp" />
 
                 <TextView
-                    android:id="@+id/userCountText"
+                    android:id="@+id/usersCountText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0 Active Users"
@@ -91,13 +81,7 @@
 
             </LinearLayout>
 
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="#ecf0f1"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp" />
-
+            <!-- Items Count -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -108,12 +92,14 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="🍽️"
-                    android:textSize="32sp"
-                    android:layout_marginBottom="8dp" />
+                    android:text="🍽️ Items"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#2ecc71"
+                    android:layout_marginBottom="4dp" />
 
                 <TextView
-                    android:id="@+id/itemCountText"
+                    android:id="@+id/itemsCountText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0 Food Items"
@@ -176,37 +162,52 @@
             android:orientation="vertical"
             android:background="@android:color/white"
             android:padding="16dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="12dp"
             android:elevation="2dp">
 
-            <!-- Search Row -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="👥 User Management"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#2c3e50"
+                android:layout_marginBottom="12dp" />
+
+            <EditText
+                android:id="@+id/userSearchEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="🔍 Search users..."
+                android:inputType="text"
+                android:background="@android:drawable/edit_text"
+                android:padding="12dp"
+                android:layout_marginBottom="8dp" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:layout_marginBottom="12dp">
+                android:orientation="horizontal">
 
-                <EditText
-                    android:id="@+id/userSearchEditText"
+                <TextView
+                    android:id="@+id/usersCountText"
                     android:layout_width="0dp"
-                    android:layout_height="48dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:hint="🔍 Search users..."
-                    android:padding="12dp"
-                    android:background="#f8f9fa"
-                    android:textSize="16sp"
-                    android:layout_marginEnd="8dp" />
+                    android:text="Users: 0 of 0"
+                    android:textSize="14sp"
+                    android:textColor="#7f8c8d"
+                    android:layout_gravity="center_vertical" />
 
                 <Button
                     android:id="@+id/addUserButton"
                     android:layout_width="wrap_content"
-                    android:layout_height="48dp"
+                    android:layout_height="wrap_content"
                     android:text="➕ Add User"
-                    android:textSize="14sp"
+                    android:textSize="12sp"
                     android:textColor="@android:color/white"
-                    android:background="#28a745"
-                    android:padding="12dp" />
+                    android:background="#3498db"
+                    android:padding="8dp" />
 
             </LinearLayout>
 
@@ -218,9 +219,11 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:divider="#e9ecef"
+            android:background="@android:color/white"
+            android:divider="#ecf0f1"
             android:dividerHeight="1dp"
-            android:background="@android:color/white" />
+            android:scrollbars="vertical"
+            android:elevation="1dp" />
 
     </LinearLayout>
 
@@ -240,46 +243,62 @@
             android:orientation="vertical"
             android:background="@android:color/white"
             android:padding="16dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="12dp"
             android:elevation="2dp">
 
-            <!-- Filter Row -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="🍽️ Food Item Management"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#2c3e50"
+                android:layout_marginBottom="12dp" />
+
+            <Spinner
+                android:id="@+id/categoryFilterSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:drawable/btn_dropdown"
+                android:padding="12dp"
+                android:layout_marginBottom="8dp" />
+
+            <EditText
+                android:id="@+id/itemSearchEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="🔍 Search items..."
+                android:inputType="text"
+                android:background="@android:drawable/edit_text"
+                android:padding="12dp"
+                android:layout_marginBottom="8dp" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:layout_marginBottom="12dp">
+                android:orientation="horizontal">
 
-                <Spinner
-                    android:id="@+id/categoryFilterSpinner"
+                <TextView
+                    android:id="@+id/itemsCountText"
                     android:layout_width="0dp"
-                    android:layout_height="48dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:background="#f8f9fa"
-                    android:layout_marginEnd="8dp" />
+                    android:text="Items: 0 of 0"
+                    android:textSize="14sp"
+                    android:textColor="#7f8c8d"
+                    android:layout_gravity="center_vertical" />
 
                 <Button
                     android:id="@+id/addItemButton"
                     android:layout_width="wrap_content"
-                    android:layout_height="48dp"
+                    android:layout_height="wrap_content"
                     android:text="➕ Add Item"
-                    android:textSize="14sp"
+                    android:textSize="12sp"
                     android:textColor="@android:color/white"
-                    android:background="#28a745"
-                    android:padding="12dp" />
+                    android:background="#2ecc71"
+                    android:padding="8dp" />
 
             </LinearLayout>
-
-            <!-- Search Row -->
-            <EditText
-                android:id="@+id/itemSearchEditText"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:hint="🔍 Search items..."
-                android:padding="12dp"
-                android:background="#f8f9fa"
-                android:textSize="16sp" />
 
         </LinearLayout>
 
@@ -289,10 +308,25 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:divider="#e9ecef"
+            android:background="@android:color/white"
+            android:divider="#ecf0f1"
             android:dividerHeight="1dp"
-            android:background="@android:color/white" />
+            android:scrollbars="vertical"
+            android:elevation="1dp" />
 
     </LinearLayout>
+
+    <!-- Back Button -->
+    <Button
+        android:id="@+id/backToMenuButton"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:text="← Back to Main Menu"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/white"
+        android:background="#6c757d"
+        android:layout_marginTop="16dp"
+        android:visibility="gone" />
 
 </LinearLayout>

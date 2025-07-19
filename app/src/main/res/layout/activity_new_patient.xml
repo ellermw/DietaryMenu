@@ -2,266 +2,291 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#f8f9fa">
+    android:padding="16dp"
+    android:background="#f8fafc">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Content -->
+        <!-- Header -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="➕ Add New Patient"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="#1e3a8a"
+            android:gravity="center"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Patient Information Card -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="20dp">
+            android:background="@android:color/white"
+            android:padding="20dp"
+            android:layout_marginBottom="16dp"
+            android:elevation="4dp">
 
-            <!-- Header -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Add New Patient"
-                android:textSize="28sp"
+                android:text="👤 Patient Information"
+                android:textSize="18sp"
                 android:textStyle="bold"
-                android:textColor="#1f2937"
-                android:gravity="center"
-                android:layout_marginBottom="32dp" />
+                android:textColor="#2c3e50"
+                android:layout_marginBottom="16dp" />
 
-            <LinearLayout
+            <!-- First Name -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="First Name *"
+                android:textStyle="bold"
+                android:textColor="#2c3e50"
+                android:layout_marginBottom="4dp" />
+
+            <EditText
+                android:id="@+id/patientFirstNameEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@android:color/white"
-                android:padding="20dp"
-                android:layout_marginBottom="16dp">
+                android:hint="Enter first name"
+                android:inputType="textPersonName"
+                android:background="@android:drawable/edit_text"
+                android:padding="12dp"
+                android:layout_marginBottom="16dp" />
 
-                <!-- Section Header -->
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Patient Information"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:textColor="#1f2937"
-                    android:layout_marginBottom="16dp" />
+            <!-- Last Name -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Last Name *"
+                android:textStyle="bold"
+                android:textColor="#2c3e50"
+                android:layout_marginBottom="4dp" />
 
-                <!-- First Name -->
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="First Name *"
-                    android:textSize="14sp"
-                    android:textColor="#374151"
-                    android:layout_marginBottom="4dp" />
-
-                <EditText
-                    android:id="@+id/patientFirstNameEditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:hint="Enter first name"
-                    android:background="?android:attr/editTextBackground"
-                    android:padding="12dp"
-                    android:textSize="16sp"
-                    android:inputType="textPersonName|textCapWords"
-                    android:importantForAutofill="no"
-                    android:layout_marginBottom="16dp" />
-
-                <!-- Last Name -->
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Last Name *"
-                    android:textSize="14sp"
-                    android:textColor="#374151"
-                    android:layout_marginBottom="4dp" />
-
-                <EditText
-                    android:id="@+id/patientLastNameEditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:hint="Enter last name"
-                    android:background="?android:attr/editTextBackground"
-                    android:padding="12dp"
-                    android:textSize="16sp"
-                    android:inputType="textPersonName|textCapWords"
-                    android:importantForAutofill="no"
-                    android:layout_marginBottom="16dp" />
-
-                <!-- Wing Selection -->
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Wing *"
-                    android:textSize="14sp"
-                    android:textColor="#374151"
-                    android:layout_marginBottom="4dp" />
-
-                <Spinner
-                    android:id="@+id/wingSpinner"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:background="?android:attr/editTextBackground"
-                    android:layout_marginBottom="16dp" />
-
-                <!-- Room Number -->
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Room Number *"
-                    android:textSize="14sp"
-                    android:textColor="#374151"
-                    android:layout_marginBottom="4dp" />
-
-                <Spinner
-                    android:id="@+id/roomNumberSpinner"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:background="?android:attr/editTextBackground"
-                    android:layout_marginBottom="16dp" />
-
-                <!-- Diet Selection -->
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Diet Type *"
-                    android:textSize="14sp"
-                    android:textColor="#374151"
-                    android:layout_marginBottom="4dp" />
-
-                <Spinner
-                    android:id="@+id/dietSpinner"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:background="?android:attr/editTextBackground"
-                    android:layout_marginBottom="16dp" />
-
-                <!-- Fluid Restriction -->
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Fluid Restriction"
-                    android:textSize="14sp"
-                    android:textColor="#374151"
-                    android:layout_marginBottom="4dp" />
-
-                <Spinner
-                    android:id="@+id/fluidRestrictionSpinner"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:background="?android:attr/editTextBackground"
-                    android:layout_marginBottom="16dp" />
-
-            </LinearLayout>
-
-            <!-- Texture Modifications Section -->
-            <LinearLayout
+            <EditText
+                android:id="@+id/patientLastNameEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@android:color/white"
-                android:padding="20dp"
-                android:layout_marginBottom="16dp">
+                android:hint="Enter last name"
+                android:inputType="textPersonName"
+                android:background="@android:drawable/edit_text"
+                android:padding="12dp"
+                android:layout_marginBottom="16dp" />
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Texture Modifications"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:textColor="#1f2937"
-                    android:layout_marginBottom="16dp" />
+            <!-- Wing -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Wing *"
+                android:textStyle="bold"
+                android:textColor="#2c3e50"
+                android:layout_marginBottom="4dp" />
 
-                <CheckBox
-                    android:id="@+id/mechanicalGroundCB"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Mechanical Ground"
-                    android:textSize="16sp"
-                    android:textColor="#374151"
-                    android:layout_marginBottom="8dp" />
-
-                <CheckBox
-                    android:id="@+id/mechanicalChoppedCB"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Mechanical Chopped"
-                    android:textSize="16sp"
-                    android:textColor="#374151"
-                    android:layout_marginBottom="8dp" />
-
-                <CheckBox
-                    android:id="@+id/biteSizeCB"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Bite Size"
-                    android:textSize="16sp"
-                    android:textColor="#374151"
-                    android:layout_marginBottom="8dp" />
-
-                <CheckBox
-                    android:id="@+id/breadOKCB"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Bread OK"
-                    android:textSize="16sp"
-                    android:textColor="#374151" />
-
-            </LinearLayout>
-
-            <!-- Action Buttons -->
-            <LinearLayout
+            <Spinner
+                android:id="@+id/wingSpinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp">
+                android:background="@android:drawable/btn_dropdown"
+                android:padding="12dp"
+                android:layout_marginBottom="16dp" />
 
-                <Button
-                    android:id="@+id/savePatientButton"
-                    android:layout_width="0dp"
-                    android:layout_height="56dp"
-                    android:layout_weight="1"
-                    android:text="Save Patient"
-                    android:textSize="16sp"
-                    android:background="@color/success_green"
-                    android:textColor="@android:color/white"
-                    android:layout_marginEnd="8dp"
-                    android:textStyle="bold" />
+            <!-- Room Number -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Room Number *"
+                android:textStyle="bold"
+                android:textColor="#2c3e50"
+                android:layout_marginBottom="4dp" />
 
-                <Button
-                    android:id="@+id/backButton"
-                    android:layout_width="0dp"
-                    android:layout_height="56dp"
-                    android:layout_weight="1"
-                    android:text="← Back"
-                    android:textSize="16sp"
-                    android:background="@color/text_secondary"
-                    android:textColor="@android:color/white"
-                    android:layout_marginStart="8dp" />
-
-            </LinearLayout>
-
-            <!-- Home Button -->
-            <Button
-                android:id="@+id/homeButton"
+            <Spinner
+                android:id="@+id/roomNumberSpinner"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:text="🏠 Home"
-                android:textSize="16sp"
-                android:background="@color/primary_blue"
-                android:textColor="@android:color/white"
-                android:layout_marginTop="8dp" />
+                android:layout_height="wrap_content"
+                android:background="@android:drawable/btn_dropdown"
+                android:padding="12dp"
+                android:layout_marginBottom="16dp" />
 
-            <!-- Required Fields Note -->
+        </LinearLayout>
+
+        <!-- Diet Information Card -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@android:color/white"
+            android:padding="20dp"
+            android:layout_marginBottom="16dp"
+            android:elevation="4dp">
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="* Required fields"
-                android:textSize="12sp"
+                android:text="🍽️ Diet Information"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#2c3e50"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Diet Type -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Diet Type *"
+                android:textStyle="bold"
+                android:textColor="#2c3e50"
+                android:layout_marginBottom="4dp" />
+
+            <Spinner
+                android:id="@+id/dietSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:drawable/btn_dropdown"
+                android:padding="12dp"
+                android:layout_marginBottom="16dp" />
+
+            <!-- FIXED: ADA Toggle (only visible for Clear Liquid) -->
+            <CheckBox
+                android:id="@+id/adaToggleCheckBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="ADA Friendly (Sugar-free options)"
+                android:textSize="16sp"
+                android:textColor="#2c3e50"
+                android:textStyle="bold"
+                android:visibility="gone"
+                android:layout_marginBottom="16dp"
+                android:background="#e3f2fd"
+                android:padding="12dp" />
+
+            <!-- Fluid Restriction -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Fluid Restriction"
+                android:textStyle="bold"
+                android:textColor="#2c3e50"
+                android:layout_marginBottom="4dp" />
+
+            <Spinner
+                android:id="@+id/fluidRestrictionSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:drawable/btn_dropdown"
+                android:padding="12dp"
+                android:layout_marginBottom="16dp" />
+
+        </LinearLayout>
+
+        <!-- Texture Modifications Card -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@android:color/white"
+            android:padding="20dp"
+            android:layout_marginBottom="24dp"
+            android:elevation="4dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="🔧 Texture Modifications"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#2c3e50"
+                android:layout_marginBottom="16dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Select one texture modification:"
                 android:textColor="#7f8c8d"
-                android:textStyle="italic"
-                android:layout_marginTop="16dp"
-                android:gravity="center" />
+                android:layout_marginBottom="12dp" />
+
+            <CheckBox
+                android:id="@+id/pureedCheckBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Pureed"
+                android:textSize="16sp"
+                android:padding="8dp" />
+
+            <CheckBox
+                android:id="@+id/choppedCheckBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Chopped"
+                android:textSize="16sp"
+                android:padding="8dp" />
+
+            <CheckBox
+                android:id="@+id/softCheckBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Soft"
+                android:textSize="16sp"
+                android:padding="8dp" />
+
+            <CheckBox
+                android:id="@+id/regularCheckBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Regular"
+                android:textSize="16sp"
+                android:padding="8dp"
+                android:checked="true" />
+
+        </LinearLayout>
+
+        <!-- Action Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="32dp">
+
+            <Button
+                android:id="@+id/backButton"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:text="← Back"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                android:background="#6c757d" />
+
+            <Button
+                android:id="@+id/clearFormButton"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_weight="1"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:text="🗑️ Clear"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                android:background="#dc3545" />
+
+            <Button
+                android:id="@+id/savePatientButton"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:text="💾 Save Patient"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                android:background="#28a745" />
 
         </LinearLayout>
 

@@ -1,6 +1,8 @@
 package com.hospital.dietary.models;
 
 import java.util.Date;
+import java.util.List;
+import java.util.ArrayList;
 
 public class Patient {
     private int patientId;
@@ -19,15 +21,35 @@ public class Patient {
     private boolean dinnerNPO;
     private Date createdDate;
 
-    // Constructors
-    public Patient() {}
+    // FIXED: Enhanced meal selection support for full editing
+    private List<String> mealSelections;
+    private List<String> breakfastSelections;
+    private List<String> lunchSelections;
+    private List<String> dinnerSelections;
 
-    public Patient(String patientFirstName, String patientLastName, String wing, String roomNumber, String diet) {
+    // FIXED: Additional fields for comprehensive patient management
+    private String allergies;
+    private String specialInstructions;
+    private boolean isAdaFriendly;
+    private Date lastModified;
+
+    // Default constructor
+    public Patient() {
+        this.mealSelections = new ArrayList<>();
+        this.breakfastSelections = new ArrayList<>();
+        this.lunchSelections = new ArrayList<>();
+        this.dinnerSelections = new ArrayList<>();
+        this.createdDate = new Date();
+        this.lastModified = new Date();
+    }
+
+    // Constructor with basic info
+    public Patient(String patientFirstName, String patientLastName, String wing, String roomNumber) {
+        this();
         this.patientFirstName = patientFirstName;
         this.patientLastName = patientLastName;
         this.wing = wing;
         this.roomNumber = roomNumber;
-        this.diet = diet;
     }
 
     // Getters and Setters
@@ -45,6 +67,7 @@ public class Patient {
 
     public void setPatientFirstName(String patientFirstName) {
         this.patientFirstName = patientFirstName;
+        updateLastModified();
     }
 
     public String getPatientLastName() {
@@ -53,6 +76,7 @@ public class Patient {
 
     public void setPatientLastName(String patientLastName) {
         this.patientLastName = patientLastName;
+        updateLastModified();
     }
 
     public String getWing() {
@@ -61,6 +85,7 @@ public class Patient {
 
     public void setWing(String wing) {
         this.wing = wing;
+        updateLastModified();
     }
 
     public String getRoomNumber() {
@@ -69,6 +94,7 @@ public class Patient {
 
     public void setRoomNumber(String roomNumber) {
         this.roomNumber = roomNumber;
+        updateLastModified();
     }
 
     public String getDiet() {
@@ -77,6 +103,10 @@ public class Patient {
 
     public void setDiet(String diet) {
         this.diet = diet;
+
+        // FIXED: Auto-update ADA friendly flag based on diet
+        this.isAdaFriendly = (diet != null && diet.contains("ADA"));
+        updateLastModified();
     }
 
     public String getFluidRestriction() {
@@ -85,6 +115,7 @@ public class Patient {
 
     public void setFluidRestriction(String fluidRestriction) {
         this.fluidRestriction = fluidRestriction;
+        updateLastModified();
     }
 
     public String getTextureModifications() {
@@ -93,15 +124,16 @@ public class Patient {
 
     public void setTextureModifications(String textureModifications) {
         this.textureModifications = textureModifications;
+        updateLastModified();
     }
 
-    // Meal completion getters and setters
     public boolean isBreakfastComplete() {
         return breakfastComplete;
     }
 
     public void setBreakfastComplete(boolean breakfastComplete) {
         this.breakfastComplete = breakfastComplete;
+        updateLastModified();
     }
 
     public boolean isLunchComplete() {
@@ -110,6 +142,7 @@ public class Patient {
 
     public void setLunchComplete(boolean lunchComplete) {
         this.lunchComplete = lunchComplete;
+        updateLastModified();
     }
 
     public boolean isDinnerComplete() {
@@ -118,15 +151,16 @@ public class Patient {
 
     public void setDinnerComplete(boolean dinnerComplete) {
         this.dinnerComplete = dinnerComplete;
+        updateLastModified();
     }
 
-    // NPO status getters and setters
     public boolean isBreakfastNPO() {
         return breakfastNPO;
     }
 
     public void setBreakfastNPO(boolean breakfastNPO) {
         this.breakfastNPO = breakfastNPO;
+        updateLastModified();
     }
 
     public boolean isLunchNPO() {
@@ -135,6 +169,7 @@ public class Patient {
 
     public void setLunchNPO(boolean lunchNPO) {
         this.lunchNPO = lunchNPO;
+        updateLastModified();
     }
 
     public boolean isDinnerNPO() {
@@ -143,6 +178,7 @@ public class Patient {
 
     public void setDinnerNPO(boolean dinnerNPO) {
         this.dinnerNPO = dinnerNPO;
+        updateLastModified();
     }
 
     public Date getCreatedDate() {
@@ -153,130 +189,157 @@ public class Patient {
         this.createdDate = createdDate;
     }
 
-    // Utility methods
-    public String getFullName() {
-        if (patientFirstName != null && patientLastName != null) {
-            return patientFirstName + " " + patientLastName;
-        } else if (patientFirstName != null) {
-            return patientFirstName;
-        } else if (patientLastName != null) {
-            return patientLastName;
-        } else {
-            return "Unknown Patient";
+    // FIXED: Enhanced meal selection methods
+    public List<String> getMealSelections() {
+        return mealSelections;
+    }
+
+    public void setMealSelections(List<String> mealSelections) {
+        this.mealSelections = mealSelections != null ? mealSelections : new ArrayList<>();
+        updateLastModified();
+    }
+
+    public void addMealSelection(String selection) {
+        if (this.mealSelections == null) {
+            this.mealSelections = new ArrayList<>();
+        }
+        this.mealSelections.add(selection);
+        updateLastModified();
+    }
+
+    public void removeMealSelection(String selection) {
+        if (this.mealSelections != null) {
+            this.mealSelections.remove(selection);
+            updateLastModified();
         }
     }
 
-    public String getLocationString() {
+    public List<String> getBreakfastSelections() {
+        return breakfastSelections;
+    }
+
+    public void setBreakfastSelections(List<String> breakfastSelections) {
+        this.breakfastSelections = breakfastSelections != null ? breakfastSelections : new ArrayList<>();
+        updateLastModified();
+    }
+
+    public List<String> getLunchSelections() {
+        return lunchSelections;
+    }
+
+    public void setLunchSelections(List<String> lunchSelections) {
+        this.lunchSelections = lunchSelections != null ? lunchSelections : new ArrayList<>();
+        updateLastModified();
+    }
+
+    public List<String> getDinnerSelections() {
+        return dinnerSelections;
+    }
+
+    public void setDinnerSelections(List<String> dinnerSelections) {
+        this.dinnerSelections = dinnerSelections != null ? dinnerSelections : new ArrayList<>();
+        updateLastModified();
+    }
+
+    // FIXED: New enhanced fields
+    public String getAllergies() {
+        return allergies;
+    }
+
+    public void setAllergies(String allergies) {
+        this.allergies = allergies;
+        updateLastModified();
+    }
+
+    public String getSpecialInstructions() {
+        return specialInstructions;
+    }
+
+    public void setSpecialInstructions(String specialInstructions) {
+        this.specialInstructions = specialInstructions;
+        updateLastModified();
+    }
+
+    public boolean isAdaFriendly() {
+        return isAdaFriendly;
+    }
+
+    public void setAdaFriendly(boolean adaFriendly) {
+        this.isAdaFriendly = adaFriendly;
+        updateLastModified();
+    }
+
+    public Date getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(Date lastModified) {
+        this.lastModified = lastModified;
+    }
+
+    private void updateLastModified() {
+        this.lastModified = new Date();
+    }
+
+    // FIXED: Utility methods
+    public String getFullName() {
+        return patientFirstName + " " + patientLastName;
+    }
+
+    public String getLocationInfo() {
         return wing + " - Room " + roomNumber;
     }
 
-    // FIXED: Get incomplete meal count for pending orders
-    public int getIncompleteMealCount() {
-        int count = 0;
-        if (!breakfastComplete) count++;
-        if (!lunchComplete) count++;
-        if (!dinnerComplete) count++;
-        return count;
-    }
-
-    public boolean hasIncompleteMeals() {
-        return !breakfastComplete || !lunchComplete || !dinnerComplete;
-    }
-
-    public boolean hasNPORestrictions() {
-        return breakfastNPO || lunchNPO || dinnerNPO;
-    }
-
-    /**
-     * NEW: Get meal completion status for display
-     */
-    public String getMealCompletionStatus() {
+    public String getCompletionStatus() {
         int completed = 0;
         if (breakfastComplete) completed++;
         if (lunchComplete) completed++;
         if (dinnerComplete) completed++;
-
-        StringBuilder status = new StringBuilder();
-        status.append(completed).append("/3 meals complete");
-
-        // Add NPO info if any
-        if (hasNPORestrictions()) {
-            status.append(" (");
-            boolean first = true;
-            if (breakfastNPO) {
-                status.append("B-NPO");
-                first = false;
-            }
-            if (lunchNPO) {
-                if (!first) status.append(", ");
-                status.append("L-NPO");
-                first = false;
-            }
-            if (dinnerNPO) {
-                if (!first) status.append(", ");
-                status.append("D-NPO");
-            }
-            status.append(")");
-        }
-
-        return status.toString();
-    }
-
-    public String getNPOStatus() {
-        if (!hasNPORestrictions()) {
-            return "No NPO restrictions";
-        }
-
-        StringBuilder npo = new StringBuilder("NPO: ");
-        if (breakfastNPO) npo.append("Breakfast ");
-        if (lunchNPO) npo.append("Lunch ");
-        if (dinnerNPO) npo.append("Dinner ");
-        return npo.toString().trim();
+        return completed + "/3 meals complete";
     }
 
     /**
-     * Get restrictions string for display (used by FinishedOrdersActivity)
+     * FIXED: Alias method for compatibility
      */
-    public String getRestrictionsString() {
-        StringBuilder restrictions = new StringBuilder();
-
-        if (hasFluidRestrictions()) {
-            restrictions.append("Fluid: ").append(fluidRestriction);
-        }
-
-        if (hasTextureModifications()) {
-            if (restrictions.length() > 0) {
-                restrictions.append(" | ");
-            }
-            restrictions.append("Texture: ").append(textureModifications);
-        }
-
-        if (hasNPORestrictions()) {
-            if (restrictions.length() > 0) {
-                restrictions.append(" | ");
-            }
-            restrictions.append(getNPOStatus());
-        }
-
-        return restrictions.length() > 0 ? restrictions.toString() : "No restrictions";
+    public String getMealCompletionStatus() {
+        return getCompletionStatus();
     }
 
-    // Helper methods for restrictions
-    public boolean hasFluidRestrictions() {
-        return fluidRestriction != null && !fluidRestriction.trim().isEmpty() && !"None".equals(fluidRestriction);
+    public boolean isAllMealsComplete() {
+        return breakfastComplete && lunchComplete && dinnerComplete;
     }
 
-    public boolean hasTextureModifications() {
-        return textureModifications != null && !textureModifications.trim().isEmpty();
+    public boolean hasAnyMealComplete() {
+        return breakfastComplete || lunchComplete || dinnerComplete;
     }
 
-    // Validation methods
+    public int getCompletedMealCount() {
+        int count = 0;
+        if (breakfastComplete) count++;
+        if (lunchComplete) count++;
+        if (dinnerComplete) count++;
+        return count;
+    }
+
+    public int getPendingMealCount() {
+        return 3 - getCompletedMealCount();
+    }
+
+    // FIXED: Clear liquid diet helper methods
+    public boolean isClearLiquidDiet() {
+        return diet != null && diet.toLowerCase().contains("clear liquid");
+    }
+
+    public boolean isAdaClearLiquidDiet() {
+        return isClearLiquidDiet() && (diet.contains("ADA") || isAdaFriendly);
+    }
+
+    // FIXED: Validation methods
     public boolean isValid() {
         return patientFirstName != null && !patientFirstName.trim().isEmpty() &&
                 patientLastName != null && !patientLastName.trim().isEmpty() &&
                 wing != null && !wing.trim().isEmpty() &&
-                roomNumber != null && !roomNumber.trim().isEmpty() &&
-                diet != null && !diet.trim().isEmpty();
+                roomNumber != null && !roomNumber.trim().isEmpty();
     }
 
     public String getValidationErrors() {
@@ -285,31 +348,60 @@ public class Patient {
         if (patientFirstName == null || patientFirstName.trim().isEmpty()) {
             errors.append("First name is required. ");
         }
-
         if (patientLastName == null || patientLastName.trim().isEmpty()) {
             errors.append("Last name is required. ");
         }
-
         if (wing == null || wing.trim().isEmpty()) {
             errors.append("Wing is required. ");
         }
-
         if (roomNumber == null || roomNumber.trim().isEmpty()) {
             errors.append("Room number is required. ");
-        }
-
-        if (diet == null || diet.trim().isEmpty()) {
-            errors.append("Diet is required. ");
         }
 
         return errors.toString().trim();
     }
 
+    // FIXED: Enhanced toString for debugging and display
     @Override
     public String toString() {
-        return getFullName() + " - " + getLocationString() + " (" + diet + ")";
+        return getFullName() + " (" + getLocationInfo() + ") - " +
+                (diet != null ? diet : "No diet specified") + " - " +
+                getCompletionStatus();
     }
 
+    // FIXED: Copy constructor for editing support
+    public Patient copy() {
+        Patient copy = new Patient();
+        copy.patientId = this.patientId;
+        copy.patientFirstName = this.patientFirstName;
+        copy.patientLastName = this.patientLastName;
+        copy.wing = this.wing;
+        copy.roomNumber = this.roomNumber;
+        copy.diet = this.diet;
+        copy.fluidRestriction = this.fluidRestriction;
+        copy.textureModifications = this.textureModifications;
+        copy.breakfastComplete = this.breakfastComplete;
+        copy.lunchComplete = this.lunchComplete;
+        copy.dinnerComplete = this.dinnerComplete;
+        copy.breakfastNPO = this.breakfastNPO;
+        copy.lunchNPO = this.lunchNPO;
+        copy.dinnerNPO = this.dinnerNPO;
+        copy.createdDate = this.createdDate;
+        copy.allergies = this.allergies;
+        copy.specialInstructions = this.specialInstructions;
+        copy.isAdaFriendly = this.isAdaFriendly;
+        copy.lastModified = this.lastModified;
+
+        // Deep copy lists
+        copy.mealSelections = new ArrayList<>(this.mealSelections);
+        copy.breakfastSelections = new ArrayList<>(this.breakfastSelections);
+        copy.lunchSelections = new ArrayList<>(this.lunchSelections);
+        copy.dinnerSelections = new ArrayList<>(this.dinnerSelections);
+
+        return copy;
+    }
+
+    // FIXED: Equals method for comparison
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;

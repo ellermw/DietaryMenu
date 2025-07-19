@@ -1,105 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:padding="16dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="24dp">
+        android:orientation="vertical">
 
         <!-- Item Name -->
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Item Name *"
-            android:textSize="16sp"
             android:textStyle="bold"
             android:textColor="#2c3e50"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="4dp" />
 
         <EditText
-            android:id="@+id/itemNameEditText"
+            android:id="@+id/nameInput"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
+            android:layout_height="wrap_content"
             android:hint="Enter item name"
+            android:inputType="textCapWords"
             android:background="@android:drawable/edit_text"
             android:padding="12dp"
-            android:textSize="16sp"
-            android:inputType="textCapWords"
-            android:layout_marginBottom="16dp" />
+            android:layout_marginBottom="12dp" />
+
+        <!-- Description -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Description"
+            android:textStyle="bold"
+            android:textColor="#2c3e50"
+            android:layout_marginBottom="4dp" />
+
+        <EditText
+            android:id="@+id/descriptionInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter description (optional)"
+            android:inputType="textMultiLine"
+            android:background="@android:drawable/edit_text"
+            android:padding="12dp"
+            android:layout_marginBottom="12dp"
+            android:minLines="2" />
 
         <!-- Category -->
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Category *"
-            android:textSize="16sp"
             android:textStyle="bold"
             android:textColor="#2c3e50"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="4dp" />
 
         <Spinner
             android:id="@+id/categorySpinner"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:background="@android:drawable/edit_text"
-            android:layout_marginBottom="16dp" />
-
-        <!-- Description -->
-        <TextView
-            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Description (Optional)"
-            android:textSize="16sp"
+            android:background="@android:drawable/btn_dropdown"
+            android:padding="12dp"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Meal Type -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Meal Type *"
             android:textStyle="bold"
             android:textColor="#2c3e50"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="4dp" />
 
-        <EditText
-            android:id="@+id/descriptionEditText"
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:hint="Enter item description"
-            android:background="@android:drawable/edit_text"
-            android:padding="12dp"
-            android:textSize="16sp"
-            android:inputType="textMultiLine|textCapSentences"
-            android:gravity="top"
-            android:maxLines="3"
-            android:layout_marginBottom="16dp" />
-
-        <!-- Size in ML -->
-        <TextView
+        <Spinner
+            android:id="@+id/mealTypeSpinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Size in ml (Optional)"
-            android:textSize="16sp"
+            android:background="@android:drawable/btn_dropdown"
+            android:padding="12dp"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Size (for beverages) -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Size (ml)"
             android:textStyle="bold"
             android:textColor="#2c3e50"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="4dp" />
 
         <EditText
-            android:id="@+id/sizeMlEditText"
+            android:id="@+id/sizeInput"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:hint="e.g., 240, 355, 500"
-            android:background="@android:drawable/edit_text"
-            android:padding="12dp"
-            android:textSize="16sp"
+            android:layout_height="wrap_content"
+            android:hint="Enter size in ml (optional)"
             android:inputType="number"
+            android:background="@android:drawable/edit_text"
+            android:padding="12dp"
             android:layout_marginBottom="16dp" />
 
         <!-- Properties Section -->
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Item Properties"
-            android:textSize="16sp"
             android:textStyle="bold"
             android:textColor="#2c3e50"
-            android:layout_marginBottom="12dp" />
+            android:textSize="16sp"
+            android:layout_marginBottom="8dp" />
 
         <!-- ADA Friendly -->
         <CheckBox

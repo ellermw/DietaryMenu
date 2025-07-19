@@ -15,17 +15,18 @@ public class MainMenuActivity extends AppCompatActivity {
     private DatabaseHelper dbHelper;
     private PatientDAO patientDAO;
 
+    // User information
     private String currentUsername;
     private String currentUserRole;
     private String currentUserFullName;
 
+    // UI Components
     private TextView welcomeText;
     private Button patientInfoButton;
     private Button pendingOrdersButton;
     private Button retiredOrdersButton;
     private Button userManagementButton;
     private Button itemManagementButton;
-    private Button logoutButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,13 +44,14 @@ public class MainMenuActivity extends AppCompatActivity {
 
         // Set title
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle("Dietary Management - Main Menu");
+            getSupportActionBar().setTitle("Main Menu");
         }
 
         initializeUI();
-        setupListeners();
         updateWelcomeMessage();
         updateButtonVisibility();
+        setupListeners();
+        updateStatistics();
     }
 
     private void initializeUI() {
@@ -59,16 +61,16 @@ public class MainMenuActivity extends AppCompatActivity {
         retiredOrdersButton = findViewById(R.id.retiredOrdersButton);
         userManagementButton = findViewById(R.id.userManagementButton);
         itemManagementButton = findViewById(R.id.itemManagementButton);
-        logoutButton = findViewById(R.id.logoutButton);
     }
 
     private void setupListeners() {
         patientInfoButton.setOnClickListener(v -> openPatientInfo());
         pendingOrdersButton.setOnClickListener(v -> openPendingOrders());
         retiredOrdersButton.setOnClickListener(v -> openRetiredOrders());
+
+        // FIXED: Connect admin buttons to actual AdminActivity
         userManagementButton.setOnClickListener(v -> openUserManagement());
         itemManagementButton.setOnClickListener(v -> openItemManagement());
-        logoutButton.setOnClickListener(v -> logout());
     }
 
     private void updateWelcomeMessage() {
@@ -117,24 +119,38 @@ public class MainMenuActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    /**
+     * FIXED: Open AdminActivity for user management
+     */
     private void openUserManagement() {
         if (!"admin".equals(currentUserRole)) {
             Toast.makeText(this, "Access denied. Admin privileges required.", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // For now, show a message since AdminMenuActivity doesn't exist yet
-        Toast.makeText(this, "User Management - Coming Soon!\nAdmin features will be available in future updates.", Toast.LENGTH_LONG).show();
+        Intent intent = new Intent(this, AdminActivity.class);
+        intent.putExtra("current_user", currentUsername);
+        intent.putExtra("user_role", currentUserRole);
+        intent.putExtra("user_full_name", currentUserFullName);
+        intent.putExtra("admin_mode", "users"); // Direct to user management
+        startActivity(intent);
     }
 
+    /**
+     * FIXED: Open AdminActivity for item management
+     */
     private void openItemManagement() {
         if (!"admin".equals(currentUserRole)) {
             Toast.makeText(this, "Access denied. Admin privileges required.", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // For now, show a message since ItemManagementActivity doesn't exist yet
-        Toast.makeText(this, "Item Management - Coming Soon!\nFood item management will be available in future updates.", Toast.LENGTH_LONG).show();
+        Intent intent = new Intent(this, AdminActivity.class);
+        intent.putExtra("current_user", currentUsername);
+        intent.putExtra("user_role", currentUserRole);
+        intent.putExtra("user_full_name", currentUserFullName);
+        intent.putExtra("admin_mode", "items"); // Direct to item management
+        startActivity(intent);
     }
 
     private void logout() {
@@ -168,8 +184,12 @@ public class MainMenuActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * FIXED: Properly update dashboard counts with real-time data
+     */
     private void updateStatistics() {
         try {
+            // Get real counts from database
             int patientCount = patientDAO.getPatientCount();
             int pendingCount = patientDAO.getPendingOrdersCount();
 
@@ -180,14 +200,25 @@ public class MainMenuActivity extends AppCompatActivity {
             if (pendingOrdersButton != null) {
                 pendingOrdersButton.setText("⏳ Pending Orders\n(" + pendingCount + " pending)");
             }
+
+            // Add visual feedback
+            if (pendingCount > 0) {
+                // Highlight pending orders button if there are pending orders
+                pendingOrdersButton.setBackgroundColor(getResources().getColor(android.R.color.holo_orange_light));
+            } else {
+                pendingOrdersButton.setBackgroundColor(getResources().getColor(android.R.color.white));
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
+            Toast.makeText(this, "Error updating statistics", Toast.LENGTH_SHORT).show();
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        // FIXED: Refresh statistics every time we return to main menu
         updateStatistics();
     }
 

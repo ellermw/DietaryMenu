@@ -3,10 +3,10 @@
     <string name="app_name">Dietary Management</string>
 
     <!-- App Version - Update this when version changes -->
-    <string name="app_version">V 0.0.10</string>
+    <string name="app_version">V 0.0.20</string>
 
     <!-- Copyright message with version -->
-    <string name="copyright_message">© 2025 Hospital Dietary Management System - V 0.0.10</string>
+    <string name="copyright_message">Dietary Management System - V 0.0.20</string>
 
     <!-- Common strings -->
     <string name="loading">Loading...</string>

@@ -142,7 +142,7 @@ public class MealPlanningActivity extends AppCompatActivity {
         patientInfoText = findViewById(R.id.patientInfoText);
         saveOrderButton = findViewById(R.id.saveOrderButton);
         backButton = findViewById(R.id.backButton);
-        homeButton = findViewById(R.id.homeButton);
+    //  homeButton = findViewById(R.id.homeButton);
 
         // Meal sections
         breakfastSection = findViewById(R.id.breakfastSection);

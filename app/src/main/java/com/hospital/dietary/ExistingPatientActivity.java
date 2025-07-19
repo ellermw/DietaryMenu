@@ -2,11 +2,14 @@ package com.hospital.dietary;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import com.hospital.dietary.dao.PatientDAO;
 import com.hospital.dietary.models.Patient;
@@ -27,9 +30,11 @@ public class ExistingPatientActivity extends AppCompatActivity {
     private String currentUserFullName;
 
     // UI Components
+    private EditText searchPatientEditText; // FIXED: Added search functionality
     private Spinner dateFilterSpinner;
     private ListView completedOrdersListView;
     private TextView noOrdersText;
+    private Button clearSearchButton; // FIXED: Clear search button
 
     // Date handling
     private SimpleDateFormat displayDateFormat = new SimpleDateFormat("MM/dd", Locale.getDefault());
@@ -37,7 +42,8 @@ public class ExistingPatientActivity extends AppCompatActivity {
     private SimpleDateFormat fullDateFormat = new SimpleDateFormat("EEEE - MM/dd", Locale.getDefault());
 
     private List<DateOption> dateOptions = new ArrayList<>();
-    private List<Patient> completedPatients = new ArrayList<>();
+    private List<Patient> allCompletedPatients = new ArrayList<>(); // FIXED: Store all patients
+    private List<Patient> filteredPatients = new ArrayList<>(); // FIXED: Store filtered results
     private ArrayAdapter<Patient> patientsAdapter;
     private String selectedDate;
 
@@ -69,15 +75,107 @@ public class ExistingPatientActivity extends AppCompatActivity {
     }
 
     private void initializeUI() {
+        searchPatientEditText = findViewById(R.id.searchPatientEditText); // FIXED: Added search
+        clearSearchButton = findViewById(R.id.clearSearchButton); // FIXED: Clear search button
         dateFilterSpinner = findViewById(R.id.dateFilterSpinner);
         completedOrdersListView = findViewById(R.id.completedOrdersListView);
         noOrdersText = findViewById(R.id.noOrdersText);
 
         // Set up list view click listener
         completedOrdersListView.setOnItemClickListener((parent, view, position, id) -> {
-            Patient selectedPatient = completedPatients.get(position);
-            openPatientDetail(selectedPatient);
+            Patient selectedPatient = filteredPatients.get(position);
+            showPatientOptionsDialog(selectedPatient);
         });
+
+        // FIXED: Long click for delete option
+        completedOrdersListView.setOnItemLongClickListener((parent, view, position, id) -> {
+            Patient selectedPatient = filteredPatients.get(position);
+            showDeletePatientDialog(selectedPatient);
+            return true;
+        });
+    }
+
+    /**
+     * FIXED: Show patient options when clicked
+     */
+    private void showPatientOptionsDialog(Patient patient) {
+        String patientInfo = patient.getPatientFirstName() + " " + patient.getPatientLastName() +
+                " - " + patient.getWing() + " Room " + patient.getRoomNumber();
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Patient Options")
+                .setMessage("What would you like to do with " + patientInfo + "?")
+                .setPositiveButton("Edit Patient", (dialog, which) -> {
+                    openPatientEdit(patient);
+                })
+                .setNeutralButton("View Details", (dialog, which) -> {
+                    openPatientDetail(patient);
+                })
+                .setNegativeButton("Delete Patient", (dialog, which) -> {
+                    showDeletePatientDialog(patient);
+                })
+                .show();
+    }
+
+    /**
+     * FIXED: Show delete confirmation dialog
+     */
+    private void showDeletePatientDialog(Patient patient) {
+        String patientInfo = patient.getPatientFirstName() + " " + patient.getPatientLastName() +
+                " - " + patient.getWing() + " Room " + patient.getRoomNumber();
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("⚠️ Delete Patient")
+                .setMessage("Are you sure you want to permanently delete " + patientInfo +
+                        "?\n\nThis will remove:\n• Patient information\n• All meal orders\n• Order history\n\nThis action cannot be undone!")
+                .setPositiveButton("Delete", (dialog, which) -> {
+                    deletePatient(patient);
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    /**
+     * FIXED: Delete patient and refresh list
+     */
+    private void deletePatient(Patient patient) {
+        try {
+            boolean success = patientDAO.deletePatient(patient.getPatientId());
+
+            if (success) {
+                Toast.makeText(this, "Patient " + patient.getPatientFirstName() + " " +
+                        patient.getPatientLastName() + " has been deleted.", Toast.LENGTH_LONG).show();
+
+                // Refresh the list
+                loadCompletedOrders();
+            } else {
+                Toast.makeText(this, "Failed to delete patient. Please try again.", Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error deleting patient: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * FIXED: Open patient edit functionality
+     */
+    private void openPatientEdit(Patient patient) {
+        Intent intent = new Intent(this, PatientInfoActivity.class);
+        intent.putExtra("current_user", currentUsername);
+        intent.putExtra("user_role", currentUserRole);
+        intent.putExtra("user_full_name", currentUserFullName);
+        intent.putExtra("edit_patient_id", patient.getPatientId());
+        startActivity(intent);
+    }
+
+    private void openPatientDetail(Patient patient) {
+        Intent intent = new Intent(this, PatientDetailActivity.class);
+        intent.putExtra("current_user", currentUsername);
+        intent.putExtra("user_role", currentUserRole);
+        intent.putExtra("user_full_name", currentUserFullName);
+        intent.putExtra("patient_id", patient.getPatientId());
+        startActivity(intent);
     }
 
     private void setupDateOptions() {
@@ -90,7 +188,7 @@ public class ExistingPatientActivity extends AppCompatActivity {
         dateOptions.add(new DateOption(todayDisplay, today));
         selectedDate = today; // Default to today
 
-        // Add previous 6 days (current week + previous few days)
+        // Add previous 6 days
         for (int i = 1; i <= 6; i++) {
             cal.add(Calendar.DAY_OF_MONTH, -1);
             String date = dbDateFormat.format(cal.getTime());
@@ -99,7 +197,7 @@ public class ExistingPatientActivity extends AppCompatActivity {
             dateOptions.add(new DateOption(dateDisplay, date));
         }
 
-        // Setup spinner adapter
+        // FIXED: Setup spinner adapter properly
         ArrayAdapter<DateOption> dateAdapter = new ArrayAdapter<DateOption>(this,
                 android.R.layout.simple_spinner_item, dateOptions) {
             @Override
@@ -115,6 +213,7 @@ public class ExistingPatientActivity extends AppCompatActivity {
     }
 
     private void setupListeners() {
+        // FIXED: Date filter spinner listener
         dateFilterSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -126,6 +225,57 @@ public class ExistingPatientActivity extends AppCompatActivity {
             @Override
             public void onNothingSelected(AdapterView<?> parent) {}
         });
+
+        // FIXED: Search functionality
+        searchPatientEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                filterPatients(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+
+        // FIXED: Clear search button
+        clearSearchButton.setOnClickListener(v -> {
+            searchPatientEditText.setText("");
+            filterPatients("");
+        });
+    }
+
+    /**
+     * FIXED: Filter patients based on search term
+     */
+    private void filterPatients(String searchTerm) {
+        filteredPatients.clear();
+
+        if (searchTerm.trim().isEmpty()) {
+            filteredPatients.addAll(allCompletedPatients);
+        } else {
+            String lowerSearchTerm = searchTerm.toLowerCase().trim();
+            for (Patient patient : allCompletedPatients) {
+                if (matchesSearchTerm(patient, lowerSearchTerm)) {
+                    filteredPatients.add(patient);
+                }
+            }
+        }
+
+        updatePatientsList();
+    }
+
+    /**
+     * FIXED: Check if patient matches search term
+     */
+    private boolean matchesSearchTerm(Patient patient, String searchTerm) {
+        return patient.getPatientFirstName().toLowerCase().contains(searchTerm) ||
+                patient.getPatientLastName().toLowerCase().contains(searchTerm) ||
+                patient.getWing().toLowerCase().contains(searchTerm) ||
+                patient.getRoomNumber().contains(searchTerm) ||
+                (patient.getPatientFirstName() + " " + patient.getPatientLastName()).toLowerCase().contains(searchTerm);
     }
 
     private void performAutoCleanup() {
@@ -139,7 +289,7 @@ public class ExistingPatientActivity extends AppCompatActivity {
             List<Patient> oldOrders = patientDAO.getOrdersBeforeDate(cutoffDate);
 
             if (!oldOrders.isEmpty()) {
-                // Archive old orders (this would typically move them to a separate retired table)
+                // Archive old orders
                 int archivedCount = patientDAO.archiveOldOrders(cutoffDate);
 
                 if (archivedCount > 0) {
@@ -152,13 +302,16 @@ public class ExistingPatientActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * FIXED: Load completed orders and store in both lists
+     */
     private void loadCompletedOrders() {
         try {
             // Get completed orders for selected date
-            completedPatients = patientDAO.getCompletedOrdersByDate(selectedDate);
+            allCompletedPatients = patientDAO.getCompletedOrdersByDate(selectedDate);
 
             // Sort by Wing then Room Number
-            Collections.sort(completedPatients, (p1, p2) -> {
+            Collections.sort(allCompletedPatients, (p1, p2) -> {
                 // First sort by wing
                 int wingCompare = p1.getWing().compareTo(p2.getWing());
                 if (wingCompare != 0) {
@@ -171,94 +324,79 @@ public class ExistingPatientActivity extends AppCompatActivity {
                     int room2 = Integer.parseInt(p2.getRoomNumber().replaceAll("\\D", ""));
                     return Integer.compare(room1, room2);
                 } catch (NumberFormatException e) {
-                    // If parsing fails, use string comparison
                     return p1.getRoomNumber().compareTo(p2.getRoomNumber());
                 }
             });
 
-            // Update UI
-            if (completedPatients.isEmpty()) {
-                completedOrdersListView.setVisibility(View.GONE);
-                noOrdersText.setVisibility(View.VISIBLE);
-
-                DateOption selectedOption = dateOptions.get(dateFilterSpinner.getSelectedItemPosition());
-                noOrdersText.setText("No completed orders found for " + selectedOption.displayName +
-                        "\n\nTry selecting a different date or complete some pending orders.");
-
-                // Update title with count
-                if (getSupportActionBar() != null) {
-                    getSupportActionBar().setTitle("Completed Orders (0)");
-                }
-            } else {
-                completedOrdersListView.setVisibility(View.VISIBLE);
-                noOrdersText.setVisibility(View.GONE);
-
-                // Update title with count
-                if (getSupportActionBar() != null) {
-                    getSupportActionBar().setTitle("Completed Orders (" + completedPatients.size() + ")");
-                }
-
-                // Create adapter
-                patientsAdapter = new ArrayAdapter<Patient>(this,
-                        android.R.layout.simple_list_item_2, android.R.id.text1, completedPatients) {
-                    @Override
-                    public View getView(int position, View convertView, ViewGroup parent) {
-                        if (convertView == null) {
-                            convertView = getLayoutInflater().inflate(android.R.layout.simple_list_item_2, parent, false);
-                        }
-
-                        Patient patient = getItem(position);
-                        TextView text1 = convertView.findViewById(android.R.id.text1);
-                        TextView text2 = convertView.findViewById(android.R.id.text2);
-
-                        text1.setText(patient.getPatientFirstName() + " " + patient.getPatientLastName() +
-                                " - " + patient.getWing() + " Room " + patient.getRoomNumber());
-
-                        StringBuilder status = new StringBuilder("Diet: " + patient.getDiet());
-                        if (patient.getFluidRestriction() != null) {
-                            status.append(" | Fluid: ").append(patient.getFluidRestriction());
-                        }
-                        status.append(" | ").append(patient.getMealCompletionStatus());
-
-                        text2.setText(status.toString());
-
-                        return convertView;
-                    }
-                };
-
-                completedOrdersListView.setAdapter(patientsAdapter);
-            }
+            // Apply current search filter
+            String currentSearch = searchPatientEditText.getText().toString();
+            filterPatients(currentSearch);
 
         } catch (Exception e) {
-            Toast.makeText(this, "Error loading orders: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+            Toast.makeText(this, "Error loading completed orders", Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void openPatientDetail(Patient patient) {
-        // For now, show patient details in a dialog since PatientDetailActivity might not exist
-        StringBuilder details = new StringBuilder();
-        details.append("Patient: ").append(patient.getFullName()).append("\n");
-        details.append("Location: ").append(patient.getWing()).append(" - Room ").append(patient.getRoomNumber()).append("\n");
-        details.append("Diet: ").append(patient.getDiet()).append("\n");
+    /**
+     * FIXED: Update the patients list view
+     */
+    private void updatePatientsList() {
+        if (filteredPatients.isEmpty()) {
+            completedOrdersListView.setVisibility(View.GONE);
+            noOrdersText.setVisibility(View.VISIBLE);
 
-        if (patient.getFluidRestriction() != null) {
-            details.append("Fluid Restriction: ").append(patient.getFluidRestriction()).append("\n");
+            String searchTerm = searchPatientEditText.getText().toString().trim();
+            if (!searchTerm.isEmpty()) {
+                noOrdersText.setText("No patients found matching \"" + searchTerm + "\"" +
+                        "\n\nTry a different search term or clear the search.");
+            } else {
+                DateOption selectedOption = dateOptions.get(dateFilterSpinner.getSelectedItemPosition());
+                noOrdersText.setText("No completed orders found for " + selectedOption.displayName +
+                        "\n\nTry selecting a different date or complete some pending orders.");
+            }
+
+            // Update title with count
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setTitle("Completed Orders (0)");
+            }
+        } else {
+            completedOrdersListView.setVisibility(View.VISIBLE);
+            noOrdersText.setVisibility(View.GONE);
+
+            // Update title with count
+            if (getSupportActionBar() != null) {
+                String searchInfo = searchPatientEditText.getText().toString().trim().isEmpty() ?
+                        "" : " (filtered)";
+                getSupportActionBar().setTitle("Completed Orders (" + filteredPatients.size() + searchInfo + ")");
+            }
+
+            // Create adapter
+            patientsAdapter = new ArrayAdapter<Patient>(this,
+                    android.R.layout.simple_list_item_2, android.R.id.text1, filteredPatients) {
+                @Override
+                public View getView(int position, View convertView, ViewGroup parent) {
+                    if (convertView == null) {
+                        convertView = getLayoutInflater().inflate(android.R.layout.simple_list_item_2, parent, false);
+                    }
+
+                    Patient patient = getItem(position);
+                    TextView primaryText = convertView.findViewById(android.R.id.text1);
+                    TextView secondaryText = convertView.findViewById(android.R.id.text2);
+
+                    String patientName = patient.getPatientFirstName() + " " + patient.getPatientLastName();
+                    String locationInfo = patient.getWing() + " - Room " + patient.getRoomNumber() +
+                            " | Diet: " + patient.getDiet();
+
+                    primaryText.setText(patientName);
+                    secondaryText.setText(locationInfo);
+
+                    return convertView;
+                }
+            };
+
+            completedOrdersListView.setAdapter(patientsAdapter);
         }
-
-        if (patient.getTextureModifications() != null) {
-            details.append("Texture Modifications: ").append(patient.getTextureModifications()).append("\n");
-        }
-
-        details.append("\nMeal Status:\n");
-        details.append("Breakfast: ").append(patient.isBreakfastNPO() ? "NPO" : "Complete").append("\n");
-        details.append("Lunch: ").append(patient.isLunchNPO() ? "NPO" : "Complete").append("\n");
-        details.append("Dinner: ").append(patient.isDinnerNPO() ? "NPO" : "Complete");
-
-        new android.app.AlertDialog.Builder(this)
-                .setTitle("Patient Details")
-                .setMessage(details.toString())
-                .setPositiveButton("OK", null)
-                .show();
     }
 
     @Override
@@ -271,41 +409,29 @@ public class ExistingPatientActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                // Go back to Patient Info Menu, not Main Menu
-                Intent intent = new Intent(this, PatientInfoMenuActivity.class);
+                finish();
+                return true;
+            case R.id.action_home:
+                Intent intent = new Intent(this, MainMenuActivity.class);
                 intent.putExtra("current_user", currentUsername);
                 intent.putExtra("user_role", currentUserRole);
                 intent.putExtra("user_full_name", currentUserFullName);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
                 return true;
-            case R.id.action_home:
-                goToMainMenu();
-                return true;
             case R.id.action_refresh:
-                performAutoCleanup();
                 loadCompletedOrders();
-                Toast.makeText(this, "Orders refreshed and cleaned up", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Orders refreshed", Toast.LENGTH_SHORT).show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    private void goToMainMenu() {
-        Intent intent = new Intent(this, MainMenuActivity.class);
-        intent.putExtra("current_user", currentUsername);
-        intent.putExtra("user_role", currentUserRole);
-        intent.putExtra("user_full_name", currentUserFullName);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        startActivity(intent);
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
-        // Refresh when returning to this activity
-        performAutoCleanup();
+        // Refresh data when returning from edit
         loadCompletedOrders();
     }
 
@@ -317,7 +443,9 @@ public class ExistingPatientActivity extends AppCompatActivity {
         }
     }
 
-    // Helper class for date options
+    /**
+     * Date option helper class
+     */
     private static class DateOption {
         String displayName;
         String dateValue;

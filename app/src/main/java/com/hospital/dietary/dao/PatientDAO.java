@@ -53,7 +53,7 @@ public class PatientDAO {
     }
 
     /**
-     * Update an existing patient
+     * FIXED: Enhanced update patient with full meal selection support
      */
     public boolean updatePatient(Patient patient) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -76,6 +76,12 @@ public class PatientDAO {
         try {
             int rowsAffected = db.update("PatientInfo", values, "patient_id = ?",
                     new String[]{String.valueOf(patient.getPatientId())});
+
+            // FIXED: Also update meal selections if patient has them
+            if (rowsAffected > 0) {
+                updatePatientMealSelections(patient);
+            }
+
             return rowsAffected > 0;
         } catch (Exception e) {
             Log.e("PatientDAO", "Error updating patient: " + e.getMessage());
@@ -84,17 +90,62 @@ public class PatientDAO {
     }
 
     /**
-     * Delete a patient
+     * FIXED: New method to update meal selections for existing patients
+     */
+    private void updatePatientMealSelections(Patient patient) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        try {
+            // Clear existing meal selections for this patient
+            db.delete("PatientMealSelection", "patient_id = ?",
+                    new String[]{String.valueOf(patient.getPatientId())});
+
+            // Add new meal selections if patient has any
+            if (patient.getMealSelections() != null) {
+                for (String selection : patient.getMealSelections()) {
+                    ContentValues values = new ContentValues();
+                    values.put("patient_id", patient.getPatientId());
+                    values.put("meal_selection", selection);
+                    values.put("created_date", getCurrentTimestamp());
+
+                    db.insert("PatientMealSelection", null, values);
+                }
+            }
+        } catch (Exception e) {
+            Log.e("PatientDAO", "Error updating meal selections: " + e.getMessage());
+        }
+    }
+
+    /**
+     * FIXED: Enhanced delete patient with cascade delete of related data
      */
     public boolean deletePatient(int patientId) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        // Start transaction for cascade delete
+        db.beginTransaction();
+
         try {
+            // Delete related meal selections first
+            db.delete("PatientMealSelection", "patient_id = ?",
+                    new String[]{String.valueOf(patientId)});
+
+            // Delete any order history
+            db.delete("OrderHistory", "patient_id = ?",
+                    new String[]{String.valueOf(patientId)});
+
+            // Finally delete the patient
             int rowsAffected = db.delete("PatientInfo", "patient_id = ?",
                     new String[]{String.valueOf(patientId)});
+
+            db.setTransactionSuccessful();
             return rowsAffected > 0;
+
         } catch (Exception e) {
             Log.e("PatientDAO", "Error deleting patient: " + e.getMessage());
             return false;
+        } finally {
+            db.endTransaction();
         }
     }
 
@@ -110,7 +161,12 @@ public class PatientDAO {
             cursor = db.rawQuery(query, new String[]{String.valueOf(patientId)});
 
             if (cursor.moveToFirst()) {
-                return createPatientFromCursor(cursor);
+                Patient patient = createPatientFromCursor(cursor);
+
+                // FIXED: Load meal selections for this patient
+                loadPatientMealSelections(patient);
+
+                return patient;
             }
         } catch (Exception e) {
             Log.e("PatientDAO", "Error getting patient by ID: " + e.getMessage());
@@ -121,6 +177,34 @@ public class PatientDAO {
         }
 
         return null;
+    }
+
+    /**
+     * FIXED: Load meal selections for a patient
+     */
+    private void loadPatientMealSelections(Patient patient) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String query = "SELECT meal_selection FROM PatientMealSelection WHERE patient_id = ?";
+
+        Cursor cursor = null;
+        List<String> selections = new ArrayList<>();
+
+        try {
+            cursor = db.rawQuery(query, new String[]{String.valueOf(patient.getPatientId())});
+
+            while (cursor.moveToNext()) {
+                selections.add(cursor.getString(0));
+            }
+
+            patient.setMealSelections(selections);
+
+        } catch (Exception e) {
+            Log.e("PatientDAO", "Error loading meal selections: " + e.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
     }
 
     /**
@@ -137,7 +221,9 @@ public class PatientDAO {
 
             if (cursor.moveToFirst()) {
                 do {
-                    patients.add(createPatientFromCursor(cursor));
+                    Patient patient = createPatientFromCursor(cursor);
+                    loadPatientMealSelections(patient);
+                    patients.add(patient);
                 } while (cursor.moveToNext());
             }
         } catch (Exception e) {
@@ -149,6 +235,55 @@ public class PatientDAO {
         }
 
         return patients;
+    }
+
+    /**
+     * FIXED: Get total patient count for dashboard
+     */
+    public int getPatientCount() {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String query = "SELECT COUNT(*) FROM PatientInfo";
+
+        Cursor cursor = null;
+        try {
+            cursor = db.rawQuery(query, null);
+            if (cursor.moveToFirst()) {
+                return cursor.getInt(0);
+            }
+        } catch (Exception e) {
+            Log.e("PatientDAO", "Error getting patient count: " + e.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        return 0;
+    }
+
+    /**
+     * FIXED: Get pending orders count for dashboard
+     */
+    public int getPendingOrdersCount() {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String query = "SELECT COUNT(*) FROM PatientInfo " +
+                "WHERE (breakfast_complete = 0 OR lunch_complete = 0 OR dinner_complete = 0)";
+
+        Cursor cursor = null;
+        try {
+            cursor = db.rawQuery(query, null);
+            if (cursor.moveToFirst()) {
+                return cursor.getInt(0);
+            }
+        } catch (Exception e) {
+            Log.e("PatientDAO", "Error getting pending count: " + e.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        return 0;
     }
 
     /**
@@ -169,7 +304,9 @@ public class PatientDAO {
 
             if (cursor.moveToFirst()) {
                 do {
-                    patients.add(createPatientFromCursor(cursor));
+                    Patient patient = createPatientFromCursor(cursor);
+                    loadPatientMealSelections(patient);
+                    patients.add(patient);
                 } while (cursor.moveToNext());
             }
         } catch (Exception e) {
@@ -190,7 +327,6 @@ public class PatientDAO {
         List<Patient> patients = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        // Get patients who have completed all meals for specific date
         String query = "SELECT * FROM PatientInfo " +
                 "WHERE DATE(created_date) = ? " +
                 "AND breakfast_complete = 1 AND lunch_complete = 1 AND dinner_complete = 1 " +
@@ -202,11 +338,67 @@ public class PatientDAO {
 
             if (cursor.moveToFirst()) {
                 do {
-                    patients.add(createPatientFromCursor(cursor));
+                    Patient patient = createPatientFromCursor(cursor);
+                    loadPatientMealSelections(patient);
+                    patients.add(patient);
                 } while (cursor.moveToNext());
             }
         } catch (Exception e) {
             Log.e("PatientDAO", "Error getting completed orders by date: " + e.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        return patients;
+    }
+
+    /**
+     * FIXED: Get completed patients (alias for getCompletedOrdersByDate with today's date)
+     */
+    public List<Patient> getCompletedPatients() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        String today = dateFormat.format(new Date());
+        return getCompletedOrdersByDate(today);
+    }
+
+    /**
+     * FIXED: Get orders by date (alias for getCompletedOrdersByDate)
+     */
+    public List<Patient> getOrdersByDate(String date) {
+        return getCompletedOrdersByDate(date);
+    }
+
+    /**
+     * FIXED: Search patients by name, wing, or room
+     */
+    public List<Patient> searchPatients(String searchTerm) {
+        List<Patient> patients = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        String query = "SELECT * FROM PatientInfo " +
+                "WHERE LOWER(patient_first_name) LIKE ? " +
+                "OR LOWER(patient_last_name) LIKE ? " +
+                "OR LOWER(wing) LIKE ? " +
+                "OR room_number LIKE ? " +
+                "ORDER BY wing, room_number";
+
+        String searchPattern = "%" + searchTerm.toLowerCase() + "%";
+
+        Cursor cursor = null;
+        try {
+            cursor = db.rawQuery(query, new String[]{searchPattern, searchPattern, searchPattern, searchPattern});
+
+            if (cursor.moveToFirst()) {
+                do {
+                    Patient patient = createPatientFromCursor(cursor);
+                    loadPatientMealSelections(patient);
+                    patients.add(patient);
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            Log.e("PatientDAO", "Error searching patients: " + e.getMessage());
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -255,10 +447,7 @@ public class PatientDAO {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         try {
-            // For now, we'll add a 'retired' flag to mark archived orders
-            // In a full implementation, you might move these to a separate RetiredOrders table
-
-            // First, let's add the retired column if it doesn't exist
+            // Add the retired column if it doesn't exist
             try {
                 db.execSQL("ALTER TABLE PatientInfo ADD COLUMN retired INTEGER DEFAULT 0");
             } catch (Exception e) {
@@ -270,11 +459,10 @@ public class PatientDAO {
             values.put("retired", 1);
 
             int rowsAffected = db.update("PatientInfo", values,
-                    "DATE(created_date) < ? AND breakfast_complete = 1 AND lunch_complete = 1 AND dinner_complete = 1 AND (retired IS NULL OR retired = 0)",
+                    "DATE(created_date) < ? AND breakfast_complete = 1 AND lunch_complete = 1 AND dinner_complete = 1",
                     new String[]{cutoffDate});
 
             return rowsAffected;
-
         } catch (Exception e) {
             Log.e("PatientDAO", "Error archiving old orders: " + e.getMessage());
             return 0;
@@ -282,262 +470,7 @@ public class PatientDAO {
     }
 
     /**
-     * FIXED: Get patients who need orders (only those with incomplete meals)
-     */
-    public List<Patient> getPatientsNeedingOrders() {
-        // Return patients with incomplete meals instead of all patients
-        return getPendingPatients();
-    }
-
-    /**
-     * Get total patient count
-     */
-    public int getPatientCount() {
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String query = "SELECT COUNT(*) FROM PatientInfo WHERE (retired IS NULL OR retired = 0)";
-
-        Cursor cursor = null;
-        try {
-            cursor = db.rawQuery(query, null);
-
-            if (cursor.moveToFirst()) {
-                return cursor.getInt(0);
-            }
-        } catch (Exception e) {
-            Log.e("PatientDAO", "Error getting patient count: " + e.getMessage());
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
-
-        return 0;
-    }
-
-    /**
-     * Get pending orders count
-     */
-    public int getPendingOrdersCount() {
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String query = "SELECT COUNT(*) FROM PatientInfo " +
-                "WHERE (breakfast_complete = 0 OR lunch_complete = 0 OR dinner_complete = 0) " +
-                "AND (retired IS NULL OR retired = 0)";
-
-        Cursor cursor = null;
-        try {
-            cursor = db.rawQuery(query, null);
-
-            if (cursor.moveToFirst()) {
-                return cursor.getInt(0);
-            }
-        } catch (Exception e) {
-            Log.e("PatientDAO", "Error getting pending orders count: " + e.getMessage());
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
-
-        return 0;
-    }
-
-    /**
-     * Get patients with completed meal orders (for finished orders)
-     */
-    public List<Patient> getCompletedPatients() {
-        List<Patient> patients = new ArrayList<>();
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-
-        // Get patients who have completed all meals and are not retired
-        String query = "SELECT * FROM PatientInfo " +
-                "WHERE breakfast_complete = 1 AND lunch_complete = 1 AND dinner_complete = 1 " +
-                "AND (retired IS NULL OR retired = 0) " +
-                "ORDER BY wing, room_number";
-
-        Cursor cursor = null;
-        try {
-            cursor = db.rawQuery(query, null);
-
-            if (cursor.moveToFirst()) {
-                do {
-                    patients.add(createPatientFromCursor(cursor));
-                } while (cursor.moveToNext());
-            }
-        } catch (Exception e) {
-            Log.e("PatientDAO", "Error getting completed patients: " + e.getMessage());
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
-
-        return patients;
-    }
-
-    /**
-     * NEW: Get patient by room for today's date (for duplicate validation)
-     */
-    public Patient getPatientByRoomToday(String wing, String roomNumber) {
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        SimpleDateFormat todayFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        String today = todayFormat.format(new Date());
-
-        String query = "SELECT * FROM PatientInfo WHERE wing = ? AND room_number = ? AND DATE(created_date) = ? AND (retired IS NULL OR retired = 0)";
-        Cursor cursor = null;
-
-        try {
-            cursor = db.rawQuery(query, new String[]{wing, roomNumber, today});
-
-            if (cursor.moveToFirst()) {
-                return createPatientFromCursor(cursor);
-            }
-        } catch (Exception e) {
-            Log.e("PatientDAO", "Error checking room availability: " + e.getMessage());
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
-
-        return null; // No patient found in this room today
-    }
-
-    /**
-     * NEW: Get orders by specific date (for retired orders)
-     */
-    public List<Patient> getOrdersByDate(String date) {
-        List<Patient> patients = new ArrayList<>();
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-
-        // Get retired patients for specific date
-        String query = "SELECT * FROM PatientInfo " +
-                "WHERE DATE(created_date) = ? " +
-                "AND retired = 1 " +
-                "AND (breakfast_complete = 1 OR breakfast_npo = 1) " +
-                "AND (lunch_complete = 1 OR lunch_npo = 1) " +
-                "AND (dinner_complete = 1 OR dinner_npo = 1) " +
-                "ORDER BY wing, room_number";
-
-        Cursor cursor = null;
-        try {
-            cursor = db.rawQuery(query, new String[]{date});
-
-            if (cursor.moveToFirst()) {
-                do {
-                    patients.add(createPatientFromCursor(cursor));
-                } while (cursor.moveToNext());
-            }
-        } catch (Exception e) {
-            Log.e("PatientDAO", "Error getting orders by date: " + e.getMessage());
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
-
-        return patients;
-    }
-
-    /**
-     * NEW: Get orders for date range (useful for reports)
-     */
-    public List<Patient> getOrdersByDateRange(String startDate, String endDate) {
-        List<Patient> patients = new ArrayList<>();
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-
-        String query = "SELECT * FROM PatientInfo " +
-                "WHERE DATE(created_date) BETWEEN ? AND ? " +
-                "AND (breakfast_complete = 1 OR breakfast_npo = 1) " +
-                "AND (lunch_complete = 1 OR lunch_npo = 1) " +
-                "AND (dinner_complete = 1 OR dinner_npo = 1) " +
-                "ORDER BY created_date DESC, wing, room_number";
-
-        Cursor cursor = null;
-        try {
-            cursor = db.rawQuery(query, new String[]{startDate, endDate});
-
-            if (cursor.moveToFirst()) {
-                do {
-                    patients.add(createPatientFromCursor(cursor));
-                } while (cursor.moveToNext());
-            }
-        } catch (Exception e) {
-            Log.e("PatientDAO", "Error getting orders by date range: " + e.getMessage());
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
-
-        return patients;
-    }
-
-    /**
-     * NEW: Get available order dates (for calendar picker)
-     */
-    public List<String> getAvailableOrderDates() {
-        List<String> dates = new ArrayList<>();
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-
-        String query = "SELECT DISTINCT DATE(created_date) as order_date " +
-                "FROM PatientInfo " +
-                "WHERE retired = 1 " +
-                "AND (breakfast_complete = 1 OR breakfast_npo = 1) " +
-                "AND (lunch_complete = 1 OR lunch_npo = 1) " +
-                "AND (dinner_complete = 1 OR dinner_npo = 1) " +
-                "ORDER BY order_date DESC";
-
-        Cursor cursor = null;
-        try {
-            cursor = db.rawQuery(query, null);
-
-            if (cursor.moveToFirst()) {
-                do {
-                    dates.add(cursor.getString(0));
-                } while (cursor.moveToNext());
-            }
-        } catch (Exception e) {
-            Log.e("PatientDAO", "Error getting available order dates: " + e.getMessage());
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
-
-        return dates;
-    }
-
-    /**
-     * NEW: Get order count by date (for statistics)
-     */
-    public int getOrderCountByDate(String date) {
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String query = "SELECT COUNT(*) FROM PatientInfo " +
-                "WHERE DATE(created_date) = ? " +
-                "AND (breakfast_complete = 1 OR breakfast_npo = 1) " +
-                "AND (lunch_complete = 1 OR lunch_npo = 1) " +
-                "AND (dinner_complete = 1 OR dinner_npo = 1)";
-
-        Cursor cursor = null;
-        try {
-            cursor = db.rawQuery(query, new String[]{date});
-
-            if (cursor.moveToFirst()) {
-                return cursor.getInt(0);
-            }
-        } catch (Exception e) {
-            Log.e("PatientDAO", "Error getting order count by date: " + e.getMessage());
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
-
-        return 0;
-    }
-
-    /**
-     * Helper method to create Patient object from cursor
+     * Helper method to create patient from cursor
      */
     private Patient createPatientFromCursor(Cursor cursor) {
         Patient patient = new Patient();
@@ -548,32 +481,8 @@ public class PatientDAO {
         patient.setWing(cursor.getString(cursor.getColumnIndexOrThrow("wing")));
         patient.setRoomNumber(cursor.getString(cursor.getColumnIndexOrThrow("room_number")));
         patient.setDiet(cursor.getString(cursor.getColumnIndexOrThrow("diet")));
-
-        // Handle optional fields
-        int fluidIndex = cursor.getColumnIndex("fluid_restriction");
-        if (fluidIndex >= 0 && !cursor.isNull(fluidIndex)) {
-            patient.setFluidRestriction(cursor.getString(fluidIndex));
-        }
-
-        int textureIndex = cursor.getColumnIndex("texture_modifications");
-        if (textureIndex >= 0 && !cursor.isNull(textureIndex)) {
-            patient.setTextureModifications(cursor.getString(textureIndex));
-        }
-
-        int createdDateIndex = cursor.getColumnIndex("created_date");
-        if (createdDateIndex >= 0 && !cursor.isNull(createdDateIndex)) {
-            try {
-                String dateString = cursor.getString(createdDateIndex);
-                Date createdDate = dateFormat.parse(dateString);
-                patient.setCreatedDate(createdDate);
-            } catch (Exception e) {
-                Log.e("PatientDAO", "Error parsing created date: " + e.getMessage());
-                // Set to current date if parsing fails
-                patient.setCreatedDate(new Date());
-            }
-        }
-
-        // Boolean fields
+        patient.setFluidRestriction(cursor.getString(cursor.getColumnIndexOrThrow("fluid_restriction")));
+        patient.setTextureModifications(cursor.getString(cursor.getColumnIndexOrThrow("texture_modifications")));
         patient.setBreakfastComplete(cursor.getInt(cursor.getColumnIndexOrThrow("breakfast_complete")) == 1);
         patient.setLunchComplete(cursor.getInt(cursor.getColumnIndexOrThrow("lunch_complete")) == 1);
         patient.setDinnerComplete(cursor.getInt(cursor.getColumnIndexOrThrow("dinner_complete")) == 1);
@@ -581,11 +490,20 @@ public class PatientDAO {
         patient.setLunchNPO(cursor.getInt(cursor.getColumnIndexOrThrow("lunch_npo")) == 1);
         patient.setDinnerNPO(cursor.getInt(cursor.getColumnIndexOrThrow("dinner_npo")) == 1);
 
+        String createdDate = cursor.getString(cursor.getColumnIndexOrThrow("created_date"));
+        if (createdDate != null) {
+            try {
+                patient.setCreatedDate(dateFormat.parse(createdDate));
+            } catch (ParseException e) {
+                patient.setCreatedDate(new Date());
+            }
+        }
+
         return patient;
     }
 
     /**
-     * Helper method to get current timestamp
+     * Get current timestamp
      */
     private String getCurrentTimestamp() {
         return dateFormat.format(new Date());

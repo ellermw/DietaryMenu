@@ -1,60 +1,172 @@
-// ================================================================================================
-// FILE: app/src/main/java/com/hospital/dietary/models/User.java
-// ================================================================================================
-
 package com.hospital.dietary.models;
+
+import java.util.Date;
 
 public class User {
     private int userId;
     private String username;
     private String password;
-    private String role; // "admin" or "user"
     private String fullName;
-    private String email;
+    private String role;
     private boolean isActive;
-    private String createdDate;
+    private Date createdDate;
+    private Date lastLogin;
 
-    public User() {}
+    // Default constructor
+    public User() {
+        this.isActive = true;
+        this.createdDate = new Date();
+        this.role = "user"; // Default role
+    }
 
-    public User(String username, String password, String role, String fullName) {
+    // Constructor with essential fields
+    public User(String username, String password, String fullName, String role) {
+        this();
         this.username = username;
         this.password = password;
-        this.role = role;
         this.fullName = fullName;
-        this.isActive = true;
+        this.role = role;
+    }
+
+    // Constructor with all fields except dates
+    public User(String username, String password, String fullName, String role, boolean isActive) {
+        this(username, password, fullName, role);
+        this.isActive = isActive;
     }
 
     // Getters and Setters
-    public int getUserId() { return userId; }
-    public void setUserId(int userId) { this.userId = userId; }
+    public int getUserId() {
+        return userId;
+    }
 
-    public String getUsername() { return username; }
-    public void setUsername(String username) { this.username = username; }
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
 
-    public String getPassword() { return password; }
-    public void setPassword(String password) { this.password = password; }
+    public String getUsername() {
+        return username;
+    }
 
-    public String getRole() { return role; }
-    public void setRole(String role) { this.role = role; }
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-    public String getFullName() { return fullName; }
-    public void setFullName(String fullName) { this.fullName = fullName; }
+    public String getPassword() {
+        return password;
+    }
 
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-    public boolean isActive() { return isActive; }
-    public void setActive(boolean active) { isActive = active; }
+    public String getFullName() {
+        return fullName;
+    }
 
-    public String getCreatedDate() { return createdDate; }
-    public void setCreatedDate(String createdDate) { this.createdDate = createdDate; }
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
 
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public Date getLastLogin() {
+        return lastLogin;
+    }
+
+    public void setLastLogin(Date lastLogin) {
+        this.lastLogin = lastLogin;
+    }
+
+    // Utility methods
     public boolean isAdmin() {
         return "admin".equalsIgnoreCase(role);
     }
 
+    public boolean isUser() {
+        return "user".equalsIgnoreCase(role);
+    }
+
+    public String getRoleDisplayName() {
+        return role != null ? role.substring(0, 1).toUpperCase() + role.substring(1) : "User";
+    }
+
+    public String getStatusDisplayName() {
+        return isActive ? "Active" : "Inactive";
+    }
+
+    // Validation methods
+    public boolean isValid() {
+        return username != null && !username.trim().isEmpty() &&
+                password != null && !password.trim().isEmpty() &&
+                fullName != null && !fullName.trim().isEmpty() &&
+                role != null && !role.trim().isEmpty();
+    }
+
+    public String getValidationErrors() {
+        StringBuilder errors = new StringBuilder();
+
+        if (username == null || username.trim().isEmpty()) {
+            errors.append("Username is required. ");
+        }
+        if (password == null || password.trim().isEmpty()) {
+            errors.append("Password is required. ");
+        }
+        if (fullName == null || fullName.trim().isEmpty()) {
+            errors.append("Full name is required. ");
+        }
+        if (role == null || role.trim().isEmpty()) {
+            errors.append("Role is required. ");
+        }
+
+        return errors.toString().trim();
+    }
+
+    // Authentication helper
+    public boolean authenticate(String inputPassword) {
+        // In a real application, you would hash the passwords and compare hashes
+        // For this demo, we're using plain text (NOT recommended for production)
+        return password != null && password.equals(inputPassword) && isActive;
+    }
+
     @Override
     public String toString() {
-        return fullName + " (" + username + ") - " + role.toUpperCase();
+        return fullName + " (" + username + ") - " + getRoleDisplayName();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        User user = (User) obj;
+        return userId == user.userId ||
+                (username != null && username.equals(user.username));
+    }
+
+    @Override
+    public int hashCode() {
+        return username != null ? username.hashCode() : 0;
     }
 }
