@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "dietary_menu.db";
-    private static final int DATABASE_VERSION = 7; // Incremented for diet options update
+    private static final int DATABASE_VERSION = 8; // Incremented for diet options update
 
     // Updated PatientInfo table with enhanced features
     private static final String CREATE_PATIENT_INFO_TABLE =
@@ -118,7 +118,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     "password TEXT NOT NULL, " +
                     "full_name TEXT NOT NULL, " +
                     "role TEXT NOT NULL, " +
-                    "created_date TEXT NOT NULL" +
+                    "created_date TEXT NOT NULL, " +
+                    "is_active INTEGER DEFAULT 1" +
                     ")";
 
     public DatabaseHelper(Context context) {
@@ -144,26 +145,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         if (oldVersion < 5) {
-            // Add missing Category table if it doesn't exist
             db.execSQL(CREATE_CATEGORY_TABLE);
-
-            // Update Item table to use category_id
             migrateItemTable(db);
-
-            // Insert default data if not already present
             insertDefaultData(db);
         }
 
         if (oldVersion < 6) {
-            // Update diet options with ADA varieties
             updateDietOptions(db);
         }
 
         if (oldVersion < 7) {
-            // Add 'retired' column to PatientInfo table
             db.execSQL("ALTER TABLE PatientInfo ADD COLUMN retired INTEGER DEFAULT 0");
         }
+
+        if (oldVersion < 8) {
+            db.execSQL("ALTER TABLE User ADD COLUMN is_active INTEGER DEFAULT 1");
+        }
     }
+
 
     private void migrateItemTable(SQLiteDatabase db) {
         try {

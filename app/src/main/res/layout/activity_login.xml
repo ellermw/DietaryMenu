@@ -109,7 +109,7 @@
         android:id="@+id/copyrightText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="© 2025 Hospital Dietary Management System - V 1.0.0"
+        android:text="© 2025 Dietary Management System - V 0.0.10"
         android:textSize="12sp"
         android:textColor="#7f8c8d"
         android:layout_marginTop="24dp"
