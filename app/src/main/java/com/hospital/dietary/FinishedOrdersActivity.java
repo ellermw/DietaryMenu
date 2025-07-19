@@ -1,12 +1,15 @@
 package com.hospital.dietary;
 
-import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import com.hospital.dietary.dao.PatientDAO;
 import com.hospital.dietary.models.Patient;
 import java.util.ArrayList;
@@ -23,10 +26,13 @@ public class FinishedOrdersActivity extends AppCompatActivity {
     private String currentUserFullName;
     
     // UI Components
+    private Toolbar toolbar;
     private ListView finishedOrdersListView;
     private TextView noFinishedOrdersText;
     private Button backButton;
-    private Button refreshButton;
+    private Button homeButton;
+    private Button printAllButton;
+    private Button printSelectedButton;
     
     // Data
     private List<Patient> finishedPatients = new ArrayList<>();
@@ -46,6 +52,9 @@ public class FinishedOrdersActivity extends AppCompatActivity {
         dbHelper = new DatabaseHelper(this);
         patientDAO = new PatientDAO(dbHelper);
         
+        // Setup toolbar
+        setupToolbar();
+        
         // Initialize UI
         initializeUI();
         
@@ -56,11 +65,57 @@ public class FinishedOrdersActivity extends AppCompatActivity {
         loadFinishedOrders();
     }
     
+    private void setupToolbar() {
+        toolbar = findViewById(R.id.toolbar);
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                getSupportActionBar().setTitle("Finished Orders");
+            }
+        }
+    }
+    
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_with_home, menu);
+        return true;
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            case R.id.action_home:
+                goToMainMenu();
+                return true;
+            case R.id.action_refresh:
+                loadFinishedOrders();
+                Toast.makeText(this, "Orders refreshed", Toast.LENGTH_SHORT).show();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+    
+    private void goToMainMenu() {
+        Intent intent = new Intent(this, MainMenuActivity.class);
+        intent.putExtra("current_user", currentUsername);
+        intent.putExtra("user_role", currentUserRole);
+        intent.putExtra("user_full_name", currentUserFullName);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
+    }
+    
     private void initializeUI() {
         finishedOrdersListView = findViewById(R.id.finishedOrdersListView);
         noFinishedOrdersText = findViewById(R.id.noFinishedOrdersText);
         backButton = findViewById(R.id.backButton);
-        refreshButton = findViewById(R.id.refreshButton);
+        homeButton = findViewById(R.id.homeButton);
+        printAllButton = findViewById(R.id.printAllButton);
+        printSelectedButton = findViewById(R.id.printSelectedButton);
         
         // Set title
         setTitle("Finished Orders");
@@ -68,12 +123,25 @@ public class FinishedOrdersActivity extends AppCompatActivity {
         // Setup adapter
         adapter = new FinishedOrdersAdapter(this, finishedPatients);
         finishedOrdersListView.setAdapter(adapter);
+        finishedOrdersListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
     }
     
     private void setupListeners() {
-        backButton.setOnClickListener(v -> finish());
+        if (backButton != null) {
+            backButton.setOnClickListener(v -> finish());
+        }
         
-        refreshButton.setOnClickListener(v -> loadFinishedOrders());
+        if (homeButton != null) {
+            homeButton.setOnClickListener(v -> goToMainMenu());
+        }
+        
+        if (printAllButton != null) {
+            printAllButton.setOnClickListener(v -> printAllOrders());
+        }
+        
+        if (printSelectedButton != null) {
+            printSelectedButton.setOnClickListener(v -> printSelectedOrders());
+        }
         
         // Make list view non-clickable since orders are finalized
         finishedOrdersListView.setOnItemClickListener((parent, view, position, id) -> {
@@ -96,8 +164,8 @@ public class FinishedOrdersActivity extends AppCompatActivity {
                 
                 // Try to parse room numbers as integers for proper sorting (descending)
                 try {
-                    int room1 = Integer.parseInt(p1.getRoomNumber());
-                    int room2 = Integer.parseInt(p2.getRoomNumber());
+                    int room1 = Integer.parseInt(p1.getRoomNumber().replaceAll("\\D", ""));
+                    int room2 = Integer.parseInt(p2.getRoomNumber().replaceAll("\\D", ""));
                     return Integer.compare(room2, room1); // Descending order
                 } catch (NumberFormatException e) {
                     // If parsing fails, use string comparison (descending)
@@ -109,6 +177,7 @@ public class FinishedOrdersActivity extends AppCompatActivity {
             if (finishedPatients.isEmpty()) {
                 finishedOrdersListView.setVisibility(ListView.GONE);
                 noFinishedOrdersText.setVisibility(TextView.VISIBLE);
+                noFinishedOrdersText.setText("No finished orders found.\nComplete some pending orders first.");
             } else {
                 finishedOrdersListView.setVisibility(ListView.VISIBLE);
                 noFinishedOrdersText.setVisibility(TextView.GONE);
@@ -124,37 +193,57 @@ public class FinishedOrdersActivity extends AppCompatActivity {
         // Show detailed view of the order (read-only)
         StringBuilder details = new StringBuilder();
         details.append("Patient: ").append(patient.getFullName()).append("\n");
-        details.append("Location: ").append(patient.getLocationString()).append("\n");
+        details.append("Location: ").append(patient.getWing()).append(" - Room ").append(patient.getRoomNumber()).append("\n");
         details.append("Diet: ").append(patient.getDiet()).append("\n");
         
-        if (patient.getFluidRestriction() != null && !patient.getFluidRestriction().equals("None")) {
+        if (patient.getFluidRestriction() != null) {
             details.append("Fluid Restriction: ").append(patient.getFluidRestriction()).append("\n");
         }
         
-        if (patient.getTextureModifications() != null && !patient.getTextureModifications().isEmpty()) {
+        if (patient.getTextureModifications() != null) {
             details.append("Texture Modifications: ").append(patient.getTextureModifications()).append("\n");
         }
         
         details.append("\nMeal Status:\n");
-        details.append("• Breakfast: ").append(getMealStatus(patient.isBreakfastComplete(), patient.isBreakfastNPO())).append("\n");
-        details.append("• Lunch: ").append(getMealStatus(patient.isLunchComplete(), patient.isLunchNPO())).append("\n");
-        details.append("• Dinner: ").append(getMealStatus(patient.isDinnerComplete(), patient.isDinnerNPO())).append("\n");
+        details.append("Breakfast: ").append(patient.isBreakfastNPO() ? "NPO" : "Complete").append("\n");
+        details.append("Lunch: ").append(patient.isLunchNPO() ? "NPO" : "Complete").append("\n");
+        details.append("Dinner: ").append(patient.isDinnerNPO() ? "NPO" : "Complete");
         
-        new AlertDialog.Builder(this)
+        new android.app.AlertDialog.Builder(this)
             .setTitle("Order Details")
             .setMessage(details.toString())
-            .setPositiveButton("Close", null)
+            .setPositiveButton("OK", null)
             .show();
     }
     
-    private String getMealStatus(boolean complete, boolean npo) {
-        if (npo) {
-            return "NPO";
-        } else if (complete) {
-            return "Complete";
-        } else {
-            return "Incomplete";
+    private void printAllOrders() {
+        if (finishedPatients.isEmpty()) {
+            Toast.makeText(this, "No orders to print", Toast.LENGTH_SHORT).show();
+            return;
         }
+        
+        // TODO: Implement printing functionality
+        Toast.makeText(this, "Print All Orders - " + finishedPatients.size() + " orders", Toast.LENGTH_SHORT).show();
+    }
+    
+    private void printSelectedOrders() {
+        android.util.SparseBooleanArray selectedItems = finishedOrdersListView.getCheckedItemPositions();
+        List<Patient> selectedPatients = new ArrayList<>();
+        
+        for (int i = 0; i < selectedItems.size(); i++) {
+            int position = selectedItems.keyAt(i);
+            if (selectedItems.valueAt(i)) {
+                selectedPatients.add(finishedPatients.get(position));
+            }
+        }
+        
+        if (selectedPatients.isEmpty()) {
+            Toast.makeText(this, "No orders selected", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        
+        // TODO: Implement printing functionality
+        Toast.makeText(this, "Print Selected Orders - " + selectedPatients.size() + " orders", Toast.LENGTH_SHORT).show();
     }
     
     @Override
@@ -164,7 +253,15 @@ public class FinishedOrdersActivity extends AppCompatActivity {
         loadFinishedOrders();
     }
     
-    // Inner class for the adapter
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (dbHelper != null) {
+            dbHelper.close();
+        }
+    }
+    
+    // Enhanced adapter for finished orders
     private class FinishedOrdersAdapter extends BaseAdapter {
         private List<Patient> patients;
         private LayoutInflater inflater;
@@ -192,42 +289,21 @@ public class FinishedOrdersActivity extends AppCompatActivity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             if (convertView == null) {
-                convertView = inflater.inflate(R.layout.item_finished_order, parent, false);
+                convertView = inflater.inflate(android.R.layout.simple_list_item_multiple_choice, parent, false);
             }
             
             Patient patient = patients.get(position);
             
-            TextView patientNameText = convertView.findViewById(R.id.patientNameText);
-            TextView locationText = convertView.findViewById(R.id.locationText);
-            TextView dietText = convertView.findViewById(R.id.dietText);
-            TextView restrictionsText = convertView.findViewById(R.id.restrictionsText);
-            TextView statusText = convertView.findViewById(R.id.statusText);
-            TextView completedDateText = convertView.findViewById(R.id.completedDateText);
+            TextView textView = convertView.findViewById(android.R.id.text1);
             
-            patientNameText.setText(patient.getFullName());
-            locationText.setText(patient.getWing() + " - Room " + patient.getRoomNumber());
-            dietText.setText(patient.getDiet());
+            // Format: "John Doe - 1 South Room 106 (Regular Diet) ✅"
+            String displayText = String.format("%s - %s Room %s (%s) ✅", 
+                patient.getFullName(), 
+                patient.getWing(), 
+                patient.getRoomNumber(),
+                patient.getDiet());
             
-            // Show restrictions if any
-            String restrictions = patient.getRestrictionsString();
-            if (!restrictions.isEmpty()) {
-                restrictionsText.setText(restrictions);
-                restrictionsText.setVisibility(TextView.VISIBLE);
-            } else {
-                restrictionsText.setVisibility(TextView.GONE);
-            }
-            
-            // Show completion status
-            statusText.setText("✅ Complete");
-            statusText.setTextColor(0xFF27ae60); // Green color
-            
-            // Show completion date
-            if (patient.getCreatedDate() != null) {
-                completedDateText.setText("Completed: " + patient.getCreatedDateString());
-                completedDateText.setVisibility(TextView.VISIBLE);
-            } else {
-                completedDateText.setVisibility(TextView.GONE);
-            }
+            textView.setText(displayText);
             
             return convertView;
         }

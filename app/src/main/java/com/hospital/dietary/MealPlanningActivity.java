@@ -1,25 +1,27 @@
 package com.hospital.dietary;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import com.hospital.dietary.dao.PatientDAO;
-import com.hospital.dietary.dao.ItemDAO;
 import com.hospital.dietary.models.Patient;
-import com.hospital.dietary.models.Item;
-import java.util.*;
 
 public class MealPlanningActivity extends AppCompatActivity {
     
     private DatabaseHelper dbHelper;
     private PatientDAO patientDAO;
-    private ItemDAO itemDAO;
     
-    // User and patient information
+    // User information
     private String currentUsername;
     private String currentUserRole;
     private String currentUserFullName;
+    
+    // Patient information
     private int patientId;
     private String patientName;
     private String wing;
@@ -29,9 +31,11 @@ public class MealPlanningActivity extends AppCompatActivity {
     private String textureModifications;
     
     // UI Components
+    private Toolbar toolbar;
     private TextView patientInfoText;
     private Button saveOrderButton;
     private Button backButton;
+    private Button homeButton;
     
     // Meal sections
     private LinearLayout breakfastSection;
@@ -48,7 +52,7 @@ public class MealPlanningActivity extends AppCompatActivity {
     private LinearLayout lunchItemsContainer;
     private LinearLayout dinnerItemsContainer;
     
-    // Meal completion status
+    // Completion tracking
     private boolean breakfastComplete = false;
     private boolean lunchComplete = false;
     private boolean dinnerComplete = false;
@@ -64,7 +68,9 @@ public class MealPlanningActivity extends AppCompatActivity {
         // Initialize database
         dbHelper = new DatabaseHelper(this);
         patientDAO = new PatientDAO(dbHelper);
-        itemDAO = new ItemDAO(dbHelper);
+        
+        // Setup toolbar
+        setupToolbar();
         
         // Initialize UI
         initializeUI();
@@ -72,11 +78,56 @@ public class MealPlanningActivity extends AppCompatActivity {
         // Setup listeners
         setupListeners();
         
-        // Load patient data and setup meals
+        // Load patient data
         loadPatientData();
         
-        // Setup meal content based on diet
+        // Setup meal content based on diet type
         setupMealContent();
+    }
+    
+    private void setupToolbar() {
+        toolbar = findViewById(R.id.toolbar);
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                getSupportActionBar().setTitle("Meal Planning");
+            }
+        }
+    }
+    
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_with_home, menu);
+        return true;
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            case R.id.action_home:
+                goToMainMenu();
+                return true;
+            case R.id.action_refresh:
+                loadPatientData();
+                setupMealContent();
+                Toast.makeText(this, "Meal plan refreshed", Toast.LENGTH_SHORT).show();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+    
+    private void goToMainMenu() {
+        Intent intent = new Intent(this, MainMenuActivity.class);
+        intent.putExtra("current_user", currentUsername);
+        intent.putExtra("user_role", currentUserRole);
+        intent.putExtra("user_full_name", currentUserFullName);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
     }
     
     private void extractIntentData() {
@@ -96,6 +147,7 @@ public class MealPlanningActivity extends AppCompatActivity {
         patientInfoText = findViewById(R.id.patientInfoText);
         saveOrderButton = findViewById(R.id.saveOrderButton);
         backButton = findViewById(R.id.backButton);
+        homeButton = findViewById(R.id.homeButton);
         
         // Meal sections
         breakfastSection = findViewById(R.id.breakfastSection);
@@ -122,6 +174,10 @@ public class MealPlanningActivity extends AppCompatActivity {
     private void setupListeners() {
         saveOrderButton.setOnClickListener(v -> saveOrder());
         backButton.setOnClickListener(v -> finish());
+        
+        if (homeButton != null) {
+            homeButton.setOnClickListener(v -> goToMainMenu());
+        }
         
         // NPO checkbox listeners
         breakfastNPOCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -280,94 +336,62 @@ public class MealPlanningActivity extends AppCompatActivity {
         addClearLiquidItem(dinnerItemsContainer, spriteChoice, "240ml");
     }
     
-    private void addClearLiquidItem(LinearLayout container, String itemName, String size) {
+    private void addClearLiquidItem(LinearLayout container, String itemName, String volume) {
         TextView itemView = new TextView(this);
-        String displayText = "• " + itemName;
-        if (!size.isEmpty()) {
-            displayText += " (" + size + ")";
-        }
-        itemView.setText(displayText);
+        String displayText = volume.isEmpty() ? itemName : itemName + " (" + volume + ")";
+        itemView.setText("• " + displayText);
         itemView.setTextSize(16);
-        itemView.setTextColor(0xFF2c3e50);
-        itemView.setPadding(16, 8, 16, 8);
+        itemView.setPadding(0, 8, 0, 8);
         container.addView(itemView);
     }
     
     private void setupRegularMeals() {
-        // For regular diets, setup meal selection interface
-        setupRegularMealSection(breakfastItemsContainer, "Breakfast");
-        setupRegularMealSection(lunchItemsContainer, "Lunch");
-        setupRegularMealSection(dinnerItemsContainer, "Dinner");
-        
-        // These would need to be manually completed by selecting items
+        // Implementation for regular meal setup
+        // This would include meal selection interfaces for non-clear liquid diets
         breakfastComplete = false;
         lunchComplete = false;
         dinnerComplete = false;
     }
     
-    private void setupRegularMealSection(LinearLayout container, String mealType) {
-        // For now, add a simple completion button for non-Clear Liquid diets
-        Button completeButton = new Button(this);
-        completeButton.setText("Mark " + mealType + " Complete");
-        completeButton.setBackgroundColor(0xFF3498db);
-        completeButton.setTextColor(0xFFFFFFFF);
-        completeButton.setOnClickListener(v -> {
-            switch (mealType) {
-                case "Breakfast":
-                    breakfastComplete = true;
-                    break;
-                case "Lunch":
-                    lunchComplete = true;
-                    break;
-                case "Dinner":
-                    dinnerComplete = true;
-                    break;
-            }
-            completeButton.setText(mealType + " Complete ✓");
-            completeButton.setBackgroundColor(0xFF27ae60);
-            completeButton.setEnabled(false);
-            updateSaveButtonState();
-        });
-        
-        container.addView(completeButton);
-    }
-    
     private void updateSaveButtonState() {
-        boolean canSave = (breakfastComplete || breakfastNPOCheckbox.isChecked()) &&
-                         (lunchComplete || lunchNPOCheckbox.isChecked()) &&
-                         (dinnerComplete || dinnerNPOCheckbox.isChecked());
-        
-        saveOrderButton.setEnabled(canSave);
-        saveOrderButton.setBackgroundColor(canSave ? 0xFF27ae60 : 0xFF95a5a6);
+        boolean allComplete = (breakfastComplete || breakfastNPOCheckbox.isChecked()) &&
+                             (lunchComplete || lunchNPOCheckbox.isChecked()) &&
+                             (dinnerComplete || dinnerNPOCheckbox.isChecked());
+        saveOrderButton.setEnabled(allComplete);
+        saveOrderButton.setText(allComplete ? "Save Complete Order" : "Complete All Meals First");
     }
     
     private void saveOrder() {
-        if (patientId == -1) {
-            Toast.makeText(this, "Error: Patient ID not found", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        
-        try {
-            // Update patient meal completion status
+        if (patientId != -1) {
             Patient patient = patientDAO.getPatientById(patientId);
             if (patient != null) {
-                patient.setBreakfastComplete(breakfastComplete);
-                patient.setLunchComplete(lunchComplete);
-                patient.setDinnerComplete(dinnerComplete);
+                // Update completion status
+                patient.setBreakfastComplete(breakfastComplete || breakfastNPOCheckbox.isChecked());
+                patient.setLunchComplete(lunchComplete || lunchNPOCheckbox.isChecked());
+                patient.setDinnerComplete(dinnerComplete || dinnerNPOCheckbox.isChecked());
+                
+                // Update NPO status
                 patient.setBreakfastNPO(breakfastNPOCheckbox.isChecked());
                 patient.setLunchNPO(lunchNPOCheckbox.isChecked());
                 patient.setDinnerNPO(dinnerNPOCheckbox.isChecked());
                 
                 boolean success = patientDAO.updatePatient(patient);
+                
                 if (success) {
                     Toast.makeText(this, "Order saved successfully!", Toast.LENGTH_SHORT).show();
-                    finish();
+                    finish(); // Return to previous activity
                 } else {
                     Toast.makeText(this, "Failed to save order", Toast.LENGTH_SHORT).show();
                 }
             }
-        } catch (Exception e) {
-            Toast.makeText(this, "Error saving order: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+    
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (dbHelper != null) {
+            dbHelper.close();
         }
     }
 }

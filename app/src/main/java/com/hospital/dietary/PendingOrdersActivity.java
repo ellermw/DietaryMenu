@@ -3,10 +3,13 @@ package com.hospital.dietary;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import com.hospital.dietary.dao.PatientDAO;
 import com.hospital.dietary.models.Patient;
 import java.text.SimpleDateFormat;
@@ -26,11 +29,13 @@ public class PendingOrdersActivity extends AppCompatActivity {
     private String currentUserFullName;
     
     // UI Components
+    private Toolbar toolbar;
     private Spinner dayFilterSpinner;
     private ListView pendingOrdersListView;
     private TextView noPendingOrdersText;
     private TextView orderCountText;
     private Button backButton;
+    private Button homeButton;
     private Button refreshButton;
     
     // Data
@@ -38,7 +43,7 @@ public class PendingOrdersActivity extends AppCompatActivity {
     private List<Patient> filteredPendingPatients = new ArrayList<>();
     private PendingOrdersAdapter adapter;
     
-    // FIXED: Day of week options
+    // Day of week options
     private String[] daysOfWeek = {"All Days", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
     private String currentDayOfWeek;
 
@@ -56,8 +61,11 @@ public class PendingOrdersActivity extends AppCompatActivity {
         dbHelper = new DatabaseHelper(this);
         patientDAO = new PatientDAO(dbHelper);
         
-        // FIXED: Get current day of week
+        // Get current day of week
         currentDayOfWeek = getCurrentDayOfWeek();
+        
+        // Setup toolbar
+        setupToolbar();
         
         // Initialize UI
         initializeUI();
@@ -69,18 +77,64 @@ public class PendingOrdersActivity extends AppCompatActivity {
         loadPendingOrders();
     }
     
+    private void setupToolbar() {
+        toolbar = findViewById(R.id.toolbar);
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                getSupportActionBar().setDisplayShowTitleEnabled(true);
+                getSupportActionBar().setTitle("Pending Orders");
+            }
+        }
+    }
+    
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_with_home, menu);
+        return true;
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            case R.id.action_home:
+                goToMainMenu();
+                return true;
+            case R.id.action_refresh:
+                loadPendingOrders();
+                Toast.makeText(this, "Orders refreshed", Toast.LENGTH_SHORT).show();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+    
+    private void goToMainMenu() {
+        Intent intent = new Intent(this, MainMenuActivity.class);
+        intent.putExtra("current_user", currentUsername);
+        intent.putExtra("user_role", currentUserRole);
+        intent.putExtra("user_full_name", currentUserFullName);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
+    }
+    
     private void initializeUI() {
         dayFilterSpinner = findViewById(R.id.dayFilterSpinner);
         pendingOrdersListView = findViewById(R.id.pendingOrdersListView);
         noPendingOrdersText = findViewById(R.id.noPendingOrdersText);
         orderCountText = findViewById(R.id.orderCountText);
         backButton = findViewById(R.id.backButton);
+        homeButton = findViewById(R.id.homeButton);
         refreshButton = findViewById(R.id.refreshButton);
         
         // Set title
         setTitle("Pending Orders");
         
-        // FIXED: Setup day filter spinner
+        // Setup day filter spinner
         setupDayFilterSpinner();
         
         // Setup adapter
@@ -88,7 +142,6 @@ public class PendingOrdersActivity extends AppCompatActivity {
         pendingOrdersListView.setAdapter(adapter);
     }
     
-    // FIXED: Setup day filter spinner with current day as default
     private void setupDayFilterSpinner() {
         ArrayAdapter<String> dayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, daysOfWeek);
         dayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -109,14 +162,22 @@ public class PendingOrdersActivity extends AppCompatActivity {
     }
     
     private void setupListeners() {
-        backButton.setOnClickListener(v -> finish());
+        if (backButton != null) {
+            backButton.setOnClickListener(v -> finish());
+        }
         
-        refreshButton.setOnClickListener(v -> {
-            loadPendingOrders();
-            Toast.makeText(this, "Orders refreshed", Toast.LENGTH_SHORT).show();
-        });
+        if (homeButton != null) {
+            homeButton.setOnClickListener(v -> goToMainMenu());
+        }
         
-        // FIXED: Day filter listener
+        if (refreshButton != null) {
+            refreshButton.setOnClickListener(v -> {
+                loadPendingOrders();
+                Toast.makeText(this, "Orders refreshed", Toast.LENGTH_SHORT).show();
+            });
+        }
+        
+        // Day filter listener
         dayFilterSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -127,17 +188,18 @@ public class PendingOrdersActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) {}
         });
         
+        // FIXED: Make list items clickable for editing
         pendingOrdersListView.setOnItemClickListener((parent, view, position, id) -> {
             Patient patient = filteredPendingPatients.get(position);
             openMealPlanning(patient);
         });
     }
     
-    // FIXED: Load all patients that need meal orders (not just those with incomplete orders)
+    // FIXED: Load only patients that have incomplete meal orders
     private void loadPendingOrders() {
         try {
-            // Get all patients who haven't completed their meals for today
-            allPendingPatients = patientDAO.getPatientsNeedingOrders();
+            // CORRECTED: Get only patients who haven't completed their meals
+            allPendingPatients = patientDAO.getPendingPatients();
             
             // Sort by wing then room number (ascending)
             allPendingPatients.sort((p1, p2) -> {
@@ -165,7 +227,6 @@ public class PendingOrdersActivity extends AppCompatActivity {
         }
     }
     
-    // FIXED: Filter patients by selected day
     private void filterPendingOrdersByDay() {
         filteredPendingPatients.clear();
         String selectedDay = (String) dayFilterSpinner.getSelectedItem();
@@ -186,7 +247,9 @@ public class PendingOrdersActivity extends AppCompatActivity {
         if (filteredPendingPatients.isEmpty()) {
             pendingOrdersListView.setVisibility(ListView.GONE);
             noPendingOrdersText.setVisibility(TextView.VISIBLE);
-            orderCountText.setVisibility(TextView.GONE);
+            if (orderCountText != null) {
+                orderCountText.setVisibility(TextView.GONE);
+            }
             
             String selectedDay = (String) dayFilterSpinner.getSelectedItem();
             if ("All Days".equals(selectedDay)) {
@@ -197,15 +260,17 @@ public class PendingOrdersActivity extends AppCompatActivity {
         } else {
             pendingOrdersListView.setVisibility(ListView.VISIBLE);
             noPendingOrdersText.setVisibility(TextView.GONE);
-            orderCountText.setVisibility(TextView.VISIBLE);
-            
-            String selectedDay = (String) dayFilterSpinner.getSelectedItem();
-            String countText = filteredPendingPatients.size() + " pending order" + 
-                              (filteredPendingPatients.size() == 1 ? "" : "s");
-            if (!"All Days".equals(selectedDay)) {
-                countText += " for " + selectedDay;
+            if (orderCountText != null) {
+                orderCountText.setVisibility(TextView.VISIBLE);
+                
+                String selectedDay = (String) dayFilterSpinner.getSelectedItem();
+                String countText = filteredPendingPatients.size() + " pending order" + 
+                                  (filteredPendingPatients.size() == 1 ? "" : "s");
+                if (!"All Days".equals(selectedDay)) {
+                    countText += " for " + selectedDay;
+                }
+                orderCountText.setText(countText);
             }
-            orderCountText.setText(countText);
             
             adapter.notifyDataSetChanged();
         }
@@ -226,7 +291,6 @@ public class PendingOrdersActivity extends AppCompatActivity {
         startActivity(intent);
     }
     
-    // FIXED: Get current day of week
     private String getCurrentDayOfWeek() {
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE", Locale.getDefault());
@@ -238,6 +302,14 @@ public class PendingOrdersActivity extends AppCompatActivity {
         super.onResume();
         // Refresh the list when returning to this activity
         loadPendingOrders();
+    }
+    
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (dbHelper != null) {
+            dbHelper.close();
+        }
     }
     
     // Enhanced adapter for pending orders
@@ -268,65 +340,45 @@ public class PendingOrdersActivity extends AppCompatActivity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             if (convertView == null) {
-                convertView = inflater.inflate(R.layout.item_pending_order, parent, false);
+                convertView = inflater.inflate(android.R.layout.simple_list_item_2, parent, false);
             }
             
             Patient patient = patients.get(position);
             
-            TextView patientNameText = convertView.findViewById(R.id.patientNameText);
-            TextView locationText = convertView.findViewById(R.id.locationText);
-            TextView dietText = convertView.findViewById(R.id.dietText);
-            TextView restrictionsText = convertView.findViewById(R.id.restrictionsText);
-            TextView statusText = convertView.findViewById(R.id.statusText);
+            TextView text1 = convertView.findViewById(android.R.id.text1);
+            TextView text2 = convertView.findViewById(android.R.id.text2);
             
-            patientNameText.setText(patient.getFullName());
-            locationText.setText(patient.getWing() + " - Room " + patient.getRoomNumber());
-            dietText.setText(patient.getDiet());
+            // Main patient info
+            String mainText = String.format("%s - %s Room %s", 
+                patient.getFullName(), patient.getWing(), patient.getRoomNumber());
+            text1.setText(mainText);
             
-            // Show restrictions if any
-            StringBuilder restrictions = new StringBuilder();
-            if (patient.getFluidRestriction() != null && !patient.getFluidRestriction().equals("None")) {
-                restrictions.append("Fluid: ").append(patient.getFluidRestriction());
+            // Diet and incomplete meals info
+            StringBuilder subText = new StringBuilder();
+            subText.append("Diet: ").append(patient.getDiet());
+            
+            // Show which meals are incomplete
+            List<String> incompleteMeals = new ArrayList<>();
+            if (!patient.isBreakfastComplete() && !patient.isBreakfastNPO()) {
+                incompleteMeals.add("Breakfast");
             }
-            if (patient.getTextureModifications() != null && !patient.getTextureModifications().isEmpty()) {
-                if (restrictions.length() > 0) {
-                    restrictions.append(" | ");
-                }
-                restrictions.append("Texture: ").append(patient.getTextureModifications());
+            if (!patient.isLunchComplete() && !patient.isLunchNPO()) {
+                incompleteMeals.add("Lunch");
             }
-            
-            if (restrictions.length() > 0) {
-                restrictionsText.setText(restrictions.toString());
-                restrictionsText.setVisibility(TextView.VISIBLE);
-            } else {
-                restrictionsText.setVisibility(TextView.GONE);
+            if (!patient.isDinnerComplete() && !patient.isDinnerNPO()) {
+                incompleteMeals.add("Dinner");
             }
             
-            // Show meal completion status
-            int incompleteMeals = 0;
-            if (!patient.isBreakfastComplete()) incompleteMeals++;
-            if (!patient.isLunchComplete()) incompleteMeals++;
-            if (!patient.isDinnerComplete()) incompleteMeals++;
-            
-            String statusMessage;
-            if (incompleteMeals == 0) {
-                statusMessage = "All meals complete";
-                statusText.setTextColor(getResources().getColor(android.R.color.holo_green_dark));
-            } else {
-                statusMessage = incompleteMeals + " meal" + (incompleteMeals == 1 ? "" : "s") + " pending";
-                statusText.setTextColor(getResources().getColor(android.R.color.holo_orange_dark));
+            if (!incompleteMeals.isEmpty()) {
+                subText.append(" | Pending: ").append(String.join(", ", incompleteMeals));
             }
-            statusText.setText(statusMessage);
+            
+            text2.setText(subText.toString());
+            
+            // Make it visually clear this item is clickable
+            convertView.setBackgroundResource(android.R.drawable.list_selector_background);
             
             return convertView;
-        }
-    }
-    
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (dbHelper != null) {
-            dbHelper.close();
         }
     }
 }

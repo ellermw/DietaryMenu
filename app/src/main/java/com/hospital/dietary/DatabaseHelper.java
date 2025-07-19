@@ -94,15 +94,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         "CREATE TABLE IF NOT EXISTS MealOrder (" +
         "order_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
         "patient_id INTEGER NOT NULL, " +
-        "meal TEXT NOT NULL, " +
         "timestamp TEXT NOT NULL, " +
+        "meal_type TEXT NOT NULL, " +
         "FOREIGN KEY(patient_id) REFERENCES PatientInfo(patient_id)" +
         ")";
 
-    // MealLine table for order details
-    private static final String CREATE_MEAL_LINE_TABLE = 
-        "CREATE TABLE IF NOT EXISTS MealLine (" +
-        "line_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+    // OrderItem table for detailed order items
+    private static final String CREATE_ORDER_ITEM_TABLE = 
+        "CREATE TABLE IF NOT EXISTS OrderItem (" +
+        "order_item_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
         "order_id INTEGER NOT NULL, " +
         "item_id INTEGER NOT NULL, " +
         "quantity INTEGER DEFAULT 1, " +
@@ -110,7 +110,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         "FOREIGN KEY(item_id) REFERENCES Item(item_id)" +
         ")";
 
-    // User table for authentication - FIXED PASSWORD COLUMN NAME
+    // User table for login system
     private static final String CREATE_USER_TABLE = 
         "CREATE TABLE IF NOT EXISTS User (" +
         "user_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -118,8 +118,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         "password TEXT NOT NULL, " +
         "full_name TEXT NOT NULL, " +
         "role TEXT NOT NULL, " +
-        "email TEXT, " +
-        "is_active INTEGER DEFAULT 1, " +
         "created_date TEXT NOT NULL" +
         ")";
 
@@ -129,14 +127,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        // Create all tables - FIXED: Added Category table creation
+        // Create all tables
         db.execSQL(CREATE_PATIENT_INFO_TABLE);
         db.execSQL(CREATE_FINALIZED_ORDER_TABLE);
         db.execSQL(CREATE_DIET_TABLE);
-        db.execSQL(CREATE_CATEGORY_TABLE);  // CRITICAL: This was missing
+        db.execSQL(CREATE_CATEGORY_TABLE);
         db.execSQL(CREATE_ITEM_TABLE);
         db.execSQL(CREATE_MEAL_ORDER_TABLE);
-        db.execSQL(CREATE_MEAL_LINE_TABLE);
+        db.execSQL(CREATE_ORDER_ITEM_TABLE);
         db.execSQL(CREATE_USER_TABLE);
         
         // Insert default data
@@ -146,36 +144,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         if (oldVersion < 5) {
-            // Create Category table if upgrading from older version
+            // Add missing Category table if it doesn't exist
             db.execSQL(CREATE_CATEGORY_TABLE);
             
-            // Migrate existing Item data if needed
-            migrateItemCategoryData(db);
+            // Update Item table to use category_id
+            migrateItemTable(db);
             
-            // Add email column to User table if it doesn't exist
-            try {
-                db.execSQL("ALTER TABLE User ADD COLUMN email TEXT");
-            } catch (Exception e) {
-                // Column already exists or other error
-                android.util.Log.d("DatabaseHelper", "Email column may already exist: " + e.getMessage());
-            }
+            // Insert default data if not already present
+            insertDefaultData(db);
         }
-        
-        insertDefaultData(db);
     }
-
-    private void migrateItemCategoryData(SQLiteDatabase db) {
-        // First, populate Category table with default categories
-        insertDefaultCategories(db);
-        
-        // Check if Item table needs migration (if it has old 'category' TEXT column)
+    
+    private void migrateItemTable(SQLiteDatabase db) {
         try {
-            // Try to add new category_id column
+            // Try to add category_id column if it doesn't exist
             db.execSQL("ALTER TABLE Item ADD COLUMN category_id INTEGER");
             
-            // Update category_id based on existing category text values
-            db.execSQL("UPDATE Item SET category_id = 1 WHERE category LIKE '%Breakfast%' OR category LIKE '%Cereal%' OR category LIKE '%Bread%'");
-            db.execSQL("UPDATE Item SET category_id = 2 WHERE category LIKE '%Protein%' OR category LIKE '%Meat%' OR category LIKE '%Fish%'");
+            // Map existing category text to category_id
+            db.execSQL("UPDATE Item SET category_id = 1 WHERE category LIKE '%Breakfast%'");
+            db.execSQL("UPDATE Item SET category_id = 2 WHERE category LIKE '%Protein%'");
             db.execSQL("UPDATE Item SET category_id = 3 WHERE category LIKE '%Starch%' OR category LIKE '%Carb%' OR category LIKE '%Potato%'");
             db.execSQL("UPDATE Item SET category_id = 4 WHERE category LIKE '%Vegetable%'");
             db.execSQL("UPDATE Item SET category_id = 5 WHERE category LIKE '%Beverage%' OR category LIKE '%Drink%'");
@@ -226,9 +213,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     private void insertDefaultDiets(SQLiteDatabase db) {
+        // CORRECTED: Using the proper diet types as specified
         String[] diets = {
-            "Regular", "ADA Diabetic", "Cardiac", "Renal", "Soft", 
-            "Liquid", "NPO", "Pureed", "Mechanical Soft"
+            "Regular", "Cardiac", "ADA", "Puree", "Renal", "Full Liquid", "Clear Liquid"
         };
         
         for (String diet : diets) {
@@ -309,6 +296,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // Additional soup category items
         insertItem(db, "Soup", 4, "Lunch", 1, 200, 0, "Vegetable soup");
         insertItem(db, "Chicken Soup", 2, "Lunch", 1, 200, 0, "Chicken noodle soup");
+        
+        // Clear Liquid items for special diets
+        insertItem(db, "Chicken Broth", 5, "Breakfast", 1, 200, 0, "Clear chicken broth");
+        insertItem(db, "Beef Broth", 5, "Lunch", 1, 200, 0, "Clear beef broth");
+        insertItem(db, "Sugar Free Jello", 7, "Lunch", 1, 0, 0, "Sugar-free gelatin");
+        insertItem(db, "Sprite", 5, "Lunch", 0, 240, 0, "Lemon-lime soda");
+        insertItem(db, "Sprite Zero", 5, "Lunch", 1, 240, 0, "Sugar-free lemon-lime soda");
+        
+        // Mark clear liquid items
+        db.execSQL("UPDATE Item SET is_clear_liquid = 1 WHERE name IN ('Chicken Broth', 'Beef Broth', 'Sugar Free Jello', 'Jello', 'Sprite', 'Sprite Zero', 'Apple Juice', 'Orange Juice', 'Cranberry Juice', 'Coffee', 'Tea', 'Iced Tea')");
     }
 
     private void insertItem(SQLiteDatabase db, String name, int categoryId, String mealType, 
