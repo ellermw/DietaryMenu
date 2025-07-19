@@ -5,121 +5,121 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
-    
+
     private static final String DATABASE_NAME = "dietary_menu.db";
-    private static final int DATABASE_VERSION = 5; // Incremented to fix Category table issue
-    
+    private static final int DATABASE_VERSION = 7; // Incremented for diet options update
+
     // Updated PatientInfo table with enhanced features
-    private static final String CREATE_PATIENT_INFO_TABLE = 
-        "CREATE TABLE IF NOT EXISTS PatientInfo (" +
-        "patient_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-        "patient_first_name TEXT NOT NULL, " +
-        "patient_last_name TEXT NOT NULL, " +
-        "wing TEXT NOT NULL, " +
-        "room_number TEXT NOT NULL, " +
-        "diet TEXT NOT NULL, " +
-        "fluid_restriction TEXT, " +
-        "texture_modifications TEXT, " +
-        "breakfast_complete INTEGER DEFAULT 0, " +
-        "lunch_complete INTEGER DEFAULT 0, " +
-        "dinner_complete INTEGER DEFAULT 0, " +
-        "breakfast_npo INTEGER DEFAULT 0, " +
-        "lunch_npo INTEGER DEFAULT 0, " +
-        "dinner_npo INTEGER DEFAULT 0, " +
-        "created_date TEXT NOT NULL, " +
-        "UNIQUE(wing, room_number)" + // Ensure only one patient per room
-        ")";
+    private static final String CREATE_PATIENT_INFO_TABLE =
+            "CREATE TABLE IF NOT EXISTS PatientInfo (" +
+                    "patient_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    "patient_first_name TEXT NOT NULL, " +
+                    "patient_last_name TEXT NOT NULL, " +
+                    "wing TEXT NOT NULL, " +
+                    "room_number TEXT NOT NULL, " +
+                    "diet TEXT NOT NULL, " +
+                    "fluid_restriction TEXT, " +
+                    "texture_modifications TEXT, " +
+                    "breakfast_complete INTEGER DEFAULT 0, " +
+                    "lunch_complete INTEGER DEFAULT 0, " +
+                    "dinner_complete INTEGER DEFAULT 0, " +
+                    "breakfast_npo INTEGER DEFAULT 0, " +
+                    "lunch_npo INTEGER DEFAULT 0, " +
+                    "dinner_npo INTEGER DEFAULT 0, " +
+                    "created_date TEXT NOT NULL, " +
+                    "UNIQUE(wing, room_number)" + // Ensure only one patient per room
+                    ")";
 
     // Enhanced FinalizedOrder table for order history tracking
-    private static final String CREATE_FINALIZED_ORDER_TABLE = 
-        "CREATE TABLE IF NOT EXISTS FinalizedOrder (" +
-        "order_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-        "patient_name TEXT NOT NULL, " +
-        "wing TEXT NOT NULL, " +
-        "room TEXT NOT NULL, " +
-        "order_date TEXT NOT NULL, " +
-        "diet_type TEXT NOT NULL, " +
-        "fluid_restriction TEXT, " +
-        "mechanical_ground INTEGER DEFAULT 0, " +
-        "mechanical_chopped INTEGER DEFAULT 0, " +
-        "bite_size INTEGER DEFAULT 0, " +
-        "bread_ok INTEGER DEFAULT 0, " +
-        "breakfast_items TEXT, " +
-        "lunch_items TEXT, " +
-        "dinner_items TEXT, " +
-        "breakfast_juices TEXT, " +
-        "lunch_juices TEXT, " +
-        "dinner_juices TEXT, " +
-        "breakfast_drinks TEXT, " +
-        "lunch_drinks TEXT, " +
-        "dinner_drinks TEXT, " +
-        "created_timestamp TEXT DEFAULT CURRENT_TIMESTAMP" +
-        ")";
+    private static final String CREATE_FINALIZED_ORDER_TABLE =
+            "CREATE TABLE IF NOT EXISTS FinalizedOrder (" +
+                    "order_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    "patient_name TEXT NOT NULL, " +
+                    "wing TEXT NOT NULL, " +
+                    "room TEXT NOT NULL, " +
+                    "order_date TEXT NOT NULL, " +
+                    "diet_type TEXT NOT NULL, " +
+                    "fluid_restriction TEXT, " +
+                    "mechanical_ground INTEGER DEFAULT 0, " +
+                    "mechanical_chopped INTEGER DEFAULT 0, " +
+                    "bite_size INTEGER DEFAULT 0, " +
+                    "bread_ok INTEGER DEFAULT 0, " +
+                    "breakfast_items TEXT, " +
+                    "lunch_items TEXT, " +
+                    "dinner_items TEXT, " +
+                    "breakfast_juices TEXT, " +
+                    "lunch_juices TEXT, " +
+                    "dinner_juices TEXT, " +
+                    "breakfast_drinks TEXT, " +
+                    "lunch_drinks TEXT, " +
+                    "dinner_drinks TEXT, " +
+                    "created_timestamp TEXT DEFAULT CURRENT_TIMESTAMP" +
+                    ")";
 
     // Diet table
-    private static final String CREATE_DIET_TABLE = 
-        "CREATE TABLE IF NOT EXISTS Diet (" +
-        "diet_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-        "name TEXT NOT NULL UNIQUE, " +
-        "description TEXT" +
-        ")";
+    private static final String CREATE_DIET_TABLE =
+            "CREATE TABLE IF NOT EXISTS Diet (" +
+                    "diet_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    "name TEXT NOT NULL UNIQUE, " +
+                    "description TEXT" +
+                    ")";
 
     // FIXED: Add the missing Category table
-    private static final String CREATE_CATEGORY_TABLE = 
-        "CREATE TABLE IF NOT EXISTS Category (" +
-        "category_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-        "name TEXT NOT NULL UNIQUE, " +
-        "description TEXT, " +
-        "display_order INTEGER DEFAULT 0" +
-        ")";
+    private static final String CREATE_CATEGORY_TABLE =
+            "CREATE TABLE IF NOT EXISTS Category (" +
+                    "category_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    "name TEXT NOT NULL UNIQUE, " +
+                    "description TEXT, " +
+                    "display_order INTEGER DEFAULT 0" +
+                    ")";
 
     // FIXED: Updated Item table to use category_id instead of category text
-    private static final String CREATE_ITEM_TABLE = 
-        "CREATE TABLE IF NOT EXISTS Item (" +
-        "item_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-        "category_id INTEGER NOT NULL, " +
-        "name TEXT NOT NULL, " +
-        "size_ml INTEGER, " +
-        "description TEXT, " +
-        "is_ada_friendly INTEGER DEFAULT 0, " +
-        "is_soda INTEGER DEFAULT 0, " +
-        "is_clear_liquid INTEGER DEFAULT 0, " +
-        "meal_type TEXT NOT NULL, " +
-        "is_default INTEGER DEFAULT 0, " +
-        "FOREIGN KEY(category_id) REFERENCES Category(category_id)" +
-        ")";
+    private static final String CREATE_ITEM_TABLE =
+            "CREATE TABLE IF NOT EXISTS Item (" +
+                    "item_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    "category_id INTEGER NOT NULL, " +
+                    "name TEXT NOT NULL, " +
+                    "size_ml INTEGER, " +
+                    "description TEXT, " +
+                    "is_ada_friendly INTEGER DEFAULT 0, " +
+                    "is_soda INTEGER DEFAULT 0, " +
+                    "is_clear_liquid INTEGER DEFAULT 0, " +
+                    "meal_type TEXT NOT NULL, " +
+                    "is_default INTEGER DEFAULT 0, " +
+                    "FOREIGN KEY(category_id) REFERENCES Category(category_id)" +
+                    ")";
 
     // MealOrder table for tracking orders
-    private static final String CREATE_MEAL_ORDER_TABLE = 
-        "CREATE TABLE IF NOT EXISTS MealOrder (" +
-        "order_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-        "patient_id INTEGER NOT NULL, " +
-        "timestamp TEXT NOT NULL, " +
-        "meal_type TEXT NOT NULL, " +
-        "FOREIGN KEY(patient_id) REFERENCES PatientInfo(patient_id)" +
-        ")";
+    private static final String CREATE_MEAL_ORDER_TABLE =
+            "CREATE TABLE IF NOT EXISTS MealOrder (" +
+                    "order_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    "patient_id INTEGER NOT NULL, " +
+                    "timestamp TEXT NOT NULL, " +
+                    "meal_type TEXT NOT NULL, " +
+                    "FOREIGN KEY(patient_id) REFERENCES PatientInfo(patient_id)" +
+                    ")";
 
     // OrderItem table for detailed order items
-    private static final String CREATE_ORDER_ITEM_TABLE = 
-        "CREATE TABLE IF NOT EXISTS OrderItem (" +
-        "order_item_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-        "order_id INTEGER NOT NULL, " +
-        "item_id INTEGER NOT NULL, " +
-        "quantity INTEGER DEFAULT 1, " +
-        "FOREIGN KEY(order_id) REFERENCES MealOrder(order_id), " +
-        "FOREIGN KEY(item_id) REFERENCES Item(item_id)" +
-        ")";
+    private static final String CREATE_ORDER_ITEM_TABLE =
+            "CREATE TABLE IF NOT EXISTS OrderItem (" +
+                    "order_item_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    "order_id INTEGER NOT NULL, " +
+                    "item_id INTEGER NOT NULL, " +
+                    "quantity INTEGER DEFAULT 1, " +
+                    "FOREIGN KEY(order_id) REFERENCES MealOrder(order_id), " +
+                    "FOREIGN KEY(item_id) REFERENCES Item(item_id)" +
+                    ")";
 
     // User table for login system
-    private static final String CREATE_USER_TABLE = 
-        "CREATE TABLE IF NOT EXISTS User (" +
-        "user_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-        "username TEXT NOT NULL UNIQUE, " +
-        "password TEXT NOT NULL, " +
-        "full_name TEXT NOT NULL, " +
-        "role TEXT NOT NULL, " +
-        "created_date TEXT NOT NULL" +
-        ")";
+    private static final String CREATE_USER_TABLE =
+            "CREATE TABLE IF NOT EXISTS User (" +
+                    "user_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    "username TEXT NOT NULL UNIQUE, " +
+                    "password TEXT NOT NULL, " +
+                    "full_name TEXT NOT NULL, " +
+                    "role TEXT NOT NULL, " +
+                    "created_date TEXT NOT NULL" +
+                    ")";
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -136,7 +136,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_MEAL_ORDER_TABLE);
         db.execSQL(CREATE_ORDER_ITEM_TABLE);
         db.execSQL(CREATE_USER_TABLE);
-        
+
         // Insert default data
         insertDefaultData(db);
     }
@@ -146,20 +146,30 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (oldVersion < 5) {
             // Add missing Category table if it doesn't exist
             db.execSQL(CREATE_CATEGORY_TABLE);
-            
+
             // Update Item table to use category_id
             migrateItemTable(db);
-            
+
             // Insert default data if not already present
             insertDefaultData(db);
         }
+
+        if (oldVersion < 6) {
+            // Update diet options with ADA varieties
+            updateDietOptions(db);
+        }
+
+        if (oldVersion < 7) {
+            // Add 'retired' column to PatientInfo table
+            db.execSQL("ALTER TABLE PatientInfo ADD COLUMN retired INTEGER DEFAULT 0");
+        }
     }
-    
+
     private void migrateItemTable(SQLiteDatabase db) {
         try {
             // Try to add category_id column if it doesn't exist
             db.execSQL("ALTER TABLE Item ADD COLUMN category_id INTEGER");
-            
+
             // Map existing category text to category_id
             db.execSQL("UPDATE Item SET category_id = 1 WHERE category LIKE '%Breakfast%'");
             db.execSQL("UPDATE Item SET category_id = 2 WHERE category LIKE '%Protein%'");
@@ -170,57 +180,99 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             db.execSQL("UPDATE Item SET category_id = 7 WHERE category LIKE '%Dessert%'");
             db.execSQL("UPDATE Item SET category_id = 8 WHERE category LIKE '%Fruit%'");
             db.execSQL("UPDATE Item SET category_id = 9 WHERE category LIKE '%Dairy%' OR category LIKE '%Milk%'");
-            
+
             // Set default category for any unmapped items
             db.execSQL("UPDATE Item SET category_id = 1 WHERE category_id IS NULL");
-            
+
         } catch (Exception e) {
             android.util.Log.d("DatabaseHelper", "Item table migration: " + e.getMessage());
+        }
+    }
+
+    private void updateDietOptions(SQLiteDatabase db) {
+        // Add new ADA diet varieties
+        String[] newDiets = {
+                "Puree ADA",
+                "Full Liquid ADA",
+                "Clear Liquid ADA"
+        };
+
+        String[] descriptions = {
+                "Pureed consistency diet with ADA guidelines",
+                "Full liquid diet with ADA guidelines",
+                "Clear liquid diet with ADA substitutions (Sprite Zero, Apple Juice, Sugar Free Jello)"
+        };
+
+        for (int i = 0; i < newDiets.length; i++) {
+            db.execSQL("INSERT OR IGNORE INTO Diet (name, description) VALUES (?, ?)",
+                    new String[]{newDiets[i], descriptions[i]});
         }
     }
 
     private void insertDefaultData(SQLiteDatabase db) {
         // Insert default categories first
         insertDefaultCategories(db);
-        
+
         // Insert default diets
         insertDefaultDiets(db);
-        
+
         // Insert default food items
         insertDefaultItems(db);
-        
+
         // Insert default user
         insertDefaultUser(db);
     }
 
     private void insertDefaultCategories(SQLiteDatabase db) {
         String[] categories = {
-            "Breakfast Items",
-            "Proteins", 
-            "Starches",
-            "Vegetables",
-            "Beverages",
-            "Juices",
-            "Desserts",
-            "Fruits",
-            "Dairy"
+                "Breakfast Items",
+                "Proteins",
+                "Starches",
+                "Vegetables",
+                "Beverages",
+                "Juices",
+                "Desserts",
+                "Fruits",
+                "Dairy"
         };
-        
+
         for (int i = 0; i < categories.length; i++) {
-            db.execSQL("INSERT OR IGNORE INTO Category (name, display_order) VALUES (?, ?)", 
-                       new Object[]{categories[i], i + 1});
+            db.execSQL("INSERT OR IGNORE INTO Category (name, display_order) VALUES (?, ?)",
+                    new Object[]{categories[i], i + 1});
         }
     }
 
     private void insertDefaultDiets(SQLiteDatabase db) {
-        // CORRECTED: Using the proper diet types as specified
+        // UPDATED: Complete diet types including ADA varieties
         String[] diets = {
-            "Regular", "Cardiac", "ADA", "Puree", "Renal", "Full Liquid", "Clear Liquid"
+                "Regular",
+                "Cardiac",
+                "ADA",
+                "Puree",
+                "Puree ADA",
+                "Renal",
+                "Full Liquid",
+                "Full Liquid ADA",
+                "Clear Liquid",
+                "Clear Liquid ADA"
         };
-        
-        for (String diet : diets) {
-            db.execSQL("INSERT OR IGNORE INTO Diet (name, description) VALUES (?, ?)", 
-                      new String[]{diet, "Standard " + diet + " diet"});
+
+        String[] descriptions = {
+                "Standard regular diet",
+                "Heart-healthy cardiac diet",
+                "American Diabetic Association diet",
+                "Pureed consistency diet",
+                "Pureed consistency diet with ADA guidelines",
+                "Kidney-friendly renal diet",
+                "Full liquid diet",
+                "Full liquid diet with ADA guidelines",
+                "Clear liquid diet with predetermined items",
+                "Clear liquid diet with ADA substitutions (Sprite Zero, Apple Juice, Sugar Free Jello)"
+        };
+
+        for (int i = 0; i < diets.length; i++) {
+            db.execSQL("INSERT OR IGNORE INTO Diet (name, description) VALUES (?, ?)",
+                    new String[]{diets[i], descriptions[i]});
         }
     }
 
@@ -234,7 +286,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         insertItem(db, "Pancakes", 1, "Breakfast", 0, 0, 0, "Fluffy pancakes");
         insertItem(db, "French Toast", 1, "Breakfast", 0, 0, 0, "Classic french toast");
         insertItem(db, "Muffin", 1, "Breakfast", 0, 0, 0, "Bran or blueberry muffin");
-        
+
         // Category 2: Proteins
         insertItem(db, "Grilled Chicken", 2, "Lunch", 1, 0, 1, "Grilled chicken breast");
         insertItem(db, "Baked Fish", 2, "Dinner", 1, 0, 1, "Baked white fish");
@@ -242,84 +294,75 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         insertItem(db, "Turkey Sandwich", 2, "Lunch", 1, 0, 0, "Sliced turkey sandwich");
         insertItem(db, "Salmon", 2, "Dinner", 1, 0, 0, "Baked salmon fillet");
         insertItem(db, "Hamburger", 2, "Lunch", 0, 0, 0, "Beef hamburger patty");
-        
+
         // Category 3: Starches
-        insertItem(db, "Rice", 3, "Lunch", 1, 0, 1, "Steamed white rice");
+        insertItem(db, "Rice", 3, "Lunch", 1, 0, 1, "White or brown rice");
         insertItem(db, "Mashed Potatoes", 3, "Dinner", 1, 0, 1, "Creamy mashed potatoes");
+        insertItem(db, "Pasta", 3, "Dinner", 1, 0, 0, "Various pasta dishes");
+        insertItem(db, "Bread Roll", 3, "Lunch", 1, 0, 1, "Dinner roll");
         insertItem(db, "Baked Potato", 3, "Dinner", 1, 0, 0, "Baked russet potato");
-        insertItem(db, "Pasta", 3, "Dinner", 1, 0, 0, "Italian pasta");
-        insertItem(db, "Dinner Roll", 3, "Dinner", 0, 0, 0, "Fresh dinner roll");
-        insertItem(db, "Sweet Potato", 3, "Dinner", 1, 0, 0, "Roasted sweet potato");
-        
+
         // Category 4: Vegetables
-        insertItem(db, "Steamed Vegetables", 4, "Lunch", 1, 0, 1, "Mixed steamed vegetables");
         insertItem(db, "Green Beans", 4, "Dinner", 1, 0, 1, "Fresh green beans");
-        insertItem(db, "Garden Salad", 4, "Lunch", 1, 0, 0, "Fresh garden salad");
-        insertItem(db, "Broccoli", 4, "Dinner", 1, 0, 0, "Steamed broccoli");
-        insertItem(db, "Carrots", 4, "Dinner", 1, 0, 0, "Glazed carrots");
-        insertItem(db, "Corn", 4, "Dinner", 1, 0, 0, "Sweet corn kernels");
-        
-        // Category 5: Beverages
-        insertItem(db, "Water", 5, "Lunch", 1, 240, 1, "Filtered water");
-        insertItem(db, "Coffee", 5, "Breakfast", 1, 240, 1, "Fresh brewed coffee");
-        insertItem(db, "Tea", 5, "Breakfast", 1, 240, 1, "Hot tea");
-        insertItem(db, "Decaf Coffee", 5, "Breakfast", 1, 240, 0, "Decaffeinated coffee");
-        insertItem(db, "Iced Tea", 5, "Lunch", 1, 240, 0, "Unsweetened iced tea");
-        insertItem(db, "Soda", 5, "Lunch", 0, 240, 0, "Carbonated soda");
-        
-        // Category 6: Juices
-        insertItem(db, "Orange Juice", 6, "Breakfast", 0, 240, 0, "Fresh orange juice");
-        insertItem(db, "Apple Juice", 6, "Lunch", 0, 240, 0, "Apple juice");
-        insertItem(db, "Cranberry Juice", 6, "Dinner", 0, 240, 0, "Cranberry juice");
-        insertItem(db, "Grape Juice", 6, "Breakfast", 0, 240, 0, "Grape juice");
-        insertItem(db, "Tomato Juice", 6, "Breakfast", 1, 240, 0, "Low sodium tomato juice");
-        
-        // Category 7: Desserts
+        insertItem(db, "Broccoli", 4, "Dinner", 1, 0, 1, "Steamed broccoli");
+        insertItem(db, "Carrots", 4, "Lunch", 1, 0, 1, "Cooked carrots");
+        insertItem(db, "Corn", 4, "Lunch", 1, 0, 0, "Sweet corn");
+        insertItem(db, "Garden Salad", 4, "Lunch", 1, 0, 0, "Mixed greens salad");
+
+        // Category 5: Beverages (Clear liquid compatible)
+        insertItem(db, "Water", 5, "All", 1, 0, 1, 240, "Drinking water");
+        insertItem(db, "Coffee", 5, "Breakfast", 1, 0, 1, 240, "Hot coffee");
+        insertItem(db, "Tea", 5, "All", 1, 0, 1, 240, "Hot tea");
+        insertItem(db, "Milk", 5, "Breakfast", 1, 0, 0, 240, "2% milk");
+        insertItem(db, "Sprite", 5, "All", 0, 1, 1, 240, "Lemon-lime soda");
+        insertItem(db, "Sprite Zero", 5, "All", 1, 1, 1, 240, "Sugar-free lemon-lime soda");
+        insertItem(db, "Iced Tea", 5, "Lunch", 1, 0, 1, 240, "Iced tea");
+
+        // Category 6: Juices (Clear liquid compatible)
+        insertItem(db, "Orange Juice", 6, "Breakfast", 0, 0, 0, 240, "Fresh orange juice");
+        insertItem(db, "Apple Juice", 6, "All", 1, 0, 1, 240, "Clear apple juice");
+        insertItem(db, "Cranberry Juice", 6, "All", 1, 0, 1, 240, "Cranberry juice");
+        insertItem(db, "Grape Juice", 6, "All", 0, 0, 1, 240, "Purple grape juice");
+        insertItem(db, "Tomato Juice", 6, "Breakfast", 1, 0, 0, 240, "Tomato juice");
+
+        // Category 7: Desserts (with ADA options)
         insertItem(db, "Ice Cream", 7, "Dinner", 0, 0, 0, "Vanilla ice cream");
-        insertItem(db, "Pudding", 7, "Dinner", 1, 0, 0, "Sugar-free pudding");
-        insertItem(db, "Cake", 7, "Dinner", 0, 0, 0, "Chocolate cake");
-        insertItem(db, "Jello", 7, "Lunch", 1, 0, 0, "Sugar-free jello");
-        
+        insertItem(db, "Sugar Free Ice Cream", 7, "Dinner", 1, 0, 0, "ADA-friendly ice cream");
+        insertItem(db, "Pudding", 7, "Lunch", 0, 0, 0, "Chocolate pudding");
+        insertItem(db, "Sugar Free Pudding", 7, "Lunch", 1, 0, 0, "ADA-friendly pudding");
+        insertItem(db, "Jello", 7, "All", 0, 0, 1, "Regular jello");
+        insertItem(db, "Sugar Free Jello", 7, "All", 1, 0, 1, "ADA-friendly jello");
+        insertItem(db, "Cake", 7, "Dinner", 0, 0, 0, "Slice of cake");
+        insertItem(db, "Fresh Fruit", 7, "All", 1, 0, 0, "Seasonal fresh fruit");
+
         // Category 8: Fruits
-        insertItem(db, "Fresh Fruit", 8, "Breakfast", 1, 0, 1, "Seasonal fresh fruit");
         insertItem(db, "Banana", 8, "Breakfast", 1, 0, 0, "Fresh banana");
-        insertItem(db, "Apple", 8, "Lunch", 1, 0, 0, "Fresh apple");
         insertItem(db, "Orange", 8, "Breakfast", 1, 0, 0, "Fresh orange");
-        insertItem(db, "Fruit Cup", 8, "Lunch", 1, 0, 0, "Mixed fruit cup");
-        
+        insertItem(db, "Apple", 8, "All", 1, 0, 0, "Fresh apple");
+        insertItem(db, "Fruit Cup", 8, "All", 1, 0, 0, "Mixed fruit cup");
+        insertItem(db, "Berries", 8, "Breakfast", 1, 0, 0, "Fresh berries");
+
         // Category 9: Dairy
-        insertItem(db, "Milk", 9, "Dinner", 1, 240, 1, "2% milk");
-        insertItem(db, "Yogurt", 9, "Breakfast", 1, 0, 0, "Plain yogurt");
+        insertItem(db, "Yogurt", 9, "Breakfast", 1, 0, 0, "Plain or flavored yogurt");
+        insertItem(db, "Greek Yogurt", 9, "Breakfast", 1, 0, 0, "Greek style yogurt");
         insertItem(db, "Cheese", 9, "Lunch", 1, 0, 0, "Sliced cheese");
-        insertItem(db, "Cottage Cheese", 9, "Breakfast", 1, 0, 0, "Low-fat cottage cheese");
-        
-        // Additional soup category items
-        insertItem(db, "Soup", 4, "Lunch", 1, 200, 0, "Vegetable soup");
-        insertItem(db, "Chicken Soup", 2, "Lunch", 1, 200, 0, "Chicken noodle soup");
-        
-        // Clear Liquid items for special diets
-        insertItem(db, "Chicken Broth", 5, "Breakfast", 1, 200, 0, "Clear chicken broth");
-        insertItem(db, "Beef Broth", 5, "Lunch", 1, 200, 0, "Clear beef broth");
-        insertItem(db, "Sugar Free Jello", 7, "Lunch", 1, 0, 0, "Sugar-free gelatin");
-        insertItem(db, "Sprite", 5, "Lunch", 0, 240, 0, "Lemon-lime soda");
-        insertItem(db, "Sprite Zero", 5, "Lunch", 1, 240, 0, "Sugar-free lemon-lime soda");
-        
-        // Mark clear liquid items
-        db.execSQL("UPDATE Item SET is_clear_liquid = 1 WHERE name IN ('Chicken Broth', 'Beef Broth', 'Sugar Free Jello', 'Jello', 'Sprite', 'Sprite Zero', 'Apple Juice', 'Orange Juice', 'Cranberry Juice', 'Coffee', 'Tea', 'Iced Tea')");
+        insertItem(db, "Cottage Cheese", 9, "Lunch", 1, 0, 0, "Low-fat cottage cheese");
     }
 
-    private void insertItem(SQLiteDatabase db, String name, int categoryId, String mealType, 
-                           int isAdaFriendly, int fluidAmount, int isDefault, String description) {
-        db.execSQL("INSERT OR IGNORE INTO Item (name, category_id, meal_type, is_ada_friendly, size_ml, is_default, description) " +
-                  "VALUES (?, ?, ?, ?, ?, ?, ?)", 
-                  new Object[]{name, categoryId, mealType, isAdaFriendly, fluidAmount, isDefault, description});
+    private void insertItem(SQLiteDatabase db, String name, int categoryId, String mealType, int isAdaFriendly, int isSoda, int isClearLiquid, String description) {
+        insertItem(db, name, categoryId, mealType, isAdaFriendly, isSoda, isClearLiquid, null, description);
+    }
+
+    private void insertItem(SQLiteDatabase db, String name, int categoryId, String mealType, int isAdaFriendly, int isSoda, int isClearLiquid, Integer fluidAmount, String description) {
+        String sql = "INSERT OR IGNORE INTO Item (name, category_id, meal_type, is_ada_friendly, size_ml, is_soda, is_clear_liquid, is_default, description) VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?)";
+        db.execSQL(sql, new Object[]{name, categoryId, mealType, isAdaFriendly, fluidAmount, isSoda, isClearLiquid, description});
     }
 
     private void insertDefaultUser(SQLiteDatabase db) {
         // Insert default admin user (username: admin, password: admin123)
         db.execSQL("INSERT OR IGNORE INTO User (username, password, full_name, role, created_date) " +
-                  "VALUES (?, ?, ?, ?, datetime('now'))", 
-                  new String[]{"admin", "admin123", "System Administrator", "admin"});
+                        "VALUES (?, ?, ?, ?, datetime('now'))",
+                new String[]{"admin", "admin123", "System Administrator", "admin"});
     }
 
     @Override

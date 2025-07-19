@@ -4,30 +4,28 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import com.hospital.dietary.dao.PatientDAO;
 
 public class MainMenuActivity extends AppCompatActivity {
+
+    private DatabaseHelper dbHelper;
+    private PatientDAO patientDAO;
 
     private String currentUsername;
     private String currentUserRole;
     private String currentUserFullName;
 
+    private TextView welcomeText;
     private Button patientInfoButton;
     private Button pendingOrdersButton;
-    private Button finishedOrdersButton;
     private Button retiredOrdersButton;
-    private Button logoutButton;
-
-    // Admin-only buttons
     private Button userManagementButton;
     private Button itemManagementButton;
-    private LinearLayout adminSection;
-
-    private TextView welcomeText;
+    private Button logoutButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,116 +37,171 @@ public class MainMenuActivity extends AppCompatActivity {
         currentUserRole = getIntent().getStringExtra("user_role");
         currentUserFullName = getIntent().getStringExtra("user_full_name");
 
-        // Setup action bar with title - NO back button, NO menu for main menu
-        setupActionBar();
+        // Initialize database
+        dbHelper = new DatabaseHelper(this);
+        patientDAO = new PatientDAO(dbHelper);
+
+        // Set title
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle("Dietary Management - Main Menu");
+        }
 
         initializeUI();
         setupListeners();
-        configureAdminAccess();
+        updateWelcomeMessage();
+        updateButtonVisibility();
     }
-
-    private void setupActionBar() {
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle("Dietary Management - Main Menu");
-            getSupportActionBar().setDisplayHomeAsUpEnabled(false); // No back button
-        }
-    }
-
-    // NO MENU FOR MAIN MENU - Remove onCreateOptionsMenu and onOptionsItemSelected
-    // Logout is handled by the button in the layout
 
     private void initializeUI() {
+        welcomeText = findViewById(R.id.welcomeText);
         patientInfoButton = findViewById(R.id.patientInfoButton);
         pendingOrdersButton = findViewById(R.id.pendingOrdersButton);
-        finishedOrdersButton = findViewById(R.id.finishedOrdersButton);
         retiredOrdersButton = findViewById(R.id.retiredOrdersButton);
-        logoutButton = findViewById(R.id.logoutButton);
-
-        // Admin-only UI elements
-        adminSection = findViewById(R.id.adminSection);
         userManagementButton = findViewById(R.id.userManagementButton);
         itemManagementButton = findViewById(R.id.itemManagementButton);
-
-        welcomeText = findViewById(R.id.welcomeText);
-
-        // Set welcome text
-        welcomeText.setText("Welcome, " + (currentUserFullName != null ? currentUserFullName : currentUsername) + "!");
-
-        setTitle("Dietary Management - Main Menu");
-    }
-
-    private void configureAdminAccess() {
-        // Show/hide admin options based on user role
-        if ("admin".equalsIgnoreCase(currentUserRole)) {
-            adminSection.setVisibility(View.VISIBLE);
-        } else {
-            adminSection.setVisibility(View.GONE);
-        }
+        logoutButton = findViewById(R.id.logoutButton);
     }
 
     private void setupListeners() {
-        patientInfoButton.setOnClickListener(v -> {
-            Intent intent = new Intent(this, PatientInfoMenuActivity.class);
-            intent.putExtra("current_user", currentUsername);
-            intent.putExtra("user_role", currentUserRole);
-            intent.putExtra("user_full_name", currentUserFullName);
-            startActivity(intent);
-        });
+        patientInfoButton.setOnClickListener(v -> openPatientInfo());
+        pendingOrdersButton.setOnClickListener(v -> openPendingOrders());
+        retiredOrdersButton.setOnClickListener(v -> openRetiredOrders());
+        userManagementButton.setOnClickListener(v -> openUserManagement());
+        itemManagementButton.setOnClickListener(v -> openItemManagement());
+        logoutButton.setOnClickListener(v -> logout());
+    }
 
-        pendingOrdersButton.setOnClickListener(v -> {
-            Intent intent = new Intent(this, PendingOrdersActivity.class);
-            intent.putExtra("current_user", currentUsername);
-            intent.putExtra("user_role", currentUserRole);
-            intent.putExtra("user_full_name", currentUserFullName);
-            startActivity(intent);
-        });
+    private void updateWelcomeMessage() {
+        if (welcomeText != null && currentUserFullName != null) {
+            String welcome = "Welcome, " + currentUserFullName + "!";
+            if ("admin".equals(currentUserRole)) {
+                welcome += "\n(Administrator Access)";
+            }
+            welcomeText.setText(welcome);
+        }
+    }
 
-        finishedOrdersButton.setOnClickListener(v -> {
-            Intent intent = new Intent(this, FinishedOrdersActivity.class);
-            intent.putExtra("current_user", currentUsername);
-            intent.putExtra("user_role", currentUserRole);
-            intent.putExtra("user_full_name", currentUserFullName);
-            startActivity(intent);
-        });
+    private void updateButtonVisibility() {
+        // Show admin buttons only for admin users
+        boolean isAdmin = "admin".equals(currentUserRole);
 
-        retiredOrdersButton.setOnClickListener(v -> {
-            Intent intent = new Intent(this, RetiredOrdersActivity.class);
-            intent.putExtra("current_user", currentUsername);
-            intent.putExtra("user_role", currentUserRole);
-            intent.putExtra("user_full_name", currentUserFullName);
-            startActivity(intent);
-        });
-
-        // Admin-only button listeners
         if (userManagementButton != null) {
-            userManagementButton.setOnClickListener(v -> {
-                Intent intent = new Intent(this, AdminActivity.class);
-                intent.putExtra("current_user", currentUsername);
-                intent.putExtra("user_role", currentUserRole);
-                intent.putExtra("user_full_name", currentUserFullName);
-                intent.putExtra("admin_mode", "users");
-                startActivity(intent);
-            });
+            userManagementButton.setVisibility(isAdmin ? Button.VISIBLE : Button.GONE);
         }
-
         if (itemManagementButton != null) {
-            itemManagementButton.setOnClickListener(v -> {
-                Intent intent = new Intent(this, AdminActivity.class);
-                intent.putExtra("current_user", currentUsername);
-                intent.putExtra("user_role", currentUserRole);
-                intent.putExtra("user_full_name", currentUserFullName);
-                intent.putExtra("admin_mode", "items");
-                startActivity(intent);
-            });
+            itemManagementButton.setVisibility(isAdmin ? Button.VISIBLE : Button.GONE);
+        }
+    }
+
+    private void openPatientInfo() {
+        Intent intent = new Intent(this, PatientInfoMenuActivity.class);
+        intent.putExtra("current_user", currentUsername);
+        intent.putExtra("user_role", currentUserRole);
+        intent.putExtra("user_full_name", currentUserFullName);
+        startActivity(intent);
+    }
+
+    private void openPendingOrders() {
+        Intent intent = new Intent(this, PendingOrdersActivity.class);
+        intent.putExtra("current_user", currentUsername);
+        intent.putExtra("user_role", currentUserRole);
+        intent.putExtra("user_full_name", currentUserFullName);
+        startActivity(intent);
+    }
+
+    private void openRetiredOrders() {
+        Intent intent = new Intent(this, RetiredOrdersActivity.class);
+        intent.putExtra("current_user", currentUsername);
+        intent.putExtra("user_role", currentUserRole);
+        intent.putExtra("user_full_name", currentUserFullName);
+        startActivity(intent);
+    }
+
+    private void openUserManagement() {
+        if (!"admin".equals(currentUserRole)) {
+            Toast.makeText(this, "Access denied. Admin privileges required.", Toast.LENGTH_SHORT).show();
+            return;
         }
 
-        // Logout button listener
-        logoutButton.setOnClickListener(v -> {
-            // Return to login screen
-            Intent intent = new Intent(this, LoginActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-            finish();
-        });
+        // For now, show a message since AdminMenuActivity doesn't exist yet
+        Toast.makeText(this, "User Management - Coming Soon!\nAdmin features will be available in future updates.", Toast.LENGTH_LONG).show();
+    }
+
+    private void openItemManagement() {
+        if (!"admin".equals(currentUserRole)) {
+            Toast.makeText(this, "Access denied. Admin privileges required.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // For now, show a message since ItemManagementActivity doesn't exist yet
+        Toast.makeText(this, "Item Management - Coming Soon!\nFood item management will be available in future updates.", Toast.LENGTH_LONG).show();
+    }
+
+    private void logout() {
+        // Clear any stored session data if needed
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Use the existing menu with home instead of missing menu_main
+        getMenuInflater().inflate(R.menu.menu_with_home, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_refresh:
+                updateStatistics();
+                Toast.makeText(this, "Statistics refreshed", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.action_home:
+                // Already on main menu, just show a message
+                Toast.makeText(this, "You are already on the Main Menu", Toast.LENGTH_SHORT).show();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void updateStatistics() {
+        try {
+            int patientCount = patientDAO.getPatientCount();
+            int pendingCount = patientDAO.getPendingOrdersCount();
+
+            // Update button texts with counts
+            if (patientInfoButton != null) {
+                patientInfoButton.setText("👤 Patient Information\n(" + patientCount + " patients)");
+            }
+            if (pendingOrdersButton != null) {
+                pendingOrdersButton.setText("⏳ Pending Orders\n(" + pendingCount + " pending)");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateStatistics();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (dbHelper != null) {
+            dbHelper.close();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        // Prevent going back to login screen accidentally
+        moveTaskToBack(true);
     }
 }

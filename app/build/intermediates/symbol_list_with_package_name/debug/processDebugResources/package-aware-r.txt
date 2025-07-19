@@ -1033,7 +1033,6 @@ id addItemButton
 id addLunchDrinkButton
 id addUserButton
 id adminPasswordInput
-id adminSection
 id adminUsernameInput
 id alertTitle
 id aligned
@@ -1092,11 +1091,11 @@ id checkbox
 id checked
 id chronometer
 id clearFormButton
-id clearSearchButton
 id clockwise
 id closest
 id collapseActionView
 id completedDateText
+id completedOrdersListView
 id confirmPasswordEditText
 id constraint
 id content
@@ -1108,8 +1107,9 @@ id createdDateText
 id currentState
 id custom
 id customPanel
+id dateFilterSpinner
+id datePickerButton
 id dateSpinner
-id dayFilterSpinner
 id decelerate
 id decelerateAndComplete
 id decor_content_parent
@@ -1166,7 +1166,6 @@ id existingOrdersCountText
 id existingPatientButton
 id expand_activities_button
 id expanded_menu
-id finishedOrdersButton
 id finishedOrdersListView
 id flip
 id fluidRestrictionSpinner
@@ -1258,7 +1257,7 @@ id newPasswordEditText
 id newPatientButton
 id noExistingOrdersText
 id noFinishedOrdersText
-id noPatientsText
+id noOrdersText
 id noPendingOrdersText
 id noRetiredOrdersText
 id noState
@@ -1287,7 +1286,6 @@ id passwordInput
 id passwordLabel
 id path
 id pathRelative
-id patientCountText
 id patientDetailsText
 id patientFirstNameEditText
 id patientFirstNameInput

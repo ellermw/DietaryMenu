@@ -45,9 +45,9 @@ public class NewPatientActivity extends AppCompatActivity {
     private Button backButton;
     private Button homeButton;
 
-    // Data arrays with proper wings and diets
+    // FIXED: Updated wings and diets with ADA options
     private String[] wings = {"1 South", "2 North", "Labor and Delivery", "2 West", "3 North", "ICU"};
-    private String[] diets = {"Regular", "Cardiac", "ADA", "Puree", "Renal", "Full Liquid", "Clear Liquid"};
+    private String[] diets = {"Regular", "Cardiac", "ADA", "Puree", "Puree ADA", "Renal", "Full Liquid", "Full Liquid ADA", "Clear Liquid", "Clear Liquid ADA"};
     private String[] fluidRestrictions = {"None", "1000ml", "1200ml", "1500ml", "1800ml", "2000ml", "2500ml"};
 
     // Room mapping for each wing
@@ -113,14 +113,54 @@ public class NewPatientActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    /**
+     * CRITICAL: Hospital Room Configuration - DO NOT MODIFY WITHOUT AUTHORIZATION
+     * These room numbers are based on actual hospital layout and must remain consistent.
+     * Any changes must be approved by hospital administration and IT department.
+     * Last verified: [Current Date]
+     */
     private void initializeRoomMapping() {
         wingRoomMap = new HashMap<>();
-        wingRoomMap.put("1 South", new String[]{"101", "102", "103", "104", "105", "106", "107", "108", "109", "110"});
-        wingRoomMap.put("2 North", new String[]{"201", "202", "203", "204", "205", "206", "207", "208", "209", "210"});
-        wingRoomMap.put("Labor and Delivery", new String[]{"L1", "L2", "L3", "L4", "L5", "L6"});
-        wingRoomMap.put("2 West", new String[]{"221", "222", "223", "224", "225", "226", "227", "228", "229", "230"});
-        wingRoomMap.put("3 North", new String[]{"301", "302", "303", "304", "305", "306", "307", "308", "309", "310"});
-        wingRoomMap.put("ICU", new String[]{"ICU1", "ICU2", "ICU3", "ICU4", "ICU5", "ICU6", "ICU7", "ICU8"});
+
+        // *** HOSPITAL ROOM CONFIGURATION - DO NOT MODIFY ***
+        // 1 South - Rooms 106 through 122
+        List<String> south1Rooms = new ArrayList<>();
+        for (int i = 106; i <= 122; i++) {
+            south1Rooms.add(String.valueOf(i));
+        }
+        wingRoomMap.put("1 South", south1Rooms.toArray(new String[0]));
+
+        // 2 North - Rooms 250 through 264
+        List<String> north2Rooms = new ArrayList<>();
+        for (int i = 250; i <= 264; i++) {
+            north2Rooms.add(String.valueOf(i));
+        }
+        wingRoomMap.put("2 North", north2Rooms.toArray(new String[0]));
+
+        // Labor and Delivery - LDR1 through LDR6
+        wingRoomMap.put("Labor and Delivery", new String[]{"LDR1", "LDR2", "LDR3", "LDR4", "LDR5", "LDR6"});
+
+        // 2 West - Rooms 225 through 248
+        List<String> west2Rooms = new ArrayList<>();
+        for (int i = 225; i <= 248; i++) {
+            west2Rooms.add(String.valueOf(i));
+        }
+        wingRoomMap.put("2 West", west2Rooms.toArray(new String[0]));
+
+        // 3 North - Rooms 349 through 371
+        List<String> north3Rooms = new ArrayList<>();
+        for (int i = 349; i <= 371; i++) {
+            north3Rooms.add(String.valueOf(i));
+        }
+        wingRoomMap.put("3 North", north3Rooms.toArray(new String[0]));
+
+        // ICU - ICU1 through ICU13
+        List<String> icuRooms = new ArrayList<>();
+        for (int i = 1; i <= 13; i++) {
+            icuRooms.add("ICU" + i);
+        }
+        wingRoomMap.put("ICU", icuRooms.toArray(new String[0]));
+        // *** END HOSPITAL ROOM CONFIGURATION ***
     }
 
     private void initializeUI() {
@@ -167,27 +207,6 @@ public class NewPatientActivity extends AppCompatActivity {
             roomAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             roomNumberSpinner.setAdapter(roomAdapter);
 
-            // Diet spinner
-            ArrayAdapter<String> dietAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, diets);
-            dietAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            dietSpinner.setAdapter(dietAdapter);
-
-            // Fluid restriction spinner
-            ArrayAdapter<String> fluidAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, fluidRestrictions);
-            fluidAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            fluidRestrictionSpinner.setAdapter(fluidAdapter);
-
-            // Set initial room options for first wing
-            updateRoomDropdown();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            showError("Failed to setup spinners: " + e.getMessage());
-        }
-    }
-
-    private void setupListeners() {
-        try {
             // Wing selection listener - updates room dropdown
             wingSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
@@ -199,6 +218,27 @@ public class NewPatientActivity extends AppCompatActivity {
                 public void onNothingSelected(AdapterView<?> parent) {}
             });
 
+            // Diet spinner
+            ArrayAdapter<String> dietAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, diets);
+            dietAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            dietSpinner.setAdapter(dietAdapter);
+
+            // Fluid restriction spinner
+            ArrayAdapter<String> fluidAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, fluidRestrictions);
+            fluidAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            fluidRestrictionSpinner.setAdapter(fluidAdapter);
+
+            // Set initial room options
+            updateRoomDropdown();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            showError("Failed to setup spinners: " + e.getMessage());
+        }
+    }
+
+    private void setupListeners() {
+        try {
             savePatientButton.setOnClickListener(v -> validateAndSavePatient());
             backButton.setOnClickListener(v -> finish());
 
@@ -302,13 +342,39 @@ public class NewPatientActivity extends AppCompatActivity {
             patient.setFluidRestriction(fluidRestriction.equals("None") ? null : fluidRestriction);
             patient.setTextureModifications(textureModifications);
 
+            // FIXED: Auto-complete Clear Liquid diets (predetermined, can't be changed)
+            if (diet.startsWith("Clear Liquid")) {
+                patient.setBreakfastComplete(true);
+                patient.setLunchComplete(true);
+                patient.setDinnerComplete(true);
+                // Clear liquid patients are NPO for regular meals but get predetermined clear liquids
+                patient.setBreakfastNPO(false);
+                patient.setLunchNPO(false);
+                patient.setDinnerNPO(false);
+            } else {
+                // Normal patients start with incomplete meals
+                patient.setBreakfastComplete(false);
+                patient.setLunchComplete(false);
+                patient.setDinnerComplete(false);
+                patient.setBreakfastNPO(false);
+                patient.setLunchNPO(false);
+                patient.setDinnerNPO(false);
+            }
+
             // Save to database
             long result = patientDAO.addPatient(patient);
 
             if (result > 0) {
+                String message = "Patient " + firstName + " " + lastName + " has been added successfully!\n\nLocation: " + wing + " - Room " + roomNumber + "\nDiet: " + diet;
+
+                // Add special message for Clear Liquid patients
+                if (diet.startsWith("Clear Liquid")) {
+                    message += "\n\n✅ Clear Liquid diet automatically completed - predetermined menu items will be provided.";
+                }
+
                 new AlertDialog.Builder(this)
                         .setTitle("Success")
-                        .setMessage("Patient " + firstName + " " + lastName + " has been added successfully!\n\nLocation: " + wing + " - Room " + roomNumber + "\nDiet: " + diet)
+                        .setMessage(message)
                         .setPositiveButton("Add Another", (dialog, which) -> {
                             // Clear form and stay on this activity for adding more patients
                             clearForm();
@@ -319,7 +385,7 @@ public class NewPatientActivity extends AppCompatActivity {
             } else {
                 new AlertDialog.Builder(this)
                         .setTitle("Error")
-                        .setMessage("Failed to save patient. Please check all information and try again.")
+                        .setMessage("Failed to save patient. Please try again.")
                         .setPositiveButton("OK", null)
                         .show();
             }
@@ -354,20 +420,15 @@ public class NewPatientActivity extends AppCompatActivity {
             patientFirstNameEditText.setText("");
             patientLastNameEditText.setText("");
             wingSpinner.setSelection(0);
+            updateRoomDropdown(); // Reset room dropdown
             dietSpinner.setSelection(0);
             fluidRestrictionSpinner.setSelection(0);
 
+            // Clear checkboxes
             mechanicalGroundCB.setChecked(false);
             mechanicalChoppedCB.setChecked(false);
             biteSizeCB.setChecked(false);
             breadOKCB.setChecked(false);
-
-            // Clear any errors
-            patientFirstNameEditText.setError(null);
-            patientLastNameEditText.setError(null);
-
-            // Update room dropdown for selected wing
-            updateRoomDropdown();
 
             // Focus on first name field
             patientFirstNameEditText.requestFocus();
@@ -379,7 +440,11 @@ public class NewPatientActivity extends AppCompatActivity {
     }
 
     private void showError(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+        new AlertDialog.Builder(this)
+                .setTitle("Error")
+                .setMessage(message)
+                .setPositiveButton("OK", null)
+                .show();
     }
 
     @Override

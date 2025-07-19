@@ -10,17 +10,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import com.hospital.dietary.dao.PatientDAO;
 import com.hospital.dietary.models.Patient;
+import android.graphics.Typeface;
 
 public class MealPlanningActivity extends AppCompatActivity {
-    
+
     private DatabaseHelper dbHelper;
     private PatientDAO patientDAO;
-    
+
     // User information
     private String currentUsername;
     private String currentUserRole;
     private String currentUserFullName;
-    
+
     // Patient information
     private int patientId;
     private String patientName;
@@ -29,30 +30,30 @@ public class MealPlanningActivity extends AppCompatActivity {
     private String diet;
     private String fluidRestriction;
     private String textureModifications;
-    
+
     // UI Components
     private Toolbar toolbar;
     private TextView patientInfoText;
     private Button saveOrderButton;
     private Button backButton;
     private Button homeButton;
-    
+
     // Meal sections
     private LinearLayout breakfastSection;
     private LinearLayout lunchSection;
     private LinearLayout dinnerSection;
-    
+
     // NPO checkboxes
     private CheckBox breakfastNPOCheckbox;
     private CheckBox lunchNPOCheckbox;
     private CheckBox dinnerNPOCheckbox;
-    
+
     // Meal content containers
     private LinearLayout breakfastItemsContainer;
     private LinearLayout lunchItemsContainer;
     private LinearLayout dinnerItemsContainer;
-    
-    // Completion tracking
+
+    // FIXED: Better completion tracking
     private boolean breakfastComplete = false;
     private boolean lunchComplete = false;
     private boolean dinnerComplete = false;
@@ -61,81 +62,33 @@ public class MealPlanningActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_meal_planning);
-        
+
         // Get information from intent
         extractIntentData();
-        
+
         // Initialize database
         dbHelper = new DatabaseHelper(this);
         patientDAO = new PatientDAO(dbHelper);
-        
+
         // Setup toolbar
         setupToolbar();
-        
+
         // Initialize UI
         initializeUI();
-        
+
         // Setup listeners
         setupListeners();
-        
-        // Load patient data
+
+        // Load existing patient data
         loadPatientData();
-        
-        // Setup meal content based on diet type
-        setupMealContent();
+
+        // Load meal items
+        loadMealItems();
+
+        // Initial button state update
+        updateSaveButtonState();
     }
 
-    private void setupToolbar() {
-        // toolbar = findViewById(R.id.toolbar);  // Comment this out
-        // if (toolbar != null) {
-        //     setSupportActionBar(toolbar);
-        //     if (getSupportActionBar() != null) {
-        //         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        //         getSupportActionBar().setTitle("Finished Orders");
-        //     }
-        // }
-
-        // Use default action bar instead:
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle("Finished Orders");
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
-    }
-    
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_with_home, menu);
-        return true;
-    }
-    
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                return true;
-            case R.id.action_home:
-                goToMainMenu();
-                return true;
-            case R.id.action_refresh:
-                loadPatientData();
-                setupMealContent();
-                Toast.makeText(this, "Meal plan refreshed", Toast.LENGTH_SHORT).show();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-    
-    private void goToMainMenu() {
-        Intent intent = new Intent(this, MainMenuActivity.class);
-        intent.putExtra("current_user", currentUsername);
-        intent.putExtra("user_role", currentUserRole);
-        intent.putExtra("user_full_name", currentUserFullName);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        startActivity(intent);
-    }
-    
     private void extractIntentData() {
         currentUsername = getIntent().getStringExtra("current_user");
         currentUserRole = getIntent().getStringExtra("user_role");
@@ -148,78 +101,128 @@ public class MealPlanningActivity extends AppCompatActivity {
         fluidRestriction = getIntent().getStringExtra("fluid_restriction");
         textureModifications = getIntent().getStringExtra("texture_modifications");
     }
-    
+
+    private void setupToolbar() {
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle("Meal Planning");
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_with_home, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            case R.id.action_home:
+                goToMainMenu();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void goToMainMenu() {
+        Intent intent = new Intent(this, MainMenuActivity.class);
+        intent.putExtra("current_user", currentUsername);
+        intent.putExtra("user_role", currentUserRole);
+        intent.putExtra("user_full_name", currentUserFullName);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
+    }
+
     private void initializeUI() {
         patientInfoText = findViewById(R.id.patientInfoText);
         saveOrderButton = findViewById(R.id.saveOrderButton);
         backButton = findViewById(R.id.backButton);
-    //  homeButton = findViewById(R.id.homeButton);
-        
+        homeButton = findViewById(R.id.homeButton);
+
         // Meal sections
         breakfastSection = findViewById(R.id.breakfastSection);
         lunchSection = findViewById(R.id.lunchSection);
         dinnerSection = findViewById(R.id.dinnerSection);
-        
+
         // NPO checkboxes
         breakfastNPOCheckbox = findViewById(R.id.breakfastNPOCheckbox);
         lunchNPOCheckbox = findViewById(R.id.lunchNPOCheckbox);
         dinnerNPOCheckbox = findViewById(R.id.dinnerNPOCheckbox);
-        
+
         // Meal content containers
         breakfastItemsContainer = findViewById(R.id.breakfastItemsContainer);
         lunchItemsContainer = findViewById(R.id.lunchItemsContainer);
         dinnerItemsContainer = findViewById(R.id.dinnerItemsContainer);
-        
-        // Set title
-        setTitle("Meal Planning");
-        
+
         // Display patient info
         displayPatientInfo();
     }
-    
+
+    private void displayPatientInfo() {
+        StringBuilder info = new StringBuilder();
+        info.append("Patient: ").append(patientName).append("\n");
+        info.append("Location: ").append(wing).append(" - Room ").append(room).append("\n");
+        info.append("Diet: ").append(diet);
+
+        if (fluidRestriction != null && !fluidRestriction.equals("None")) {
+            info.append("\nFluid Restriction: ").append(fluidRestriction);
+        }
+
+        if (textureModifications != null && !textureModifications.isEmpty()) {
+            info.append("\nTexture Modifications: ").append(textureModifications);
+        }
+
+        patientInfoText.setText(info.toString());
+    }
+
     private void setupListeners() {
         saveOrderButton.setOnClickListener(v -> saveOrder());
         backButton.setOnClickListener(v -> finish());
-        
+
         if (homeButton != null) {
             homeButton.setOnClickListener(v -> goToMainMenu());
         }
-        
-        // NPO checkbox listeners
+
+        // FIXED: NPO checkbox listeners with proper completion logic
         breakfastNPOCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
                 breakfastItemsContainer.setVisibility(View.GONE);
-                breakfastComplete = true;
+                breakfastComplete = true; // NPO counts as complete
             } else {
                 breakfastItemsContainer.setVisibility(View.VISIBLE);
-                breakfastComplete = false;
+                breakfastComplete = checkMealItemsSelected(breakfastItemsContainer);
             }
             updateSaveButtonState();
         });
-        
+
         lunchNPOCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
                 lunchItemsContainer.setVisibility(View.GONE);
-                lunchComplete = true;
+                lunchComplete = true; // NPO counts as complete
             } else {
                 lunchItemsContainer.setVisibility(View.VISIBLE);
-                lunchComplete = false;
+                lunchComplete = checkMealItemsSelected(lunchItemsContainer);
             }
             updateSaveButtonState();
         });
-        
+
         dinnerNPOCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
                 dinnerItemsContainer.setVisibility(View.GONE);
-                dinnerComplete = true;
+                dinnerComplete = true; // NPO counts as complete
             } else {
                 dinnerItemsContainer.setVisibility(View.VISIBLE);
-                dinnerComplete = false;
+                dinnerComplete = checkMealItemsSelected(dinnerItemsContainer);
             }
             updateSaveButtonState();
         });
     }
-    
+
     private void loadPatientData() {
         if (patientId != -1) {
             Patient patient = patientDAO.getPatientById(patientId);
@@ -228,163 +231,195 @@ public class MealPlanningActivity extends AppCompatActivity {
                 breakfastComplete = patient.isBreakfastComplete();
                 lunchComplete = patient.isLunchComplete();
                 dinnerComplete = patient.isDinnerComplete();
-                
+
                 // Update NPO status
                 breakfastNPOCheckbox.setChecked(patient.isBreakfastNPO());
                 lunchNPOCheckbox.setChecked(patient.isLunchNPO());
                 dinnerNPOCheckbox.setChecked(patient.isDinnerNPO());
+
+                // Hide containers if NPO is checked
+                if (patient.isBreakfastNPO()) {
+                    breakfastItemsContainer.setVisibility(View.GONE);
+                }
+                if (patient.isLunchNPO()) {
+                    lunchItemsContainer.setVisibility(View.GONE);
+                }
+                if (patient.isDinnerNPO()) {
+                    dinnerItemsContainer.setVisibility(View.GONE);
+                }
             }
         }
     }
-    
-    private void displayPatientInfo() {
-        StringBuilder info = new StringBuilder();
-        info.append("Patient: ").append(patientName).append("\n");
-        info.append("Location: ").append(wing).append(" - Room ").append(room).append("\n");
-        info.append("Diet: ").append(diet).append("\n");
-        
-        if (fluidRestriction != null && !fluidRestriction.equals("None")) {
-            info.append("Fluid Restriction: ").append(fluidRestriction).append("\n");
-        }
-        
-        if (textureModifications != null && !textureModifications.isEmpty()) {
-            info.append("Texture Modifications: ").append(textureModifications).append("\n");
-        }
-        
-        patientInfoText.setText(info.toString());
-    }
-    
-    private void setupMealContent() {
-        if (diet != null && diet.contains("Clear Liquid")) {
-            setupClearLiquidMeals();
+
+    private void loadMealItems() {
+        // FIXED: Special handling for Clear Liquid diets
+        if (diet.startsWith("Clear Liquid")) {
+            loadClearLiquidItems();
         } else {
-            setupRegularMeals();
+            loadRegularMealItems();
         }
-        
+    }
+
+    private void loadClearLiquidItems() {
+        // Clear liquid patients get predetermined items - no selection needed
+        breakfastComplete = true;
+        lunchComplete = true;
+        dinnerComplete = true;
+
+        // Hide NPO checkboxes for clear liquid (predetermined menu)
+        breakfastNPOCheckbox.setVisibility(View.GONE);
+        lunchNPOCheckbox.setVisibility(View.GONE);
+        dinnerNPOCheckbox.setVisibility(View.GONE);
+
+        // Show predetermined clear liquid items
+        addClearLiquidMenuItems();
+
+        // Auto-save button should be enabled
         updateSaveButtonState();
     }
-    
-    private void setupClearLiquidMeals() {
-        boolean isADA = diet.contains("ADA");
-        
-        // Clear Liquid menus are fixed and cannot be adjusted
-        setupClearLiquidBreakfast(isADA);
-        setupClearLiquidLunch(isADA);
-        setupClearLiquidDinner(isADA);
-        
-        // Mark as complete since Clear Liquid is predefined
-        if (!breakfastNPOCheckbox.isChecked()) breakfastComplete = true;
-        if (!lunchNPOCheckbox.isChecked()) lunchComplete = true;
-        if (!dinnerNPOCheckbox.isChecked()) dinnerComplete = true;
+
+    private void addClearLiquidMenuItems() {
+        // Add clear liquid breakfast items
+        addClearLiquidMealItems(breakfastItemsContainer, "Breakfast", diet.contains("ADA"));
+
+        // Add clear liquid lunch items
+        addClearLiquidMealItems(lunchItemsContainer, "Lunch", diet.contains("ADA"));
+
+        // Add clear liquid dinner items
+        addClearLiquidMealItems(dinnerItemsContainer, "Dinner", diet.contains("ADA"));
     }
-    
-    private void setupClearLiquidBreakfast(boolean isADA) {
-        breakfastItemsContainer.removeAllViews();
-        
-        // Coffee or Decaf Coffee (200ml)
-        addClearLiquidItem(breakfastItemsContainer, "Coffee", "200ml");
-        
-        // Chicken Broth (200ml)
-        addClearLiquidItem(breakfastItemsContainer, "Chicken Broth", "200ml");
-        
-        // Orange Juice (120ml) or Apple Juice (120ml) if ADA
-        String juiceChoice = isADA ? "Apple Juice" : "Orange Juice";
-        addClearLiquidItem(breakfastItemsContainer, juiceChoice, "120ml");
-        
-        // Jello or Sugar Free Jello if ADA
-        String jelloChoice = isADA ? "Sugar Free Jello" : "Jello";
-        addClearLiquidItem(breakfastItemsContainer, jelloChoice, "");
-        
-        // Sprite or Sprite Zero if ADA
-        String spriteChoice = isADA ? "Sprite Zero" : "Sprite";
-        addClearLiquidItem(breakfastItemsContainer, spriteChoice, "240ml");
+
+    private void addClearLiquidMealItems(LinearLayout container, String mealType, boolean isADA) {
+        container.removeAllViews();
+
+        TextView title = new TextView(this);
+        title.setText(mealType + " - Clear Liquid" + (isADA ? " ADA" : "") + " (Predetermined)");
+        title.setTextSize(16);
+        // FIXED: Use setTypeface instead of setTextStyle
+        title.setTypeface(null, Typeface.BOLD);
+        title.setPadding(0, 16, 0, 8);
+        container.addView(title);
+
+        // ADA substitutions for clear liquids
+        String[] items;
+        if (isADA) {
+            items = new String[]{
+                    "• Apple Juice (instead of Orange Juice)",
+                    "• Sprite Zero (instead of Sprite)",
+                    "• Sugar Free Jello (instead of regular Jello)",
+                    "• Clear Broth",
+                    "• Water",
+                    "• Tea/Coffee (no sugar)"
+            };
+        } else {
+            items = new String[]{
+                    "• Orange Juice",
+                    "• Sprite",
+                    "• Jello",
+                    "• Clear Broth",
+                    "• Water",
+                    "• Tea/Coffee"
+            };
+        }
+
+        for (String item : items) {
+            TextView itemView = new TextView(this);
+            itemView.setText(item);
+            itemView.setPadding(16, 4, 0, 4);
+            container.addView(itemView);
+        }
     }
-    
-    private void setupClearLiquidLunch(boolean isADA) {
-        lunchItemsContainer.removeAllViews();
-        
-        // Cranberry Juice (120ml)
-        addClearLiquidItem(lunchItemsContainer, "Cranberry Juice", "120ml");
-        
-        // Beef Broth (200ml)
-        addClearLiquidItem(lunchItemsContainer, "Beef Broth", "200ml");
-        
-        // Jello or Sugar Free Jello if ADA
-        String jelloChoice = isADA ? "Sugar Free Jello" : "Jello";
-        addClearLiquidItem(lunchItemsContainer, jelloChoice, "");
-        
-        // Ice Tea (240ml)
-        addClearLiquidItem(lunchItemsContainer, "Ice Tea", "240ml");
-        
-        // Sprite or Sprite Zero if ADA
-        String spriteChoice = isADA ? "Sprite Zero" : "Sprite";
-        addClearLiquidItem(lunchItemsContainer, spriteChoice, "240ml");
+
+    private void loadRegularMealItems() {
+        // TODO: Load actual meal items from database for regular diets
+        // For now, add placeholder items with selection listeners
+        addSelectableMealItems(breakfastItemsContainer, "Breakfast");
+        addSelectableMealItems(lunchItemsContainer, "Lunch");
+        addSelectableMealItems(dinnerItemsContainer, "Dinner");
     }
-    
-    private void setupClearLiquidDinner(boolean isADA) {
-        dinnerItemsContainer.removeAllViews();
-        
-        // Apple Juice (120ml)
-        addClearLiquidItem(dinnerItemsContainer, "Apple Juice", "120ml");
-        
-        // Chicken Broth (200ml)
-        addClearLiquidItem(dinnerItemsContainer, "Chicken Broth", "200ml");
-        
-        // Jello or Sugar Free Jello if ADA
-        String jelloChoice = isADA ? "Sugar Free Jello" : "Jello";
-        addClearLiquidItem(dinnerItemsContainer, jelloChoice, "");
-        
-        // Ice Tea (200ml)
-        addClearLiquidItem(dinnerItemsContainer, "Ice Tea", "200ml");
-        
-        // Sprite or Sprite Zero if ADA
-        String spriteChoice = isADA ? "Sprite Zero" : "Sprite";
-        addClearLiquidItem(dinnerItemsContainer, spriteChoice, "240ml");
+
+    private void addSelectableMealItems(LinearLayout container, String mealType) {
+        container.removeAllViews();
+
+        TextView title = new TextView(this);
+        title.setText(mealType + " Items");
+        title.setTextSize(16);
+        // FIXED: Use setTypeface instead of setTextStyle
+        title.setTypeface(null, Typeface.BOLD);
+        title.setPadding(0, 16, 0, 8);
+        container.addView(title);
+
+        // Add some sample checkboxes for meal items
+        String[] sampleItems = {"Main Course", "Side Dish", "Beverage", "Dessert"};
+
+        for (String item : sampleItems) {
+            CheckBox itemCheckbox = new CheckBox(this);
+            itemCheckbox.setText(item);
+            itemCheckbox.setPadding(16, 8, 0, 8);
+
+            // FIXED: Add listener to track meal completion
+            itemCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                updateMealCompletion(container);
+            });
+
+            container.addView(itemCheckbox);
+        }
     }
-    
-    private void addClearLiquidItem(LinearLayout container, String itemName, String volume) {
-        TextView itemView = new TextView(this);
-        String displayText = volume.isEmpty() ? itemName : itemName + " (" + volume + ")";
-        itemView.setText("• " + displayText);
-        itemView.setTextSize(16);
-        itemView.setPadding(0, 8, 0, 8);
-        container.addView(itemView);
+
+    // FIXED: Method to check if meal items are selected
+    private boolean checkMealItemsSelected(LinearLayout container) {
+        for (int i = 0; i < container.getChildCount(); i++) {
+            View child = container.getChildAt(i);
+            if (child instanceof CheckBox) {
+                CheckBox checkbox = (CheckBox) child;
+                if (checkbox.isChecked()) {
+                    return true; // At least one item selected
+                }
+            }
+        }
+        return false; // No items selected
     }
-    
-    private void setupRegularMeals() {
-        // Implementation for regular meal setup
-        // This would include meal selection interfaces for non-clear liquid diets
-        breakfastComplete = false;
-        lunchComplete = false;
-        dinnerComplete = false;
+
+    // FIXED: Update meal completion when items are selected/deselected
+    private void updateMealCompletion(LinearLayout container) {
+        if (container == breakfastItemsContainer && !breakfastNPOCheckbox.isChecked()) {
+            breakfastComplete = checkMealItemsSelected(container);
+        } else if (container == lunchItemsContainer && !lunchNPOCheckbox.isChecked()) {
+            lunchComplete = checkMealItemsSelected(container);
+        } else if (container == dinnerItemsContainer && !dinnerNPOCheckbox.isChecked()) {
+            dinnerComplete = checkMealItemsSelected(container);
+        }
+        updateSaveButtonState();
     }
-    
+
     private void updateSaveButtonState() {
-        boolean allComplete = (breakfastComplete || breakfastNPOCheckbox.isChecked()) &&
-                             (lunchComplete || lunchNPOCheckbox.isChecked()) &&
-                             (dinnerComplete || dinnerNPOCheckbox.isChecked());
-        saveOrderButton.setEnabled(allComplete);
-        saveOrderButton.setText(allComplete ? "Save Complete Order" : "Complete All Meals First");
+        boolean allMealsComplete = breakfastComplete && lunchComplete && dinnerComplete;
+        saveOrderButton.setEnabled(allMealsComplete);
+        saveOrderButton.setText(allMealsComplete ? "Save Complete Order" : "Complete All Meals First");
     }
-    
+
     private void saveOrder() {
         if (patientId != -1) {
             Patient patient = patientDAO.getPatientById(patientId);
             if (patient != null) {
-                // Update completion status
-                patient.setBreakfastComplete(breakfastComplete || breakfastNPOCheckbox.isChecked());
-                patient.setLunchComplete(lunchComplete || lunchNPOCheckbox.isChecked());
-                patient.setDinnerComplete(dinnerComplete || dinnerNPOCheckbox.isChecked());
-                
+                // FIXED: Properly update completion status
+                patient.setBreakfastComplete(breakfastComplete);
+                patient.setLunchComplete(lunchComplete);
+                patient.setDinnerComplete(dinnerComplete);
+
                 // Update NPO status
                 patient.setBreakfastNPO(breakfastNPOCheckbox.isChecked());
                 patient.setLunchNPO(lunchNPOCheckbox.isChecked());
                 patient.setDinnerNPO(dinnerNPOCheckbox.isChecked());
-                
+
                 boolean success = patientDAO.updatePatient(patient);
-                
+
                 if (success) {
-                    Toast.makeText(this, "Order saved successfully!", Toast.LENGTH_SHORT).show();
+                    String message = "Order saved successfully!";
+                    if (diet.startsWith("Clear Liquid")) {
+                        message += "\n\nClear Liquid order completed with predetermined menu items.";
+                    }
+                    Toast.makeText(this, message, Toast.LENGTH_LONG).show();
                     finish(); // Return to previous activity
                 } else {
                     Toast.makeText(this, "Failed to save order", Toast.LENGTH_SHORT).show();
@@ -392,7 +427,7 @@ public class MealPlanningActivity extends AppCompatActivity {
             }
         }
     }
-    
+
     @Override
     protected void onDestroy() {
         super.onDestroy();

@@ -3,167 +3,93 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#f8f9fa"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="#f8fafc">
 
-    <!-- Header -->
+    <!-- Title -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="📋 Pending Orders"
+        android:text="⏳ Pending Orders"
         android:textSize="24sp"
         android:textStyle="bold"
-        android:textColor="#2c3e50"
+        android:textColor="#dc2626"
         android:gravity="center"
-        android:background="#ffffff"
-        android:padding="16dp"
-        android:layout_marginBottom="16dp"
-        android:elevation="2dp" />
+        android:layout_marginBottom="16dp" />
 
-    <!-- Controls Section -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Click on a patient to plan their meals"
+        android:textSize="16sp"
+        android:textColor="#64748b"
+        android:gravity="center"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Column Headers -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="#ffffff"
-        android:padding="16dp"
-        android:layout_marginBottom="16dp"
-        android:elevation="2dp">
+        android:orientation="horizontal"
+        android:layout_marginBottom="8dp"
+        android:paddingBottom="8dp"
+        android:background="#f1f5f9">
 
-        <!-- Day Filter Row -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="12dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="📅 Filter by Day:"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="#2c3e50"
-                android:layout_marginEnd="12dp" />
-
-            <Spinner
-                android:id="@+id/dayFilterSpinner"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_weight="1"
-                android:background="@android:drawable/edit_text"
-                android:layout_marginEnd="8dp" />
-
-            <Button
-                android:id="@+id/refreshButton"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:text="🔄 Refresh"
-                android:textSize="14sp"
-                android:textColor="@android:color/white"
-                android:background="#3498db"
-                android:padding="8dp" />
-
-        </LinearLayout>
-
-        <!-- Order Count -->
         <TextView
-            android:id="@+id/orderCountText"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Loading orders..."
+            android:layout_weight="2"
+            android:text="Patient"
             android:textSize="14sp"
-            android:textColor="#7f8c8d"
+            android:textStyle="bold"
+            android:textColor="#2c3e50"
+            android:padding="8dp" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Location"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#2c3e50"
             android:gravity="center"
-            android:padding="8dp"
-            android:background="#f8f9fa" />
+            android:padding="8dp" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Status"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#2c3e50"
+            android:gravity="end"
+            android:padding="8dp" />
 
     </LinearLayout>
 
-    <!-- Orders List Container -->
-    <LinearLayout
+    <!-- Orders ListView -->
+    <ListView
+        android:id="@+id/pendingOrdersListView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:orientation="vertical"
-        android:background="#ffffff"
-        android:elevation="2dp">
+        android:divider="#ecf0f1"
+        android:dividerHeight="1dp"
+        android:scrollbars="vertical" />
 
-        <!-- Column Headers -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="12dp"
-            android:background="#ecf0f1">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:text="Patient"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:textColor="#2c3e50" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Location"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:textColor="#2c3e50"
-                android:gravity="center" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Status"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:textColor="#2c3e50"
-                android:gravity="end" />
-
-        </LinearLayout>
-
-        <!-- Orders ListView -->
-        <ListView
-            android:id="@+id/pendingOrdersListView"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:divider="#ecf0f1"
-            android:dividerHeight="1dp"
-            android:scrollbars="vertical" />
-
-        <!-- No Orders Message -->
-        <TextView
-            android:id="@+id/noPendingOrdersText"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:text="✅ No pending orders!\nAll patients have completed meal orders."
-            android:textSize="18sp"
-            android:textColor="#7f8c8d"
-            android:gravity="center"
-            android:visibility="gone"
-            android:padding="32dp" />
-
-    </LinearLayout>
-
-    <!-- Back Button -->
-    <Button
-        android:id="@+id/backButton"
+    <!-- No Orders Message -->
+    <TextView
+        android:id="@+id/noPendingOrdersText"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginTop="16dp"
-        android:text="← Back to Main Menu"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:textColor="@android:color/white"
-        android:background="#6b7280" />
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text="✅ No pending orders!\nAll patients have completed meal orders."
+        android:textSize="18sp"
+        android:textColor="#7f8c8d"
+        android:gravity="center"
+        android:visibility="gone"
+        android:padding="32dp" />
 
 </LinearLayout>

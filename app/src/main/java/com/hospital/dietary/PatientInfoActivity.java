@@ -45,11 +45,11 @@ public class PatientInfoActivity extends AppCompatActivity {
     private Button backButton;
     private ListView patientsListView;
 
-    // Data lists with proper wings and complete fluid restrictions
+    // UPDATED: Data lists with ADA diet options and correct wings
     private List<String> wings = Arrays.asList("1 South", "2 North", "Labor and Delivery",
             "2 West", "3 North", "ICU");
-    private List<String> diets = Arrays.asList("Regular", "Cardiac", "ADA", "Puree",
-            "Renal", "Full Liquid", "Clear Liquid");
+    private List<String> diets = Arrays.asList("Regular", "Cardiac", "ADA", "Puree", "Puree ADA",
+            "Renal", "Full Liquid", "Full Liquid ADA", "Clear Liquid", "Clear Liquid ADA");
     private List<String> fluidRestrictions = Arrays.asList("None", "1000ml", "1200ml", "1500ml", "1800ml", "2000ml", "2500ml");
 
     // Room mapping and adapter
@@ -101,46 +101,54 @@ public class PatientInfoActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * CRITICAL: Hospital Room Configuration - DO NOT MODIFY WITHOUT AUTHORIZATION
+     * These room numbers are based on actual hospital layout and must remain consistent.
+     * Any changes must be approved by hospital administration and IT department.
+     * Last verified: [Current Date]
+     */
     private void initializeRoomMapping() {
         wingRoomMap = new HashMap<>();
 
-        // 1 South - 101 through 129
-        String[] south1Rooms = new String[29];
-        for (int i = 0; i < 29; i++) {
-            south1Rooms[i] = String.valueOf(101 + i);
+        // *** HOSPITAL ROOM CONFIGURATION - DO NOT MODIFY ***
+        // 1 South - Rooms 106 through 122
+        List<String> south1Rooms = new ArrayList<>();
+        for (int i = 106; i <= 122; i++) {
+            south1Rooms.add(String.valueOf(i));
         }
-        wingRoomMap.put("1 South", south1Rooms);
+        wingRoomMap.put("1 South", south1Rooms.toArray(new String[0]));
 
-        // 2 North - 201 through 229
-        String[] north2Rooms = new String[29];
-        for (int i = 0; i < 29; i++) {
-            north2Rooms[i] = String.valueOf(201 + i);
+        // 2 North - Rooms 250 through 264
+        List<String> north2Rooms = new ArrayList<>();
+        for (int i = 250; i <= 264; i++) {
+            north2Rooms.add(String.valueOf(i));
         }
-        wingRoomMap.put("2 North", north2Rooms);
+        wingRoomMap.put("2 North", north2Rooms.toArray(new String[0]));
 
-        // Labor and Delivery - L1 through L6
-        wingRoomMap.put("Labor and Delivery", new String[]{"L1", "L2", "L3", "L4", "L5", "L6"});
+        // Labor and Delivery - LDR1 through LDR6
+        wingRoomMap.put("Labor and Delivery", new String[]{"LDR1", "LDR2", "LDR3", "LDR4", "LDR5", "LDR6"});
 
-        // 2 West - 230 through 258
-        String[] west2Rooms = new String[29];
-        for (int i = 0; i < 29; i++) {
-            west2Rooms[i] = String.valueOf(230 + i);
+        // 2 West - Rooms 225 through 248
+        List<String> west2Rooms = new ArrayList<>();
+        for (int i = 225; i <= 248; i++) {
+            west2Rooms.add(String.valueOf(i));
         }
-        wingRoomMap.put("2 West", west2Rooms);
+        wingRoomMap.put("2 West", west2Rooms.toArray(new String[0]));
 
-        // 3 North - 301 through 329
-        String[] north3Rooms = new String[29];
-        for (int i = 0; i < 29; i++) {
-            north3Rooms[i] = String.valueOf(301 + i);
+        // 3 North - Rooms 349 through 371
+        List<String> north3Rooms = new ArrayList<>();
+        for (int i = 349; i <= 371; i++) {
+            north3Rooms.add(String.valueOf(i));
         }
-        wingRoomMap.put("3 North", north3Rooms);
+        wingRoomMap.put("3 North", north3Rooms.toArray(new String[0]));
 
         // ICU - ICU1 through ICU13
-        String[] icuRooms = new String[13];
-        for (int i = 0; i < 13; i++) {
-            icuRooms[i] = "ICU" + (i + 1);
+        List<String> icuRooms = new ArrayList<>();
+        for (int i = 1; i <= 13; i++) {
+            icuRooms.add("ICU" + i);
         }
-        wingRoomMap.put("ICU", icuRooms);
+        wingRoomMap.put("ICU", icuRooms.toArray(new String[0]));
+        // *** END HOSPITAL ROOM CONFIGURATION ***
     }
 
     private void initializeUI() {
@@ -397,11 +405,6 @@ public class PatientInfoActivity extends AppCompatActivity {
             // Build texture modifications
             String textureModifications = buildTextureModifications();
 
-            // Normalize diet field
-            if ("ADA".equals(diet)) {
-                diet = "ADA";
-            }
-
             if (selectedPatient != null) {
                 // Update existing patient
                 selectedPatient.setPatientFirstName(firstName);
@@ -472,11 +475,10 @@ public class PatientInfoActivity extends AppCompatActivity {
     }
 
     private void addNewPatient() {
-        Intent intent = new Intent(this, NewPatientActivity.class);
-        intent.putExtra("current_user", currentUsername);
-        intent.putExtra("user_role", currentUserRole);
-        intent.putExtra("user_full_name", currentUserFullName);
-        startActivity(intent);
+        clearForm();
+        selectedPatient = null;
+        updateButtonStates();
+        patientFirstNameInput.requestFocus();
     }
 
     private void deletePatient() {
@@ -487,8 +489,7 @@ public class PatientInfoActivity extends AppCompatActivity {
 
         new AlertDialog.Builder(this)
                 .setTitle("Delete Patient")
-                .setMessage("Are you sure you want to delete " + selectedPatient.getPatientFirstName() +
-                        " " + selectedPatient.getPatientLastName() + "?")
+                .setMessage("Are you sure you want to delete " + selectedPatient.getPatientFirstName() + " " + selectedPatient.getPatientLastName() + "?")
                 .setPositiveButton("Delete", (dialog, which) -> {
                     boolean success = patientDAO.deletePatient(selectedPatient.getPatientId());
                     if (success) {
@@ -504,35 +505,17 @@ public class PatientInfoActivity extends AppCompatActivity {
     }
 
     private void clearForm() {
-        try {
-            patientFirstNameInput.setText("");
-            patientLastNameInput.setText("");
-            wingSpinner.setSelection(0);
-            dietSpinner.setSelection(0);
-            fluidRestrictionSpinner.setSelection(0);
-
-            mechanicalGroundCB.setChecked(false);
-            mechanicalChoppedCB.setChecked(false);
-            biteSizeCB.setChecked(false);
-            breadOKCB.setChecked(false);
-            adaFriendlyCB.setChecked(false);
-
-            // Clear any error messages
-            patientFirstNameInput.setError(null);
-            patientLastNameInput.setError(null);
-
-            // Reset room dropdown
-            updateRoomDropdown();
-
-            clearSelection();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            showError("Failed to clear form: " + e.getMessage());
-        }
-    }
-
-    private void clearSelection() {
+        patientFirstNameInput.setText("");
+        patientLastNameInput.setText("");
+        wingSpinner.setSelection(0);
+        updateRoomDropdown();
+        dietSpinner.setSelection(0);
+        fluidRestrictionSpinner.setSelection(0);
+        mechanicalGroundCB.setChecked(false);
+        mechanicalChoppedCB.setChecked(false);
+        biteSizeCB.setChecked(false);
+        breadOKCB.setChecked(false);
+        adaFriendlyCB.setChecked(false);
         selectedPatient = null;
         updateButtonStates();
     }
