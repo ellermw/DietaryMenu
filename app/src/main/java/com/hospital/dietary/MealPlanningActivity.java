@@ -331,41 +331,44 @@ public class MealPlanningActivity extends AppCompatActivity {
 
         // Label
         TextView labelView = new TextView(this);
-        labelView.setText(label != null ? label : "Unknown:");
+        labelView.setText(label != null ? label : "Category:");
         labelView.setTextSize(14);
+        labelView.setTypeface(null, Typeface.BOLD);
         labelView.setPadding(0, 8, 0, 4);
         container.addView(labelView);
 
         // Spinner
         Spinner spinner = new Spinner(this);
-        spinner.setTag(tag.trim()); // Ensure tag is not null and trimmed
-        container.addView(spinner);
+        spinner.setTag(tag);
 
-        // Populate spinner and store reference
+        // Get items for this category
         String category = getCategoryFromTag(tag);
-        populateCategorySpinner(spinner, category);
-        storeSpinnerReference(spinner, tag);
+        List<Item> items = itemDAO.getItemsByCategory(category);
 
-        // Add listener
+        // Create adapter
+        List<String> itemNames = new ArrayList<>();
+        itemNames.add("Select " + category.toLowerCase());
+        for (Item item : items) {
+            itemNames.add(item.getName());
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, itemNames);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+
+        // Set listener
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                updateMealCompletion(tag);
                 updateSaveButtonState();
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {}
         });
-    }
 
-    private void storeSpinnerReference(Spinner spinner, String tag) {
-        // Add null check to prevent NullPointerException
-        if (tag == null) {
-            Log.w(TAG, "storeSpinnerReference called with null tag");
-            return;
-        }
-
-        // Use safe string comparison
+        // Store reference for later use
         if ("lunchProtein".equals(tag)) lunchProteinSpinner = spinner;
         else if ("lunchStarch".equals(tag)) lunchStarchSpinner = spinner;
         else if ("lunchVegetable".equals(tag)) lunchVegetableSpinner = spinner;
@@ -374,141 +377,90 @@ public class MealPlanningActivity extends AppCompatActivity {
         else if ("dinnerStarch".equals(tag)) dinnerStarchSpinner = spinner;
         else if ("dinnerVegetable".equals(tag)) dinnerVegetableSpinner = spinner;
         else if ("dinnerDessert".equals(tag)) dinnerDessertSpinner = spinner;
+
+        container.addView(spinner);
     }
 
     private String getCategoryFromTag(String tag) {
-        // Add null check to prevent NullPointerException
-        if (tag == null) {
-            Log.w(TAG, "getCategoryFromTag called with null tag");
-            return "Other";
-        }
-
-        // Use safe string comparison
-        if (tag.contains("Protein")) return "Proteins";
-        if (tag.contains("Starch")) return "Starches";
-        if (tag.contains("Vegetable")) return "Vegetables";
-        if (tag.contains("Dessert")) return "Desserts";
-        return "Other";
+        if (tag.contains("Protein")) return "Protein";
+        if (tag.contains("Starch")) return "Starch";
+        if (tag.contains("Vegetable")) return "Vegetable";
+        if (tag.contains("Dessert")) return "Dessert";
+        return "Unknown";
     }
 
-    private void populateCategorySpinner(Spinner spinner, String category) {
-        List<String> items = new ArrayList<>();
-
-        // Safe category handling
-        String categoryName = (category != null && category.length() > 1) ?
-                category.substring(0, category.length() - 1) : "Item";
-        items.add("Select " + categoryName);
-
-        try {
-            List<Item> categoryItems;
-            if (isAdaDiet) {
-                categoryItems = itemDAO.getAdaItemsByCategory(category);
-            } else {
-                categoryItems = itemDAO.getItemsByCategory(category);
-            }
-
-            for (Item item : categoryItems) {
-                if (item != null && item.getName() != null) {
-                    items.add(item.getName());
-                }
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Error populating category spinner: " + e.getMessage());
-            e.printStackTrace();
+    private void updateMealCompletion(String tag) {
+        if (tag.startsWith("lunch")) {
+            // Check if lunch is complete
+            boolean hasProtein = lunchProteinSpinner != null && lunchProteinSpinner.getSelectedItemPosition() > 0;
+            boolean hasStarch = lunchStarchSpinner != null && lunchStarchSpinner.getSelectedItemPosition() > 0;
+            lunchComplete = hasProtein || hasStarch; // At least one selection
+        } else if (tag.startsWith("dinner")) {
+            // Check if dinner is complete
+            boolean hasProtein = dinnerProteinSpinner != null && dinnerProteinSpinner.getSelectedItemPosition() > 0;
+            boolean hasStarch = dinnerStarchSpinner != null && dinnerStarchSpinner.getSelectedItemPosition() > 0;
+            dinnerComplete = hasProtein || hasStarch; // At least one selection
         }
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, items);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
     }
 
     private void showAddDrinkDialog(String mealType) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Add Drink for " + mealType);
+
+        // Create dialog layout
         View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_drink, null);
+        builder.setView(dialogView);
 
         Spinner drinkSpinner = dialogView.findViewById(R.id.drinkSpinner);
         EditText quantityInput = dialogView.findViewById(R.id.quantityInput);
-        TextView mlInfoText = dialogView.findViewById(R.id.mlInfoText);
 
-        // Populate drink spinner
-        List<Item> beverages = isAdaDiet ? itemDAO.getAdaItemsByCategory("Beverages") : itemDAO.getItemsByCategory("Beverages");
-        List<Item> juices = isAdaDiet ? itemDAO.getAdaItemsByCategory("Juices") : itemDAO.getItemsByCategory("Juices");
-
-        List<String> drinkOptions = new ArrayList<>();
-        drinkOptions.add("Select Drink");
-
-        for (Item item : beverages) {
-            if (item != null && item.getName() != null) {
-                drinkOptions.add(item.getName() + " (240ml)");
-            }
-        }
-        for (Item item : juices) {
-            if (item != null && item.getName() != null) {
-                drinkOptions.add(item.getName() + " (180ml)");
-            }
+        // Populate drink options
+        List<Item> drinks = itemDAO.getItemsByCategory("Drinks");
+        List<String> drinkNames = new ArrayList<>();
+        drinkNames.add("Select drink");
+        for (Item drink : drinks) {
+            drinkNames.add(drink.getName());
         }
 
-        ArrayAdapter<String> drinkAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, drinkOptions);
-        drinkAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        drinkSpinner.setAdapter(drinkAdapter);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, drinkNames);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        drinkSpinner.setAdapter(adapter);
 
-        // Update ML info when drink is selected
-        drinkSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position > 0) {
-                    String selectedDrink = drinkOptions.get(position);
-                    int mlPerUnit = selectedDrink.contains("(240ml)") ? 240 : 180;
-                    mlInfoText.setText("ML per unit: " + mlPerUnit);
-                    mlInfoText.setVisibility(View.VISIBLE);
-                } else {
-                    mlInfoText.setVisibility(View.GONE);
+        builder.setPositiveButton("Add", (dialog, which) -> {
+            int selectedPosition = drinkSpinner.getSelectedItemPosition();
+            if (selectedPosition > 0) {
+                String drinkName = drinkNames.get(selectedPosition);
+                String quantityText = quantityInput.getText().toString();
+
+                try {
+                    int quantity = Integer.parseInt(quantityText);
+                    if (quantity > 0) {
+                        // Find drink item to get ml value
+                        Item selectedDrink = drinks.get(selectedPosition - 1);
+                        DrinkSelection selection = new DrinkSelection(drinkName, quantity, selectedDrink.getSizeML());
+
+                        if ("lunch".equals(mealType)) {
+                            lunchDrinks.add(selection);
+                            updateDrinkDisplay(lunchDrinksContainer, lunchDrinks);
+                        } else {
+                            dinnerDrinks.add(selection);
+                            updateDrinkDisplay(dinnerDrinksContainer, dinnerDrinks);
+                        }
+
+                        updateFluidTotal();
+                        updateSaveButtonState();
+                    }
+                } catch (NumberFormatException e) {
+                    Toast.makeText(this, "Please enter a valid quantity", Toast.LENGTH_SHORT).show();
                 }
             }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
         });
 
-        new AlertDialog.Builder(this)
-                .setTitle("Add " + (mealType != null ? mealType.substring(0, 1).toUpperCase() + mealType.substring(1) : "Meal") + " Drink")
-                .setView(dialogView)
-                .setPositiveButton("Add", (dialog, which) -> {
-                    int drinkPosition = drinkSpinner.getSelectedItemPosition();
-                    String quantityStr = quantityInput.getText().toString().trim();
-
-                    if (drinkPosition > 0 && !quantityStr.isEmpty()) {
-                        try {
-                            int quantity = Integer.parseInt(quantityStr);
-                            String drinkName = drinkOptions.get(drinkPosition);
-                            int mlPerUnit = drinkName.contains("(240ml)") ? 240 : 180;
-
-                            DrinkSelection drink = new DrinkSelection(drinkName, quantity, mlPerUnit);
-
-                            if ("lunch".equals(mealType)) {
-                                lunchDrinks.add(drink);
-                                updateDrinkDisplay(lunchDrinksContainer, lunchDrinks);
-                            } else {
-                                dinnerDrinks.add(drink);
-                                updateDrinkDisplay(dinnerDrinksContainer, dinnerDrinks);
-                            }
-
-                            updateFluidTracking();
-                            updateSaveButtonState();
-
-                        } catch (NumberFormatException e) {
-                            Toast.makeText(this, "Please enter a valid quantity", Toast.LENGTH_SHORT).show();
-                        }
-                    } else {
-                        Toast.makeText(this, "Please select a drink and enter quantity", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .setNegativeButton("Cancel", null)
-                .show();
+        builder.setNegativeButton("Cancel", null);
+        builder.show();
     }
 
     private void updateDrinkDisplay(LinearLayout container, List<DrinkSelection> drinks) {
-        if (container == null) return;
-
         container.removeAllViews();
 
         for (int i = 0; i < drinks.size(); i++) {
@@ -516,11 +468,12 @@ public class MealPlanningActivity extends AppCompatActivity {
 
             LinearLayout drinkRow = new LinearLayout(this);
             drinkRow.setOrientation(LinearLayout.HORIZONTAL);
-            drinkRow.setPadding(0, 4, 0, 4);
 
             TextView drinkText = new TextView(this);
-            drinkText.setText(drink.quantity + "x " + drink.drinkName + " (" + drink.getTotalML() + "ml)");
-            drinkText.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
+            drinkText.setText(String.format("%s x%d (%dml)",
+                    drink.drinkName, drink.quantity, drink.getTotalML()));
+            drinkText.setLayoutParams(new LinearLayout.LayoutParams(0,
+                    LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
 
             Button removeButton = new Button(this);
             removeButton.setText("Remove");
@@ -529,7 +482,7 @@ public class MealPlanningActivity extends AppCompatActivity {
             removeButton.setOnClickListener(v -> {
                 drinks.remove(index);
                 updateDrinkDisplay(container, drinks);
-                updateFluidTracking();
+                updateFluidTotal();
                 updateSaveButtonState();
             });
 
@@ -539,9 +492,8 @@ public class MealPlanningActivity extends AppCompatActivity {
         }
     }
 
-    private void updateFluidTracking() {
+    private void updateFluidTotal() {
         currentFluidML = 0;
-
         for (DrinkSelection drink : lunchDrinks) {
             currentFluidML += drink.getTotalML();
         }
@@ -549,11 +501,15 @@ public class MealPlanningActivity extends AppCompatActivity {
             currentFluidML += drink.getTotalML();
         }
 
-        // Update UI to show fluid status if needed
-        // You can add a TextView to show current fluid intake vs limit
+        // Update UI if there's a fluid display
+        if (fluidLimitML > 0) {
+            // Could add fluid total display here
+            Log.d(TAG, String.format("Current fluid: %dml / %dml", currentFluidML, fluidLimitML));
+        }
     }
 
     private void setupListeners() {
+        // Action buttons
         if (saveOrderButton != null) {
             saveOrderButton.setOnClickListener(v -> saveOrderAndFinish());
         }
@@ -566,7 +522,7 @@ public class MealPlanningActivity extends AppCompatActivity {
             homeButton.setOnClickListener(v -> goToMainMenu());
         }
 
-        // NPO checkbox listeners
+        // NPO checkboxes
         if (breakfastNPOCheckbox != null) {
             breakfastNPOCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 if (breakfastItemsContainer != null) {
@@ -665,11 +621,74 @@ public class MealPlanningActivity extends AppCompatActivity {
         title.setPadding(0, 8, 0, 8);
         container.addView(title);
 
+        // Get specific items based on diet type and meal
+        String itemsList = getPredeterminedItemsForMeal(diet, mealType, isAdaDiet);
+
         TextView itemsText = new TextView(this);
-        String items = "Predetermined items for " + diet + " diet";
-        itemsText.setText(items);
+        itemsText.setText(itemsList);
         itemsText.setPadding(16, 8, 16, 8);
+        itemsText.setTextSize(14);
         container.addView(itemsText);
+    }
+
+    private String getPredeterminedItemsForMeal(String dietType, String mealType, boolean isADA) {
+        StringBuilder items = new StringBuilder();
+
+        if ("Clear Liquid".equals(dietType)) {
+            // Existing Clear Liquid logic
+            if (isADA) {
+                items.append("• Apple Juice (ADA)\n");
+                items.append("• Sprite Zero (ADA)\n");
+                items.append("• Sugar Free Jello (ADA)\n");
+            } else {
+                items.append("• Orange Juice\n");
+                items.append("• Sprite\n");
+                items.append("• Jello\n");
+            }
+            items.append("• Clear Broth\n");
+            items.append("• Water\n");
+            items.append("• Tea/Coffee\n");
+
+        } else if ("Full Liquid".equals(dietType)) {
+            // Full Liquid diet items
+            switch (mealType) {
+                case "Breakfast":
+                    items.append("• Apple Juice (120ml)\n");
+                    items.append("• Jello").append(isADA ? " (Sugar Free)" : "").append("\n");
+                    items.append("• Cream of Wheat\n");
+                    items.append("• Coffee (200ml)\n");
+                    items.append("• ").append(isADA ? "2% Milk (240ml)" : "Whole Milk (240ml)").append("\n");
+                    items.append("• ").append(isADA ? "Sprite Zero (355ml)" : "Sprite (355ml)").append("\n");
+                    items.append("• Ensure (240ml)\n");
+                    break;
+
+                case "Lunch":
+                    items.append("• Cranberry Juice (120ml)\n");
+                    items.append("• Jello").append(isADA ? " (Sugar Free)" : "").append("\n");
+                    items.append("• Cream of Chicken Soup\n");
+                    items.append("• Pudding").append(isADA ? " (Sugar Free)" : "").append("\n");
+                    items.append("• ").append(isADA ? "2% Milk (240ml)" : "Whole Milk (240ml)").append("\n");
+                    items.append("• ").append(isADA ? "Sprite Zero (355ml)" : "Sprite (355ml)").append("\n");
+                    items.append("• Ensure (240ml)\n");
+                    break;
+
+                case "Dinner":
+                    items.append("• Apple Juice (120ml)\n");
+                    items.append("• Jello").append(isADA ? " (Sugar Free)" : "").append("\n");
+                    items.append("• Tomato Soup\n");
+                    items.append("• Pudding").append(isADA ? " (Sugar Free)" : "").append("\n");
+                    items.append("• ").append(isADA ? "2% Milk (240ml)" : "Whole Milk (240ml)").append("\n");
+                    items.append("• ").append(isADA ? "Sprite Zero (355ml)" : "Sprite (355ml)").append("\n");
+                    items.append("• Ensure (240ml)\n");
+                    break;
+            }
+
+        } else if ("Puree".equals(dietType)) {
+            // Keep existing puree logic or add specific items if needed
+            items.append("Predetermined items for ").append(dietType).append(" diet");
+        }
+
+        return items.toString();
     }
 
     private void loadRegularMealItems() {

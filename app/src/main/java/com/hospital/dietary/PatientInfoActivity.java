@@ -212,8 +212,8 @@ public class PatientInfoActivity extends AppCompatActivity {
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     String selectedDiet = editDietSpinner.getSelectedItem().toString();
 
-                    // Only show ADA toggle for Clear Liquid diet
-                    if ("Clear Liquid".equals(selectedDiet)) {
+                    // FIXED: Show ADA toggle for Puree, Full Liquid, or Clear Liquid
+                    if ("Puree".equals(selectedDiet) || "Full Liquid".equals(selectedDiet) || "Clear Liquid".equals(selectedDiet)) {
                         editAdaToggle.setVisibility(View.VISIBLE);
                     } else {
                         editAdaToggle.setVisibility(View.GONE);
@@ -340,13 +340,19 @@ public class PatientInfoActivity extends AppCompatActivity {
                 editRoomSpinner.setSelection(roomPosition);
             }
 
-            // FIXED: Handle diet and ADA toggle
+            // FIXED: Handle diet and ADA toggle for all liquid diets
             String baseDiet = patient.getDiet();
             boolean isAda = false;
 
             if (baseDiet != null && baseDiet.contains("ADA")) {
                 if (baseDiet.equals("Clear Liquid ADA")) {
                     baseDiet = "Clear Liquid";
+                    isAda = true;
+                } else if (baseDiet.equals("Full Liquid ADA")) {
+                    baseDiet = "Full Liquid";
+                    isAda = true;
+                } else if (baseDiet.equals("Puree ADA")) {
+                    baseDiet = "Puree";
                     isAda = true;
                 } else {
                     // For other ADA diets, convert back to base diet
@@ -360,12 +366,15 @@ public class PatientInfoActivity extends AppCompatActivity {
                 editDietSpinner.setSelection(dietPosition);
             }
 
-            // Set ADA toggle
+            // Set ADA toggle and visibility
             editAdaToggle.setChecked(isAda);
-            editAdaToggle.setVisibility("Clear Liquid".equals(baseDiet) ? View.VISIBLE : View.GONE);
+            // Show ADA toggle for liquid diets
+            boolean showAdaToggle = "Clear Liquid".equals(baseDiet) || "Full Liquid".equals(baseDiet) || "Puree".equals(baseDiet);
+            editAdaToggle.setVisibility(showAdaToggle ? View.VISIBLE : View.GONE);
 
             // Set fluid restriction
-            String fluidRestriction = patient.getFluidRestriction() != null ? patient.getFluidRestriction() : "None";
+            String fluidRestriction = patient.getFluidRestriction() != null ?
+                    patient.getFluidRestriction() : "No Restriction";
             ArrayAdapter<String> fluidAdapter = (ArrayAdapter<String>) editFluidRestrictionSpinner.getAdapter();
             int fluidPosition = fluidAdapter.getPosition(fluidRestriction);
             if (fluidPosition >= 0) {
@@ -422,25 +431,29 @@ public class PatientInfoActivity extends AppCompatActivity {
             selectedPatient.setWing(editWingSpinner.getSelectedItem().toString());
             selectedPatient.setRoomNumber(editRoomSpinner.getSelectedItem().toString());
 
-            // FIXED: Handle diet with ADA toggle
+            // FIXED: Handle diet with ADA toggle for all liquid diets
             String baseDiet = editDietSpinner.getSelectedItem().toString();
             String finalDiet = baseDiet;
-            if ("Clear Liquid".equals(baseDiet) && editAdaToggle.isChecked()) {
-                finalDiet = "Clear Liquid ADA";
+            if (editAdaToggle.isChecked() &&
+                    ("Clear Liquid".equals(baseDiet) || "Full Liquid".equals(baseDiet) || "Puree".equals(baseDiet))) {
+                finalDiet = baseDiet + " ADA";
             }
             selectedPatient.setDiet(finalDiet);
+            selectedPatient.setDietType(finalDiet); // Keep both fields in sync
+            selectedPatient.setAdaDiet(editAdaToggle.isChecked());
 
             String fluidRestriction = editFluidRestrictionSpinner.getSelectedItem().toString();
-            selectedPatient.setFluidRestriction("None".equals(fluidRestriction) ? null : fluidRestriction);
+            selectedPatient.setFluidRestriction("None".equals(fluidRestriction) ? "No Restriction" : fluidRestriction);
 
             // Update texture modifications
             String textureModification = "Regular";
             if (editPureedCheckBox.isChecked()) textureModification = "Pureed";
             else if (editChoppedCheckBox.isChecked()) textureModification = "Chopped";
             else if (editSoftCheckBox.isChecked()) textureModification = "Soft";
+
             selectedPatient.setTextureModifications(textureModification);
 
-            // Update meal completion status
+            // Update meal completion
             selectedPatient.setBreakfastComplete(editBreakfastCompleteCheckBox.isChecked());
             selectedPatient.setLunchComplete(editLunchCompleteCheckBox.isChecked());
             selectedPatient.setDinnerComplete(editDinnerCompleteCheckBox.isChecked());
@@ -449,19 +462,17 @@ public class PatientInfoActivity extends AppCompatActivity {
             boolean success = patientDAO.updatePatient(selectedPatient);
 
             if (success) {
-                Toast.makeText(this, "Patient " + firstName + " " + lastName + " updated successfully!",
-                        Toast.LENGTH_LONG).show();
-
-                // Refresh patient list and hide edit section
-                loadPatients();
-                cancelEdit();
+                showMessage("Patient " + firstName + " " + lastName + " updated successfully!");
+                loadPatients(); // Refresh the list
+                editPatientSection.setVisibility(View.GONE);
+                selectedPatient = null;
             } else {
-                showError("Failed to save changes. Please try again.");
+                showError("Failed to update patient");
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-            showError("Save error: " + e.getMessage());
+            showError("Error saving changes: " + e.getMessage());
         }
     }
 
@@ -511,10 +522,7 @@ public class PatientInfoActivity extends AppCompatActivity {
                         boolean success = patientDAO.deletePatient(selectedPatient.getPatientId());
 
                         if (success) {
-                            Toast.makeText(this, "Patient " + selectedPatient.getFullName() +
-                                    " has been deleted.", Toast.LENGTH_LONG).show();
-
-                            // Refresh list and hide edit section
+                            showMessage("Patient " + selectedPatient.getFullName() + " has been deleted.");
                             loadPatients();
                             cancelEdit();
                         } else {
@@ -544,6 +552,10 @@ public class PatientInfoActivity extends AppCompatActivity {
                 .setMessage(message)
                 .setPositiveButton("OK", null)
                 .show();
+    }
+
+    private void showMessage(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 
     @Override

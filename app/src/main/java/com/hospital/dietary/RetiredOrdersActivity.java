@@ -264,6 +264,41 @@ public class RetiredOrdersActivity extends AppCompatActivity {
             content.append("• Clear Broth\n");
             content.append("• Water\n");
             content.append("• Tea/Coffee\n\n");
+        } else if (diet.startsWith("Full Liquid")) {
+            // Add full liquid items with ADA substitutions if needed
+            boolean isADA = diet.contains("ADA");
+
+            switch (mealName) {
+                case "BREAKFAST":
+                    content.append("• Apple Juice (120ml)\n");
+                    content.append("• Jello").append(isADA ? " (Sugar Free)" : "").append("\n");
+                    content.append("• Cream of Wheat\n");
+                    content.append("• Coffee (200ml)\n");
+                    content.append("• ").append(isADA ? "2% Milk (240ml)" : "Whole Milk (240ml)").append("\n");
+                    content.append("• ").append(isADA ? "Sprite Zero (355ml)" : "Sprite (355ml)").append("\n");
+                    content.append("• Ensure (240ml)\n\n");
+                    break;
+
+                case "LUNCH":
+                    content.append("• Cranberry Juice (120ml)\n");
+                    content.append("• Jello").append(isADA ? " (Sugar Free)" : "").append("\n");
+                    content.append("• Cream of Chicken Soup\n");
+                    content.append("• Pudding").append(isADA ? " (Sugar Free)" : "").append("\n");
+                    content.append("• ").append(isADA ? "2% Milk (240ml)" : "Whole Milk (240ml)").append("\n");
+                    content.append("• ").append(isADA ? "Sprite Zero (355ml)" : "Sprite (355ml)").append("\n");
+                    content.append("• Ensure (240ml)\n\n");
+                    break;
+
+                case "DINNER":
+                    content.append("• Apple Juice (120ml)\n");
+                    content.append("• Jello").append(isADA ? " (Sugar Free)" : "").append("\n");
+                    content.append("• Tomato Soup\n");
+                    content.append("• Pudding").append(isADA ? " (Sugar Free)" : "").append("\n");
+                    content.append("• ").append(isADA ? "2% Milk (240ml)" : "Whole Milk (240ml)").append("\n");
+                    content.append("• ").append(isADA ? "Sprite Zero (355ml)" : "Sprite (355ml)").append("\n");
+                    content.append("• Ensure (240ml)\n\n");
+                    break;
+            }
         } else {
             content.append("Regular meal items\n");
             content.append("(Meal planning completed)\n\n");
