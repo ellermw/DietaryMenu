@@ -11,31 +11,40 @@ public class Patient {
     private String wing;
     private String roomNumber;
     private String dietType;
-    private String diet; // Alternative field for compatibility
+    private String diet;
     private boolean adaDiet;
     private String fluidRestriction;
     private String textureModifications;
 
-    // NPO (Nothing by mouth) fields
-    private boolean breakfastNPO;
-    private boolean lunchNPO;
-    private boolean dinnerNPO;
-
-    // Texture modification fields
+    // Texture modification flags - existing
     private boolean mechanicalChopped;
     private boolean mechanicalGround;
     private boolean biteSize;
     private boolean breadOK;
 
-    // Meal completion fields
+    // FIXED: New texture modification options
+    private boolean nectarThick;
+    private boolean puddingThick;
+    private boolean honeyThick;
+    private boolean extraGravy;
+    private boolean meatsOnly; // Shows only when Mechanical Ground or Chopped is selected
+
+    // NPO (Nothing by mouth) flags
+    private boolean breakfastNPO;
+    private boolean lunchNPO;
+    private boolean dinnerNPO;
+
+    // Meal completion flags
     private boolean breakfastComplete;
     private boolean lunchComplete;
     private boolean dinnerComplete;
 
-    // Meal items and drinks fields
+    // Meal items
     private String breakfastItems;
     private String lunchItems;
     private String dinnerItems;
+
+    // Drink items
     private String breakfastJuices;
     private String lunchJuices;
     private String dinnerJuices;
@@ -43,66 +52,34 @@ public class Patient {
     private String lunchDrinks;
     private String dinnerDrinks;
 
-    // Meal selections
+    // Metadata
+    private Date createdDate;
     private List<String> mealSelections;
 
-    private Date createdDate;
-
-    // Default constructor
+    // Constructor
     public Patient() {
-        this.adaDiet = false;
-        this.breakfastNPO = false;
-        this.lunchNPO = false;
-        this.dinnerNPO = false;
-        this.mechanicalChopped = false;
-        this.mechanicalGround = false;
-        this.biteSize = false;
-        this.breadOK = false;
+        this.createdDate = new Date();
+        this.mealSelections = new ArrayList<>();
+        // Set default values
+        this.fluidRestriction = "No Restriction";
+        this.textureModifications = "Regular";
         this.breakfastComplete = false;
         this.lunchComplete = false;
         this.dinnerComplete = false;
-        this.mealSelections = new ArrayList<>();
-        this.createdDate = new Date();
-    }
-
-    // Constructor with essential fields
-    public Patient(String patientFirstName, String patientLastName, String wing, String roomNumber, String dietType) {
-        this();
-        this.patientFirstName = patientFirstName;
-        this.patientLastName = patientLastName;
-        this.wing = wing;
-        this.roomNumber = roomNumber;
-        this.dietType = dietType;
-        this.diet = dietType; // Keep both in sync
-    }
-
-    // Full constructor
-    public Patient(int patientId, String patientFirstName, String patientLastName,
-                   String wing, String roomNumber, String dietType, boolean adaDiet,
-                   String fluidRestriction, boolean mechanicalChopped, boolean mechanicalGround,
-                   boolean biteSize, boolean breadOK, boolean breakfastComplete,
-                   boolean lunchComplete, boolean dinnerComplete) {
-        this.patientId = patientId;
-        this.patientFirstName = patientFirstName;
-        this.patientLastName = patientLastName;
-        this.wing = wing;
-        this.roomNumber = roomNumber;
-        this.dietType = dietType;
-        this.diet = dietType; // Keep both in sync
-        this.adaDiet = adaDiet;
-        this.fluidRestriction = fluidRestriction;
-        this.mechanicalChopped = mechanicalChopped;
-        this.mechanicalGround = mechanicalGround;
-        this.biteSize = biteSize;
-        this.breadOK = breadOK;
-        this.breakfastComplete = breakfastComplete;
-        this.lunchComplete = lunchComplete;
-        this.dinnerComplete = dinnerComplete;
         this.breakfastNPO = false;
         this.lunchNPO = false;
         this.dinnerNPO = false;
-        this.mealSelections = new ArrayList<>();
-        this.createdDate = new Date();
+        this.adaDiet = false;
+        this.mechanicalChopped = false;
+        this.mechanicalGround = false;
+        this.biteSize = false;
+        this.breadOK = true; // Default to bread being OK
+        // Initialize new fields
+        this.nectarThick = false;
+        this.puddingThick = false;
+        this.honeyThick = false;
+        this.extraGravy = false;
+        this.meatsOnly = false;
     }
 
     // Getters and Setters
@@ -146,7 +123,6 @@ public class Patient {
         this.roomNumber = roomNumber;
     }
 
-    // Diet type methods (existing)
     public String getDietType() {
         return dietType;
     }
@@ -156,7 +132,6 @@ public class Patient {
         this.diet = dietType; // Keep both in sync
     }
 
-    // Diet methods (for compatibility with DAO)
     public String getDiet() {
         return diet != null ? diet : dietType;
     }
@@ -216,7 +191,7 @@ public class Patient {
         this.dinnerNPO = dinnerNPO;
     }
 
-    // Texture modification methods
+    // Existing texture modification methods
     public boolean isMechanicalChopped() {
         return mechanicalChopped;
     }
@@ -247,6 +222,47 @@ public class Patient {
 
     public void setBreadOK(boolean breadOK) {
         this.breadOK = breadOK;
+    }
+
+    // FIXED: New texture modification getters and setters
+    public boolean isNectarThick() {
+        return nectarThick;
+    }
+
+    public void setNectarThick(boolean nectarThick) {
+        this.nectarThick = nectarThick;
+    }
+
+    public boolean isPuddingThick() {
+        return puddingThick;
+    }
+
+    public void setPuddingThick(boolean puddingThick) {
+        this.puddingThick = puddingThick;
+    }
+
+    public boolean isHoneyThick() {
+        return honeyThick;
+    }
+
+    public void setHoneyThick(boolean honeyThick) {
+        this.honeyThick = honeyThick;
+    }
+
+    public boolean isExtraGravy() {
+        return extraGravy;
+    }
+
+    public void setExtraGravy(boolean extraGravy) {
+        this.extraGravy = extraGravy;
+    }
+
+    public boolean isMeatsOnly() {
+        return meatsOnly;
+    }
+
+    public void setMeatsOnly(boolean meatsOnly) {
+        this.meatsOnly = meatsOnly;
     }
 
     // Meal completion methods
@@ -301,7 +317,7 @@ public class Patient {
         this.dinnerItems = dinnerItems;
     }
 
-    // Breakfast Juices
+    // Juice getters and setters
     public String getBreakfastJuices() {
         return breakfastJuices != null ? breakfastJuices : "";
     }
@@ -310,7 +326,6 @@ public class Patient {
         this.breakfastJuices = breakfastJuices;
     }
 
-    // Lunch Juices
     public String getLunchJuices() {
         return lunchJuices != null ? lunchJuices : "";
     }
@@ -319,7 +334,6 @@ public class Patient {
         this.lunchJuices = lunchJuices;
     }
 
-    // Dinner Juices
     public String getDinnerJuices() {
         return dinnerJuices != null ? dinnerJuices : "";
     }
@@ -328,7 +342,7 @@ public class Patient {
         this.dinnerJuices = dinnerJuices;
     }
 
-    // Breakfast Drinks
+    // Drink getters and setters
     public String getBreakfastDrinks() {
         return breakfastDrinks != null ? breakfastDrinks : "";
     }
@@ -337,7 +351,6 @@ public class Patient {
         this.breakfastDrinks = breakfastDrinks;
     }
 
-    // Lunch Drinks
     public String getLunchDrinks() {
         return lunchDrinks != null ? lunchDrinks : "";
     }
@@ -346,7 +359,6 @@ public class Patient {
         this.lunchDrinks = lunchDrinks;
     }
 
-    // Dinner Drinks
     public String getDinnerDrinks() {
         return dinnerDrinks != null ? dinnerDrinks : "";
     }
@@ -355,9 +367,8 @@ public class Patient {
         this.dinnerDrinks = dinnerDrinks;
     }
 
-    // Meal selections methods
     public List<String> getMealSelections() {
-        return mealSelections;
+        return mealSelections != null ? mealSelections : new ArrayList<>();
     }
 
     public void setMealSelections(List<String> mealSelections) {
@@ -399,9 +410,10 @@ public class Patient {
         }
     }
 
-    // Utility methods to check if any texture modifications are applied
+    // FIXED: Updated utility methods to check if any texture modifications are applied
     public boolean hasTextureModifications() {
-        return mechanicalChopped || mechanicalGround || biteSize || !breadOK;
+        return mechanicalChopped || mechanicalGround || biteSize || !breadOK ||
+                nectarThick || puddingThick || honeyThick || extraGravy;
     }
 
     public String getTextureModificationsDescription() {
@@ -410,6 +422,11 @@ public class Patient {
         if (mechanicalGround) modifications.add("Mechanical Ground");
         if (biteSize) modifications.add("Bite Size");
         if (!breadOK) modifications.add("No Bread");
+        if (nectarThick) modifications.add("Nectar Thick");
+        if (puddingThick) modifications.add("Pudding Thick");
+        if (honeyThick) modifications.add("Honey Thick");
+        if (extraGravy) modifications.add("Extra Gravy");
+        if (meatsOnly && (mechanicalChopped || mechanicalGround)) modifications.add("Meats Only");
 
         return modifications.isEmpty() ? "None" : String.join(", ", modifications);
     }

@@ -2,199 +2,220 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#f8f9fa"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="#f5f5f5">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <LinearLayout
-            android:id="@+id/adaToggleContainer"
+        <!-- Header -->
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:visibility="visible" />
+            android:text="Add New Patient"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="#2c3e50"
+            android:gravity="center"
+            android:layout_marginBottom="20dp" />
 
-
-        <!-- Patient Information Section -->
+        <!-- Basic Information Section -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@android:color/white"
-            android:padding="20dp"
-            android:elevation="2dp"
+            android:background="#ffffff"
+            android:padding="16dp"
             android:layout_marginBottom="16dp">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Patient Information"
+                android:text="Basic Information"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="#2c3e50"
-                android:layout_marginBottom="16dp" />
-
-            <!-- Patient First Name -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="First Name *"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:textColor="#2c3e50"
-                android:layout_marginBottom="4dp" />
-
-            <EditText
-                android:id="@+id/patientFirstNameEditText"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:hint="Enter first name"
-                android:background="?android:attr/editTextBackground"
-                android:padding="12dp"
-                android:textSize="16sp"
-                android:layout_marginBottom="12dp"
-                android:importantForAutofill="no" />
-
-            <!-- Patient Last Name -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Last Name *"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:textColor="#2c3e50"
-                android:layout_marginBottom="4dp" />
-
-            <EditText
-                android:id="@+id/patientLastNameEditText"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:hint="Enter last name"
-                android:background="?android:attr/editTextBackground"
-                android:padding="12dp"
-                android:textSize="16sp"
-                android:layout_marginBottom="12dp"
-                android:importantForAutofill="no" />
-
-            <!-- Wing Selection -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Wing *"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:textColor="#2c3e50"
-                android:layout_marginBottom="4dp" />
-
-            <Spinner
-                android:id="@+id/wingSpinner"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:background="?android:attr/editTextBackground"
                 android:layout_marginBottom="12dp" />
 
-            <!-- Room Number Selection -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Room Number *"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:textColor="#2c3e50"
-                android:layout_marginBottom="4dp" />
-
-            <Spinner
-                android:id="@+id/roomNumberSpinner"
+            <!-- Patient Name -->
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:background="?android:attr/editTextBackground"
-                android:layout_marginBottom="12dp" />
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+
+                <EditText
+                    android:id="@+id/patientFirstNameEditText"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:hint="Enter first name"
+                    android:padding="12dp"
+                    android:layout_marginEnd="8dp"
+                    android:inputType="textPersonName|textCapWords" />
+
+                <EditText
+                    android:id="@+id/patientLastNameEditText"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:hint="Enter last name"
+                    android:padding="12dp"
+                    android:layout_marginStart="8dp"
+                    android:inputType="textPersonName|textCapWords" />
+
+            </LinearLayout>
+
+            <!-- Wing and Room -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginEnd="8dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Wing:"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="4dp" />
+
+                    <Spinner
+                        android:id="@+id/wingSpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginStart="8dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Room:"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="4dp" />
+
+                    <Spinner
+                        android:id="@+id/roomNumberSpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
 
         </LinearLayout>
 
-        <!-- Diet Information Section -->
+        <!-- Dietary Requirements Section -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@android:color/white"
-            android:padding="20dp"
-            android:elevation="2dp"
+            android:background="#ffffff"
+            android:padding="16dp"
             android:layout_marginBottom="16dp">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Diet Information"
+                android:text="Dietary Requirements"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="#2c3e50"
-                android:layout_marginBottom="16dp" />
+                android:layout_marginBottom="12dp" />
 
             <!-- Diet Type -->
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Diet Type *"
+                android:text="Diet Type:"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                android:textColor="#2c3e50"
                 android:layout_marginBottom="4dp" />
 
             <Spinner
                 android:id="@+id/dietSpinner"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:background="?android:attr/editTextBackground"
                 android:layout_marginBottom="12dp" />
 
-            <!-- ADA Diet Toggle -->
-            <CheckBox
-                android:id="@+id/adaToggleCheckBox"
+            <!-- ADA Toggle for liquid diets -->
+            <LinearLayout
+                android:id="@+id/adaToggleContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="ADA Diet (American Diabetes Association)"
-                android:textSize="14sp"
-                android:textColor="#2c3e50"
+                android:orientation="horizontal"
                 android:layout_marginBottom="12dp"
-                android:visibility="gone" />
+                android:visibility="gone"
+                android:background="#e8f5e8"
+                android:padding="8dp">
+
+                <CheckBox
+                    android:id="@+id/adaToggleCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ADA Diet"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Check for ADA version of selected diet"
+                    android:textSize="12sp"
+                    android:textColor="#7f8c8d"
+                    android:layout_marginStart="8dp" />
+
+            </LinearLayout>
 
             <!-- Fluid Restriction -->
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Fluid Restriction"
+                android:text="Fluid Restriction:"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                android:textColor="#2c3e50"
                 android:layout_marginBottom="4dp" />
 
             <Spinner
                 android:id="@+id/fluidRestrictionSpinner"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:background="?android:attr/editTextBackground"
                 android:layout_marginBottom="12dp" />
 
         </LinearLayout>
 
-        <!-- FIXED: Texture Modifications Section -->
+        <!-- Texture Modifications Section -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@android:color/white"
-            android:padding="20dp"
-            android:elevation="2dp"
+            android:background="#ffffff"
+            android:padding="16dp"
             android:layout_marginBottom="16dp">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/texture_modifications"
+                android:text="Texture Modifications"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="#2c3e50"
@@ -203,50 +224,116 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/texture_note"
+                android:text="Select applicable texture modifications (multiple selections allowed)"
                 android:textSize="12sp"
-                android:textColor="#e74c3c"
-                android:background="#fdf2f2"
-                android:padding="8dp"
+                android:textColor="#7f8c8d"
                 android:layout_marginBottom="12dp" />
 
-            <!-- FIXED: Multiple checkbox selections allowed -->
+            <!-- Original Texture Modifications -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Physical Modifications:"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+
             <CheckBox
                 android:id="@+id/mechanicalChoppedCheckBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/mechanical_chopped"
-                android:textSize="14sp"
-                android:textColor="#2c3e50"
-                android:layout_marginBottom="8dp" />
+                android:text="Mechanical Chopped"
+                android:textSize="14sp" />
 
             <CheckBox
                 android:id="@+id/mechanicalGroundCheckBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/mechanical_ground"
-                android:textSize="14sp"
-                android:textColor="#2c3e50"
-                android:layout_marginBottom="8dp" />
+                android:text="Mechanical Ground"
+                android:textSize="14sp" />
 
             <CheckBox
                 android:id="@+id/biteSizeCheckBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/bite_size"
-                android:textSize="14sp"
-                android:textColor="#2c3e50"
-                android:layout_marginBottom="8dp" />
+                android:text="Bite Size"
+                android:textSize="14sp" />
 
             <CheckBox
                 android:id="@+id/breadOKCheckBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/bread_ok"
+                android:text="Bread OK"
+                android:textSize="14sp" />
+
+            <!-- Meats Only Toggle -->
+            <LinearLayout
+                android:id="@+id/meatsOnlyContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="12dp"
+                android:visibility="gone"
+                android:background="#fff3cd"
+                android:padding="8dp">
+
+                <CheckBox
+                    android:id="@+id/meatsOnlyCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Meats Only"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Apply mechanical modification to meats only"
+                    android:textSize="12sp"
+                    android:textColor="#7f8c8d"
+                    android:layout_marginStart="8dp" />
+
+            </LinearLayout>
+
+            <!-- New Texture Modification Options -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Liquid Thickness and Special Modifications:"
                 android:textSize="14sp"
-                android:textColor="#27ae60"
                 android:textStyle="bold"
+                android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp" />
+
+            <CheckBox
+                android:id="@+id/nectarThickCheckBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Nectar Thick"
+                android:textSize="14sp" />
+
+            <CheckBox
+                android:id="@+id/puddingThickCheckBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Pudding Thick"
+                android:textSize="14sp" />
+
+            <CheckBox
+                android:id="@+id/honeyThickCheckBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Honey Thick"
+                android:textSize="14sp" />
+
+            <CheckBox
+                android:id="@+id/extraGravyCheckBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Extra Gravy"
+                android:textSize="14sp" />
 
         </LinearLayout>
 
@@ -255,33 +342,42 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="8dp">
+            android:layout_marginTop="16dp">
 
             <Button
                 android:id="@+id/clearFormButton"
                 android:layout_width="0dp"
-                android:layout_height="56dp"
+                android:layout_height="64dp"
                 android:layout_weight="1"
                 android:text="Clear Form"
                 android:textSize="16sp"
-                android:textColor="@android:color/white"
+                android:textColor="#ffffff"
                 android:background="#95a5a6"
-                android:elevation="2dp"
                 android:layout_marginEnd="8dp" />
 
             <Button
                 android:id="@+id/savePatientButton"
                 android:layout_width="0dp"
-                android:layout_height="56dp"
-                android:layout_weight="1"
+                android:layout_height="64dp"
+                android:layout_weight="2"
                 android:text="Save Patient"
-                android:textSize="16sp"
-                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:textColor="#ffffff"
                 android:background="#27ae60"
-                android:elevation="2dp"
                 android:layout_marginStart="8dp" />
 
         </LinearLayout>
+
+        <!-- Help Section -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="• Select wing first to populate room numbers\n• ADA toggle appears for Puree, Clear Liquid, and Full Liquid diets\n• Meats Only option appears when Mechanical Ground or Chopped is selected\n• Liquid diets are automatically completed upon creation"
+            android:textSize="14sp"
+            android:textColor="#7f8c8d"
+            android:background="#ecf0f1"
+            android:padding="16dp"
+            android:layout_marginTop="20dp" />
 
     </LinearLayout>
 
