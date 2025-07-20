@@ -340,6 +340,71 @@ public class PatientDAO {
     }
 
     /**
+     * Get patients with all meals completed (breakfast, lunch, dinner)
+     */
+    public List<Patient> getCompletedPatients() {
+        List<Patient> patients = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        String query = "SELECT * FROM PatientInfo " +
+                "WHERE breakfast_complete = 1 AND lunch_complete = 1 AND dinner_complete = 1 " +
+                "ORDER BY wing, room_number";
+
+        Cursor cursor = null;
+        try {
+            cursor = db.rawQuery(query, null);
+
+            if (cursor.moveToFirst()) {
+                do {
+                    Patient patient = createPatientFromCursor(cursor);
+                    loadPatientMealSelections(patient);
+                    patients.add(patient);
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            Log.e("PatientDAO", "Error getting completed patients: " + e.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return patients;
+    }
+
+    /**
+     * Get patients with all meals completed for a specific created_date (formatted "yyyy-MM-dd")
+     */
+    public List<Patient> getOrdersByDate(String date) {
+        List<Patient> patients = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        String query = "SELECT * FROM PatientInfo " +
+                "WHERE DATE(created_date) = ? " +
+                "AND breakfast_complete = 1 AND lunch_complete = 1 AND dinner_complete = 1 " +
+                "ORDER BY wing, room_number";
+
+        Cursor cursor = null;
+        try {
+            cursor = db.rawQuery(query, new String[]{date});
+
+            if (cursor.moveToFirst()) {
+                do {
+                    Patient patient = createPatientFromCursor(cursor);
+                    loadPatientMealSelections(patient);
+                    patients.add(patient);
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            Log.e("PatientDAO", "Error getting orders by date: " + e.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return patients;
+    }
+
+    /**
      * Get patients with completed meal orders for a specific date
      */
     public List<Patient> getCompletedOrdersByDate(String date) {

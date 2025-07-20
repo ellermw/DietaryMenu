@@ -3200,6 +3200,7 @@ id adaFriendlyCheckBox
 id adaStatusText
 id adaText
 id adaToggleCheckBox
+id adaToggleContainer
 id add
 id addBreakfastDrinkButton
 id addBreakfastJuiceButton
@@ -3436,6 +3437,7 @@ id header_title
 id hideable
 id home
 id homeAsUp
+id homeButton
 id honorRequest
 id horizontal_only
 id icon
@@ -3796,6 +3798,7 @@ id title
 id titleDividerNoCustom
 id title_template
 id toggle
+id toolbar
 id top
 id topPanel
 id touch_outside
