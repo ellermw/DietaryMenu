@@ -1,85 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.hospital.dietary">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <application
         android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/Theme.DietaryMenu"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:hardwareAccelerated="true">
+        android:theme="@style/AppTheme"
+        tools:targetApi="31">
 
-        <!-- Login Activity - Entry Point -->
+        <!-- Login Activity - App entry point -->
         <activity
             android:name=".LoginActivity"
             android:exported="true"
-            android:windowSoftInputMode="adjustResize"
-            android:importantForAutofill="no">
+            android:theme="@style/AppTheme.WithActionBar"
+            android:importantForAutofill="no"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <!-- Main Menu Activity - Updated main menu with admin options -->
+        <!-- Main Menu Activity - Dashboard -->
         <activity
             android:name=".MainMenuActivity"
             android:exported="false"
-            android:parentActivityName=".LoginActivity"
+            android:theme="@style/AppTheme.WithActionBar"
             android:importantForAutofill="no" />
 
-        <!-- FEATURE: Account Management Activity - New password change feature -->
+        <!-- Password Change Activity -->
         <activity
-            android:name=".AccountManagementActivity"
+            android:name=".PasswordChangeActivity"
             android:exported="false"
-            android:parentActivityName=".MainMenuActivity"
+            android:parentActivityName=".LoginActivity"
+            android:theme="@style/AppTheme.WithActionBar"
             android:importantForAutofill="no"
             android:windowSoftInputMode="adjustResize" />
 
-        <!-- Patient Information Menu Activity - New submenu -->
+        <!-- Patient Info Menu Activity - Patient information hub -->
         <activity
             android:name=".PatientInfoMenuActivity"
             android:exported="false"
             android:parentActivityName=".MainMenuActivity"
+            android:theme="@style/AppTheme.WithActionBar"
             android:importantForAutofill="no" />
 
-        <!-- New Patient Activity - Create new patient -->
+        <!-- New Patient Activity - Add new patients -->
         <activity
             android:name=".NewPatientActivity"
             android:exported="false"
             android:parentActivityName=".PatientInfoMenuActivity"
+            android:theme="@style/AppTheme.WithActionBar"
             android:importantForAutofill="no"
             android:windowSoftInputMode="adjustResize" />
 
-        <!-- Existing Patient Activity - View existing patients -->
+        <!-- Existing Patient Activity - View/search existing patients -->
         <activity
             android:name=".ExistingPatientActivity"
             android:exported="false"
             android:parentActivityName=".PatientInfoMenuActivity"
-            android:importantForAutofill="no" />
+            android:theme="@style/AppTheme.WithActionBar"
+            android:importantForAutofill="no"
+            android:windowSoftInputMode="adjustResize" />
 
-        <!-- Patient Detail Activity - FIXED: View patient details -->
+        <!-- Patient Detail Activity - View/edit specific patient -->
         <activity
             android:name=".PatientDetailActivity"
             android:exported="false"
             android:parentActivityName=".ExistingPatientActivity"
+            android:theme="@style/AppTheme.WithActionBar"
             android:importantForAutofill="no"
             android:windowSoftInputMode="adjustResize" />
 
-        <!-- Patient Info Activity - Manage patients -->
-        <activity
-            android:name=".PatientInfoActivity"
-            android:exported="false"
-            android:parentActivityName=".PatientInfoMenuActivity"
-            android:importantForAutofill="no"
-            android:windowSoftInputMode="adjustResize" />
-
-        <!-- Meal Planning Activity - Plan patient meals -->
+        <!-- FIXED: Meal Planning Activity - Plan patient meals with proper theme -->
         <activity
             android:name=".MealPlanningActivity"
             android:exported="false"
             android:parentActivityName=".PatientDetailActivity"
+            android:theme="@style/AppTheme.WithActionBar"
             android:importantForAutofill="no"
             android:windowSoftInputMode="adjustResize" />
 
@@ -88,6 +91,15 @@
             android:name=".PendingOrdersActivity"
             android:exported="false"
             android:parentActivityName=".MainMenuActivity"
+            android:theme="@style/AppTheme.WithActionBar"
+            android:importantForAutofill="no" />
+
+        <!-- Finished Orders Activity - View completed orders -->
+        <activity
+            android:name=".FinishedOrdersActivity"
+            android:exported="false"
+            android:parentActivityName=".MainMenuActivity"
+            android:theme="@style/AppTheme.WithActionBar"
             android:importantForAutofill="no" />
 
         <!-- Retired Orders Activity - View completed orders -->
@@ -95,21 +107,32 @@
             android:name=".RetiredOrdersActivity"
             android:exported="false"
             android:parentActivityName=".MainMenuActivity"
+            android:theme="@style/AppTheme.WithActionBar"
             android:importantForAutofill="no" />
 
-        <!-- Admin Activity - FIXED: User and item management -->
+        <!-- Admin Activity - User and item management -->
         <activity
             android:name=".AdminActivity"
             android:exported="false"
             android:parentActivityName=".MainMenuActivity"
+            android:theme="@style/AppTheme.WithActionBar"
             android:importantForAutofill="no"
             android:windowSoftInputMode="adjustResize" />
+
+        <!-- View Orders Activity - View and print orders -->
+        <activity
+            android:name=".ViewOrdersActivity"
+            android:exported="false"
+            android:parentActivityName=".MainMenuActivity"
+            android:theme="@style/AppTheme.WithActionBar"
+            android:importantForAutofill="no" />
 
         <!-- Main Activity - Original meal planning (keep for compatibility) -->
         <activity
             android:name=".MainActivity"
             android:exported="false"
             android:parentActivityName=".MealPlanningActivity"
+            android:theme="@style/AppTheme.WithActionBar"
             android:importantForAutofill="no"
             android:windowSoftInputMode="adjustResize" />
 

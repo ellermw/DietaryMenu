@@ -17,20 +17,22 @@
     <application
         android:allowBackup="true"
         android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+        android:dataExtractionRules="@xml/data_extraction_rules"
         android:debuggable="true"
         android:extractNativeLibs="true"
-        android:hardwareAccelerated="true"
+        android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:testOnly="true"
-        android:theme="@style/Theme.DietaryMenu" >
+        android:theme="@style/AppTheme" >
 
-        <!-- Login Activity - Entry Point -->
+        <!-- Login Activity - App entry point -->
         <activity
             android:name="com.hospital.dietary.LoginActivity"
             android:exported="true"
             android:importantForAutofill="no"
+            android:theme="@style/AppTheme.WithActionBar"
             android:windowSoftInputMode="adjustResize" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -39,65 +41,64 @@
             </intent-filter>
         </activity>
 
-        <!-- Main Menu Activity - Updated main menu with admin options -->
+        <!-- Main Menu Activity - Dashboard -->
         <activity
             android:name="com.hospital.dietary.MainMenuActivity"
             android:exported="false"
             android:importantForAutofill="no"
-            android:parentActivityName="com.hospital.dietary.LoginActivity" />
+            android:theme="@style/AppTheme.WithActionBar" />
 
-        <!-- FEATURE: Account Management Activity - New password change feature -->
+        <!-- Password Change Activity -->
         <activity
-            android:name="com.hospital.dietary.AccountManagementActivity"
+            android:name="com.hospital.dietary.PasswordChangeActivity"
             android:exported="false"
             android:importantForAutofill="no"
-            android:parentActivityName="com.hospital.dietary.MainMenuActivity"
+            android:parentActivityName="com.hospital.dietary.LoginActivity"
+            android:theme="@style/AppTheme.WithActionBar"
             android:windowSoftInputMode="adjustResize" />
 
-        <!-- Patient Information Menu Activity - New submenu -->
+        <!-- Patient Info Menu Activity - Patient information hub -->
         <activity
             android:name="com.hospital.dietary.PatientInfoMenuActivity"
             android:exported="false"
             android:importantForAutofill="no"
-            android:parentActivityName="com.hospital.dietary.MainMenuActivity" />
+            android:parentActivityName="com.hospital.dietary.MainMenuActivity"
+            android:theme="@style/AppTheme.WithActionBar" />
 
-        <!-- New Patient Activity - Create new patient -->
+        <!-- New Patient Activity - Add new patients -->
         <activity
             android:name="com.hospital.dietary.NewPatientActivity"
             android:exported="false"
             android:importantForAutofill="no"
             android:parentActivityName="com.hospital.dietary.PatientInfoMenuActivity"
+            android:theme="@style/AppTheme.WithActionBar"
             android:windowSoftInputMode="adjustResize" />
 
-        <!-- Existing Patient Activity - View existing patients -->
+        <!-- Existing Patient Activity - View/search existing patients -->
         <activity
             android:name="com.hospital.dietary.ExistingPatientActivity"
             android:exported="false"
             android:importantForAutofill="no"
-            android:parentActivityName="com.hospital.dietary.PatientInfoMenuActivity" />
+            android:parentActivityName="com.hospital.dietary.PatientInfoMenuActivity"
+            android:theme="@style/AppTheme.WithActionBar"
+            android:windowSoftInputMode="adjustResize" />
 
-        <!-- Patient Detail Activity - FIXED: View patient details -->
+        <!-- Patient Detail Activity - View/edit specific patient -->
         <activity
             android:name="com.hospital.dietary.PatientDetailActivity"
             android:exported="false"
             android:importantForAutofill="no"
             android:parentActivityName="com.hospital.dietary.ExistingPatientActivity"
+            android:theme="@style/AppTheme.WithActionBar"
             android:windowSoftInputMode="adjustResize" />
 
-        <!-- Patient Info Activity - Manage patients -->
-        <activity
-            android:name="com.hospital.dietary.PatientInfoActivity"
-            android:exported="false"
-            android:importantForAutofill="no"
-            android:parentActivityName="com.hospital.dietary.PatientInfoMenuActivity"
-            android:windowSoftInputMode="adjustResize" />
-
-        <!-- Meal Planning Activity - Plan patient meals -->
+        <!-- FIXED: Meal Planning Activity - Plan patient meals with proper theme -->
         <activity
             android:name="com.hospital.dietary.MealPlanningActivity"
             android:exported="false"
             android:importantForAutofill="no"
             android:parentActivityName="com.hospital.dietary.PatientDetailActivity"
+            android:theme="@style/AppTheme.WithActionBar"
             android:windowSoftInputMode="adjustResize" />
 
         <!-- Pending Orders Activity - View pending orders -->
@@ -105,22 +106,41 @@
             android:name="com.hospital.dietary.PendingOrdersActivity"
             android:exported="false"
             android:importantForAutofill="no"
-            android:parentActivityName="com.hospital.dietary.MainMenuActivity" />
+            android:parentActivityName="com.hospital.dietary.MainMenuActivity"
+            android:theme="@style/AppTheme.WithActionBar" />
+
+        <!-- Finished Orders Activity - View completed orders -->
+        <activity
+            android:name="com.hospital.dietary.FinishedOrdersActivity"
+            android:exported="false"
+            android:importantForAutofill="no"
+            android:parentActivityName="com.hospital.dietary.MainMenuActivity"
+            android:theme="@style/AppTheme.WithActionBar" />
 
         <!-- Retired Orders Activity - View completed orders -->
         <activity
             android:name="com.hospital.dietary.RetiredOrdersActivity"
             android:exported="false"
             android:importantForAutofill="no"
-            android:parentActivityName="com.hospital.dietary.MainMenuActivity" />
+            android:parentActivityName="com.hospital.dietary.MainMenuActivity"
+            android:theme="@style/AppTheme.WithActionBar" />
 
-        <!-- Admin Activity - FIXED: User and item management -->
+        <!-- Admin Activity - User and item management -->
         <activity
             android:name="com.hospital.dietary.AdminActivity"
             android:exported="false"
             android:importantForAutofill="no"
             android:parentActivityName="com.hospital.dietary.MainMenuActivity"
+            android:theme="@style/AppTheme.WithActionBar"
             android:windowSoftInputMode="adjustResize" />
+
+        <!-- View Orders Activity - View and print orders -->
+        <activity
+            android:name="com.hospital.dietary.ViewOrdersActivity"
+            android:exported="false"
+            android:importantForAutofill="no"
+            android:parentActivityName="com.hospital.dietary.MainMenuActivity"
+            android:theme="@style/AppTheme.WithActionBar" />
 
         <!-- Main Activity - Original meal planning (keep for compatibility) -->
         <activity
@@ -128,6 +148,7 @@
             android:exported="false"
             android:importantForAutofill="no"
             android:parentActivityName="com.hospital.dietary.MealPlanningActivity"
+            android:theme="@style/AppTheme.WithActionBar"
             android:windowSoftInputMode="adjustResize" />
 
         <provider

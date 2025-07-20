@@ -1,71 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- app/src/main/res/values/colors.xml -->
 <resources>
-    <!-- Primary Colors - Based on McAlester Regional Health Center Logo -->
-    <color name="primary_blue">#1e3a8a</color>          <!-- Deep Blue -->
-    <color name="primary_teal">#0891b2</color>           <!-- Teal Blue -->
-    <color name="light_blue">#3b82f6</color>             <!-- Light Blue -->
-    <color name="hospital_blue">#1e40af</color>          <!-- Hospital Blue -->
-    
-    <!-- Secondary Colors -->
-    <color name="background_light">#f5f7fa</color>       <!-- Light Gray Background -->
-    <color name="background_white">#ffffff</color>       <!-- White Background -->
-    <color name="text_primary">#1e3a8a</color>          <!-- Primary Text -->
-    <color name="text_secondary">#64748b</color>         <!-- Secondary Text -->
-    <color name="text_tertiary">#94a3b8</color>         <!-- Tertiary Text -->
-    <color name="text_dark">#374151</color>             <!-- Dark Text -->
-    
-    <!-- Status Colors -->
-    <color name="success_green">#16a34a</color>         <!-- Success Green -->
-    <color name="warning_orange">#dc2626</color>        <!-- Warning Orange -->
-    <color name="error_red">#dc2626</color>             <!-- Error Red -->
-    <color name="info_blue">#3b82f6</color>             <!-- Info Blue -->
-    <color name="pending_amber">#f59e0b</color>         <!-- Pending Amber -->
-    
-    <!-- Button Colors -->
-    <color name="button_primary">#1e3a8a</color>        <!-- Primary Button -->
-    <color name="button_secondary">#64748b</color>      <!-- Secondary Button -->
-    <color name="button_success">#16a34a</color>        <!-- Success Button -->
-    <color name="button_warning">#dc2626</color>        <!-- Warning Button -->
-    <color name="button_danger">#dc2626</color>         <!-- Danger Button -->
-    <color name="button_info">#0891b2</color>           <!-- Info Button -->
-    
-    <!-- Divider and Border Colors -->
-    <color name="divider_light">#e5e7eb</color>         <!-- Light Divider -->
-    <color name="divider_medium">#d1d5db</color>        <!-- Medium Divider -->
-    <color name="border_light">#e5e7eb</color>          <!-- Light Border -->
-    <color name="border_medium">#9ca3af</color>         <!-- Medium Border -->
-    
-    <!-- Card and Surface Colors -->
-    <color name="card_background">#ffffff</color>       <!-- Card Background -->
-    <color name="surface_light">#f8fafc</color>         <!-- Light Surface -->
-    <color name="surface_medium">#f1f5f9</color>        <!-- Medium Surface -->
-    
-    <!-- Accent Colors -->
-    <color name="accent_purple">#7c3aed</color>         <!-- Purple Accent -->
-    <color name="accent_pink">#ec4899</color>           <!-- Pink Accent -->
-    <color name="accent_indigo">#6366f1</color>         <!-- Indigo Accent -->
-    
-    <!-- Legacy Colors (keep for backward compatibility) -->
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-    
-    <!-- Material Design Colors -->
-    <color name="colorPrimary">@color/primary_blue</color>
-    <color name="colorPrimaryVariant">@color/hospital_blue</color>
-    <color name="colorOnPrimary">@color/white</color>
-    <color name="colorSecondary">@color/primary_teal</color>
-    <color name="colorSecondaryVariant">@color/light_blue</color>
-    <color name="colorOnSecondary">@color/white</color>
-    <color name="colorError">@color/error_red</color>
-    <color name="colorOnError">@color/white</color>
-    <color name="colorSurface">@color/card_background</color>
-    <color name="colorOnSurface">@color/text_primary</color>
-    <color name="colorBackground">@color/background_light</color>
-    <color name="colorOnBackground">@color/text_primary</color>
+    <!-- Primary colors -->
+    <color name="colorPrimary">#2196F3</color>
+    <color name="colorPrimaryDark">#1976D2</color>
+    <color name="colorAccent">#FF5722</color>
+
+    <!-- Secondary colors -->
+    <color name="colorSecondary">#4CAF50</color>
+    <color name="colorSecondaryDark">#388E3C</color>
+
+    <!-- Status colors -->
+    <color name="colorSuccess">#4CAF50</color>
+    <color name="colorWarning">#FF9800</color>
+    <color name="colorDanger">#F44336</color>
+    <color name="colorError">#F44336</color>
+    <color name="colorInfo">#2196F3</color>
+
+    <!-- Text colors -->
+    <color name="colorTextPrimary">#212121</color>
+    <color name="colorTextSecondary">#757575</color>
+    <color name="colorTextHint">#BDBDBD</color>
+    <color name="colorTextDisabled">#9E9E9E</color>
+
+    <!-- Background colors -->
+    <color name="colorBackground">#FAFAFA</color>
+    <color name="colorSurface">#FFFFFF</color>
+    <color name="colorCard">#FFFFFF</color>
+
+    <!-- Border colors -->
+    <color name="colorBorder">#E0E0E0</color>
+    <color name="colorDivider">#EEEEEE</color>
+
+    <!-- Hospital dietary specific colors -->
+    <color name="colorBreakfast">#FF9800</color>
+    <color name="colorLunch">#4CAF50</color>
+    <color name="colorDinner">#9C27B0</color>
+
+    <!-- Diet type colors -->
+    <color name="colorRegularDiet">#2196F3</color>
+    <color name="colorADADiet">#F44336</color>
+    <color name="colorLiquidDiet">#00BCD4</color>
+    <color name="colorPureeDiet">#9E9E9E</color>
+
+    <!-- NPO and completion status colors -->
+    <color name="colorNPO">#F44336</color>
+    <color name="colorComplete">#4CAF50</color>
+    <color name="colorIncomplete">#FF9800</color>
+
+    <!-- Button states -->
+    <color name="colorButtonPressed">#1976D2</color>
+    <color name="colorButtonDisabled">#E0E0E0</color>
+
+    <!-- Material Design colors -->
+    <color name="colorOnPrimary">#FFFFFF</color>
+    <color name="colorOnSecondary">#FFFFFF</color>
+    <color name="colorOnSurface">#212121</color>
+    <color name="colorOnBackground">#212121</color>
+
+    <!-- Transparent colors -->
+    <color name="transparent">#00000000</color>
+    <color name="semi_transparent">#80000000</color>
+
+    <!-- Wing colors for visual identification -->
+    <color name="colorWingA">#E3F2FD</color>
+    <color name="colorWingB">#E8F5E8</color>
+    <color name="colorWingC">#FFF3E0</color>
+    <color name="colorWingD">#F3E5F5</color>
+    <color name="colorWingE">#E0F2F1</color>
+
+    <!-- Room status colors -->
+    <color name="colorRoomOccupied">#FFEBEE</color>
+    <color name="colorRoomAvailable">#E8F5E8</color>
+
+    <!-- Fluid restriction colors -->
+    <color name="colorFluidNormal">#E8F5E8</color>
+    <color name="colorFluidRestricted">#FFF3E0</color>
+    <color name="colorFluidCritical">#FFEBEE</color>
 </resources>

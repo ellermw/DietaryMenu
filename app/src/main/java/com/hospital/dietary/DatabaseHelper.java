@@ -2,15 +2,19 @@ package com.hospital.dietary;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String TAG = "DatabaseHelper";
     private static final String DATABASE_NAME = "hospital_dietary.db";
-    private static final int DATABASE_VERSION = 4; // UPDATED: Incremented version for table name fix
+    private static final int DATABASE_VERSION = 5; // UPDATED: Incremented for PatientMealSelection table
 
     // User table
     private static final String CREATE_USER_TABLE =
@@ -67,6 +71,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     "item_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     "name TEXT NOT NULL, " +
                     "category TEXT NOT NULL, " +
+                    "size_ml INTEGER DEFAULT 0, " +
+                    "description TEXT, " +
+                    "is_ada_friendly INTEGER NOT NULL DEFAULT 0, " +
+                    "is_soda INTEGER NOT NULL DEFAULT 0, " +
+                    "is_clear_liquid INTEGER NOT NULL DEFAULT 0, " +
+                    "meal_type TEXT, " +
+                    "is_default INTEGER NOT NULL DEFAULT 0, " +
                     "ada_friendly INTEGER NOT NULL DEFAULT 0" +
                     ")";
 
@@ -103,6 +114,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     "display_order INTEGER NOT NULL DEFAULT 0" +
                     ")";
 
+    // FIXED: Add the missing PatientMealSelection table
+    private static final String CREATE_PATIENT_MEAL_SELECTION_TABLE =
+            "CREATE TABLE PatientMealSelection (" +
+                    "selection_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    "patient_id INTEGER NOT NULL, " +
+                    "meal_selection TEXT NOT NULL, " +
+                    "created_date TEXT DEFAULT CURRENT_TIMESTAMP, " +
+                    "FOREIGN KEY (patient_id) REFERENCES PatientInfo (patient_id) ON DELETE CASCADE" +
+                    ")";
+
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -118,6 +139,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             db.execSQL(CREATE_ITEM_TABLE);
             db.execSQL(CREATE_FINALIZED_ORDER_TABLE);
             db.execSQL(CREATE_CATEGORY_TABLE);
+            db.execSQL(CREATE_PATIENT_MEAL_SELECTION_TABLE); // FIXED: Added missing table
 
             // Insert default data
             insertDefaultUsers(db);
@@ -151,6 +173,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 migratePatientTableToPatientInfo(db);
             }
 
+            if (oldVersion < 5) {
+                // FIXED: Add PatientMealSelection table if it doesn't exist
+                if (!tableExists(db, "PatientMealSelection")) {
+                    db.execSQL(CREATE_PATIENT_MEAL_SELECTION_TABLE);
+                    Log.d(TAG, "Created PatientMealSelection table");
+                }
+            }
+
             Log.d(TAG, "Database upgrade completed successfully");
         } catch (Exception e) {
             Log.e(TAG, "Error upgrading database: " + e.getMessage());
@@ -161,6 +191,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             db.execSQL("DROP TABLE IF EXISTS Item");
             db.execSQL("DROP TABLE IF EXISTS FinalizedOrder");
             db.execSQL("DROP TABLE IF EXISTS Category");
+            db.execSQL("DROP TABLE IF EXISTS PatientMealSelection"); // FIXED: Added to cleanup
             onCreate(db);
         }
     }
@@ -218,11 +249,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // Helper method to check if table exists
     private boolean tableExists(SQLiteDatabase db, String tableName) {
+        Cursor cursor = null;
         try {
-            db.rawQuery("SELECT 1 FROM " + tableName + " LIMIT 1", null).close();
-            return true;
+            cursor = db.rawQuery("SELECT DISTINCT tbl_name FROM sqlite_master WHERE tbl_name = ?",
+                    new String[]{tableName});
+            return cursor != null && cursor.getCount() > 0;
         } catch (Exception e) {
+            Log.e(TAG, "Error checking table existence: " + e.getMessage());
             return false;
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
         }
     }
 
@@ -288,6 +326,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             long userResult = db.insert("User", null, userValues);
 
             Log.d(TAG, "Default users inserted. Admin: " + adminResult + ", User: " + userResult);
+
         } catch (Exception e) {
             Log.e(TAG, "Error inserting default users: " + e.getMessage());
         }
@@ -296,19 +335,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private void insertDefaultCategories(SQLiteDatabase db) {
         Log.d(TAG, "Inserting default categories");
 
-        try {
-            String[] categories = {
-                    "Breakfast Items", "Proteins", "Starches", "Vegetables",
-                    "Beverages", "Juices", "Desserts", "Fruits", "Dairy"
-            };
+        String[] categories = {
+                "Breakfast Items", "Proteins", "Starches", "Vegetables",
+                "Fruits", "Desserts", "Beverages", "Juices", "Dairy", "Other"
+        };
 
+        try {
             for (int i = 0; i < categories.length; i++) {
                 ContentValues values = new ContentValues();
                 values.put("name", categories[i]);
                 values.put("display_order", i + 1);
                 db.insert("Category", null, values);
             }
-
             Log.d(TAG, "Default categories inserted");
         } catch (Exception e) {
             Log.e(TAG, "Error inserting default categories: " + e.getMessage());
@@ -318,38 +356,78 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private void insertDefaultItems(SQLiteDatabase db) {
         Log.d(TAG, "Inserting default items");
 
-        try {
-            // Sample items - you can expand this list
-            String[][] items = {
-                    {"Scrambled Eggs", "Breakfast Items", "1"},
-                    {"Pancakes", "Breakfast Items", "0"},
-                    {"Oatmeal", "Breakfast Items", "1"},
-                    {"Grilled Chicken", "Proteins", "1"},
-                    {"Baked Fish", "Proteins", "1"},
-                    {"Rice", "Starches", "1"},
-                    {"Mashed Potatoes", "Starches", "0"},
-                    {"Green Beans", "Vegetables", "1"},
-                    {"Carrots", "Vegetables", "1"},
-                    {"Water", "Beverages", "1"},
-                    {"Coffee", "Beverages", "1"},
-                    {"Orange Juice", "Juices", "1"},
-                    {"Apple Juice", "Juices", "1"},
-                    {"Sugar-Free Jello", "Desserts", "1"},
-                    {"Regular Jello", "Desserts", "0"},
-                    {"Apple", "Fruits", "1"},
-                    {"Banana", "Fruits", "1"},
-                    {"Milk", "Dairy", "1"},
-                    {"Yogurt", "Dairy", "1"}
-            };
+        // Sample items for each category
+        String[][] defaultItems = {
+                // Breakfast Items
+                {"Scrambled Eggs", "Breakfast Items", "1"},
+                {"Oatmeal", "Breakfast Items", "1"},
+                {"Toast", "Breakfast Items", "0"},
+                {"Pancakes", "Breakfast Items", "0"},
+                {"Cereal", "Breakfast Items", "1"},
 
-            for (String[] item : items) {
+                // Proteins
+                {"Grilled Chicken", "Proteins", "1"},
+                {"Baked Fish", "Proteins", "1"},
+                {"Lean Beef", "Proteins", "1"},
+                {"Turkey", "Proteins", "1"},
+                {"Tofu", "Proteins", "1"},
+
+                // Starches
+                {"Brown Rice", "Starches", "1"},
+                {"White Rice", "Starches", "0"},
+                {"Mashed Potatoes", "Starches", "0"},
+                {"Whole Wheat Bread", "Starches", "1"},
+                {"Pasta", "Starches", "0"},
+
+                // Vegetables
+                {"Steamed Broccoli", "Vegetables", "1"},
+                {"Green Beans", "Vegetables", "1"},
+                {"Carrots", "Vegetables", "1"},
+                {"Spinach", "Vegetables", "1"},
+                {"Mixed Vegetables", "Vegetables", "1"},
+
+                // Fruits
+                {"Apple", "Fruits", "1"},
+                {"Orange", "Fruits", "1"},
+                {"Banana", "Fruits", "1"},
+                {"Berries", "Fruits", "1"},
+                {"Grapes", "Fruits", "1"},
+
+                // Desserts
+                {"Sugar-free Jello", "Desserts", "1"},
+                {"Vanilla Pudding", "Desserts", "0"},
+                {"Fresh Fruit Cup", "Desserts", "1"},
+                {"Ice Cream", "Desserts", "0"},
+
+                // Beverages
+                {"Water", "Beverages", "1"},
+                {"Diet Soda", "Beverages", "1"},
+                {"Regular Soda", "Beverages", "0"},
+                {"Coffee", "Beverages", "1"},
+                {"Tea", "Beverages", "1"},
+
+                // Juices
+                {"Orange Juice", "Juices", "0"},
+                {"Apple Juice", "Juices", "0"},
+                {"Cranberry Juice", "Juices", "0"},
+                {"Tomato Juice", "Juices", "1"},
+
+                // Dairy
+                {"Skim Milk", "Dairy", "1"},
+                {"Whole Milk", "Dairy", "0"},
+                {"Yogurt", "Dairy", "1"},
+                {"Cheese", "Dairy", "0"}
+        };
+
+        try {
+            for (String[] item : defaultItems) {
                 ContentValues values = new ContentValues();
                 values.put("name", item[0]);
                 values.put("category", item[1]);
                 values.put("ada_friendly", Integer.parseInt(item[2]));
+                values.put("is_ada_friendly", Integer.parseInt(item[2])); // Both columns for compatibility
                 db.insert("Item", null, values);
             }
-
             Log.d(TAG, "Default items inserted");
         } catch (Exception e) {
             Log.e(TAG, "Error inserting default items: " + e.getMessage());
@@ -357,7 +435,32 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     private String getCurrentTimestamp() {
-        return new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.getDefault())
-                .format(new java.util.Date());
+        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
+    }
+
+    /**
+     * Debug method to check database structure
+     */
+    public void debugDatabaseStructure() {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        // Check all tables
+        Cursor cursor = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table'", null);
+        Log.d(TAG, "=== DATABASE TABLES ===");
+        while (cursor.moveToNext()) {
+            String tableName = cursor.getString(0);
+            Log.d(TAG, "Table: " + tableName);
+
+            // Get column info for each table
+            Cursor columnCursor = db.rawQuery("PRAGMA table_info(" + tableName + ")", null);
+            while (columnCursor.moveToNext()) {
+                String columnName = columnCursor.getString(1);
+                String columnType = columnCursor.getString(2);
+                Log.d(TAG, "  Column: " + columnName + " (" + columnType + ")");
+            }
+            columnCursor.close();
+        }
+        cursor.close();
+        Log.d(TAG, "=== END DATABASE TABLES ===");
     }
 }
