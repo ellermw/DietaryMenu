@@ -10,7 +10,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String TAG = "DatabaseHelper";
     private static final String DATABASE_NAME = "hospital_dietary.db";
-    private static final int DATABASE_VERSION = 3; // UPDATED: Incremented version for schema changes
+    private static final int DATABASE_VERSION = 4; // UPDATED: Incremented version for table name fix
 
     // User table
     private static final String CREATE_USER_TABLE =
@@ -21,29 +21,43 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     "full_name TEXT NOT NULL, " +
                     "role TEXT NOT NULL DEFAULT 'user', " +
                     "is_active INTEGER NOT NULL DEFAULT 1, " +
-                    "must_change_password INTEGER NOT NULL DEFAULT 0, " + // FEATURE: Password change tracking
+                    "must_change_password INTEGER NOT NULL DEFAULT 0, " +
                     "created_date TEXT, " +
                     "last_login TEXT" +
                     ")";
 
-    // Patient table with FIXED texture modification columns
+    // FIXED: Changed table name from Patient to PatientInfo to match DAO expectations
     private static final String CREATE_PATIENT_TABLE =
-            "CREATE TABLE Patient (" +
+            "CREATE TABLE PatientInfo (" +
                     "patient_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     "patient_first_name TEXT NOT NULL, " +
                     "patient_last_name TEXT NOT NULL, " +
                     "wing TEXT NOT NULL, " +
                     "room_number TEXT NOT NULL, " +
-                    "diet_type TEXT NOT NULL, " +
+                    "diet_type TEXT, " +
+                    "diet TEXT, " +
                     "ada_diet INTEGER NOT NULL DEFAULT 0, " +
                     "fluid_restriction TEXT, " +
-                    "mechanical_chopped INTEGER NOT NULL DEFAULT 0, " + // FIXED: Multiple texture modifications
-                    "mechanical_ground INTEGER NOT NULL DEFAULT 0, " +   // FIXED: Multiple texture modifications
-                    "bite_size INTEGER NOT NULL DEFAULT 0, " +           // FIXED: Multiple texture modifications
-                    "bread_ok INTEGER NOT NULL DEFAULT 0, " +            // FIXED: Multiple texture modifications
+                    "texture_modifications TEXT, " +
+                    "mechanical_chopped INTEGER NOT NULL DEFAULT 0, " +
+                    "mechanical_ground INTEGER NOT NULL DEFAULT 0, " +
+                    "bite_size INTEGER NOT NULL DEFAULT 0, " +
+                    "bread_ok INTEGER NOT NULL DEFAULT 0, " +
                     "breakfast_complete INTEGER NOT NULL DEFAULT 0, " +
                     "lunch_complete INTEGER NOT NULL DEFAULT 0, " +
                     "dinner_complete INTEGER NOT NULL DEFAULT 0, " +
+                    "breakfast_npo INTEGER NOT NULL DEFAULT 0, " +
+                    "lunch_npo INTEGER NOT NULL DEFAULT 0, " +
+                    "dinner_npo INTEGER NOT NULL DEFAULT 0, " +
+                    "breakfast_items TEXT, " +
+                    "lunch_items TEXT, " +
+                    "dinner_items TEXT, " +
+                    "breakfast_juices TEXT, " +
+                    "lunch_juices TEXT, " +
+                    "dinner_juices TEXT, " +
+                    "breakfast_drinks TEXT, " +
+                    "lunch_drinks TEXT, " +
+                    "dinner_drinks TEXT, " +
                     "created_date TEXT" +
                     ")";
 
@@ -56,7 +70,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     "ada_friendly INTEGER NOT NULL DEFAULT 0" +
                     ")";
 
-    // FinalizedOrder table with FIXED texture modification columns
+    // FinalizedOrder table
     private static final String CREATE_FINALIZED_ORDER_TABLE =
             "CREATE TABLE FinalizedOrder (" +
                     "order_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -66,10 +80,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     "order_date TEXT NOT NULL, " +
                     "diet_type TEXT NOT NULL, " +
                     "fluid_restriction TEXT, " +
-                    "mechanical_chopped INTEGER NOT NULL DEFAULT 0, " + // FIXED: Multiple texture modifications
-                    "mechanical_ground INTEGER NOT NULL DEFAULT 0, " +  // FIXED: Multiple texture modifications
-                    "bite_size INTEGER NOT NULL DEFAULT 0, " +          // FIXED: Multiple texture modifications
-                    "bread_ok INTEGER NOT NULL DEFAULT 0, " +           // FIXED: Multiple texture modifications
+                    "mechanical_chopped INTEGER NOT NULL DEFAULT 0, " +
+                    "mechanical_ground INTEGER NOT NULL DEFAULT 0, " +
+                    "bite_size INTEGER NOT NULL DEFAULT 0, " +
+                    "bread_ok INTEGER NOT NULL DEFAULT 0, " +
                     "breakfast_items TEXT, " +
                     "lunch_items TEXT, " +
                     "dinner_items TEXT, " +
@@ -79,6 +93,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     "breakfast_drinks TEXT, " +
                     "lunch_drinks TEXT, " +
                     "dinner_drinks TEXT" +
+                    ")";
+
+    // Category table (for Item categorization)
+    private static final String CREATE_CATEGORY_TABLE =
+            "CREATE TABLE Category (" +
+                    "category_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    "name TEXT NOT NULL, " +
+                    "display_order INTEGER NOT NULL DEFAULT 0" +
                     ")";
 
     public DatabaseHelper(Context context) {
@@ -95,9 +117,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             db.execSQL(CREATE_PATIENT_TABLE);
             db.execSQL(CREATE_ITEM_TABLE);
             db.execSQL(CREATE_FINALIZED_ORDER_TABLE);
+            db.execSQL(CREATE_CATEGORY_TABLE);
 
             // Insert default data
             insertDefaultUsers(db);
+            insertDefaultCategories(db);
             insertDefaultItems(db);
 
             Log.d(TAG, "Database tables created successfully");
@@ -118,8 +142,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
 
             if (oldVersion < 3) {
-                // FEATURE: Add password change tracking column
+                // Add password change tracking column
                 addPasswordChangeColumn(db);
+            }
+
+            if (oldVersion < 4) {
+                // FIXED: Rename Patient table to PatientInfo and add missing columns
+                migratePatientTableToPatientInfo(db);
             }
 
             Log.d(TAG, "Database upgrade completed successfully");
@@ -128,13 +157,76 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             // If upgrade fails, recreate database
             db.execSQL("DROP TABLE IF EXISTS User");
             db.execSQL("DROP TABLE IF EXISTS Patient");
+            db.execSQL("DROP TABLE IF EXISTS PatientInfo");
             db.execSQL("DROP TABLE IF EXISTS Item");
             db.execSQL("DROP TABLE IF EXISTS FinalizedOrder");
+            db.execSQL("DROP TABLE IF EXISTS Category");
             onCreate(db);
         }
     }
 
-    // FEATURE: Add password change tracking column for existing databases
+    // FIXED: Migrate old Patient table to PatientInfo with new columns
+    private void migratePatientTableToPatientInfo(SQLiteDatabase db) {
+        try {
+            // Check if old Patient table exists
+            if (tableExists(db, "Patient")) {
+                Log.d(TAG, "Migrating Patient table to PatientInfo");
+
+                // Create the new PatientInfo table
+                db.execSQL(CREATE_PATIENT_TABLE);
+
+                // Copy data from Patient to PatientInfo
+                db.execSQL("INSERT INTO PatientInfo " +
+                        "(patient_id, patient_first_name, patient_last_name, wing, room_number, " +
+                        "diet_type, ada_diet, fluid_restriction, mechanical_chopped, mechanical_ground, " +
+                        "bite_size, bread_ok, breakfast_complete, lunch_complete, dinner_complete, " +
+                        "breakfast_items, lunch_items, dinner_items, breakfast_juices, lunch_juices, " +
+                        "dinner_juices, breakfast_drinks, lunch_drinks, dinner_drinks, created_date) " +
+                        "SELECT patient_id, patient_first_name, patient_last_name, wing, room_number, " +
+                        "diet_type, ada_diet, fluid_restriction, " +
+                        "COALESCE(mechanical_chopped, 0), COALESCE(mechanical_ground, 0), " +
+                        "COALESCE(bite_size, 0), COALESCE(bread_ok, 0), " +
+                        "breakfast_complete, lunch_complete, dinner_complete, " +
+                        "breakfast_items, lunch_items, dinner_items, breakfast_juices, lunch_juices, " +
+                        "dinner_juices, breakfast_drinks, lunch_drinks, dinner_drinks, created_date " +
+                        "FROM Patient");
+
+                // Update diet column to match diet_type where diet is null
+                db.execSQL("UPDATE PatientInfo SET diet = diet_type WHERE diet IS NULL");
+
+                // Drop the old Patient table
+                db.execSQL("DROP TABLE Patient");
+
+                Log.d(TAG, "Successfully migrated Patient table to PatientInfo");
+            } else {
+                // PatientInfo table doesn't exist, create it
+                Log.d(TAG, "Creating PatientInfo table");
+                db.execSQL(CREATE_PATIENT_TABLE);
+            }
+
+            // Add Category table if it doesn't exist
+            if (!tableExists(db, "Category")) {
+                db.execSQL(CREATE_CATEGORY_TABLE);
+                insertDefaultCategories(db);
+            }
+
+        } catch (Exception e) {
+            Log.e(TAG, "Error migrating Patient table: " + e.getMessage());
+            throw e;
+        }
+    }
+
+    // Helper method to check if table exists
+    private boolean tableExists(SQLiteDatabase db, String tableName) {
+        try {
+            db.rawQuery("SELECT 1 FROM " + tableName + " LIMIT 1", null).close();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    // Add password change tracking column for existing databases
     private void addPasswordChangeColumn(SQLiteDatabase db) {
         try {
             db.execSQL("ALTER TABLE User ADD COLUMN must_change_password INTEGER NOT NULL DEFAULT 0");
@@ -144,14 +236,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    // FIXED: Add texture modification columns for existing databases
+    // Add texture modification columns for existing databases
     private void addTextureModificationColumns(SQLiteDatabase db) {
         try {
-            // Add columns to Patient table
-            db.execSQL("ALTER TABLE Patient ADD COLUMN mechanical_chopped INTEGER NOT NULL DEFAULT 0");
-            db.execSQL("ALTER TABLE Patient ADD COLUMN mechanical_ground INTEGER NOT NULL DEFAULT 0");
-            db.execSQL("ALTER TABLE Patient ADD COLUMN bite_size INTEGER NOT NULL DEFAULT 0");
-            db.execSQL("ALTER TABLE Patient ADD COLUMN bread_ok INTEGER NOT NULL DEFAULT 0");
+            // Add columns to Patient table (will be migrated to PatientInfo)
+            String tableName = tableExists(db, "PatientInfo") ? "PatientInfo" : "Patient";
+
+            db.execSQL("ALTER TABLE " + tableName + " ADD COLUMN mechanical_chopped INTEGER NOT NULL DEFAULT 0");
+            db.execSQL("ALTER TABLE " + tableName + " ADD COLUMN mechanical_ground INTEGER NOT NULL DEFAULT 0");
+            db.execSQL("ALTER TABLE " + tableName + " ADD COLUMN bite_size INTEGER NOT NULL DEFAULT 0");
+            db.execSQL("ALTER TABLE " + tableName + " ADD COLUMN bread_ok INTEGER NOT NULL DEFAULT 0");
 
             // Add columns to FinalizedOrder table
             db.execSQL("ALTER TABLE FinalizedOrder ADD COLUMN mechanical_chopped INTEGER NOT NULL DEFAULT 0");
@@ -176,7 +270,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             adminValues.put("full_name", "System Administrator");
             adminValues.put("role", "admin");
             adminValues.put("is_active", 1);
-            adminValues.put("must_change_password", 1); // FEATURE: Force password change on first login
+            adminValues.put("must_change_password", 1);
             adminValues.put("created_date", getCurrentTimestamp());
 
             long adminResult = db.insert("User", null, adminValues);
@@ -188,94 +282,64 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             userValues.put("full_name", "Default User");
             userValues.put("role", "user");
             userValues.put("is_active", 1);
-            userValues.put("must_change_password", 1); // FEATURE: Force password change on first login
+            userValues.put("must_change_password", 1);
             userValues.put("created_date", getCurrentTimestamp());
 
             long userResult = db.insert("User", null, userValues);
 
-            Log.d(TAG, "Default users inserted. Admin ID: " + adminResult + ", User ID: " + userResult);
+            Log.d(TAG, "Default users inserted. Admin: " + adminResult + ", User: " + userResult);
         } catch (Exception e) {
             Log.e(TAG, "Error inserting default users: " + e.getMessage());
         }
     }
 
-    private void insertDefaultItems(SQLiteDatabase db) {
-        Log.d(TAG, "Inserting default food items");
+    private void insertDefaultCategories(SQLiteDatabase db) {
+        Log.d(TAG, "Inserting default categories");
 
         try {
-            // Sample food items for each category
+            String[] categories = {
+                    "Breakfast Items", "Proteins", "Starches", "Vegetables",
+                    "Beverages", "Juices", "Desserts", "Fruits", "Dairy"
+            };
+
+            for (int i = 0; i < categories.length; i++) {
+                ContentValues values = new ContentValues();
+                values.put("name", categories[i]);
+                values.put("display_order", i + 1);
+                db.insert("Category", null, values);
+            }
+
+            Log.d(TAG, "Default categories inserted");
+        } catch (Exception e) {
+            Log.e(TAG, "Error inserting default categories: " + e.getMessage());
+        }
+    }
+
+    private void insertDefaultItems(SQLiteDatabase db) {
+        Log.d(TAG, "Inserting default items");
+
+        try {
+            // Sample items - you can expand this list
             String[][] items = {
-                    // Breakfast Items
                     {"Scrambled Eggs", "Breakfast Items", "1"},
-                    {"Oatmeal", "Breakfast Items", "1"},
-                    {"Whole Wheat Toast", "Breakfast Items", "1"},
                     {"Pancakes", "Breakfast Items", "0"},
-                    {"French Toast", "Breakfast Items", "0"},
-                    {"Cereal", "Breakfast Items", "1"},
-                    {"Yogurt", "Breakfast Items", "1"},
-                    {"Fresh Fruit", "Breakfast Items", "1"},
-
-                    // Proteins
-                    {"Grilled Chicken Breast", "Proteins", "1"},
+                    {"Oatmeal", "Breakfast Items", "1"},
+                    {"Grilled Chicken", "Proteins", "1"},
                     {"Baked Fish", "Proteins", "1"},
-                    {"Lean Beef", "Proteins", "1"},
-                    {"Turkey", "Proteins", "1"},
-                    {"Tofu", "Proteins", "1"},
-                    {"Beans", "Proteins", "1"},
-                    {"Cottage Cheese", "Proteins", "1"},
-
-                    // Starches
-                    {"Brown Rice", "Starches", "1"},
-                    {"White Rice", "Starches", "1"},
-                    {"Baked Potato", "Starches", "1"},
-                    {"Sweet Potato", "Starches", "1"},
-                    {"Quinoa", "Starches", "1"},
-                    {"Whole Wheat Pasta", "Starches", "1"},
-                    {"Regular Pasta", "Starches", "0"},
-
-                    // Vegetables
-                    {"Steamed Broccoli", "Vegetables", "1"},
+                    {"Rice", "Starches", "1"},
+                    {"Mashed Potatoes", "Starches", "0"},
                     {"Green Beans", "Vegetables", "1"},
                     {"Carrots", "Vegetables", "1"},
-                    {"Spinach", "Vegetables", "1"},
-                    {"Corn", "Vegetables", "1"},
-                    {"Mixed Vegetables", "Vegetables", "1"},
-
-                    // Beverages
                     {"Water", "Beverages", "1"},
-                    {"Diet Soda", "Beverages", "1"},
-                    {"Regular Soda", "Beverages", "0"},
                     {"Coffee", "Beverages", "1"},
-                    {"Tea", "Beverages", "1"},
-                    {"Milk (Low-fat)", "Beverages", "1"},
-                    {"Milk (Whole)", "Beverages", "0"},
-
-                    // Juices
-                    {"Orange Juice (Sugar-free)", "Juices", "1"},
-                    {"Orange Juice", "Juices", "0"},
-                    {"Apple Juice (Sugar-free)", "Juices", "1"},
-                    {"Apple Juice", "Juices", "0"},
-                    {"Cranberry Juice", "Juices", "0"},
-
-                    // Desserts
-                    {"Sugar-free Jello", "Desserts", "1"},
+                    {"Orange Juice", "Juices", "1"},
+                    {"Apple Juice", "Juices", "1"},
+                    {"Sugar-Free Jello", "Desserts", "1"},
                     {"Regular Jello", "Desserts", "0"},
-                    {"Sugar-free Pudding", "Desserts", "1"},
-                    {"Regular Pudding", "Desserts", "0"},
-                    {"Fresh Berries", "Desserts", "1"},
-
-                    // Fruits
                     {"Apple", "Fruits", "1"},
                     {"Banana", "Fruits", "1"},
-                    {"Orange", "Fruits", "1"},
-                    {"Grapes", "Fruits", "1"},
-                    {"Berries", "Fruits", "1"},
-
-                    // Dairy
-                    {"Low-fat Cheese", "Dairy", "1"},
-                    {"Regular Cheese", "Dairy", "0"},
-                    {"Greek Yogurt", "Dairy", "1"},
-                    {"Ice Cream", "Dairy", "0"}
+                    {"Milk", "Dairy", "1"},
+                    {"Yogurt", "Dairy", "1"}
             };
 
             for (String[] item : items) {
@@ -283,24 +347,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 values.put("name", item[0]);
                 values.put("category", item[1]);
                 values.put("ada_friendly", Integer.parseInt(item[2]));
-
                 db.insert("Item", null, values);
             }
 
-            Log.d(TAG, "Default food items inserted successfully");
+            Log.d(TAG, "Default items inserted");
         } catch (Exception e) {
             Log.e(TAG, "Error inserting default items: " + e.getMessage());
         }
     }
 
     private String getCurrentTimestamp() {
-        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.getDefault());
-        return sdf.format(new java.util.Date());
-    }
-
-    @Override
-    public void onOpen(SQLiteDatabase db) {
-        super.onOpen(db);
-        Log.d(TAG, "Database opened");
+        return new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.getDefault())
+                .format(new java.util.Date());
     }
 }

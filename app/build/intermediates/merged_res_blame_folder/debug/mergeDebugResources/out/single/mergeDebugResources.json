@@ -236,6 +236,10 @@
         "source": "com.hospital.dietary.app-main-6:/layout/item_pending_order.xml"
     },
     {
+        "merged": "com.hospital.dietary.app-debug-4:/layout_dialog_add_drink.xml.flat",
+        "source": "com.hospital.dietary.app-main-6:/layout/dialog_add_drink.xml"
+    },
+    {
         "merged": "com.hospital.dietary.app-debug-4:/layout_item_existing_patient.xml.flat",
         "source": "com.hospital.dietary.app-main-6:/layout/item_existing_patient.xml"
     },

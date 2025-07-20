@@ -10,8 +10,8 @@ android {
         applicationId "com.hospital.dietary"
         minSdk 21
         targetSdk 34
-        versionCode 20  // Updated to match version 0.0.20
-        versionName "0.0.20"  // Updated version name
+        versionCode 23  // Updated to match version 0.0.23
+        versionName "0.0.23"  // Updated version name
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
