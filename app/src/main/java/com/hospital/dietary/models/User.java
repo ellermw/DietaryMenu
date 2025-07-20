@@ -11,12 +11,14 @@ public class User {
     private boolean isActive;
     private Date createdDate;
     private Date lastLogin;
+    private boolean mustChangePassword; // FEATURE: Force password change on first login
 
     // Default constructor
     public User() {
         this.isActive = true;
         this.createdDate = new Date();
         this.role = "user"; // Default role
+        this.mustChangePassword = false; // Default to false
     }
 
     // Constructor with essential fields
@@ -32,6 +34,20 @@ public class User {
     public User(String username, String password, String fullName, String role, boolean isActive) {
         this(username, password, fullName, role);
         this.isActive = isActive;
+    }
+
+    // Full constructor
+    public User(int userId, String username, String password, String fullName, String role,
+                boolean isActive, Date createdDate, Date lastLogin, boolean mustChangePassword) {
+        this.userId = userId;
+        this.username = username;
+        this.password = password;
+        this.fullName = fullName;
+        this.role = role;
+        this.isActive = isActive;
+        this.createdDate = createdDate;
+        this.lastLogin = lastLogin;
+        this.mustChangePassword = mustChangePassword;
     }
 
     // Getters and Setters
@@ -99,6 +115,15 @@ public class User {
         this.lastLogin = lastLogin;
     }
 
+    // FEATURE: Must change password support
+    public boolean isMustChangePassword() {
+        return mustChangePassword;
+    }
+
+    public void setMustChangePassword(boolean mustChangePassword) {
+        this.mustChangePassword = mustChangePassword;
+    }
+
     // Utility methods
     public boolean isAdmin() {
         return "admin".equalsIgnoreCase(role);
@@ -116,57 +141,44 @@ public class User {
         return isActive ? "Active" : "Inactive";
     }
 
-    // Validation methods
-    public boolean isValid() {
-        return username != null && !username.trim().isEmpty() &&
-                password != null && !password.trim().isEmpty() &&
-                fullName != null && !fullName.trim().isEmpty() &&
-                role != null && !role.trim().isEmpty();
+    // Helper method for display
+    public String getDisplayName() {
+        return fullName != null ? fullName : username;
     }
 
-    public String getValidationErrors() {
-        StringBuilder errors = new StringBuilder();
-
-        if (username == null || username.trim().isEmpty()) {
-            errors.append("Username is required. ");
-        }
-        if (password == null || password.trim().isEmpty()) {
-            errors.append("Password is required. ");
-        }
-        if (fullName == null || fullName.trim().isEmpty()) {
-            errors.append("Full name is required. ");
-        }
-        if (role == null || role.trim().isEmpty()) {
-            errors.append("Role is required. ");
-        }
-
-        return errors.toString().trim();
+    // Helper method to check if user needs password change
+    public boolean needsPasswordChange() {
+        return mustChangePassword;
     }
 
-    // Authentication helper
-    public boolean authenticate(String inputPassword) {
-        // In a real application, you would hash the passwords and compare hashes
-        // For this demo, we're using plain text (NOT recommended for production)
-        return password != null && password.equals(inputPassword) && isActive;
-    }
-
+    // Override toString for debugging
     @Override
     public String toString() {
-        return fullName + " (" + username + ") - " + getRoleDisplayName();
+        return "User{" +
+                "userId=" + userId +
+                ", username='" + username + '\'' +
+                ", fullName='" + fullName + '\'' +
+                ", role='" + role + '\'' +
+                ", isActive=" + isActive +
+                ", mustChangePassword=" + mustChangePassword +
+                '}';
     }
 
+    // Override equals and hashCode for proper comparison
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
 
         User user = (User) obj;
-        return userId == user.userId ||
-                (username != null && username.equals(user.username));
+        return userId == user.userId &&
+                username != null && username.equals(user.username);
     }
 
     @Override
     public int hashCode() {
-        return username != null ? username.hashCode() : 0;
+        int result = userId;
+        result = 31 * result + (username != null ? username.hashCode() : 0);
+        return result;
     }
 }

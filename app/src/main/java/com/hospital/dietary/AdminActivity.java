@@ -165,26 +165,34 @@ public class AdminActivity extends AppCompatActivity {
         addItemButton = findViewById(R.id.addItemButton);
         itemsCountText = findViewById(R.id.itemsCountText);
 
-        // Setup category filter spinner
+        // Setup category spinner
         ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categories);
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         categoryFilterSpinner.setAdapter(categoryAdapter);
+
+        // Setup users list adapter
+        usersAdapter = new UserAdapter(this, filteredUsers);
+        usersListView.setAdapter(usersAdapter);
+
+        // Setup items list adapter
+        itemsAdapter = new ItemAdapter(this, filteredItems);
+        itemsListView.setAdapter(itemsAdapter);
     }
 
     private void setupListeners() {
-        // Menu navigation
+        // Menu navigation listeners
         usersMenuButton.setOnClickListener(v -> showUsersManagement());
         itemsMenuButton.setOnClickListener(v -> showItemsManagement());
-        backToMenuButton.setOnClickListener(v -> {
-            if (wasLaunchedWithDirectMode) {
-                finish(); // Go back to MainMenuActivity
-            } else {
-                showMainMenu(); // Show AdminActivity's main menu
-            }
-        });
+        backToMenuButton.setOnClickListener(v -> showMainMenu());
 
         // Users management listeners
         addUserButton.setOnClickListener(v -> showAddUserDialog());
+
+        // FIXED: Add user selection listener for editing
+        usersListView.setOnItemClickListener((parent, view, position, id) -> {
+            User selectedUser = filteredUsers.get(position);
+            showEditUserDialog(selectedUser);
+        });
 
         userSearchEditText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -245,9 +253,20 @@ public class AdminActivity extends AppCompatActivity {
                     finish();
                     return;
                 }
-
-                configureAdminMenu();
+            } else {
+                Log.w(TAG, "Current user no longer exists: " + currentUsername);
+                Toast.makeText(this, "User account no longer exists.", Toast.LENGTH_LONG).show();
+                finish();
+                return;
             }
+        }
+
+        // Refresh data
+        if (usersContainer.getVisibility() == View.VISIBLE) {
+            loadAllUsers();
+        }
+        if (itemsContainer.getVisibility() == View.VISIBLE) {
+            loadAllItems();
         }
     }
 
@@ -256,9 +275,6 @@ public class AdminActivity extends AppCompatActivity {
         mainMenuContainer.setVisibility(View.VISIBLE);
         usersContainer.setVisibility(View.GONE);
         itemsContainer.setVisibility(View.GONE);
-        backToMenuButton.setVisibility(View.GONE);
-
-        configureAdminMenu();
     }
 
     private void showUsersManagement() {
@@ -266,8 +282,6 @@ public class AdminActivity extends AppCompatActivity {
         mainMenuContainer.setVisibility(View.GONE);
         usersContainer.setVisibility(View.VISIBLE);
         itemsContainer.setVisibility(View.GONE);
-        backToMenuButton.setVisibility(View.VISIBLE);
-
         loadAllUsers();
     }
 
@@ -276,21 +290,21 @@ public class AdminActivity extends AppCompatActivity {
         mainMenuContainer.setVisibility(View.GONE);
         usersContainer.setVisibility(View.GONE);
         itemsContainer.setVisibility(View.VISIBLE);
-        backToMenuButton.setVisibility(View.VISIBLE);
-
         loadAllItems();
     }
 
-    // FIXED: User Management Methods
-
     private void loadAllUsers() {
+        Log.d(TAG, "Loading all users");
         try {
-            allUsers = userDAO.getAllUsers();
+            allUsers.clear();
+            allUsers.addAll(userDAO.getAllUsers());
+
             filteredUsers.clear();
             filteredUsers.addAll(allUsers);
 
-            usersAdapter = new UserAdapter(this, filteredUsers);
-            usersListView.setAdapter(usersAdapter);
+            if (usersAdapter != null) {
+                usersAdapter.notifyDataSetChanged();
+            }
 
             updateUsersCount();
 
@@ -358,10 +372,12 @@ public class AdminActivity extends AppCompatActivity {
 
                     User newUser = new User(username, password, fullName, role);
                     newUser.setActive(true);
+                    // FEATURE: Force password change on first login
+                    newUser.setMustChangePassword(true);
 
                     long result = userDAO.addUser(newUser);
                     if (result > 0) {
-                        Toast.makeText(this, "User " + username + " added successfully!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "User " + username + " added successfully! They must change their password on first login.", Toast.LENGTH_LONG).show();
                         loadAllUsers();
                     } else {
                         Toast.makeText(this, "Failed to add user. Username may already exist.", Toast.LENGTH_SHORT).show();
@@ -371,17 +387,117 @@ public class AdminActivity extends AppCompatActivity {
                 .show();
     }
 
-    // FIXED: Item Management Methods
+    // FIXED: Add edit user dialog functionality
+    private void showEditUserDialog(User user) {
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_add_edit_user, null);
+
+        EditText usernameEditText = dialogView.findViewById(R.id.usernameEditText);
+        EditText passwordEditText = dialogView.findViewById(R.id.passwordEditText);
+        EditText fullNameEditText = dialogView.findViewById(R.id.fullNameEditText);
+        Spinner roleSpinner = dialogView.findViewById(R.id.roleSpinner);
+        CheckBox activeCheckBox = dialogView.findViewById(R.id.activeCheckBox);
+
+        // Setup role spinner
+        String[] roles = {"user", "admin"};
+        ArrayAdapter<String> roleAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, roles);
+        roleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        roleSpinner.setAdapter(roleAdapter);
+
+        // Populate with current user data
+        usernameEditText.setText(user.getUsername());
+        passwordEditText.setText(user.getPassword());
+        fullNameEditText.setText(user.getFullName());
+
+        // Set role selection
+        int rolePosition = "admin".equals(user.getRole()) ? 1 : 0;
+        roleSpinner.setSelection(rolePosition);
+
+        activeCheckBox.setChecked(user.isActive());
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                .setTitle("Edit User: " + user.getUsername())
+                .setView(dialogView)
+                .setPositiveButton("Save Changes", (dialog, which) -> {
+                    String username = usernameEditText.getText().toString().trim();
+                    String password = passwordEditText.getText().toString().trim();
+                    String fullName = fullNameEditText.getText().toString().trim();
+                    String role = roleSpinner.getSelectedItem().toString();
+                    boolean isActive = activeCheckBox.isChecked();
+
+                    if (username.isEmpty() || password.isEmpty() || fullName.isEmpty()) {
+                        Toast.makeText(this, "All fields are required", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    // Check if trying to deactivate the last admin
+                    if (!isActive && "admin".equals(user.getRole())) {
+                        List<User> activeAdmins = userDAO.getActiveAdmins();
+                        if (activeAdmins.size() <= 1) {
+                            Toast.makeText(this, "Cannot deactivate the last admin user", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    }
+
+                    // Update user object
+                    user.setUsername(username);
+                    user.setPassword(password);
+                    user.setFullName(fullName);
+                    user.setRole(role);
+                    user.setActive(isActive);
+
+                    boolean result = userDAO.updateUser(user);
+                    if (result) {
+                        Toast.makeText(this, "User updated successfully", Toast.LENGTH_SHORT).show();
+                        loadAllUsers();
+                    } else {
+                        Toast.makeText(this, "Failed to update user", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton("Cancel", null);
+
+        // Add delete option if not the current user
+        if (user.getUserId() != currentUser.getUserId()) {
+            builder.setNeutralButton("Delete User", (dialog, which) -> {
+                showDeleteUserConfirmation(user);
+            });
+        }
+
+        builder.show();
+    }
+
+    private void showDeleteUserConfirmation(User user) {
+        // Check if trying to delete the last admin
+        if ("admin".equals(user.getRole())) {
+            List<User> activeAdmins = userDAO.getActiveAdmins();
+            if (activeAdmins.size() <= 1) {
+                Toast.makeText(this, "Cannot delete the last admin user", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+
+        new AlertDialog.Builder(this)
+                .setTitle("Delete User")
+                .setMessage("Are you sure you want to delete user '" + user.getUsername() + "'?\n\nThis action cannot be undone.")
+                .setPositiveButton("Delete", (dialog, which) -> {
+                    boolean result = userDAO.deleteUser(user.getUserId());
+                    if (result) {
+                        Toast.makeText(this, "User deleted successfully", Toast.LENGTH_SHORT).show();
+                        loadAllUsers();
+                    } else {
+                        Toast.makeText(this, "Failed to delete user", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
 
     private void loadAllItems() {
+        Log.d(TAG, "Loading all items");
         try {
-            allItems = itemDAO.getAllItems();
-            filteredItems.clear();
-            filteredItems.addAll(allItems);
+            allItems.clear();
+            allItems.addAll(itemDAO.getAllItems());
 
-            itemsAdapter = new ItemAdapter(this, filteredItems);
-            itemsListView.setAdapter(itemsAdapter);
-
+            filterItems();
             updateItemsCount();
 
         } catch (Exception e) {
@@ -398,11 +514,11 @@ public class AdminActivity extends AppCompatActivity {
 
         for (Item item : allItems) {
             boolean matchesCategory = "All Categories".equals(selectedCategory) ||
-                    item.getCategoryName().equals(selectedCategory);
+                    selectedCategory.equals(item.getCategory());
 
             boolean matchesSearch = searchTerm.isEmpty() ||
                     item.getName().toLowerCase().contains(searchTerm) ||
-                    (item.getDescription() != null && item.getDescription().toLowerCase().contains(searchTerm));
+                    item.getCategory().toLowerCase().contains(searchTerm);
 
             if (matchesCategory && matchesSearch) {
                 filteredItems.add(item);
@@ -425,89 +541,109 @@ public class AdminActivity extends AppCompatActivity {
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_add_item, null);
 
         EditText nameInput = dialogView.findViewById(R.id.nameInput);
-        EditText descriptionInput = dialogView.findViewById(R.id.descriptionInput);
         Spinner categorySpinner = dialogView.findViewById(R.id.categorySpinner);
-        Spinner mealTypeSpinner = dialogView.findViewById(R.id.mealTypeSpinner);
-        EditText sizeInput = dialogView.findViewById(R.id.sizeInput);
         CheckBox adaFriendlyCheckBox = dialogView.findViewById(R.id.adaFriendlyCheckBox);
-        CheckBox isSodaCheckBox = dialogView.findViewById(R.id.isSodaCheckBox);
-        CheckBox isClearLiquidCheckBox = dialogView.findViewById(R.id.isClearLiquidCheckBox);
-        CheckBox isDefaultCheckBox = dialogView.findViewById(R.id.isDefaultCheckBox);
 
         // Setup category spinner (exclude "All Categories")
         List<String> itemCategories = categories.subList(1, categories.size());
-        ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, itemCategories);
+        ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, itemCategories);
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         categorySpinner.setAdapter(categoryAdapter);
 
-        // Setup meal type spinner
-        String[] mealTypes = {"All", "Breakfast", "Lunch", "Dinner"};
-        ArrayAdapter<String> mealAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, mealTypes);
-        mealAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mealTypeSpinner.setAdapter(mealAdapter);
-
         new AlertDialog.Builder(this)
-                .setTitle("Add New Food Item")
+                .setTitle("Add New Item")
                 .setView(dialogView)
                 .setPositiveButton("Add Item", (dialog, which) -> {
                     String name = nameInput.getText().toString().trim();
-                    String description = descriptionInput.getText().toString().trim();
                     String category = categorySpinner.getSelectedItem().toString();
-                    String mealType = mealTypeSpinner.getSelectedItem().toString();
-                    String sizeText = sizeInput.getText().toString().trim();
+                    boolean isAdaFriendly = adaFriendlyCheckBox.isChecked();
 
                     if (name.isEmpty()) {
                         Toast.makeText(this, "Item name is required", Toast.LENGTH_SHORT).show();
                         return;
                     }
 
-                    // Get category ID
-                    int categoryId = categories.indexOf(category); // This will be 0-based, but our categories are 1-based
-                    if (categoryId <= 0) categoryId = 1; // Default to first category
-
-                    Item newItem = new Item();
-                    newItem.setName(name);
-                    newItem.setDescription(description);
-                    newItem.setCategoryId(categoryId);
-                    newItem.setMealType(mealType);
-                    newItem.setAdaFriendly(adaFriendlyCheckBox.isChecked());
-                    newItem.setSoda(isSodaCheckBox.isChecked());
-                    newItem.setClearLiquid(isClearLiquidCheckBox.isChecked());
-                    newItem.setDefault(isDefaultCheckBox.isChecked());
-
-                    // Parse size if provided
-                    if (!sizeText.isEmpty()) {
-                        try {
-                            int size = Integer.parseInt(sizeText);
-                            newItem.setSizeML(size);
-                        } catch (NumberFormatException e) {
-                            // Invalid size, continue without it
-                        }
-                    }
-
+                    Item newItem = new Item(name, category, isAdaFriendly);
                     long result = itemDAO.addItem(newItem);
                     if (result > 0) {
-                        Toast.makeText(this, "Item " + name + " added successfully!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Item added successfully!", Toast.LENGTH_SHORT).show();
                         loadAllItems();
                     } else {
-                        Toast.makeText(this, "Failed to add item. Please try again.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Failed to add item", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .setNegativeButton("Cancel", null)
                 .show();
     }
 
-    // FIXED: Custom Adapters
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_admin, menu);
+        return true;
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                handleBackNavigation();
+                return true;
+            case R.id.action_home:
+                goToMainMenu();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        handleBackNavigation();
+    }
+
+    private void handleBackNavigation() {
+        if (usersContainer.getVisibility() == View.VISIBLE ||
+                itemsContainer.getVisibility() == View.VISIBLE) {
+            if (wasLaunchedWithDirectMode) {
+                // If launched directly to users/items, go back to main menu
+                goToMainMenu();
+            } else {
+                // Otherwise, show the admin main menu
+                showMainMenu();
+            }
+        } else {
+            // We're on the main menu, go back to main app
+            goToMainMenu();
+        }
+    }
+
+    private void goToMainMenu() {
+        Intent intent = new Intent(this, MainMenuActivity.class);
+        intent.putExtra("current_user", currentUsername);
+        intent.putExtra("user_role", currentUserRole);
+        intent.putExtra("user_full_name", currentUserFullName);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (dbHelper != null) {
+            dbHelper.close();
+        }
+    }
+
+    // User Adapter Class
     private class UserAdapter extends BaseAdapter {
         private Context context;
         private List<User> users;
-        private LayoutInflater inflater;
 
         public UserAdapter(Context context, List<User> users) {
             this.context = context;
             this.users = users;
-            this.inflater = LayoutInflater.from(context);
         }
 
         @Override
@@ -516,7 +652,7 @@ public class AdminActivity extends AppCompatActivity {
         }
 
         @Override
-        public User getItem(int position) {
+        public Object getItem(int position) {
             return users.get(position);
         }
 
@@ -528,29 +664,42 @@ public class AdminActivity extends AppCompatActivity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             if (convertView == null) {
-                convertView = inflater.inflate(android.R.layout.simple_list_item_2, parent, false);
+                convertView = LayoutInflater.from(context).inflate(R.layout.item_user, parent, false);
             }
 
-            User user = getItem(position);
-            TextView primaryText = convertView.findViewById(android.R.id.text1);
-            TextView secondaryText = convertView.findViewById(android.R.id.text2);
+            User user = users.get(position);
 
-            primaryText.setText(user.getFullName() + " (" + user.getUsername() + ")");
-            secondaryText.setText("Role: " + user.getRole() + " | Status: " + (user.isActive() ? "Active" : "Inactive"));
+            TextView usernameText = convertView.findViewById(R.id.usernameText);
+            TextView fullNameText = convertView.findViewById(R.id.fullNameText);
+            TextView roleText = convertView.findViewById(R.id.roleText);
+            TextView statusText = convertView.findViewById(R.id.statusText);
+
+            usernameText.setText(user.getUsername());
+            fullNameText.setText(user.getFullName());
+            roleText.setText(user.getRoleDisplayName());
+            statusText.setText(user.isActive() ? "Active" : "Inactive");
+
+            // Set color based on status
+            int textColor = user.isActive() ?
+                    context.getResources().getColor(android.R.color.black) :
+                    context.getResources().getColor(android.R.color.darker_gray);
+
+            usernameText.setTextColor(textColor);
+            fullNameText.setTextColor(textColor);
+            roleText.setTextColor(textColor);
 
             return convertView;
         }
     }
 
+    // Item Adapter Class
     private class ItemAdapter extends BaseAdapter {
         private Context context;
         private List<Item> items;
-        private LayoutInflater inflater;
 
         public ItemAdapter(Context context, List<Item> items) {
             this.context = context;
             this.items = items;
-            this.inflater = LayoutInflater.from(context);
         }
 
         @Override
@@ -559,7 +708,7 @@ public class AdminActivity extends AppCompatActivity {
         }
 
         @Override
-        public Item getItem(int position) {
+        public Object getItem(int position) {
             return items.get(position);
         }
 
@@ -571,65 +720,20 @@ public class AdminActivity extends AppCompatActivity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             if (convertView == null) {
-                convertView = inflater.inflate(android.R.layout.simple_list_item_2, parent, false);
+                convertView = LayoutInflater.from(context).inflate(R.layout.item_food, parent, false);
             }
 
-            Item item = getItem(position);
-            TextView primaryText = convertView.findViewById(android.R.id.text1);
-            TextView secondaryText = convertView.findViewById(android.R.id.text2);
+            Item item = items.get(position);
 
-            primaryText.setText(item.getName());
+            TextView nameText = convertView.findViewById(R.id.nameText);
+            TextView categoryText = convertView.findViewById(R.id.categoryText);
+            TextView adaText = convertView.findViewById(R.id.adaText);
 
-            String details = item.getCategoryName() + " | " + item.getMealType();
-            if (item.isAdaFriendly()) details += " | ADA";
-            if (item.isClearLiquid()) details += " | Clear Liquid";
-            if (item.getSizeML() != null) details += " | " + item.getSizeML() + "ml";
-
-            secondaryText.setText(details);
+            nameText.setText(item.getName());
+            categoryText.setText(item.getCategory());
+            adaText.setText(item.isAdaFriendly() ? "ADA Friendly" : "Regular");
 
             return convertView;
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_with_home, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                return true;
-            case R.id.action_home:
-                Intent intent = new Intent(this, MainMenuActivity.class);
-                intent.putExtra("current_user", currentUsername);
-                intent.putExtra("user_role", currentUserRole);
-                intent.putExtra("user_full_name", currentUserFullName);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
-                return true;
-            case R.id.action_refresh:
-                if (usersContainer.getVisibility() == View.VISIBLE) {
-                    loadAllUsers();
-                    Toast.makeText(this, "Users refreshed", Toast.LENGTH_SHORT).show();
-                } else if (itemsContainer.getVisibility() == View.VISIBLE) {
-                    loadAllItems();
-                    Toast.makeText(this, "Items refreshed", Toast.LENGTH_SHORT).show();
-                }
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (dbHelper != null) {
-            dbHelper.close();
         }
     }
 }

@@ -34,6 +34,7 @@ public class UserDAO {
         values.put("full_name", user.getFullName());
         values.put("role", user.getRole());
         values.put("is_active", user.isActive() ? 1 : 0);
+        values.put("must_change_password", user.isMustChangePassword() ? 1 : 0); // FEATURE: Password change tracking
         values.put("created_date", getCurrentTimestamp());
 
         try {
@@ -56,6 +57,7 @@ public class UserDAO {
         values.put("full_name", user.getFullName());
         values.put("role", user.getRole());
         values.put("is_active", user.isActive() ? 1 : 0);
+        values.put("must_change_password", user.isMustChangePassword() ? 1 : 0); // FEATURE: Password change tracking
 
         try {
             int rowsAffected = db.update("User", values, "user_id = ?",
@@ -88,23 +90,15 @@ public class UserDAO {
     public User getUserById(int userId) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         String query = "SELECT * FROM User WHERE user_id = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(userId)});
 
-        Cursor cursor = null;
-        try {
-            cursor = db.rawQuery(query, new String[]{String.valueOf(userId)});
-
-            if (cursor.moveToFirst()) {
-                return createUserFromCursor(cursor);
-            }
-        } catch (Exception e) {
-            Log.e("UserDAO", "Error getting user by ID: " + e.getMessage());
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
+        User user = null;
+        if (cursor.moveToFirst()) {
+            user = createUserFromCursor(cursor);
         }
 
-        return null;
+        cursor.close();
+        return user;
     }
 
     /**
@@ -112,69 +106,50 @@ public class UserDAO {
      */
     public User getUserByUsername(String username) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String query = "SELECT * FROM User WHERE username = ? AND is_active = 1";
+        String query = "SELECT * FROM User WHERE username = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{username});
 
-        Cursor cursor = null;
-        try {
-            cursor = db.rawQuery(query, new String[]{username});
-
-            if (cursor.moveToFirst()) {
-                return createUserFromCursor(cursor);
-            }
-        } catch (Exception e) {
-            Log.e("UserDAO", "Error getting user by username: " + e.getMessage());
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
+        User user = null;
+        if (cursor.moveToFirst()) {
+            user = createUserFromCursor(cursor);
         }
 
-        return null;
+        cursor.close();
+        return user;
     }
 
     /**
-     * Authenticate user login
+     * Authenticate user with username and password
      */
     public User authenticateUser(String username, String password) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String query = "SELECT * FROM User WHERE username = ? AND password = ? AND is_active = 1";
+        String query = "SELECT * FROM User WHERE username = ? AND password = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{username, password});
 
-        Cursor cursor = null;
-        try {
-            cursor = db.rawQuery(query, new String[]{username, password});
-
-            if (cursor.moveToFirst()) {
-                User user = createUserFromCursor(cursor);
-
-                // Update last login time
-                updateLastLogin(user.getUserId());
-                user.setLastLogin(new Date());
-
-                return user;
-            }
-        } catch (Exception e) {
-            Log.e("UserDAO", "Error authenticating user: " + e.getMessage());
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
+        User user = null;
+        if (cursor.moveToFirst()) {
+            user = createUserFromCursor(cursor);
         }
 
-        return null;
+        cursor.close();
+        return user;
     }
 
     /**
-     * Update last login time
+     * Update user's last login timestamp
      */
-    public void updateLastLogin(int userId) {
+    public boolean updateLastLogin(int userId) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("last_login", getCurrentTimestamp());
 
         try {
-            db.update("User", values, "user_id = ?", new String[]{String.valueOf(userId)});
+            int rowsAffected = db.update("User", values, "user_id = ?",
+                    new String[]{String.valueOf(userId)});
+            return rowsAffected > 0;
         } catch (Exception e) {
             Log.e("UserDAO", "Error updating last login: " + e.getMessage());
+            return false;
         }
     }
 
@@ -184,54 +159,49 @@ public class UserDAO {
     public List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String query = "SELECT * FROM User ORDER BY full_name";
+        String query = "SELECT * FROM User ORDER BY username";
+        Cursor cursor = db.rawQuery(query, null);
 
-        Cursor cursor = null;
-        try {
-            cursor = db.rawQuery(query, null);
-
-            if (cursor.moveToFirst()) {
-                do {
-                    users.add(createUserFromCursor(cursor));
-                } while (cursor.moveToNext());
-            }
-        } catch (Exception e) {
-            Log.e("UserDAO", "Error getting all users: " + e.getMessage());
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
+        while (cursor.moveToNext()) {
+            users.add(createUserFromCursor(cursor));
         }
 
+        cursor.close();
         return users;
     }
 
     /**
-     * Get active users only
+     * Get all active users
      */
     public List<User> getActiveUsers() {
         List<User> users = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String query = "SELECT * FROM User WHERE is_active = 1 ORDER BY full_name";
+        String query = "SELECT * FROM User WHERE is_active = 1 ORDER BY username";
+        Cursor cursor = db.rawQuery(query, null);
 
-        Cursor cursor = null;
-        try {
-            cursor = db.rawQuery(query, null);
-
-            if (cursor.moveToFirst()) {
-                do {
-                    users.add(createUserFromCursor(cursor));
-                } while (cursor.moveToNext());
-            }
-        } catch (Exception e) {
-            Log.e("UserDAO", "Error getting active users: " + e.getMessage());
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
+        while (cursor.moveToNext()) {
+            users.add(createUserFromCursor(cursor));
         }
 
+        cursor.close();
         return users;
+    }
+
+    /**
+     * Get all active admin users
+     */
+    public List<User> getActiveAdmins() {
+        List<User> admins = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String query = "SELECT * FROM User WHERE is_active = 1 AND role = 'admin' ORDER BY username";
+        Cursor cursor = db.rawQuery(query, null);
+
+        while (cursor.moveToNext()) {
+            admins.add(createUserFromCursor(cursor));
+        }
+
+        cursor.close();
+        return admins;
     }
 
     /**
@@ -240,74 +210,15 @@ public class UserDAO {
     public List<User> getUsersByRole(String role) {
         List<User> users = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String query = "SELECT * FROM User WHERE role = ? AND is_active = 1 ORDER BY full_name";
+        String query = "SELECT * FROM User WHERE role = ? ORDER BY username";
+        Cursor cursor = db.rawQuery(query, new String[]{role});
 
-        Cursor cursor = null;
-        try {
-            cursor = db.rawQuery(query, new String[]{role});
-
-            if (cursor.moveToFirst()) {
-                do {
-                    users.add(createUserFromCursor(cursor));
-                } while (cursor.moveToNext());
-            }
-        } catch (Exception e) {
-            Log.e("UserDAO", "Error getting users by role: " + e.getMessage());
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
+        while (cursor.moveToNext()) {
+            users.add(createUserFromCursor(cursor));
         }
 
+        cursor.close();
         return users;
-    }
-
-    /**
-     * Get user count
-     */
-    public int getUserCount() {
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String query = "SELECT COUNT(*) FROM User WHERE is_active = 1";
-
-        Cursor cursor = null;
-        try {
-            cursor = db.rawQuery(query, null);
-            if (cursor.moveToFirst()) {
-                return cursor.getInt(0);
-            }
-        } catch (Exception e) {
-            Log.e("UserDAO", "Error getting user count: " + e.getMessage());
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
-
-        return 0;
-    }
-
-    /**
-     * Get admin count
-     */
-    public int getAdminCount() {
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String query = "SELECT COUNT(*) FROM User WHERE role = 'admin' AND is_active = 1";
-
-        Cursor cursor = null;
-        try {
-            cursor = db.rawQuery(query, null);
-            if (cursor.moveToFirst()) {
-                return cursor.getInt(0);
-            }
-        } catch (Exception e) {
-            Log.e("UserDAO", "Error getting admin count: " + e.getMessage());
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
-
-        return 0;
     }
 
     /**
@@ -316,95 +227,107 @@ public class UserDAO {
     public boolean usernameExists(String username) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         String query = "SELECT COUNT(*) FROM User WHERE username = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{username});
 
-        Cursor cursor = null;
-        try {
-            cursor = db.rawQuery(query, new String[]{username});
-            if (cursor.moveToFirst()) {
-                return cursor.getInt(0) > 0;
-            }
-        } catch (Exception e) {
-            Log.e("UserDAO", "Error checking username existence: " + e.getMessage());
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
+        boolean exists = false;
+        if (cursor.moveToFirst()) {
+            exists = cursor.getInt(0) > 0;
         }
 
-        return false;
+        cursor.close();
+        return exists;
     }
 
     /**
-     * Deactivate user (soft delete)
+     * FEATURE: Get users who must change password
      */
-    public boolean deactivateUser(int userId) {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("is_active", 0);
-
-        try {
-            int rowsAffected = db.update("User", values, "user_id = ?",
-                    new String[]{String.valueOf(userId)});
-            return rowsAffected > 0;
-        } catch (Exception e) {
-            Log.e("UserDAO", "Error deactivating user: " + e.getMessage());
-            return false;
-        }
-    }
-
-    /**
-     * Reactivate user
-     */
-    public boolean reactivateUser(int userId) {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("is_active", 1);
-
-        try {
-            int rowsAffected = db.update("User", values, "user_id = ?",
-                    new String[]{String.valueOf(userId)});
-            return rowsAffected > 0;
-        } catch (Exception e) {
-            Log.e("UserDAO", "Error reactivating user: " + e.getMessage());
-            return false;
-        }
-    }
-
-    /**
-     * Search users by name or username
-     */
-    public List<User> searchUsers(String searchTerm) {
+    public List<User> getUsersNeedingPasswordChange() {
         List<User> users = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String query = "SELECT * FROM User WHERE must_change_password = 1 AND is_active = 1 ORDER BY username";
+        Cursor cursor = db.rawQuery(query, null);
 
-        String query = "SELECT * FROM User " +
-                "WHERE (LOWER(username) LIKE ? OR LOWER(full_name) LIKE ?) " +
-                "ORDER BY full_name";
-
-        String searchPattern = "%" + searchTerm.toLowerCase() + "%";
-
-        Cursor cursor = null;
-        try {
-            cursor = db.rawQuery(query, new String[]{searchPattern, searchPattern});
-
-            if (cursor.moveToFirst()) {
-                do {
-                    users.add(createUserFromCursor(cursor));
-                } while (cursor.moveToNext());
-            }
-        } catch (Exception e) {
-            Log.e("UserDAO", "Error searching users: " + e.getMessage());
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
+        while (cursor.moveToNext()) {
+            users.add(createUserFromCursor(cursor));
         }
 
+        cursor.close();
         return users;
     }
 
     /**
-     * Helper method to create user from cursor
+     * FEATURE: Update password change requirement
+     */
+    public boolean updatePasswordChangeRequirement(int userId, boolean mustChange) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("must_change_password", mustChange ? 1 : 0);
+
+        try {
+            int rowsAffected = db.update("User", values, "user_id = ?",
+                    new String[]{String.valueOf(userId)});
+            return rowsAffected > 0;
+        } catch (Exception e) {
+            Log.e("UserDAO", "Error updating password change requirement: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * FEATURE: Change user password
+     */
+    public boolean changePassword(int userId, String newPassword) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("password", newPassword);
+        values.put("must_change_password", 0); // Reset password change requirement
+
+        try {
+            int rowsAffected = db.update("User", values, "user_id = ?",
+                    new String[]{String.valueOf(userId)});
+            return rowsAffected > 0;
+        } catch (Exception e) {
+            Log.e("UserDAO", "Error changing password: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Get user count by role
+     */
+    public int getUserCountByRole(String role) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String query = "SELECT COUNT(*) FROM User WHERE role = ? AND is_active = 1";
+        Cursor cursor = db.rawQuery(query, new String[]{role});
+
+        int count = 0;
+        if (cursor.moveToFirst()) {
+            count = cursor.getInt(0);
+        }
+
+        cursor.close();
+        return count;
+    }
+
+    /**
+     * Get total active user count
+     */
+    public int getActiveUserCount() {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String query = "SELECT COUNT(*) FROM User WHERE is_active = 1";
+        Cursor cursor = db.rawQuery(query, null);
+
+        int count = 0;
+        if (cursor.moveToFirst()) {
+            count = cursor.getInt(0);
+        }
+
+        cursor.close();
+        return count;
+    }
+
+    /**
+     * Helper method to create User object from cursor
      */
     private User createUserFromCursor(Cursor cursor) {
         User user = new User();
@@ -416,34 +339,36 @@ public class UserDAO {
         user.setRole(cursor.getString(cursor.getColumnIndexOrThrow("role")));
         user.setActive(cursor.getInt(cursor.getColumnIndexOrThrow("is_active")) == 1);
 
-        // Handle created_date
-        String createdDate = cursor.getString(cursor.getColumnIndexOrThrow("created_date"));
-        if (createdDate != null) {
-            try {
-                user.setCreatedDate(dateFormat.parse(createdDate));
-            } catch (ParseException e) {
-                user.setCreatedDate(new Date());
-            }
+        // FEATURE: Load must change password field
+        int mustChangePasswordIndex = cursor.getColumnIndex("must_change_password");
+        if (mustChangePasswordIndex != -1) {
+            user.setMustChangePassword(cursor.getInt(mustChangePasswordIndex) == 1);
         }
 
-        // Handle last_login (may be null)
-        int lastLoginIndex = cursor.getColumnIndex("last_login");
-        if (lastLoginIndex >= 0) {
-            String lastLogin = cursor.getString(lastLoginIndex);
-            if (lastLogin != null) {
-                try {
-                    user.setLastLogin(dateFormat.parse(lastLogin));
-                } catch (ParseException e) {
-                    // Leave as null if parsing fails
-                }
+        // Parse dates
+        try {
+            String createdDateStr = cursor.getString(cursor.getColumnIndexOrThrow("created_date"));
+            if (createdDateStr != null) {
+                user.setCreatedDate(dateFormat.parse(createdDateStr));
             }
+        } catch (ParseException e) {
+            Log.w("UserDAO", "Error parsing created_date: " + e.getMessage());
+        }
+
+        try {
+            String lastLoginStr = cursor.getString(cursor.getColumnIndexOrThrow("last_login"));
+            if (lastLoginStr != null) {
+                user.setLastLogin(dateFormat.parse(lastLoginStr));
+            }
+        } catch (ParseException e) {
+            Log.w("UserDAO", "Error parsing last_login: " + e.getMessage());
         }
 
         return user;
     }
 
     /**
-     * Get current timestamp
+     * Get current timestamp as string
      */
     private String getCurrentTimestamp() {
         return dateFormat.format(new Date());

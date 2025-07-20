@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f8f9fa"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Welcome Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@android:color/white"
+            android:padding="20dp"
+            android:elevation="2dp"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:id="@+id/welcomeText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Welcome!"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="#2c3e50"
+                android:layout_marginBottom="16dp" />
+
+            <TextView
+                android:id="@+id/usernameText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Username: "
+                android:textSize="16sp"
+                android:textColor="#34495e"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:id="@+id/roleText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Role: "
+                android:textSize="16sp"
+                android:textColor="#34495e"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:id="@+id/lastLoginText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Last login: "
+                android:textSize="14sp"
+                android:textColor="#7f8c8d" />
+
+        </LinearLayout>
+
+        <!-- Account Actions Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@android:color/white"
+            android:padding="20dp"
+            android:elevation="2dp"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Account Actions"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#2c3e50"
+                android:layout_marginBottom="16dp" />
+
+            <!-- FEATURE: Change Password Button -->
+            <Button
+                android:id="@+id/changePasswordButton"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="🔒 Change Password"
+                android:textSize="16sp"
+                android:textColor="@android:color/white"
+                android:background="#e74c3c"
+                android:elevation="2dp"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Change your account password for security"
+                android:textSize="12sp"
+                android:textColor="#7f8c8d"
+                android:layout_marginBottom="16dp" />
+
+        </LinearLayout>
+
+        <!-- Admin Section (only visible for admin users) -->
+        <LinearLayout
+            android:id="@+id/adminSection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@android:color/white"
+            android:padding="20dp"
+            android:elevation="2dp"
+            android:layout_marginBottom="16dp"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Administrator Actions"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#2c3e50"
+                android:layout_marginBottom="16dp" />
+
+            <Button
+                android:id="@+id/manageUsersButton"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="👥 Manage Users"
+                android:textSize="16sp"
+                android:textColor="@android:color/white"
+                android:background="#9b59b6"
+                android:elevation="2dp"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Add, edit, and manage user accounts"
+                android:textSize="12sp"
+                android:textColor="#7f8c8d" />
+
+        </LinearLayout>
+
+        <!-- Security Information -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#fff3cd"
+            android:padding="16dp"
+            android:elevation="1dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="🛡️ Security Tips"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#856404"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="• Use a strong password with at least 6 characters\n• Change your password regularly\n• Never share your login credentials\n• Log out when finished using the application"
+                android:textSize="12sp"
+                android:textColor="#856404"
+                android:lineSpacingExtra="2dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>

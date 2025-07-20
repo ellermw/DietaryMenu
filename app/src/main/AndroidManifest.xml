@@ -29,6 +29,14 @@
             android:parentActivityName=".LoginActivity"
             android:importantForAutofill="no" />
 
+        <!-- FEATURE: Account Management Activity - New password change feature -->
+        <activity
+            android:name=".AccountManagementActivity"
+            android:exported="false"
+            android:parentActivityName=".MainMenuActivity"
+            android:importantForAutofill="no"
+            android:windowSoftInputMode="adjustResize" />
+
         <!-- Patient Information Menu Activity - New submenu -->
         <activity
             android:name=".PatientInfoMenuActivity"
@@ -51,12 +59,13 @@
             android:parentActivityName=".PatientInfoMenuActivity"
             android:importantForAutofill="no" />
 
-        <!-- Patient Detail Activity - View patient details -->
+        <!-- Patient Detail Activity - FIXED: View patient details -->
         <activity
             android:name=".PatientDetailActivity"
             android:exported="false"
             android:parentActivityName=".ExistingPatientActivity"
-            android:importantForAutofill="no" />
+            android:importantForAutofill="no"
+            android:windowSoftInputMode="adjustResize" />
 
         <!-- Patient Info Activity - Manage patients -->
         <activity
@@ -71,41 +80,36 @@
             android:name=".MealPlanningActivity"
             android:exported="false"
             android:parentActivityName=".PatientDetailActivity"
-            android:importantForAutofill="no" />
+            android:importantForAutofill="no"
+            android:windowSoftInputMode="adjustResize" />
 
-        <!-- Pending Orders Activity -->
+        <!-- Pending Orders Activity - View pending orders -->
         <activity
             android:name=".PendingOrdersActivity"
             android:exported="false"
             android:parentActivityName=".MainMenuActivity"
             android:importantForAutofill="no" />
 
-        <!-- Finished Orders Activity -->
-        <activity
-            android:name=".FinishedOrdersActivity"
-            android:exported="false"
-            android:parentActivityName=".MainMenuActivity"
-            android:importantForAutofill="no" />
-
-        <!-- Retired Orders Activity -->
+        <!-- Retired Orders Activity - View completed orders -->
         <activity
             android:name=".RetiredOrdersActivity"
             android:exported="false"
             android:parentActivityName=".MainMenuActivity"
             android:importantForAutofill="no" />
 
-        <!-- View Orders Activity -->
-        <activity
-            android:name=".ViewOrdersActivity"
-            android:exported="false"
-            android:parentActivityName=".MainMenuActivity"
-            android:importantForAutofill="no" />
-
-        <!-- Admin Activity - User and item management -->
+        <!-- Admin Activity - FIXED: User and item management -->
         <activity
             android:name=".AdminActivity"
             android:exported="false"
             android:parentActivityName=".MainMenuActivity"
+            android:importantForAutofill="no"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- Main Activity - Original meal planning (keep for compatibility) -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="false"
+            android:parentActivityName=".MealPlanningActivity"
             android:importantForAutofill="no"
             android:windowSoftInputMode="adjustResize" />
 
