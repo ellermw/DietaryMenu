@@ -2011,22 +2011,23 @@
     <string name="abc_shareactionprovider_share_with">Share with</string>
     <string name="abc_shareactionprovider_share_with_application">Share with <ns2:g example="Mail" id="application_name">%s</ns2:g></string>
     <string name="abc_toolbar_collapse_description">Collapse</string>
-    <string name="access_denied">Access denied. Admin privileges required.</string>
     <string name="account_inactive">Account is inactive. Please contact administrator.</string>
     <string name="account_management">🔐 Account Management</string>
-    <string name="active_patients">Active Patients (%d)</string>
-    <string name="active_users">%d Active Users</string>
+    <string name="active_patients">Active Patients</string>
+    <string name="active_user">Active</string>
+    <string name="ada_diet">ADA</string>
+    <string name="ada_diet_option">ADA Diet</string>
     <string name="add">Add</string>
-    <string name="add_item">➕ Add Item</string>
-    <string name="add_user">➕ Add User</string>
-    <string name="admin_panel">⚙️ Admin Panel</string>
-    <string name="administration">🔧 Administration</string>
+    <string name="add_patient">Add Patient</string>
+    <string name="add_user">Add User</string>
+    <string name="additional_options">Additional Options</string>
+    <string name="admin_role">Admin</string>
     <string name="androidx_startup" translatable="false">androidx.startup</string>
     <string name="app_name">Dietary Management</string>
-    <string name="app_version">V 0.0.21</string>
+    <string name="app_version">V 0.0.25</string>
     <string name="appbar_scrolling_view_behavior" translatable="false">com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior</string>
     <string name="back">Back</string>
-    <string name="back_to_main_menu">← Back to Main Menu</string>
+    <string name="basic_information">Basic Information</string>
     <string name="bite_size">Bite Size</string>
     <string name="bottom_sheet_behavior" translatable="false">com.google.android.material.bottomsheet.BottomSheetBehavior</string>
     <string description="A description of an accessibility action to collapse the bottom sheet [CHAR LIMIT=NONE]" name="bottomsheet_action_collapse">Collapse the bottom sheet</string>
@@ -2035,49 +2036,71 @@
     <string description="An accessibility feedback when the bottom sheet drag handle is clicked [CHAR LIMIT=NONE]" name="bottomsheet_drag_handle_clicked">Drag handle double-tapped</string>
     <string description="The content description of bottom sheet drag handles [CHAR LIMIT=NONE]" name="bottomsheet_drag_handle_content_description">Drag handle</string>
     <string name="bread_ok">Bread OK</string>
-    <string name="bulk_delete_confirmation">Are you sure you want to delete %d selected patients?</string>
+    <string name="breakfast">Breakfast</string>
     <string name="cancel">Cancel</string>
-    <string name="cannot_deactivate_last_admin">Cannot deactivate the last admin user</string>
-    <string name="cannot_delete_last_admin">Cannot delete the last admin user</string>
-    <string name="change_password">Change Password</string>
+    <string name="cardiac_diet">Cardiac</string>
     <string name="character_counter_content_description">Characters entered %1$d of %2$d</string>
     <string name="character_counter_overflowed_content_description">Character limit exceeded %1$d of %2$d</string>
     <string name="character_counter_pattern" translatable="false">%1$d/%2$d</string>
+    <string name="clear_form">Clear Form</string>
+    <string name="clear_liquid_diet">Clear Liquid</string>
     <string name="clear_text_end_icon_content_description">Clear text</string>
-    <string name="completed_orders">Completed Orders (%d)</string>
-    <string name="confirm_password">Confirm Password</string>
-    <string name="copyright_message">Dietary Management System - V 0.0.21\nBug Fixes &amp; New Features Update</string>
-    <string name="current_password">Current Password</string>
-    <string name="current_password_incorrect">Current password is incorrect</string>
-    <string name="default_admin_created">Default admin account created. Username: admin, Password: admin123</string>
+    <string name="confirm_delete_patient">Are you sure you want to delete this patient?</string>
+    <string name="confirm_logout">Are you sure you want to logout?</string>
+    <string name="content_description_home">Home</string>
+    <string name="content_description_menu">Menu</string>
+    <string name="content_description_refresh">Refresh</string>
+    <string name="content_description_search">Search</string>
+    <string name="copyright_message">Dietary Management System - V 0.0.25\nLiquid Diet &amp; Fluid Restriction Update</string>
     <string name="delete">Delete</string>
-    <string name="delete_patient_confirmation">Are you sure you want to delete this patient?</string>
-    <string name="delete_selected">Delete Selected</string>
-    <string name="delete_user_confirmation">Are you sure you want to delete this user?</string>
+    <string name="diet_type">Diet Type</string>
+    <string name="dietary_requirements">Dietary Requirements</string>
+    <string name="dinner">Dinner</string>
     <string name="edit">Edit</string>
+    <string name="edit_patient">Edit Patient</string>
+    <string name="edit_user">Edit User</string>
+    <string name="enter_first_name">Enter first name</string>
+    <string name="enter_last_name">Enter last name</string>
     <string name="error">Error</string>
     <string description="Screen reader announcement for when a checkbox is on error. [CHAR LIMIT=NONE]" name="error_a11y_label">
     Error: invalid
   </string>
+    <string name="error_database">Database error occurred</string>
     <string name="error_icon_content_description">Error</string>
+    <string name="error_invalid_login">Invalid username or password</string>
+    <string name="error_network">Network error occurred</string>
+    <string name="error_password_mismatch">Passwords do not match</string>
+    <string name="error_required_field">This field is required</string>
     <string name="exposed_dropdown_menu_content_description">Show dropdown menu</string>
     <string name="fab_transformation_scrim_behavior" translatable="false">com.google.android.material.transformation.FabTransformationScrimBehavior</string>
     <string name="fab_transformation_sheet_behavior" translatable="false">com.google.android.material.transformation.FabTransformationSheetBehavior</string>
+    <string name="field_required">This field is required</string>
+    <string name="filter">Filter</string>
     <string name="finished_orders">✅ Finished Orders</string>
-    <string name="first_login_password_change">You must change your password before continuing.</string>
-    <string name="food_items">%d Food Items</string>
+    <string name="finished_orders_count">Finished Orders: %d</string>
+    <string name="fluid_1000ml">1000ml (34oz): 120ml, 120ml, 160ml</string>
+    <string name="fluid_1200ml">1200ml (41oz): 250ml, 170ml, 180ml</string>
+    <string name="fluid_1500ml">1500ml (51oz): 350ml, 170ml, 180ml</string>
+    <string name="fluid_1800ml">1800ml (61oz): 360ml, 240ml, 240ml</string>
+    <string name="fluid_2000ml">2000ml (68oz): 320ml, 240ml, 240ml</string>
+    <string name="fluid_2500ml">2500ml (85oz): 400ml, 400ml, 400ml</string>
+    <string name="fluid_restriction">Fluid Restriction</string>
+    <string name="form_incomplete">Please complete all required fields</string>
+    <string name="full_liquid_diet">Full Liquid</string>
     <string name="hide_bottom_view_on_scroll_behavior" translatable="false">com.google.android.material.behavior.HideBottomViewOnScrollBehavior</string>
+    <string name="home">Home</string>
     <string description="Content description for an icon that appears in the title area of a dialog" name="icon_content_description">Dialog Icon</string>
+    <string name="inactive_user">Inactive</string>
     <string name="invalid_credentials">Invalid username or password</string>
-    <string name="invalid_selection">Please make a valid selection</string>
+    <string name="invalid_input">Invalid input</string>
     <string name="item_management">🍽️ Item Management</string>
     <string name="item_view_role_description">Tab</string>
     <string name="loading">Loading...</string>
-    <string name="login_error">Login failed. Please try again.</string>
+    <string name="login_error">Login error occurred. Please try again.</string>
     <string name="login_subtitle">Dietary Management Application</string>
     <string name="login_title">Hospital Dietary Management</string>
     <string name="logout">🚪 Logout</string>
-    <string name="logout_confirmation">Are you sure you want to logout?</string>
+    <string name="lunch">Lunch</string>
     <string name="m3_exceed_max_badge_text_suffix" translatable="false"><ns2:g example="Some te" id="part of a long text">%1$s</ns2:g><ns2:g example="…" id="suffix">%2$s</ns2:g></string>
     <string name="m3_ref_typeface_brand_medium" translatable="false">sans-serif-medium</string>
     <string name="m3_ref_typeface_brand_regular" translatable="false">sans-serif</string>
@@ -2094,9 +2117,6 @@
     <string name="m3_sys_motion_easing_standard" translatable="false">cubic-bezier(0.2, 0, 0, 1)</string>
     <string name="m3_sys_motion_easing_standard_accelerate" translatable="false">cubic-bezier(0.3, 0, 1, 1)</string>
     <string name="m3_sys_motion_easing_standard_decelerate" translatable="false">cubic-bezier(0, 0, 0, 1)</string>
-    <string name="manage_food_items">🍽️ Manage Food Items</string>
-    <string name="manage_users">👥 Manage Users</string>
-    <string name="manage_users_and_items">Manage Users and Food Items</string>
     <string name="material_clock_display_divider" translatable="false">:</string>
     <string description="Description for the toggle to choose between AM and PM [CHAR_LIMIT=NONE]" name="material_clock_toggle_content_description">Select AM or PM</string>
     <string description="Spoken suffix for an hour in the 24-hour clock [CHAR_LIMIT=10]" name="material_hour_24h_suffix"><ns2:g id="number">%1$s</ns2:g> hours</string>
@@ -2119,7 +2139,8 @@
     <string description="Suffix for time in 12-hour standard, after noon. [CHAR_LIMIT=2]" name="material_timepicker_pm">PM</string>
     <string description="Title for the dialog with a time picker. [CHAR_LIMIT=32]" name="material_timepicker_select_time">Select time</string>
     <string name="material_timepicker_text_input_mode_description">Switch to text input mode for the time input.</string>
-    <string name="meal_plan_not_found">No meal plan found for this patient</string>
+    <string name="meal_complete">Complete</string>
+    <string name="meal_planning">Meal Planning</string>
     <string name="mechanical_chopped">Mechanical Chopped</string>
     <string name="mechanical_ground">Mechanical Ground</string>
     <string description="Content description for new notification (no number count) [CHAR_LIMIT=NONE]" name="mtrl_badge_numberless_content_description">New notification</string>
@@ -2190,65 +2211,72 @@
     <string name="mtrl_switch_track_path" translatable="false">M0,16 A16,16 0 0,1 16,0 H36 A16,16 0 0,1 36,32 H16 A16,16 0 0,1 0,16</string>
     <string description="Button text to indicate that the widget will ignore the user&apos;s selection [CHAR_LIMIT=16]" name="mtrl_timepicker_cancel">Cancel</string>
     <string description="Button text to indicate that the widget will save the user&apos;s selection [CHAR_LIMIT=16]" name="mtrl_timepicker_confirm">OK</string>
-    <string name="new_password">New Password</string>
-    <string name="new_password_same_as_current">New password must be different from current password</string>
+    <string name="multiple_allowed">Multiple selections allowed</string>
     <string name="no">No</string>
-    <string name="no_orders_found">No orders found for selected day</string>
-    <string name="no_patients_found">No patients found</string>
+    <string name="no_restriction">No Restriction</string>
+    <string name="none_selected">None selected</string>
+    <string name="npo">NPO</string>
     <string name="ok">OK</string>
-    <string name="operation_failed">Operation failed. Please try again.</string>
-    <string name="password_change_failed">Failed to change password</string>
-    <string name="password_change_required">Password Change Required</string>
-    <string name="password_changed_successfully">Password changed successfully!</string>
     <string name="password_hint">Enter your password</string>
     <string name="password_required">Password is required</string>
     <string name="password_toggle_content_description">Show password</string>
-    <string name="password_too_short">Password must be at least 6 characters</string>
-    <string name="passwords_do_not_match">Passwords do not match</string>
     <string name="path_password_eye" translatable="false">M12,4.5C7,4.5 2.73,7.61 1,12c1.73,4.39 6,7.5 11,7.5s9.27,-3.11 11,-7.5c-1.73,-4.39 -6,-7.5 -11,-7.5zM12,17c-2.76,0 -5,-2.24 -5,-5s2.24,-5 5,-5 5,2.24 5,5 -2.24,5 -5,5zM12,9c-1.66,0 -3,1.34 -3,3s1.34,3 3,3 3,-1.34 3,-3 -1.34,-3 -3,-3z</string>
     <string name="path_password_eye_mask_strike_through" translatable="false">M2,4.27 L19.73,22 L22.27,19.46 L4.54,1.73 L4.54,1 L23,1 L23,23 L1,23 L1,4.27 Z</string>
     <string name="path_password_eye_mask_visible" translatable="false">M2,4.27 L2,4.27 L4.54,1.73 L4.54,1.73 L4.54,1 L23,1 L23,23 L1,23 L1,4.27 Z</string>
     <string name="path_password_strike_through" translatable="false">M3.27,4.27 L19.74,20.74</string>
-    <string name="patient_added_successfully">Patient added successfully!</string>
-    <string name="patient_deleted_successfully">Patient deleted successfully</string>
+    <string name="patient_details">Patient Details</string>
+    <string name="patient_first_name">First Name</string>
     <string name="patient_info">👤 Patient Info</string>
-    <string name="patient_not_found">Patient not found</string>
-    <string name="patient_updated_successfully">Patient updated successfully</string>
+    <string name="patient_information">Patient Information</string>
+    <string name="patient_last_name">Last Name</string>
+    <string name="patient_name">Patient Name</string>
     <string name="pending_orders">📋 Pending Orders</string>
-    <string name="print_all_menus">Print All Menus</string>
-    <string name="print_confirmation">Print menus for %d patients?</string>
-    <string name="print_menus">Print Menus</string>
+    <string name="pending_orders_count">Pending Orders: %d</string>
+    <string name="please_select">Please select an option</string>
+    <string name="puree_diet">Puree</string>
+    <string name="refresh">Refresh</string>
+    <string name="regular_diet">Regular</string>
+    <string name="renal_diet">Renal</string>
+    <string name="required_field">Required field</string>
     <string name="retired_orders">🗃️ Retired Orders</string>
-    <string name="room_occupied">Room is already occupied</string>
+    <string name="retired_orders_count">Retired Orders: %d</string>
+    <string name="room_number">Room Number</string>
     <string name="save">Save</string>
-    <string name="search_items">🔍 Search items...</string>
+    <string name="save_patient">Save Patient</string>
+    <string name="search">Search</string>
     <string name="search_menu_title">Search</string>
-    <string name="search_users">🔍 Search users...</string>
     <string name="searchbar_scrolling_view_behavior" translatable="false">
     com.google.android.material.search.SearchBar$ScrollingViewBehavior
   </string>
     <string description="Content description for the X button to clear text [CHAR_LIMIT=NONE]" name="searchview_clear_text_content_description">Clear text</string>
     <string description="Content description for the navigation button to return to the previous screen [CHAR_LIMIT=NONE]" name="searchview_navigation_content_description">Back</string>
-    <string name="select_all">Select All</string>
-    <string name="select_day">Select Day</string>
+    <string name="select_diet_type">Select Diet Type</string>
+    <string name="select_option">Select an option</string>
+    <string name="select_room">Select Room</string>
+    <string name="select_wing">Select Wing</string>
     <string name="show_password">Show password</string>
     <string description="Title of the side sheet&apos;s accessibility pane that is spoken by TalkBack when the side sheet appears on screen. [CHAR_LIMIT=NONE]" name="side_sheet_accessibility_pane_title">Side Sheet</string>
     <string name="side_sheet_behavior" translatable="false">com.google.android.material.sidesheet.SideSheetBehavior</string>
     <string name="sign_in">Sign In</string>
     <string name="status_bar_notification_info_overflow">999+</string>
+    <string name="status_error">Error loading data</string>
+    <string name="status_loading">Loading...</string>
+    <string name="status_no_data">No data available</string>
     <string name="success">Success</string>
+    <string name="success_meal_plan_saved">Meal plan saved successfully</string>
+    <string name="success_patient_added">Patient added successfully</string>
+    <string name="success_patient_deleted">Patient deleted successfully</string>
+    <string name="success_patient_updated">Patient updated successfully</string>
+    <string name="tap_to_select">Tap to select</string>
     <string name="texture_modifications">Texture Modifications</string>
-    <string name="texture_note">Note: If Mechanical Chopped or Ground is selected, bread items will be hidden unless Bread OK is also checked.</string>
-    <string name="today">Today - %s</string>
-    <string name="tomorrow">Tomorrow - %s</string>
-    <string name="user_added_successfully">User added successfully!</string>
-    <string name="user_deleted_successfully">User deleted successfully</string>
+    <string name="texture_note">Select applicable texture modifications (multiple selections allowed)</string>
     <string name="user_management">👥 User Management</string>
-    <string name="user_not_found">User not found</string>
-    <string name="user_updated_successfully">User updated successfully</string>
+    <string name="user_role">User Role</string>
+    <string name="user_role_standard">User</string>
     <string name="username_hint">Enter your username</string>
     <string name="username_required">Username is required</string>
     <string name="welcome_message">Welcome, %s!</string>
+    <string name="wing">Wing</string>
     <string name="wing_1_south">1 South</string>
     <string name="wing_2_north">2 North</string>
     <string name="wing_2_west">2 West</string>
@@ -2299,7 +2327,6 @@
         <item name="colorPrimary">#2196F3</item>
         <item name="colorPrimaryDark">#1976D2</item>
         <item name="colorAccent">#FF5722</item>
-        
         <item name="windowActionBar">true</item>
         <item name="windowNoTitle">false</item>
     </style>
@@ -5686,6 +5713,12 @@
     <style name="ButtonStyle.Primary">
         <item name="android:textColor">@android:color/white</item>
     </style>
+    <style name="CardStyle" parent="CardView">
+        <item name="cardCornerRadius">8dp</item>
+        <item name="cardElevation">4dp</item>
+        <item name="android:layout_margin">8dp</item>
+        <item name="contentPadding">16dp</item>
+    </style>
     <style name="CardView" parent="Base.CardView">
     </style>
     <style name="CardView.Dark">
@@ -5693,6 +5726,13 @@
     </style>
     <style name="CardView.Light">
         <item name="cardBackgroundColor">@color/cardview_light_background</item>
+    </style>
+    <style name="InputStyle" parent="Widget.AppCompat.EditText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">8dp</item>
+        <item name="android:padding">12dp</item>
+        <item name="android:textSize">16sp</item>
     </style>
     <style name="MaterialAlertDialog.Material3" parent="MaterialAlertDialog.MaterialComponents">
     <item name="backgroundTint">@macro/m3_comp_dialog_container_color</item>
@@ -6151,6 +6191,12 @@
     <item name="cornerSizeBottomLeft">@dimen/mtrl_textinput_box_corner_radius_small</item>
     <item name="cornerSizeBottomRight">@dimen/mtrl_textinput_box_corner_radius_small</item>
   </style>
+    <style name="SpinnerStyle" parent="Widget.AppCompat.Spinner">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">8dp</item>
+        <item name="android:padding">12dp</item>
+    </style>
     <style name="TextAppearance.AppCompat" parent="Base.TextAppearance.AppCompat"/>
     <style name="TextAppearance.AppCompat.Body1" parent="Base.TextAppearance.AppCompat.Body1"/>
     <style name="TextAppearance.AppCompat.Body2" parent="Base.TextAppearance.AppCompat.Body2"/>

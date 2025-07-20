@@ -70,54 +70,37 @@ public class PendingOrdersActivity extends AppCompatActivity {
 
     private void loadPendingOrders() {
         try {
-            // Get patients who have incomplete meal orders
+            // Get patients who have incomplete meal orders (not all meals complete)
             pendingPatients = patientDAO.getPendingPatients();
 
             if (pendingPatients.isEmpty()) {
                 pendingOrdersListView.setVisibility(View.GONE);
                 noPendingOrdersText.setVisibility(View.VISIBLE);
                 noPendingOrdersText.setText("✅ No pending orders!\nAll patients have completed meal orders.");
-
-                // Update title with count
-                if (getSupportActionBar() != null) {
-                    getSupportActionBar().setTitle("Pending Orders (0)");
-                }
             } else {
                 pendingOrdersListView.setVisibility(View.VISIBLE);
                 noPendingOrdersText.setVisibility(View.GONE);
 
-                // Update title with count
-                if (getSupportActionBar() != null) {
-                    getSupportActionBar().setTitle("Pending Orders (" + pendingPatients.size() + ")");
-                }
-
-                // Create adapter for pending orders list
-                pendingAdapter = new ArrayAdapter<Patient>(this,
-                        android.R.layout.simple_list_item_2, android.R.id.text1, pendingPatients) {
+                // Create adapter for pending patients
+                pendingAdapter = new ArrayAdapter<Patient>(this, android.R.layout.simple_list_item_2, android.R.id.text1, pendingPatients) {
                     @Override
                     public View getView(int position, View convertView, ViewGroup parent) {
-                        if (convertView == null) {
-                            convertView = getLayoutInflater().inflate(android.R.layout.simple_list_item_2, parent, false);
-                        }
+                        View view = super.getView(position, convertView, parent);
 
                         Patient patient = getItem(position);
-                        TextView text1 = convertView.findViewById(android.R.id.text1);
-                        TextView text2 = convertView.findViewById(android.R.id.text2);
+                        TextView text1 = view.findViewById(android.R.id.text1);
+                        TextView text2 = view.findViewById(android.R.id.text2);
 
-                        text1.setText(patient.getPatientFirstName() + " " + patient.getPatientLastName() +
-                                " - " + patient.getWing() + " Room " + patient.getRoomNumber());
+                        if (patient != null) {
+                            text1.setText(patient.getFullName());
 
-                        // Show which meals are pending
-                        StringBuilder status = new StringBuilder("Pending: ");
-                        if (!patient.isBreakfastComplete()) status.append("Breakfast ");
-                        if (!patient.isLunchComplete()) status.append("Lunch ");
-                        if (!patient.isDinnerComplete()) status.append("Dinner ");
+                            // Show meal completion status instead of just location
+                            String locationInfo = patient.getWing() + " - Room " + patient.getRoomNumber();
+                            String mealStatus = getMealCompletionStatus(patient);
+                            text2.setText(locationInfo + " • " + patient.getDiet() + "\n" + mealStatus);
+                        }
 
-                        status.append("| Diet: ").append(patient.getDiet());
-
-                        text2.setText(status.toString().trim());
-
-                        return convertView;
+                        return view;
                     }
                 };
 
@@ -125,23 +108,47 @@ public class PendingOrdersActivity extends AppCompatActivity {
             }
 
         } catch (Exception e) {
-            Toast.makeText(this, "Error loading pending orders: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
+            Toast.makeText(this, "Error loading pending orders: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // Helper method to show meal completion status
+    private String getMealCompletionStatus(Patient patient) {
+        List<String> completed = new ArrayList<>();
+        List<String> pending = new ArrayList<>();
+
+        if (patient.isBreakfastComplete() || patient.isBreakfastNPO()) {
+            completed.add("Breakfast");
+        } else {
+            pending.add("Breakfast");
+        }
+
+        if (patient.isLunchComplete() || patient.isLunchNPO()) {
+            completed.add("Lunch");
+        } else {
+            pending.add("Lunch");
+        }
+
+        if (patient.isDinnerComplete() || patient.isDinnerNPO()) {
+            completed.add("Dinner");
+        } else {
+            pending.add("Dinner");
+        }
+
+        if (pending.isEmpty()) {
+            return "✅ All meals complete";
+        } else {
+            return "⏳ Pending: " + String.join(", ", pending);
         }
     }
 
     private void openMealPlanning(Patient patient) {
         Intent intent = new Intent(this, MealPlanningActivity.class);
+        intent.putExtra("patient_id", patient.getPatientId());
         intent.putExtra("current_user", currentUsername);
         intent.putExtra("user_role", currentUserRole);
         intent.putExtra("user_full_name", currentUserFullName);
-        intent.putExtra("patient_id", patient.getPatientId());
-        intent.putExtra("patient_name", patient.getPatientFirstName() + " " + patient.getPatientLastName());
-        intent.putExtra("wing", patient.getWing());
-        intent.putExtra("room", patient.getRoomNumber());
-        intent.putExtra("diet", patient.getDiet());
-        intent.putExtra("fluid_restriction", patient.getFluidRestriction());
-        intent.putExtra("texture_modifications", patient.getTextureModifications());
         startActivity(intent);
     }
 
@@ -158,11 +165,16 @@ public class PendingOrdersActivity extends AppCompatActivity {
                 finish();
                 return true;
             case R.id.action_home:
-                goToMainMenu();
+                Intent intent = new Intent(this, MainMenuActivity.class);
+                intent.putExtra("current_user", currentUsername);
+                intent.putExtra("user_role", currentUserRole);
+                intent.putExtra("user_full_name", currentUserFullName);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
                 return true;
             case R.id.action_refresh:
                 loadPendingOrders();
-                Toast.makeText(this, "Orders refreshed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Pending orders refreshed", Toast.LENGTH_SHORT).show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -172,7 +184,8 @@ public class PendingOrdersActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        // Refresh the list when returning to this activity
+        // Always refresh when returning to this activity
+        // This ensures the list updates when patients complete meals
         loadPendingOrders();
     }
 
@@ -182,14 +195,5 @@ public class PendingOrdersActivity extends AppCompatActivity {
         if (dbHelper != null) {
             dbHelper.close();
         }
-    }
-
-    private void goToMainMenu() {
-        Intent intent = new Intent(this, MainMenuActivity.class);
-        intent.putExtra("current_user", currentUsername);
-        intent.putExtra("user_role", currentUserRole);
-        intent.putExtra("user_full_name", currentUserFullName);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        startActivity(intent);
     }
 }

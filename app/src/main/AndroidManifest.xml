@@ -33,6 +33,23 @@
             android:theme="@style/AppTheme.WithActionBar"
             android:importantForAutofill="no" />
 
+        <!-- Account Management Activity -->
+        <activity
+            android:name=".AccountManagementActivity"
+            android:exported="false"
+            android:parentActivityName=".MainMenuActivity"
+            android:theme="@style/AppTheme.WithActionBar"
+            android:importantForAutofill="no" />
+
+        <!-- Admin Activity - User and item management -->
+        <activity
+            android:name=".AdminActivity"
+            android:exported="false"
+            android:parentActivityName=".MainMenuActivity"
+            android:theme="@style/AppTheme.WithActionBar"
+            android:importantForAutofill="no"
+            android:windowSoftInputMode="adjustResize" />
+
         <!-- Password Change Activity -->
         <activity
             android:name=".PasswordChangeActivity"
@@ -59,32 +76,37 @@
             android:importantForAutofill="no"
             android:windowSoftInputMode="adjustResize" />
 
-        <!-- Existing Patient Activity - View/search existing patients -->
+        <!-- Existing Patient Activity - View existing patients -->
         <activity
             android:name=".ExistingPatientActivity"
             android:exported="false"
             android:parentActivityName=".PatientInfoMenuActivity"
             android:theme="@style/AppTheme.WithActionBar"
-            android:importantForAutofill="no"
-            android:windowSoftInputMode="adjustResize" />
+            android:importantForAutofill="no" />
 
-        <!-- Patient Detail Activity - View/edit specific patient -->
+        <!-- Patient Info Activity - Manage patient information -->
+        <activity
+            android:name=".PatientInfoActivity"
+            android:exported="false"
+            android:parentActivityName=".PatientInfoMenuActivity"
+            android:theme="@style/AppTheme.WithActionBar"
+            android:importantForAutofill="no" />
+
+        <!-- Patient Detail Activity - View patient details -->
         <activity
             android:name=".PatientDetailActivity"
             android:exported="false"
             android:parentActivityName=".ExistingPatientActivity"
             android:theme="@style/AppTheme.WithActionBar"
-            android:importantForAutofill="no"
-            android:windowSoftInputMode="adjustResize" />
+            android:importantForAutofill="no" />
 
-        <!-- FIXED: Meal Planning Activity - Plan patient meals with proper theme -->
+        <!-- Meal Planning Activity - Plan patient meals -->
         <activity
             android:name=".MealPlanningActivity"
             android:exported="false"
             android:parentActivityName=".PatientDetailActivity"
             android:theme="@style/AppTheme.WithActionBar"
-            android:importantForAutofill="no"
-            android:windowSoftInputMode="adjustResize" />
+            android:importantForAutofill="no" />
 
         <!-- Pending Orders Activity - View pending orders -->
         <activity
@@ -94,7 +116,7 @@
             android:theme="@style/AppTheme.WithActionBar"
             android:importantForAutofill="no" />
 
-        <!-- Finished Orders Activity - View completed orders -->
+        <!-- Finished Orders Activity - View finished orders -->
         <activity
             android:name=".FinishedOrdersActivity"
             android:exported="false"
@@ -102,7 +124,7 @@
             android:theme="@style/AppTheme.WithActionBar"
             android:importantForAutofill="no" />
 
-        <!-- Retired Orders Activity - View completed orders -->
+        <!-- Retired Orders Activity - View retired orders -->
         <activity
             android:name=".RetiredOrdersActivity"
             android:exported="false"
@@ -110,16 +132,31 @@
             android:theme="@style/AppTheme.WithActionBar"
             android:importantForAutofill="no" />
 
-        <!-- Admin Activity - User and item management -->
+        <!-- Admin Menu Activity - Admin functions -->
         <activity
-            android:name=".AdminActivity"
+            android:name=".AdminMenuActivity"
             android:exported="false"
             android:parentActivityName=".MainMenuActivity"
             android:theme="@style/AppTheme.WithActionBar"
-            android:importantForAutofill="no"
-            android:windowSoftInputMode="adjustResize" />
+            android:importantForAutofill="no" />
 
-        <!-- View Orders Activity - View and print orders -->
+        <!-- User Management Activity - Manage users (Admin only) -->
+        <activity
+            android:name=".UserManagementActivity"
+            android:exported="false"
+            android:parentActivityName=".AdminMenuActivity"
+            android:theme="@style/AppTheme.WithActionBar"
+            android:importantForAutofill="no" />
+
+        <!-- Item Management Activity - Manage food items (Admin only) -->
+        <activity
+            android:name=".ItemManagementActivity"
+            android:exported="false"
+            android:parentActivityName=".AdminMenuActivity"
+            android:theme="@style/AppTheme.WithActionBar"
+            android:importantForAutofill="no" />
+
+        <!-- View Orders Activity - View orders by date -->
         <activity
             android:name=".ViewOrdersActivity"
             android:exported="false"

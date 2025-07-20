@@ -2,11 +2,11 @@
 <resources>
     <string name="app_name">Dietary Management</string>
 
-    <!-- App Version - Update this when version changes -->
-    <string name="app_version">V 0.0.21</string>
+    <!-- App Version - Updated to 0.0.25 -->
+    <string name="app_version">V 0.0.25</string>
 
     <!-- Copyright message with version -->
-    <string name="copyright_message">Dietary Management System - V 0.0.21\nBug Fixes &amp; New Features Update</string>
+    <string name="copyright_message">Dietary Management System - V 0.0.25\nLiquid Diet &amp; Fluid Restriction Update</string>
 
     <!-- Common strings -->
     <string name="loading">Loading...</string>
@@ -22,13 +22,18 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
 
-    <!-- Login strings -->
+    <!-- Login and authentication strings -->
     <string name="login_title">Hospital Dietary Management</string>
     <string name="login_subtitle">Dietary Management Application</string>
     <string name="username_hint">Enter your username</string>
     <string name="password_hint">Enter your password</string>
     <string name="sign_in">Sign In</string>
     <string name="show_password">Show password</string>
+    <string name="username_required">Username is required</string>
+    <string name="password_required">Password is required</string>
+    <string name="invalid_credentials">Invalid username or password</string>
+    <string name="account_inactive">Account is inactive. Please contact administrator.</string>
+    <string name="login_error">Login error occurred. Please try again.</string>
 
     <!-- Main menu strings -->
     <string name="welcome_message">Welcome, %s!</string>
@@ -40,59 +45,87 @@
     <string name="item_management">🍽️ Item Management</string>
     <string name="account_management">🔐 Account Management</string>
     <string name="logout">🚪 Logout</string>
-    <string name="administration">🔧 Administration</string>
 
-    <!-- Admin panel strings -->
-    <string name="admin_panel">⚙️ Admin Panel</string>
-    <string name="manage_users_and_items">Manage Users and Food Items</string>
-    <string name="manage_users">👥 Manage Users</string>
-    <string name="manage_food_items">🍽️ Manage Food Items</string>
-    <string name="back_to_main_menu">← Back to Main Menu</string>
-    <string name="search_users">🔍 Search users...</string>
-    <string name="search_items">🔍 Search items...</string>
-    <string name="add_user">➕ Add User</string>
-    <string name="add_item">➕ Add Item</string>
-    <string name="active_users">%d Active Users</string>
-    <string name="food_items">%d Food Items</string>
+    <!-- Patient strings -->
+    <string name="add_patient">Add Patient</string>
+    <string name="edit_patient">Edit Patient</string>
+    <string name="patient_details">Patient Details</string>
+    <string name="patient_name">Patient Name</string>
+    <string name="patient_first_name">First Name</string>
+    <string name="patient_last_name">Last Name</string>
+    <string name="room_number">Room Number</string>
+    <string name="wing">Wing</string>
+    <string name="diet_type">Diet Type</string>
+    <string name="fluid_restriction">Fluid Restriction</string>
+    <string name="meal_planning">Meal Planning</string>
+    <string name="active_patients">Active Patients</string>
+    <string name="ada_diet_option">ADA Diet</string>
+    <string name="select_diet_type">Select Diet Type</string>
+    <string name="select_wing">Select Wing</string>
+    <string name="select_room">Select Room</string>
+    <string name="clear_form">Clear Form</string>
+    <string name="save_patient">Save Patient</string>
 
-    <!-- FIXED: Patient management strings -->
-    <string name="active_patients">Active Patients (%d)</string>
-    <string name="completed_orders">Completed Orders (%d)</string>
-    <string name="select_day">Select Day</string>
-    <string name="today">Today - %s</string>
-    <string name="tomorrow">Tomorrow - %s</string>
+    <!-- Form strings -->
+    <string name="required_field">Required field</string>
+    <string name="enter_first_name">Enter first name</string>
+    <string name="enter_last_name">Enter last name</string>
+    <string name="patient_information">Patient Information</string>
+    <string name="basic_information">Basic Information</string>
+    <string name="dietary_requirements">Dietary Requirements</string>
+    <string name="additional_options">Additional Options</string>
 
-    <!-- FEATURE: Bulk operations strings -->
-    <string name="select_all">Select All</string>
-    <string name="delete_selected">Delete Selected</string>
-    <string name="print_menus">Print Menus</string>
-    <string name="print_all_menus">Print All Menus</string>
-    <string name="bulk_delete_confirmation">Are you sure you want to delete %d selected patients?</string>
-    <string name="print_confirmation">Print menus for %d patients?</string>
+    <!-- Validation strings -->
+    <string name="field_required">This field is required</string>
+    <string name="invalid_input">Invalid input</string>
+    <string name="please_select">Please select an option</string>
+    <string name="form_incomplete">Please complete all required fields</string>
 
-    <!-- FEATURE: Account management strings -->
-    <string name="change_password">Change Password</string>
-    <string name="current_password">Current Password</string>
-    <string name="new_password">New Password</string>
-    <string name="confirm_password">Confirm Password</string>
-    <string name="password_changed_successfully">Password changed successfully!</string>
-    <string name="password_change_failed">Failed to change password</string>
-    <string name="passwords_do_not_match">Passwords do not match</string>
-    <string name="password_too_short">Password must be at least 6 characters</string>
-    <string name="current_password_incorrect">Current password is incorrect</string>
-    <string name="new_password_same_as_current">New password must be different from current password</string>
-    <string name="password_change_required">Password Change Required</string>
-    <string name="first_login_password_change">You must change your password before continuing.</string>
+    <!-- UI strings -->
+    <string name="select_option">Select an option</string>
+    <string name="none_selected">None selected</string>
+    <string name="multiple_allowed">Multiple selections allowed</string>
+    <string name="tap_to_select">Tap to select</string>
 
-    <!-- FIXED: Texture modification strings -->
+    <!-- Order strings -->
+    <string name="pending_orders_count">Pending Orders: %d</string>
+    <string name="finished_orders_count">Finished Orders: %d</string>
+    <string name="retired_orders_count">Retired Orders: %d</string>
+
+    <!-- Diet strings -->
+    <string name="regular_diet">Regular</string>
+    <string name="cardiac_diet">Cardiac</string>
+    <string name="ada_diet">ADA</string>
+    <string name="renal_diet">Renal</string>
+    <string name="puree_diet">Puree</string>
+    <string name="full_liquid_diet">Full Liquid</string>
+    <string name="clear_liquid_diet">Clear Liquid</string>
+
+    <!-- Meal strings -->
+    <string name="breakfast">Breakfast</string>
+    <string name="lunch">Lunch</string>
+    <string name="dinner">Dinner</string>
+    <string name="meal_complete">Complete</string>
+    <string name="npo">NPO</string>
+
+    <!-- Texture modification strings -->
+    <string name="texture_modifications">Texture Modifications</string>
+    <string name="texture_note">Select applicable texture modifications (multiple selections allowed)</string>
     <string name="mechanical_chopped">Mechanical Chopped</string>
     <string name="mechanical_ground">Mechanical Ground</string>
     <string name="bite_size">Bite Size</string>
     <string name="bread_ok">Bread OK</string>
-    <string name="texture_modifications">Texture Modifications</string>
-    <string name="texture_note">Note: If Mechanical Chopped or Ground is selected, bread items will be hidden unless Bread OK is also checked.</string>
 
-    <!-- FIXED: Wing and room strings -->
+    <!-- Fluid restriction strings -->
+    <string name="no_restriction">No Restriction</string>
+    <string name="fluid_1000ml">1000ml (34oz): 120ml, 120ml, 160ml</string>
+    <string name="fluid_1200ml">1200ml (41oz): 250ml, 170ml, 180ml</string>
+    <string name="fluid_1500ml">1500ml (51oz): 350ml, 170ml, 180ml</string>
+    <string name="fluid_1800ml">1800ml (61oz): 360ml, 240ml, 240ml</string>
+    <string name="fluid_2000ml">2000ml (68oz): 320ml, 240ml, 240ml</string>
+    <string name="fluid_2500ml">2500ml (85oz): 400ml, 400ml, 400ml</string>
+
+    <!-- Wing strings -->
     <string name="wing_1_south">1 South</string>
     <string name="wing_2_north">2 North</string>
     <string name="wing_labor_delivery">Labor and Delivery</string>
@@ -100,38 +133,46 @@
     <string name="wing_3_north">3 North</string>
     <string name="wing_icu">ICU</string>
 
+    <!-- User management strings -->
+    <string name="add_user">Add User</string>
+    <string name="edit_user">Edit User</string>
+    <string name="user_role">User Role</string>
+    <string name="admin_role">Admin</string>
+    <string name="user_role_standard">User</string>
+    <string name="active_user">Active</string>
+    <string name="inactive_user">Inactive</string>
+
+    <!-- Navigation strings -->
+    <string name="home">Home</string>
+    <string name="refresh">Refresh</string>
+    <string name="search">Search</string>
+    <string name="filter">Filter</string>
+
+    <!-- Status strings -->
+    <string name="status_loading">Loading...</string>
+    <string name="status_no_data">No data available</string>
+    <string name="status_error">Error loading data</string>
+
     <!-- Error messages -->
-    <string name="username_required">Username is required</string>
-    <string name="password_required">Password is required</string>
-    <string name="invalid_credentials">Invalid username or password</string>
-    <string name="account_inactive">Account is inactive. Please contact administrator.</string>
-    <string name="login_error">Login failed. Please try again.</string>
-    <string name="access_denied">Access denied. Admin privileges required.</string>
-    <string name="user_not_found">User not found</string>
-    <string name="patient_not_found">Patient not found</string>
-    <string name="room_occupied">Room is already occupied</string>
-    <string name="invalid_selection">Please make a valid selection</string>
-    <string name="operation_failed">Operation failed. Please try again.</string>
+    <string name="error_invalid_login">Invalid username or password</string>
+    <string name="error_network">Network error occurred</string>
+    <string name="error_database">Database error occurred</string>
+    <string name="error_required_field">This field is required</string>
+    <string name="error_password_mismatch">Passwords do not match</string>
 
     <!-- Success messages -->
-    <string name="user_added_successfully">User added successfully!</string>
-    <string name="user_updated_successfully">User updated successfully</string>
-    <string name="user_deleted_successfully">User deleted successfully</string>
-    <string name="patient_added_successfully">Patient added successfully!</string>
-    <string name="patient_updated_successfully">Patient updated successfully</string>
-    <string name="patient_deleted_successfully">Patient deleted successfully</string>
+    <string name="success_patient_added">Patient added successfully</string>
+    <string name="success_patient_updated">Patient updated successfully</string>
+    <string name="success_patient_deleted">Patient deleted successfully</string>
+    <string name="success_meal_plan_saved">Meal plan saved successfully</string>
 
     <!-- Confirmation messages -->
-    <string name="logout_confirmation">Are you sure you want to logout?</string>
-    <string name="delete_user_confirmation">Are you sure you want to delete this user?</string>
-    <string name="delete_patient_confirmation">Are you sure you want to delete this patient?</string>
-    <string name="cannot_delete_last_admin">Cannot delete the last admin user</string>
-    <string name="cannot_deactivate_last_admin">Cannot deactivate the last admin user</string>
+    <string name="confirm_delete_patient">Are you sure you want to delete this patient?</string>
+    <string name="confirm_logout">Are you sure you want to logout?</string>
 
-    <!-- Info messages -->
-    <string name="default_admin_created">Default admin account created. Username: admin, Password: admin123</string>
-    <string name="no_patients_found">No patients found</string>
-    <string name="no_orders_found">No orders found for selected day</string>
-    <string name="meal_plan_not_found">No meal plan found for this patient</string>
-
+    <!-- Accessibility strings -->
+    <string name="content_description_menu">Menu</string>
+    <string name="content_description_search">Search</string>
+    <string name="content_description_refresh">Refresh</string>
+    <string name="content_description_home">Home</string>
 </resources>

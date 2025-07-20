@@ -82,7 +82,7 @@ public class NewPatientActivity extends AppCompatActivity {
         dbHelper = new DatabaseHelper(this);
         patientDAO = new PatientDAO(dbHelper);
 
-        // Set title and back button
+        // Set up toolbar
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle("Add New Patient");
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -94,7 +94,7 @@ public class NewPatientActivity extends AppCompatActivity {
     }
 
     private void initializeUI() {
-        // Patient information inputs
+        // Patient basic info
         patientFirstNameEditText = findViewById(R.id.patientFirstNameEditText);
         patientLastNameEditText = findViewById(R.id.patientLastNameEditText);
         wingSpinner = findViewById(R.id.wingSpinner);
@@ -104,17 +104,17 @@ public class NewPatientActivity extends AppCompatActivity {
         adaToggleContainer = findViewById(R.id.adaToggleContainer);
         fluidRestrictionSpinner = findViewById(R.id.fluidRestrictionSpinner);
 
-        // Texture modification checkboxes
+        // Texture modifications
         mechanicalChoppedCheckBox = findViewById(R.id.mechanicalChoppedCheckBox);
         mechanicalGroundCheckBox = findViewById(R.id.mechanicalGroundCheckBox);
         biteSizeCheckBox = findViewById(R.id.biteSizeCheckBox);
         breadOKCheckBox = findViewById(R.id.breadOKCheckBox);
 
-        // Action buttons
+        // Buttons
         savePatientButton = findViewById(R.id.savePatientButton);
         clearFormButton = findViewById(R.id.clearFormButton);
 
-        // FIXED: Initially hide ADA toggle - only show for specific diet types
+        // Initially hide ADA toggle
         adaToggleContainer.setVisibility(View.GONE);
     }
 
@@ -129,13 +129,15 @@ public class NewPatientActivity extends AppCompatActivity {
         dietAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         dietSpinner.setAdapter(dietAdapter);
 
-        // Fluid restriction spinner
+        // FIXED: Updated fluid restrictions with detailed breakdown
         String[] fluidRestrictions = {
                 "No Restriction",
-                "1000 mL",
-                "1500 mL",
-                "2000 mL",
-                "2500 mL"
+                "1000ml (34oz): 120ml, 120ml, 160ml",
+                "1200ml (41oz): 250ml, 170ml, 180ml",
+                "1500ml (51oz): 350ml, 170ml, 180ml",
+                "1800ml (61oz): 360ml, 240ml, 240ml",
+                "2000ml (68oz): 320ml, 240ml, 240ml",
+                "2500ml (85oz): 400ml, 400ml, 400ml"
         };
         ArrayAdapter<String> fluidAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, fluidRestrictions);
         fluidAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -163,7 +165,7 @@ public class NewPatientActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selectedDiet = dietTypes[position];
 
-                // FIXED: Only show ADA toggle for Puree, Full Liquid, or Clear Liquid
+                // FIXED: Show ADA toggle for Puree, Full Liquid, or Clear Liquid
                 if ("Puree".equals(selectedDiet) || "Full Liquid".equals(selectedDiet) || "Clear Liquid".equals(selectedDiet)) {
                     adaToggleContainer.setVisibility(View.VISIBLE);
                 } else {
@@ -176,60 +178,86 @@ public class NewPatientActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) {}
         });
 
-        // Save patient button
-        savePatientButton.setOnClickListener(v -> validateAndSavePatient());
+        // Save button
+        savePatientButton.setOnClickListener(v -> savePatient());
 
         // Clear form button
         clearFormButton.setOnClickListener(v -> clearForm());
+
+        // Text change listeners for validation
+        patientFirstNameEditText.addTextChangedListener(validationWatcher);
+        patientLastNameEditText.addTextChangedListener(validationWatcher);
+    }
+
+    private TextWatcher validationWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            validateForm();
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {}
+    };
+
+    private void validateForm() {
+        boolean isValid = !patientFirstNameEditText.getText().toString().trim().isEmpty() &&
+                !patientLastNameEditText.getText().toString().trim().isEmpty() &&
+                wingSpinner.getSelectedItemPosition() > 0 &&
+                roomNumberSpinner.getSelectedItemPosition() > 0 &&
+                dietSpinner.getSelectedItemPosition() > 0;
+
+        savePatientButton.setEnabled(isValid);
     }
 
     private void updateRoomNumbers() {
         String selectedWing = wingSpinner.getSelectedItem().toString();
-        List<String> rooms = new ArrayList<>();
-        rooms.add("Select Room");
+        List<String> roomNumbers = new ArrayList<>();
+        roomNumbers.add("Select Room");
 
-        // Generate room numbers based on wing
         switch (selectedWing) {
             case "1 South":
-                for (int i = 101; i <= 150; i++) {
-                    rooms.add(String.valueOf(i));
+                for (int i = 101; i <= 125; i++) {
+                    roomNumbers.add(String.valueOf(i));
                 }
                 break;
             case "2 North":
-                for (int i = 201; i <= 250; i++) {
-                    rooms.add(String.valueOf(i));
+                for (int i = 201; i <= 225; i++) {
+                    roomNumbers.add(String.valueOf(i));
                 }
                 break;
             case "Labor and Delivery":
-                for (int i = 301; i <= 320; i++) {
-                    rooms.add("L&D " + i);
+                for (int i = 301; i <= 315; i++) {
+                    roomNumbers.add(String.valueOf(i));
                 }
                 break;
             case "2 West":
-                for (int i = 251; i <= 280; i++) {
-                    rooms.add(String.valueOf(i));
+                for (int i = 226; i <= 250; i++) {
+                    roomNumbers.add(String.valueOf(i));
                 }
                 break;
             case "3 North":
-                for (int i = 351; i <= 380; i++) {
-                    rooms.add(String.valueOf(i));
+                for (int i = 351; i <= 375; i++) {
+                    roomNumbers.add(String.valueOf(i));
                 }
                 break;
             case "ICU":
-                for (int i = 401; i <= 420; i++) {
-                    rooms.add("ICU " + i);
+                for (int i = 401; i <= 415; i++) {
+                    roomNumbers.add(String.valueOf(i));
                 }
                 break;
         }
 
-        ArrayAdapter<String> roomAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, rooms);
+        ArrayAdapter<String> roomAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, roomNumbers);
         roomAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         roomNumberSpinner.setAdapter(roomAdapter);
     }
 
-    private void validateAndSavePatient() {
+    private void savePatient() {
         try {
-            // Validate inputs
+            // Get form data
             String firstName = patientFirstNameEditText.getText().toString().trim();
             String lastName = patientLastNameEditText.getText().toString().trim();
             String wing = wingSpinner.getSelectedItem().toString();
@@ -237,53 +265,55 @@ public class NewPatientActivity extends AppCompatActivity {
             String diet = dietSpinner.getSelectedItem().toString();
             String fluidRestriction = fluidRestrictionSpinner.getSelectedItem().toString();
 
-            if (firstName.isEmpty()) {
-                showError("Please enter patient's first name");
+            // Validation
+            if (firstName.isEmpty() || lastName.isEmpty()) {
+                showError("Please enter both first and last name");
                 return;
             }
 
-            if (lastName.isEmpty()) {
-                showError("Please enter patient's last name");
-                return;
-            }
-
-            if ("Select Wing".equals(wing)) {
+            if (wingSpinner.getSelectedItemPosition() == 0) {
                 showError("Please select a wing");
                 return;
             }
 
-            if ("Select Room".equals(roomNumber)) {
+            if (roomNumberSpinner.getSelectedItemPosition() == 0) {
                 showError("Please select a room number");
                 return;
             }
 
-            if ("Select Diet Type".equals(diet)) {
+            if (dietSpinner.getSelectedItemPosition() == 0) {
                 showError("Please select a diet type");
                 return;
             }
 
+            // FIXED: Handle ADA toggle for liquid diets
+            final String finalDiet;
+            if (adaToggleCheckBox.isChecked() &&
+                    ("Puree".equals(diet) || "Full Liquid".equals(diet) || "Clear Liquid".equals(diet))) {
+                finalDiet = diet + " ADA";
+            } else {
+                finalDiet = diet;
+            }
+
             // Check if room is already occupied
-            List<Patient> existingPatients = patientDAO.getAllPatients();
-            for (Patient existingPatient : existingPatients) {
-                if (wing.equals(existingPatient.getWing()) && roomNumber.equals(existingPatient.getRoomNumber())) {
-                    new AlertDialog.Builder(this)
-                            .setTitle("Room Already Occupied")
-                            .setMessage("Room " + roomNumber + " in " + wing + " is already occupied by " +
-                                    existingPatient.getPatientFirstName() + " " + existingPatient.getPatientLastName() +
-                                    ".\n\nWould you like to replace this patient?")
-                            .setPositiveButton("Replace Patient", (dialog, which) -> {
-                                // Delete existing patient and save new one
-                                patientDAO.deletePatient(existingPatient.getPatientId());
-                                saveNewPatient(firstName, lastName, wing, roomNumber, diet, fluidRestriction);
-                            })
-                            .setNegativeButton("Select Different Room", null)
-                            .show();
-                    return;
-                }
+            Patient existingPatient = patientDAO.getPatientInRoom(wing, roomNumber);
+            if (existingPatient != null) {
+                new AlertDialog.Builder(this)
+                        .setTitle("Room Already Occupied")
+                        .setMessage("Room " + roomNumber + " in " + wing + " is already occupied by:\n" +
+                                existingPatient.getFullName() + "\n\nDo you want to replace this patient?")
+                        .setPositiveButton("Replace Patient", (dialog, which) -> {
+                            // Delete existing patient and save new one
+                            patientDAO.deletePatient(existingPatient.getPatientId());
+                            saveNewPatient(firstName, lastName, wing, roomNumber, finalDiet, fluidRestriction);
+                        })
+                        .setNegativeButton("Select Different Room", null)
+                        .show();
+                return;
             }
 
             // Save new patient
-            saveNewPatient(firstName, lastName, wing, roomNumber, diet, fluidRestriction);
+            saveNewPatient(firstName, lastName, wing, roomNumber, finalDiet, fluidRestriction);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -310,7 +340,7 @@ public class NewPatientActivity extends AppCompatActivity {
             newPatient.setBreadOK(breadOKCheckBox.isChecked());
 
             // FIXED: Auto-complete liquid diets
-            boolean isLiquidDiet = diet.equals("Clear Liquid") || diet.equals("Full Liquid") || diet.equals("Puree");
+            boolean isLiquidDiet = diet.contains("Clear Liquid") || diet.contains("Full Liquid") || diet.contains("Puree");
 
             if (isLiquidDiet) {
                 // Auto-complete all meals for liquid diets
@@ -329,31 +359,31 @@ public class NewPatientActivity extends AppCompatActivity {
             if (result > 0) {
                 if (isLiquidDiet) {
                     // FIXED: Special notification for liquid diets
-                    String dietName = diet + (adaToggleCheckBox.isChecked() ? " (ADA)" : "");
+                    String dietName = diet + (adaToggleCheckBox.isChecked() ? " ADA" : "");
                     new AlertDialog.Builder(this)
-                            .setTitle("Patient Added - Diet Auto-Completed")
-                            .setMessage("Patient " + firstName + " " + lastName + " has been added successfully.\n\n" +
-                                    "The " + dietName + " diet has been auto-completed with predetermined menu items.\n\n" +
-                                    "What would you like to do next?")
-                            .setPositiveButton("View Patient Details", (dialog, which) -> {
-                                Intent intent = new Intent(this, PatientDetailActivity.class);
-                                intent.putExtra("patient_id", (int) result);
+                            .setTitle("Patient Added Successfully")
+                            .setMessage("Patient " + firstName + " " + lastName + " has been added with " + dietName + " diet.\n\n" +
+                                    "✅ All meals automatically completed for liquid diet.\n\n" +
+                                    "This patient will appear in Finished Orders.")
+                            .setPositiveButton("Add Another Patient", (dialog, which) -> clearForm())
+                            .setNegativeButton("Back to Menu", (dialog, which) -> {
+                                Intent intent = new Intent(this, MainMenuActivity.class);
                                 intent.putExtra("current_user", currentUsername);
                                 intent.putExtra("user_role", currentUserRole);
                                 intent.putExtra("user_full_name", currentUserFullName);
                                 startActivity(intent);
                                 finish();
                             })
-                            .setNegativeButton("Add Another Patient", (dialog, which) -> clearForm())
-                            .setNeutralButton("Return to Menu", (dialog, which) -> finish())
                             .show();
                 } else {
-                    // Regular diet - offer meal planning
+                    // Regular success message for regular diets
                     new AlertDialog.Builder(this)
-                            .setTitle("Patient Added")
-                            .setMessage("Patient " + firstName + " " + lastName + " has been added successfully.\n\n" +
-                                    "Would you like to create their meal plan now?")
-                            .setPositiveButton("Create Meal Plan", (dialog, which) -> {
+                            .setTitle("Patient Added Successfully")
+                            .setMessage("Patient " + firstName + " " + lastName + " has been added successfully!\n\n" +
+                                    "Diet: " + diet + "\n" +
+                                    "Location: " + wing + " Room " + roomNumber)
+                            .setPositiveButton("Add Another Patient", (dialog, which) -> clearForm())
+                            .setNegativeButton("Create Meal Plan", (dialog, which) -> {
                                 Intent intent = new Intent(this, MealPlanningActivity.class);
                                 intent.putExtra("patient_id", (int) result);
                                 intent.putExtra("current_user", currentUsername);
@@ -362,29 +392,16 @@ public class NewPatientActivity extends AppCompatActivity {
                                 startActivity(intent);
                                 finish();
                             })
-                            .setNegativeButton("Add Another Patient", (dialog, which) -> clearForm())
-                            .setNeutralButton("Return to Menu", (dialog, which) -> finish())
                             .show();
                 }
             } else {
-                showError("Failed to add patient. Please try again.");
+                showError("Failed to save patient. Please try again.");
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-            showError("Error saving patient: " + e.getMessage());
+            showError("Error creating patient: " + e.getMessage());
         }
-    }
-
-    private String getTextureModifications() {
-        List<String> modifications = new ArrayList<>();
-
-        if (mechanicalChoppedCheckBox.isChecked()) modifications.add("Mechanical Chopped");
-        if (mechanicalGroundCheckBox.isChecked()) modifications.add("Mechanical Ground");
-        if (biteSizeCheckBox.isChecked()) modifications.add("Bite Size");
-        if (breadOKCheckBox.isChecked()) modifications.add("Bread OK");
-
-        return modifications.isEmpty() ? "None" : String.join(", ", modifications);
     }
 
     private void clearForm() {
@@ -402,15 +419,21 @@ public class NewPatientActivity extends AppCompatActivity {
         biteSizeCheckBox.setChecked(false);
         breadOKCheckBox.setChecked(false);
 
-        patientFirstNameEditText.requestFocus();
+        validateForm();
     }
 
     private void showError(String message) {
         new AlertDialog.Builder(this)
-                .setTitle("Input Error")
+                .setTitle("Error")
                 .setMessage(message)
                 .setPositiveButton("OK", null)
                 .show();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_with_home, menu);
+        return true;
     }
 
     @Override
@@ -418,6 +441,14 @@ public class NewPatientActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
+                return true;
+            case R.id.action_home:
+                Intent intent = new Intent(this, MainMenuActivity.class);
+                intent.putExtra("current_user", currentUsername);
+                intent.putExtra("user_role", currentUserRole);
+                intent.putExtra("user_full_name", currentUserFullName);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

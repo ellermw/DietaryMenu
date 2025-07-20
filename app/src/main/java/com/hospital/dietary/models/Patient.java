@@ -32,6 +32,17 @@ public class Patient {
     private boolean lunchComplete;
     private boolean dinnerComplete;
 
+    // Meal items and drinks fields
+    private String breakfastItems;
+    private String lunchItems;
+    private String dinnerItems;
+    private String breakfastJuices;
+    private String lunchJuices;
+    private String dinnerJuices;
+    private String breakfastDrinks;
+    private String lunchDrinks;
+    private String dinnerDrinks;
+
     // Meal selections
     private List<String> mealSelections;
 
@@ -261,6 +272,87 @@ public class Patient {
 
     public void setDinnerComplete(boolean dinnerComplete) {
         this.dinnerComplete = dinnerComplete;
+    }
+
+    // Breakfast Items
+    public String getBreakfastItems() {
+        return breakfastItems != null ? breakfastItems : "";
+    }
+
+    public void setBreakfastItems(String breakfastItems) {
+        this.breakfastItems = breakfastItems;
+    }
+
+    // Lunch Items
+    public String getLunchItems() {
+        return lunchItems != null ? lunchItems : "";
+    }
+
+    public void setLunchItems(String lunchItems) {
+        this.lunchItems = lunchItems;
+    }
+
+    // Dinner Items
+    public String getDinnerItems() {
+        return dinnerItems != null ? dinnerItems : "";
+    }
+
+    public void setDinnerItems(String dinnerItems) {
+        this.dinnerItems = dinnerItems;
+    }
+
+    // Breakfast Juices
+    public String getBreakfastJuices() {
+        return breakfastJuices != null ? breakfastJuices : "";
+    }
+
+    public void setBreakfastJuices(String breakfastJuices) {
+        this.breakfastJuices = breakfastJuices;
+    }
+
+    // Lunch Juices
+    public String getLunchJuices() {
+        return lunchJuices != null ? lunchJuices : "";
+    }
+
+    public void setLunchJuices(String lunchJuices) {
+        this.lunchJuices = lunchJuices;
+    }
+
+    // Dinner Juices
+    public String getDinnerJuices() {
+        return dinnerJuices != null ? dinnerJuices : "";
+    }
+
+    public void setDinnerJuices(String dinnerJuices) {
+        this.dinnerJuices = dinnerJuices;
+    }
+
+    // Breakfast Drinks
+    public String getBreakfastDrinks() {
+        return breakfastDrinks != null ? breakfastDrinks : "";
+    }
+
+    public void setBreakfastDrinks(String breakfastDrinks) {
+        this.breakfastDrinks = breakfastDrinks;
+    }
+
+    // Lunch Drinks
+    public String getLunchDrinks() {
+        return lunchDrinks != null ? lunchDrinks : "";
+    }
+
+    public void setLunchDrinks(String lunchDrinks) {
+        this.lunchDrinks = lunchDrinks;
+    }
+
+    // Dinner Drinks
+    public String getDinnerDrinks() {
+        return dinnerDrinks != null ? dinnerDrinks : "";
+    }
+
+    public void setDinnerDrinks(String dinnerDrinks) {
+        this.dinnerDrinks = dinnerDrinks;
     }
 
     // Meal selections methods
