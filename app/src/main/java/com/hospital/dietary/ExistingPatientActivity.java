@@ -82,25 +82,28 @@ public class ExistingPatientActivity extends AppCompatActivity {
     }
 
     private void setupDayFilter() {
-        // Create day options with dates
+        // Create day options with dates - Today, Tomorrow, and 5 days before today in chronological order
         List<String> dayOptions = new ArrayList<>();
         Calendar calendar = Calendar.getInstance();
 
-        // Add today and next 6 days
-        for (int i = 0; i < 7; i++) {
-            String dayName;
-            if (i == 0) {
-                dayName = "Today";
-            } else if (i == 1) {
-                dayName = "Tomorrow";
-            } else {
-                dayName = new SimpleDateFormat("EEEE", Locale.getDefault()).format(calendar.getTime());
-            }
+        // Add Today
+        dayOptions.add("Today - " + dateFormat.format(calendar.getTime()));
 
+        // Add Tomorrow
+        calendar.add(Calendar.DAY_OF_MONTH, 1);
+        dayOptions.add("Tomorrow - " + dateFormat.format(calendar.getTime()));
+
+        // Add the 5 days BEFORE today in chronological order (oldest to newest)
+        // Start from 5 days ago and work forward to yesterday
+        calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_MONTH, -5); // Start 5 days ago
+
+        for (int i = 0; i < 5; i++) {
+            String dayName = new SimpleDateFormat("EEEE", Locale.getDefault()).format(calendar.getTime());
             String dateStr = dateFormat.format(calendar.getTime());
             dayOptions.add(dayName + " - " + dateStr);
 
-            calendar.add(Calendar.DAY_OF_MONTH, 1);
+            calendar.add(Calendar.DAY_OF_MONTH, 1); // Move forward one day
         }
 
         ArrayAdapter<String> dayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, dayOptions);
@@ -157,6 +160,12 @@ public class ExistingPatientActivity extends AppCompatActivity {
             allPatients.clear();
             // FIXED: Load ALL patients, not just those with orders
             allPatients.addAll(patientDAO.getAllPatients());
+
+            // Clear select all checkbox when reloading data
+            if (selectAllCheckBox != null) {
+                selectAllCheckBox.setChecked(false);
+            }
+
             filterPatients();
         } catch (Exception e) {
             e.printStackTrace();
@@ -198,6 +207,9 @@ public class ExistingPatientActivity extends AppCompatActivity {
             patientsAdapter = new PatientAdapter(this, filteredPatients);
             patientsListView.setAdapter(patientsAdapter);
         } else {
+            // Clear selections when data changes to avoid out-of-bounds issues
+            patientsAdapter.clearSelections();
+            patientsAdapter.updatePatients(filteredPatients);
             patientsAdapter.notifyDataSetChanged();
         }
     }
@@ -276,19 +288,51 @@ public class ExistingPatientActivity extends AppCompatActivity {
             return;
         }
 
+        // Build confirmation message with patient names
+        StringBuilder message = new StringBuilder("Are you sure you want to delete the following " +
+                selectedPatients.size() + " patient(s)?\n\n");
+
+        for (Patient patient : selectedPatients) {
+            message.append("• ").append(patient.getPatientFirstName())
+                    .append(" ").append(patient.getPatientLastName())
+                    .append(" (").append(patient.getWing())
+                    .append(" Room ").append(patient.getRoomNumber()).append(")\n");
+        }
+
+        message.append("\nThis action cannot be undone.");
+
         new AlertDialog.Builder(this)
                 .setTitle("Delete Patients")
-                .setMessage("Are you sure you want to delete " + selectedPatients.size() + " selected patients?\n\nThis action cannot be undone.")
+                .setMessage(message.toString())
                 .setPositiveButton("Delete", (dialog, which) -> {
                     int deletedCount = 0;
+                    int failedCount = 0;
+
                     for (Patient patient : selectedPatients) {
-                        if (patientDAO.deletePatient(patient.getPatientId())) {
-                            deletedCount++;
+                        try {
+                            if (patientDAO.deletePatient(patient.getPatientId())) {
+                                deletedCount++;
+                            } else {
+                                failedCount++;
+                            }
+                        } catch (Exception e) {
+                            failedCount++;
+                            e.printStackTrace();
                         }
                     }
 
-                    Toast.makeText(this, "Deleted " + deletedCount + " patients", Toast.LENGTH_SHORT).show();
-                    loadPatients(); // Refresh the list
+                    // Show result message
+                    String resultMessage;
+                    if (failedCount == 0) {
+                        resultMessage = "Successfully deleted " + deletedCount + " patient(s)";
+                    } else {
+                        resultMessage = "Deleted " + deletedCount + " patient(s), failed to delete " + failedCount;
+                    }
+
+                    Toast.makeText(this, resultMessage, Toast.LENGTH_LONG).show();
+
+                    // Refresh the list and clear selections
+                    loadPatients();
                     selectAllCheckBox.setChecked(false);
                 })
                 .setNegativeButton("Cancel", null)
@@ -371,6 +415,15 @@ public class ExistingPatientActivity extends AppCompatActivity {
             }
             notifyDataSetChanged();
             updateBulkOperationVisibility();
+        }
+
+        public void clearSelections() {
+            selectedPositions.clear();
+            updateBulkOperationVisibility();
+        }
+
+        public void updatePatients(List<Patient> newPatients) {
+            this.patients = newPatients;
         }
 
         public boolean hasSelectedItems() {

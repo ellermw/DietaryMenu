@@ -3,6 +3,7 @@ package com.hospital.dietary;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,6 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MealPlanningActivity extends AppCompatActivity {
+
+    private static final String TAG = "MealPlanningActivity";
 
     private DatabaseHelper dbHelper;
     private PatientDAO patientDAO;
@@ -135,6 +138,7 @@ public class MealPlanningActivity extends AppCompatActivity {
     }
 
     private void extractIntentData() {
+        // Get intent data with null safety
         currentUsername = getIntent().getStringExtra("current_user");
         currentUserRole = getIntent().getStringExtra("user_role");
         currentUserFullName = getIntent().getStringExtra("user_full_name");
@@ -147,52 +151,59 @@ public class MealPlanningActivity extends AppCompatActivity {
         fluidRestriction = getIntent().getStringExtra("fluid_restriction");
         textureModifications = getIntent().getStringExtra("texture_modifications");
 
-        // Check if this is an ADA diet
-        isAdaDiet = "ADA".equals(diet) || (diet != null && diet.contains("ADA"));
+        // Provide safe defaults for null values
+        if (diet == null) {
+            diet = "Regular";
+            Log.w(TAG, "Diet was null, defaulting to Regular");
+        }
+
+        if (fluidRestriction == null) {
+            fluidRestriction = "No Restriction";
+        }
+
+        if (textureModifications == null) {
+            textureModifications = "";
+        }
+
+        // Check if this is an ADA diet (with null safety)
+        isAdaDiet = "ADA".equals(diet) || (diet.contains("ADA"));
 
         // Parse fluid restriction
         if (fluidRestriction != null && !fluidRestriction.equals("No Restriction")) {
             try {
-                fluidLimitML = Integer.parseInt(fluidRestriction.replaceAll("[^0-9]", ""));
-            } catch (NumberFormatException e) {
-                fluidLimitML = -1;
+                // Extract number from fluid restriction string
+                String[] parts = fluidRestriction.split(" ");
+                for (String part : parts) {
+                    if (part.matches("\\d+")) {
+                        fluidLimitML = Integer.parseInt(part);
+                        break;
+                    }
+                }
+            } catch (Exception e) {
+                Log.w(TAG, "Could not parse fluid restriction: " + fluidRestriction);
+                fluidLimitML = -1; // No limit
             }
         }
     }
 
-    // FIXED: Updated setupToolbar to use default action bar
     private void setupToolbar() {
         // Use default action bar instead of custom toolbar to avoid conflicts
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle("Meal Planning");
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-
-        // Alternative approach if you want to use custom toolbar:
-        /*
-        toolbar = findViewById(R.id.toolbar);
-        if (toolbar != null) {
-            setSupportActionBar(toolbar);
-            if (getSupportActionBar() != null) {
-                getSupportActionBar().setTitle("Meal Planning");
-                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            }
-        } else {
-            // Fallback to default action bar
-            if (getSupportActionBar() != null) {
-                getSupportActionBar().setTitle("Meal Planning");
-                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            }
-        }
-        */
     }
 
     private void initializeUI() {
         // Patient info
         patientInfoText = findViewById(R.id.patientInfoText);
         if (patientInfoText != null) {
-            patientInfoText.setText(String.format("Planning meals for %s\n%s - Room %s\nDiet: %s",
-                    patientName, wing, room, diet));
+            String patientInfo = String.format("Planning meals for %s\n%s - Room %s\nDiet: %s",
+                    patientName != null ? patientName : "Unknown Patient",
+                    wing != null ? wing : "Unknown Wing",
+                    room != null ? room : "Unknown Room",
+                    diet != null ? diet : "Unknown Diet");
+            patientInfoText.setText(patientInfo);
         }
 
         // Action buttons
@@ -307,16 +318,27 @@ public class MealPlanningActivity extends AppCompatActivity {
     }
 
     private void addCategoryDropdown(LinearLayout container, String label, String tag) {
+        // Validate inputs
+        if (container == null) {
+            Log.w(TAG, "addCategoryDropdown called with null container");
+            return;
+        }
+
+        if (tag == null || tag.trim().isEmpty()) {
+            Log.w(TAG, "addCategoryDropdown called with null or empty tag");
+            return;
+        }
+
         // Label
         TextView labelView = new TextView(this);
-        labelView.setText(label);
+        labelView.setText(label != null ? label : "Unknown:");
         labelView.setTextSize(14);
         labelView.setPadding(0, 8, 0, 4);
         container.addView(labelView);
 
         // Spinner
         Spinner spinner = new Spinner(this);
-        spinner.setTag(tag);
+        spinner.setTag(tag.trim()); // Ensure tag is not null and trimmed
         container.addView(spinner);
 
         // Populate spinner and store reference
@@ -337,17 +359,31 @@ public class MealPlanningActivity extends AppCompatActivity {
     }
 
     private void storeSpinnerReference(Spinner spinner, String tag) {
-        if (tag.equals("lunchProtein")) lunchProteinSpinner = spinner;
-        else if (tag.equals("lunchStarch")) lunchStarchSpinner = spinner;
-        else if (tag.equals("lunchVegetable")) lunchVegetableSpinner = spinner;
-        else if (tag.equals("lunchDessert")) lunchDessertSpinner = spinner;
-        else if (tag.equals("dinnerProtein")) dinnerProteinSpinner = spinner;
-        else if (tag.equals("dinnerStarch")) dinnerStarchSpinner = spinner;
-        else if (tag.equals("dinnerVegetable")) dinnerVegetableSpinner = spinner;
-        else if (tag.equals("dinnerDessert")) dinnerDessertSpinner = spinner;
+        // Add null check to prevent NullPointerException
+        if (tag == null) {
+            Log.w(TAG, "storeSpinnerReference called with null tag");
+            return;
+        }
+
+        // Use safe string comparison
+        if ("lunchProtein".equals(tag)) lunchProteinSpinner = spinner;
+        else if ("lunchStarch".equals(tag)) lunchStarchSpinner = spinner;
+        else if ("lunchVegetable".equals(tag)) lunchVegetableSpinner = spinner;
+        else if ("lunchDessert".equals(tag)) lunchDessertSpinner = spinner;
+        else if ("dinnerProtein".equals(tag)) dinnerProteinSpinner = spinner;
+        else if ("dinnerStarch".equals(tag)) dinnerStarchSpinner = spinner;
+        else if ("dinnerVegetable".equals(tag)) dinnerVegetableSpinner = spinner;
+        else if ("dinnerDessert".equals(tag)) dinnerDessertSpinner = spinner;
     }
 
     private String getCategoryFromTag(String tag) {
+        // Add null check to prevent NullPointerException
+        if (tag == null) {
+            Log.w(TAG, "getCategoryFromTag called with null tag");
+            return "Other";
+        }
+
+        // Use safe string comparison
         if (tag.contains("Protein")) return "Proteins";
         if (tag.contains("Starch")) return "Starches";
         if (tag.contains("Vegetable")) return "Vegetables";
@@ -357,7 +393,11 @@ public class MealPlanningActivity extends AppCompatActivity {
 
     private void populateCategorySpinner(Spinner spinner, String category) {
         List<String> items = new ArrayList<>();
-        items.add("Select " + category.substring(0, category.length() - 1)); // Remove 's' from category
+
+        // Safe category handling
+        String categoryName = (category != null && category.length() > 1) ?
+                category.substring(0, category.length() - 1) : "Item";
+        items.add("Select " + categoryName);
 
         try {
             List<Item> categoryItems;
@@ -368,9 +408,12 @@ public class MealPlanningActivity extends AppCompatActivity {
             }
 
             for (Item item : categoryItems) {
-                items.add(item.getName());
+                if (item != null && item.getName() != null) {
+                    items.add(item.getName());
+                }
             }
         } catch (Exception e) {
+            Log.e(TAG, "Error populating category spinner: " + e.getMessage());
             e.printStackTrace();
         }
 
@@ -394,10 +437,14 @@ public class MealPlanningActivity extends AppCompatActivity {
         drinkOptions.add("Select Drink");
 
         for (Item item : beverages) {
-            drinkOptions.add(item.getName() + " (240ml)");
+            if (item != null && item.getName() != null) {
+                drinkOptions.add(item.getName() + " (240ml)");
+            }
         }
         for (Item item : juices) {
-            drinkOptions.add(item.getName() + " (180ml)");
+            if (item != null && item.getName() != null) {
+                drinkOptions.add(item.getName() + " (180ml)");
+            }
         }
 
         ArrayAdapter<String> drinkAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, drinkOptions);
@@ -423,7 +470,7 @@ public class MealPlanningActivity extends AppCompatActivity {
         });
 
         new AlertDialog.Builder(this)
-                .setTitle("Add " + mealType.substring(0, 1).toUpperCase() + mealType.substring(1) + " Drink")
+                .setTitle("Add " + (mealType != null ? mealType.substring(0, 1).toUpperCase() + mealType.substring(1) : "Meal") + " Drink")
                 .setView(dialogView)
                 .setPositiveButton("Add", (dialog, which) -> {
                     int drinkPosition = drinkSpinner.getSelectedItemPosition();
@@ -460,6 +507,8 @@ public class MealPlanningActivity extends AppCompatActivity {
     }
 
     private void updateDrinkDisplay(LinearLayout container, List<DrinkSelection> drinks) {
+        if (container == null) return;
+
         container.removeAllViews();
 
         for (int i = 0; i < drinks.size(); i++) {
@@ -567,13 +616,14 @@ public class MealPlanningActivity extends AppCompatActivity {
                 }
             }
         } catch (Exception e) {
+            Log.e(TAG, "Error loading patient data: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
     private void loadMealItems() {
         // Special handling for liquid diets
-        if (diet.equals("Clear Liquid") || diet.equals("Full Liquid") || diet.equals("Puree")) {
+        if (diet != null && (diet.equals("Clear Liquid") || diet.equals("Full Liquid") || diet.equals("Puree"))) {
             loadLiquidDietItems();
         } else {
             loadRegularMealItems();
@@ -636,7 +686,7 @@ public class MealPlanningActivity extends AppCompatActivity {
         if (dinnerNPOCheckbox != null && dinnerNPOCheckbox.isChecked()) canSave = true;
 
         // For liquid diets, always allow save
-        if (diet.equals("Clear Liquid") || diet.equals("Full Liquid") || diet.equals("Puree")) {
+        if (diet != null && (diet.equals("Clear Liquid") || diet.equals("Full Liquid") || diet.equals("Puree"))) {
             canSave = true;
         }
 
@@ -680,6 +730,7 @@ public class MealPlanningActivity extends AppCompatActivity {
             }
 
         } catch (Exception e) {
+            Log.e(TAG, "Error saving meal plan: " + e.getMessage());
             e.printStackTrace();
             Toast.makeText(this, "Error saving meal plan: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
