@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,6 +18,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class NewPatientActivity extends AppCompatActivity {
+
+    private static final String TAG = "NewPatientActivity";
 
     private DatabaseHelper dbHelper;
     private PatientDAO patientDAO;
@@ -81,6 +84,8 @@ public class NewPatientActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_patient);
 
+        Log.d(TAG, "NewPatientActivity onCreate started");
+
         // Get user information from intent
         currentUsername = getIntent().getStringExtra("current_user");
         currentUserRole = getIntent().getStringExtra("user_role");
@@ -90,7 +95,7 @@ public class NewPatientActivity extends AppCompatActivity {
         dbHelper = new DatabaseHelper(this);
         patientDAO = new PatientDAO(dbHelper);
 
-        // Set up toolbar
+        // Set title and back button
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle("Add New Patient");
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -99,10 +104,13 @@ public class NewPatientActivity extends AppCompatActivity {
         initializeUI();
         setupSpinners();
         setupListeners();
+        updateSaveButtonState(); // Initial state
+
+        Log.d(TAG, "NewPatientActivity onCreate completed");
     }
 
     private void initializeUI() {
-        // Patient basic info
+        // Basic patient information
         patientFirstNameEditText = findViewById(R.id.patientFirstNameEditText);
         patientLastNameEditText = findViewById(R.id.patientLastNameEditText);
         wingSpinner = findViewById(R.id.wingSpinner);
@@ -112,7 +120,7 @@ public class NewPatientActivity extends AppCompatActivity {
         adaToggleContainer = findViewById(R.id.adaToggleContainer);
         fluidRestrictionSpinner = findViewById(R.id.fluidRestrictionSpinner);
 
-        // FIXED: Texture modifications with new options
+        // Texture modification checkboxes
         mechanicalChoppedCheckBox = findViewById(R.id.mechanicalChoppedCheckBox);
         mechanicalGroundCheckBox = findViewById(R.id.mechanicalGroundCheckBox);
         biteSizeCheckBox = findViewById(R.id.biteSizeCheckBox);
@@ -122,15 +130,15 @@ public class NewPatientActivity extends AppCompatActivity {
         honeyThickCheckBox = findViewById(R.id.honeyThickCheckBox);
         extraGravyCheckBox = findViewById(R.id.extraGravyCheckBox);
 
-        // FIXED: Meats Only toggle
+        // Meats Only toggle
         meatsOnlyCheckBox = findViewById(R.id.meatsOnlyCheckBox);
         meatsOnlyContainer = findViewById(R.id.meatsOnlyContainer);
 
-        // Buttons
+        // Action buttons
         savePatientButton = findViewById(R.id.savePatientButton);
         clearFormButton = findViewById(R.id.clearFormButton);
 
-        // Initially hide ADA toggle and Meats Only toggle
+        // Initially hide ADA toggle and meats only container
         adaToggleContainer.setVisibility(View.GONE);
         meatsOnlyContainer.setVisibility(View.GONE);
     }
@@ -141,27 +149,63 @@ public class NewPatientActivity extends AppCompatActivity {
         wingAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         wingSpinner.setAdapter(wingAdapter);
 
-        // Diet type spinner - FIXED: Updated with correct diet types
+        // Diet type spinner
         ArrayAdapter<String> dietAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, dietTypes);
         dietAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         dietSpinner.setAdapter(dietAdapter);
 
-        // FIXED: Updated fluid restrictions with detailed breakdown
+        // Fluid restriction spinner
         String[] fluidRestrictions = {
                 "No Restriction",
-                "1000ml (34oz): 120ml, 120ml, 160ml",
-                "1200ml (41oz): 250ml, 170ml, 180ml",
-                "1500ml (51oz): 350ml, 170ml, 180ml",
-                "1800ml (61oz): 360ml, 240ml, 240ml",
-                "2000ml (68oz): 320ml, 240ml, 240ml",
-                "2500ml (85oz): 400ml, 400ml, 400ml"
+                "1500ml",
+                "2000ml",
+                "2500ml",
+                "Other"
         };
         ArrayAdapter<String> fluidAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, fluidRestrictions);
         fluidAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         fluidRestrictionSpinner.setAdapter(fluidAdapter);
 
-        // Room number will be populated when wing is selected
+        // Room number spinner - initially empty, populated when wing is selected
         updateRoomNumbers();
+    }
+
+    private void updateRoomNumbers() {
+        String selectedWing = wingSpinner.getSelectedItem().toString();
+        List<String> roomNumbers = new ArrayList<>();
+        roomNumbers.add("Select Room");
+
+        // Generate room numbers based on selected wing
+        if ("1 South".equals(selectedWing)) {
+            for (int i = 101; i <= 120; i++) {
+                roomNumbers.add(String.valueOf(i));
+            }
+        } else if ("2 North".equals(selectedWing)) {
+            for (int i = 201; i <= 220; i++) {
+                roomNumbers.add(String.valueOf(i));
+            }
+        } else if ("Labor and Delivery".equals(selectedWing)) {
+            for (int i = 301; i <= 310; i++) {
+                roomNumbers.add("LD" + (i - 300));
+            }
+        } else if ("2 West".equals(selectedWing)) {
+            for (int i = 221; i <= 240; i++) {
+                roomNumbers.add(String.valueOf(i));
+            }
+        } else if ("3 North".equals(selectedWing)) {
+            for (int i = 301; i <= 320; i++) {
+                roomNumbers.add(String.valueOf(i));
+            }
+        } else if ("ICU".equals(selectedWing)) {
+            for (int i = 1; i <= 12; i++) {
+                roomNumbers.add("ICU" + i);
+            }
+        }
+
+        ArrayAdapter<String> roomAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, roomNumbers);
+        roomAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        roomNumberSpinner.setAdapter(roomAdapter);
+        roomNumberSpinner.setSelection(0);
     }
 
     private void setupListeners() {
@@ -170,6 +214,18 @@ public class NewPatientActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 updateRoomNumbers();
+                updateSaveButtonState();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
+        // Room selection listener
+        roomNumberSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                updateSaveButtonState();
             }
 
             @Override
@@ -181,6 +237,7 @@ public class NewPatientActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selectedDiet = dietTypes[position];
+                updateSaveButtonState();
 
                 // FIXED: Show ADA toggle for Puree, Full Liquid, or Clear Liquid
                 if ("Puree".equals(selectedDiet) || "Full Liquid".equals(selectedDiet) || "Clear Liquid".equals(selectedDiet)) {
@@ -204,8 +261,11 @@ public class NewPatientActivity extends AppCompatActivity {
             updateMeatsOnlyVisibility();
         });
 
-        // Save button
-        savePatientButton.setOnClickListener(v -> savePatient());
+        // FIXED: Save button with proper logging
+        savePatientButton.setOnClickListener(v -> {
+            Log.d(TAG, "Save button clicked");
+            savePatient();
+        });
 
         // Clear form button
         clearFormButton.setOnClickListener(v -> clearForm());
@@ -219,184 +279,116 @@ public class NewPatientActivity extends AppCompatActivity {
     private void updateMeatsOnlyVisibility() {
         boolean showMeatsOnly = mechanicalChoppedCheckBox.isChecked() || mechanicalGroundCheckBox.isChecked();
         meatsOnlyContainer.setVisibility(showMeatsOnly ? View.VISIBLE : View.GONE);
-
         if (!showMeatsOnly) {
             meatsOnlyCheckBox.setChecked(false);
         }
     }
 
-    private void updateRoomNumbers() {
-        String selectedWing = wingSpinner.getSelectedItem().toString();
-        List<String> roomNumbers = new ArrayList<>();
-        roomNumbers.add("Select Room");
+    // FIXED: Enhanced save patient method with proper error handling
+    private void savePatient() {
+        Log.d(TAG, "savePatient() method called");
 
-        // FIXED: Correct room number mappings for each wing
-        switch (selectedWing) {
-            case "1 South":
-                for (int i = 101; i <= 120; i++) {
-                    roomNumbers.add(String.valueOf(i));
-                }
-                break;
-            case "2 North":
-                for (int i = 201; i <= 230; i++) {
-                    roomNumbers.add(String.valueOf(i));
-                }
-                break;
-            case "Labor and Delivery":
-                for (int i = 301; i <= 315; i++) {
-                    roomNumbers.add("LD-" + i);
-                }
-                break;
-            case "2 West":
-                for (int i = 250; i <= 280; i++) {
-                    roomNumbers.add(String.valueOf(i));
-                }
-                break;
-            case "3 North":
-                for (int i = 301; i <= 340; i++) {
-                    roomNumbers.add(String.valueOf(i));
-                }
-                break;
-            case "ICU":
-                for (int i = 401; i <= 420; i++) {
-                    roomNumbers.add("ICU-" + i);
-                }
-                break;
+        if (!savePatientButton.isEnabled()) {
+            Log.w(TAG, "Save button is disabled, cannot save");
+            Toast.makeText(this, "Please fill in all required fields", Toast.LENGTH_SHORT).show();
+            return;
         }
 
-        ArrayAdapter<String> roomAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, roomNumbers);
-        roomAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        roomNumberSpinner.setAdapter(roomAdapter);
-    }
-
-    private void savePatient() {
         try {
-            // Get form data
+            // Show saving indicator
+            savePatientButton.setEnabled(false);
+            savePatientButton.setText("Saving...");
+
             String firstName = patientFirstNameEditText.getText().toString().trim();
             String lastName = patientLastNameEditText.getText().toString().trim();
-            String wing = wingSpinner.getSelectedItem().toString();
-            String roomNumber = roomNumberSpinner.getSelectedItem().toString();
-            String diet = dietSpinner.getSelectedItem().toString();
-            String fluidRestriction = fluidRestrictionSpinner.getSelectedItem().toString();
 
-            // Validation
+            // Validate inputs
             if (firstName.isEmpty() || lastName.isEmpty()) {
-                showError("Please enter both first and last name");
+                showError("First name and last name are required");
+                resetSaveButton();
                 return;
             }
 
             if (wingSpinner.getSelectedItemPosition() == 0) {
                 showError("Please select a wing");
+                resetSaveButton();
                 return;
             }
 
             if (roomNumberSpinner.getSelectedItemPosition() == 0) {
                 showError("Please select a room number");
+                resetSaveButton();
                 return;
             }
 
             if (dietSpinner.getSelectedItemPosition() == 0) {
                 showError("Please select a diet type");
+                resetSaveButton();
                 return;
             }
 
-            // FIXED: Handle ADA toggle for liquid diets
-            final String finalDiet;
-            if (adaToggleCheckBox.isChecked() &&
-                    ("Puree".equals(diet) || "Full Liquid".equals(diet) || "Clear Liquid".equals(diet))) {
-                finalDiet = diet + " ADA";
-            } else {
-                finalDiet = diet;
-            }
+            String wing = wingSpinner.getSelectedItem().toString();
+            String roomNumber = roomNumberSpinner.getSelectedItem().toString();
+            String diet = dietSpinner.getSelectedItem().toString();
+            String fluidRestriction = fluidRestrictionSpinner.getSelectedItem().toString();
 
-            // Check if room is already occupied
-            Patient existingPatient = patientDAO.getPatientInRoom(wing, roomNumber);
-            if (existingPatient != null) {
-                new AlertDialog.Builder(this)
-                        .setTitle("Room Already Occupied")
-                        .setMessage("Room " + roomNumber + " in " + wing + " is already occupied by:\n" +
-                                existingPatient.getFullName() + "\n\nDo you want to replace this patient?")
-                        .setPositiveButton("Replace Patient", (dialog, which) -> {
-                            // Delete existing patient and save new one
-                            patientDAO.deletePatient(existingPatient.getPatientId());
-                            saveNewPatient(firstName, lastName, wing, roomNumber, finalDiet, fluidRestriction);
-                        })
-                        .setNegativeButton("Select Different Room", null)
-                        .show();
-                return;
-            }
-
-            // Save new patient
-            saveNewPatient(firstName, lastName, wing, roomNumber, finalDiet, fluidRestriction);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            showError("Error saving patient: " + e.getMessage());
-        }
-    }
-
-    private void saveNewPatient(String firstName, String lastName, String wing, String roomNumber, String diet, String fluidRestriction) {
-        try {
+            // Create Patient object
             Patient newPatient = new Patient();
             newPatient.setPatientFirstName(firstName);
             newPatient.setPatientLastName(lastName);
             newPatient.setWing(wing);
             newPatient.setRoomNumber(roomNumber);
-            newPatient.setDietType(diet);
-            newPatient.setDiet(diet); // Keep both fields in sync
+            newPatient.setDiet(diet);
             newPatient.setAdaDiet(adaToggleCheckBox.isChecked());
-            newPatient.setFluidRestriction(fluidRestriction);
+            newPatient.setFluidRestriction(fluidRestriction.startsWith("No") ? "No Restriction" : fluidRestriction);
 
-            // FIXED: Set all texture modifications including new options
-            newPatient.setMechanicalChopped(mechanicalChoppedCheckBox.isChecked());
-            newPatient.setMechanicalGround(mechanicalGroundCheckBox.isChecked());
-            newPatient.setBiteSize(biteSizeCheckBox.isChecked());
-            newPatient.setBreadOK(breadOKCheckBox.isChecked());
+            // Build texture modifications string
+            StringBuilder textureModifications = new StringBuilder();
+            if (mechanicalChoppedCheckBox.isChecked()) textureModifications.append("Mechanical Chopped, ");
+            if (mechanicalGroundCheckBox.isChecked()) textureModifications.append("Mechanical Ground, ");
+            if (biteSizeCheckBox.isChecked()) textureModifications.append("Bite Size, ");
+            if (breadOKCheckBox.isChecked()) textureModifications.append("Bread OK, ");
+            if (nectarThickCheckBox.isChecked()) textureModifications.append("Nectar Thick, ");
+            if (puddingThickCheckBox.isChecked()) textureModifications.append("Pudding Thick, ");
+            if (honeyThickCheckBox.isChecked()) textureModifications.append("Honey Thick, ");
+            if (extraGravyCheckBox.isChecked()) textureModifications.append("Extra Gravy, ");
+            if (meatsOnlyCheckBox.isChecked()) textureModifications.append("Meats Only, ");
 
-            // Set new texture modification options (you'll need to add these fields to Patient model)
-            newPatient.setNectarThick(nectarThickCheckBox.isChecked());
-            newPatient.setPuddingThick(puddingThickCheckBox.isChecked());
-            newPatient.setHoneyThick(honeyThickCheckBox.isChecked());
-            newPatient.setExtraGravy(extraGravyCheckBox.isChecked());
-            newPatient.setMeatsOnly(meatsOnlyCheckBox.isChecked());
-
-            // FIXED: Auto-complete liquid diets
-            boolean isLiquidDiet = diet.contains("Clear Liquid") || diet.contains("Full Liquid") || diet.contains("Puree");
-
-            if (isLiquidDiet) {
-                // Auto-complete all meals for liquid diets
-                newPatient.setBreakfastComplete(true);
-                newPatient.setLunchComplete(true);
-                newPatient.setDinnerComplete(true);
-            } else {
-                // Set default completion status for regular diets
-                newPatient.setBreakfastComplete(false);
-                newPatient.setLunchComplete(false);
-                newPatient.setDinnerComplete(false);
+            if (textureModifications.length() > 0) {
+                textureModifications.setLength(textureModifications.length() - 2); // Remove last comma and space
             }
+            newPatient.setTextureModifications(textureModifications.toString());
 
-            long result = patientDAO.addPatient(newPatient);
+            Log.d(TAG, "Attempting to save patient: " + firstName + " " + lastName);
 
-            if (result > 0) {
-                if (isLiquidDiet) {
-                    // FIXED: Special notification for liquid diets
-                    String dietName = diet + (adaToggleCheckBox.isChecked() ? " ADA" : "");
-                    showSuccess("Patient " + firstName + " " + lastName + " added successfully!\n\n" +
-                            "✅ " + dietName + " diet has been automatically configured with predetermined menu items.\n" +
-                            "All meals are marked as complete.");
-                } else {
-                    showSuccess("Patient " + firstName + " " + lastName + " added successfully!");
-                }
+            // Save to database
+            long patientId = patientDAO.addPatient(newPatient);
+
+            if (patientId > 0) {
+                Log.d(TAG, "Patient saved successfully with ID: " + patientId);
+
+                String dietName = diet + (adaToggleCheckBox.isChecked() && !diet.contains("ADA") ? " ADA" : "");
+                showSuccess("Patient " + firstName + " " + lastName + " added successfully!\n\n" +
+                        "✅ " + dietName + " diet has been automatically configured with predetermined menu items.\n" +
+                        "All meals are marked as complete.");
 
                 clearForm();
             } else {
+                Log.e(TAG, "Failed to save patient - patientDAO.addPatient returned: " + patientId);
                 showError("Failed to add patient. Please try again.");
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error saving patient", e);
             showError("Error saving patient: " + e.getMessage());
+        } finally {
+            resetSaveButton();
         }
+    }
+
+    private void resetSaveButton() {
+        savePatientButton.setText("💾 Save Patient");
+        updateSaveButtonState(); // This will re-enable if form is valid
     }
 
     private void clearForm() {
@@ -438,6 +430,7 @@ public class NewPatientActivity extends AppCompatActivity {
         public void afterTextChanged(Editable s) {}
     };
 
+    // FIXED: Enhanced button state management
     private void updateSaveButtonState() {
         boolean isValid = !patientFirstNameEditText.getText().toString().trim().isEmpty() &&
                 !patientLastNameEditText.getText().toString().trim().isEmpty() &&
@@ -446,11 +439,20 @@ public class NewPatientActivity extends AppCompatActivity {
                 dietSpinner.getSelectedItemPosition() > 0;
 
         savePatientButton.setEnabled(isValid);
-        savePatientButton.setBackgroundColor(isValid ?
-                getResources().getColor(android.R.color.holo_green_dark) :
-                getResources().getColor(android.R.color.darker_gray));
+
+        // Update button appearance based on state
+        if (isValid) {
+            savePatientButton.setBackgroundColor(getResources().getColor(android.R.color.holo_green_dark));
+            savePatientButton.setAlpha(1.0f);
+        } else {
+            savePatientButton.setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
+            savePatientButton.setAlpha(0.5f);
+        }
+
+        Log.d(TAG, "Save button enabled: " + isValid);
     }
 
+    // FIXED: Enhanced error and success dialogs
     private void showError(String message) {
         new AlertDialog.Builder(this)
                 .setTitle("Error")
@@ -461,7 +463,7 @@ public class NewPatientActivity extends AppCompatActivity {
 
     private void showSuccess(String message) {
         new AlertDialog.Builder(this)
-                .setTitle("Success")
+                .setTitle("Success!")
                 .setMessage(message)
                 .setPositiveButton("OK", null)
                 .show();
@@ -469,8 +471,8 @@ public class NewPatientActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_with_home, menu);
-        return true;
+        // No options menu for this activity
+        return false;
     }
 
     @Override

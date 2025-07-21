@@ -65,28 +65,15 @@
 
     <!-- Texture modification strings -->
     <string name="texture_modifications">Texture Modifications</string>
-    <string name="texture_note">Select applicable texture modifications (multiple selections allowed)</string>
     <string name="mechanical_chopped">Mechanical Chopped</string>
     <string name="mechanical_ground">Mechanical Ground</string>
     <string name="bite_size">Bite Size</string>
     <string name="bread_ok">Bread OK</string>
-
-    <!-- FIXED: New texture modification strings -->
     <string name="nectar_thick">Nectar Thick</string>
     <string name="pudding_thick">Pudding Thick</string>
     <string name="honey_thick">Honey Thick</string>
     <string name="extra_gravy">Extra Gravy</string>
     <string name="meats_only">Meats Only</string>
-    <string name="meats_only_note">Apply mechanical modification to meats only</string>
-
-    <!-- Fluid restriction strings -->
-    <string name="no_restriction">No Restriction</string>
-    <string name="fluid_1000ml">1000ml (34oz): 120ml, 120ml, 160ml</string>
-    <string name="fluid_1200ml">1200ml (41oz): 250ml, 170ml, 180ml</string>
-    <string name="fluid_1500ml">1500ml (51oz): 350ml, 170ml, 180ml</string>
-    <string name="fluid_1800ml">1800ml (61oz): 360ml, 240ml, 240ml</string>
-    <string name="fluid_2000ml">2000ml (68oz): 320ml, 240ml, 240ml</string>
-    <string name="fluid_2500ml">2500ml (85oz): 400ml, 400ml, 400ml</string>
 
     <!-- Wing strings -->
     <string name="wing_1_south">1 South</string>
@@ -113,7 +100,7 @@
     <string name="item_description">Description</string>
     <string name="ada_friendly">ADA Friendly</string>
 
-    <!-- FIXED: Default menu management strings -->
+    <!-- NEW: Default menu management strings -->
     <string name="default_menu_management">Default Menu Management</string>
     <string name="configure_default_menus">Configure Default Menus</string>
     <string name="diet_type">Diet Type</string>
@@ -160,6 +147,12 @@
     <string name="patient_deleted_successfully">Patient deleted successfully!</string>
     <string name="menu_saved_successfully">Menu saved successfully!</string>
     <string name="settings_saved_successfully">Settings saved successfully!</string>
+    <string name="user_updated_successfully">User updated successfully!</string>
+    <string name="user_deleted_successfully">User deleted successfully!</string>
+    <string name="item_updated_successfully">Item updated successfully!</string>
+    <string name="item_deleted_successfully">Item deleted successfully!</string>
+    <string name="default_menu_saved_successfully">Default menu saved successfully!</string>
+    <string name="password_updated_successfully">Password updated successfully!</string>
 
     <!-- Error messages -->
     <string name="error_loading_data">Error loading data</string>
@@ -167,6 +160,14 @@
     <string name="error_deleting_data">Error deleting data</string>
     <string name="network_error">Network error occurred</string>
     <string name="database_error">Database error occurred</string>
+    <string name="failed_to_update_user">Failed to update user</string>
+    <string name="failed_to_delete_user">Failed to delete user</string>
+    <string name="failed_to_update_item">Failed to update item</string>
+    <string name="failed_to_delete_item">Failed to delete item</string>
+    <string name="failed_to_save_default_menu">Failed to save default menu</string>
+    <string name="failed_to_reset_menu">Failed to reset menu</string>
+    <string name="failed_to_update_password">Failed to update password</string>
+    <string name="password_cannot_be_empty">Password cannot be empty</string>
 
     <!-- Help strings -->
     <string name="help">Help</string>
@@ -196,5 +197,32 @@
     <string name="password_required">Password is required</string>
     <string name="invalid_credentials">Invalid username or password</string>
     <string name="account_inactive">Account is inactive. Please contact administrator.</string>
+
+    <!-- Dialog strings -->
+    <string name="delete_user_title">⚠️ Delete User</string>
+    <string name="delete_user_message">Are you sure you want to delete user \'%1$s\'?\n\nThis action cannot be undone!</string>
+    <string name="delete_item_title">⚠️ Delete Item</string>
+    <string name="delete_item_message">Are you sure you want to delete item \'%1$s\'?\n\nThis action cannot be undone!</string>
+    <string name="change_password_title">Change Password for %1$s</string>
+    <string name="new_password_hint">New Password</string>
+    <string name="change_password">Change Password</string>
+    <string name="edit_user_title">Edit User: %1$s</string>
+    <string name="full_name_hint">Full Name</string>
+    <string name="user_active">User Active</string>
+    <string name="edit_item_title">Edit Item: %1$s</string>
+    <string name="item_name_hint">Item Name</string>
+    <string name="reset_defaults_title">Reset to Defaults</string>
+    <string name="reset_defaults_message">Are you sure you want to reset the current menu to system defaults? This will remove all current items.</string>
+    <string name="remove_item_title">Remove Item</string>
+    <string name="remove_item_message">Remove \'%1$s\' from this menu?</string>
+    <string name="remove">Remove</string>
+    <string name="item_removed">Item removed</string>
+    <string name="added_item">Added: %1$s</string>
+    <string name="no_available_items">No available items to add</string>
+    <string name="menu_reset_to_defaults">Menu reset to defaults</string>
+
+    <!-- Access denied strings -->
+    <string name="access_denied_admin_required">Access denied. Admin privileges required.</string>
+    <string name="admin_user_not_found">Admin user not found or invalid.</string>
 
 </resources>

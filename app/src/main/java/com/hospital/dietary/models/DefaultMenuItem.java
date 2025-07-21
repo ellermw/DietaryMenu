@@ -2,27 +2,23 @@ package com.hospital.dietary.models;
 
 public class DefaultMenuItem {
     private int id;
-    private String dietType;       // Regular, ADA, Cardiac
-    private String dayOfWeek;      // Monday-Sunday, or "All Days" for breakfast
-    private String mealType;       // Breakfast, Lunch, Dinner
-    private String itemName;       // Name of the food item
-    private String category;       // Main Dish, Side Dish, Vegetable, etc.
-    private String description;    // Optional description
-    private boolean isActive;      // Whether this item is currently active
-    private int sortOrder;         // Order for displaying items
+    private int itemId;
+    private String itemName;
+    private String dietType;
+    private String mealType;
+    private String dayOfWeek;
+    private String description;
+    private String createdDate;
 
-    public DefaultMenuItem() {
-        this.isActive = true;
-        this.sortOrder = 0;
-    }
+    // Constructors
+    public DefaultMenuItem() {}
 
-    public DefaultMenuItem(String dietType, String dayOfWeek, String mealType, String itemName, String category) {
-        this();
-        this.dietType = dietType;
-        this.dayOfWeek = dayOfWeek;
-        this.mealType = mealType;
+    public DefaultMenuItem(int itemId, String itemName, String dietType, String mealType, String dayOfWeek) {
+        this.itemId = itemId;
         this.itemName = itemName;
-        this.category = category;
+        this.dietType = dietType;
+        this.mealType = mealType;
+        this.dayOfWeek = dayOfWeek;
     }
 
     // Getters and Setters
@@ -34,28 +30,12 @@ public class DefaultMenuItem {
         this.id = id;
     }
 
-    public String getDietType() {
-        return dietType;
+    public int getItemId() {
+        return itemId;
     }
 
-    public void setDietType(String dietType) {
-        this.dietType = dietType;
-    }
-
-    public String getDayOfWeek() {
-        return dayOfWeek;
-    }
-
-    public void setDayOfWeek(String dayOfWeek) {
-        this.dayOfWeek = dayOfWeek;
-    }
-
-    public String getMealType() {
-        return mealType;
-    }
-
-    public void setMealType(String mealType) {
-        this.mealType = mealType;
+    public void setItemId(int itemId) {
+        this.itemId = itemId;
     }
 
     public String getItemName() {
@@ -66,12 +46,28 @@ public class DefaultMenuItem {
         this.itemName = itemName;
     }
 
-    public String getCategory() {
-        return category;
+    public String getDietType() {
+        return dietType;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setDietType(String dietType) {
+        this.dietType = dietType;
+    }
+
+    public String getMealType() {
+        return mealType;
+    }
+
+    public void setMealType(String mealType) {
+        this.mealType = mealType;
+    }
+
+    public String getDayOfWeek() {
+        return dayOfWeek;
+    }
+
+    public void setDayOfWeek(String dayOfWeek) {
+        this.dayOfWeek = dayOfWeek;
     }
 
     public String getDescription() {
@@ -82,51 +78,19 @@ public class DefaultMenuItem {
         this.description = description;
     }
 
-    public boolean isActive() {
-        return isActive;
+    public String getCreatedDate() {
+        return createdDate;
     }
 
-    public void setActive(boolean active) {
-        isActive = active;
+    public void setCreatedDate(String createdDate) {
+        this.createdDate = createdDate;
     }
 
-    public int getSortOrder() {
-        return sortOrder;
-    }
-
-    public void setSortOrder(int sortOrder) {
-        this.sortOrder = sortOrder;
-    }
-
-    // Helper methods
-    public String getDisplayName() {
-        if (description != null && !description.trim().isEmpty()) {
-            return itemName + " - " + description;
-        }
-        return itemName;
-    }
-
-    public boolean isBreakfastItem() {
-        return "Breakfast".equalsIgnoreCase(mealType);
-    }
-
-    public boolean appliesToAllDays() {
-        return "All Days".equalsIgnoreCase(dayOfWeek);
-    }
-
+    // Utility methods
     @Override
     public String toString() {
-        return "DefaultMenuItem{" +
-                "id=" + id +
-                ", dietType='" + dietType + '\'' +
-                ", dayOfWeek='" + dayOfWeek + '\'' +
-                ", mealType='" + mealType + '\'' +
-                ", itemName='" + itemName + '\'' +
-                ", category='" + category + '\'' +
-                ", description='" + description + '\'' +
-                ", isActive=" + isActive +
-                ", sortOrder=" + sortOrder +
-                '}';
+        return itemName + " (" + dietType + " - " + mealType +
+                ("Breakfast".equals(mealType) ? "" : " - " + dayOfWeek) + ")";
     }
 
     @Override
@@ -135,11 +99,14 @@ public class DefaultMenuItem {
         if (obj == null || getClass() != obj.getClass()) return false;
 
         DefaultMenuItem that = (DefaultMenuItem) obj;
-        return id == that.id;
+        return itemId == that.itemId &&
+                dietType.equals(that.dietType) &&
+                mealType.equals(that.mealType) &&
+                dayOfWeek.equals(that.dayOfWeek);
     }
 
     @Override
     public int hashCode() {
-        return id;
+        return java.util.Objects.hash(itemId, dietType, mealType, dayOfWeek);
     }
 }

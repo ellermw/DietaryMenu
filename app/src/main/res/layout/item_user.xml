@@ -2,48 +2,51 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:padding="16dp"
-    android:background="?android:attr/selectableItemBackground"
-    android:clickable="true"
-    android:focusable="true">
+    android:background="@android:color/white"
+    android:gravity="center_vertical">
 
+    <!-- User Avatar/Icon -->
+    <TextView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:text="👤"
+        android:textSize="24sp"
+        android:gravity="center"
+        android:background="#ecf0f1"
+        android:layout_marginEnd="16dp" />
+
+    <!-- User Information -->
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/usernameText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Username"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#2c3e50"
+            android:layout_marginBottom="2dp" />
+
+        <TextView
+            android:id="@+id/fullNameText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Full Name"
+            android:textSize="14sp"
+            android:textColor="#34495e"
+            android:layout_marginBottom="2dp" />
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/usernameText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="username"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="#2c3e50" />
-
-            <TextView
-                android:id="@+id/fullNameText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Full Name"
-                android:textSize="14sp"
-                android:textColor="#34495e"
-                android:layout_marginTop="2dp" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="end">
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/roleText"
@@ -51,10 +54,10 @@
                 android:layout_height="wrap_content"
                 android:text="Role"
                 android:textSize="12sp"
-                android:textStyle="bold"
-                android:textColor="#9b59b6"
-                android:background="#f8f9fa"
-                android:padding="4dp" />
+                android:textColor="#7f8c8d"
+                android:background="#ecf0f1"
+                android:padding="4dp"
+                android:layout_marginEnd="8dp" />
 
             <TextView
                 android:id="@+id/statusText"
@@ -62,17 +65,21 @@
                 android:layout_height="wrap_content"
                 android:text="Status"
                 android:textSize="12sp"
-                android:textColor="#27ae60"
-                android:layout_marginTop="4dp" />
+                android:textColor="@android:color/white"
+                android:background="#27ae60"
+                android:padding="4dp" />
 
         </LinearLayout>
 
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#ecf0f1"
-        android:layout_marginTop="12dp" />
+    <!-- Action Indicator -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=">"
+        android:textSize="20sp"
+        android:textColor="#bdc3c7"
+        android:layout_marginStart="8dp" />
 
 </LinearLayout>

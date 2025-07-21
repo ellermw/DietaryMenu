@@ -6,76 +6,108 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import com.hospital.dietary.DatabaseHelper;
 import com.hospital.dietary.models.DefaultMenuItem;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class DefaultMenuDAO {
-    private static final String TAG = "DefaultMenuDAO";
+
     private DatabaseHelper dbHelper;
+    private static final String TAG = "DefaultMenuDAO";
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
 
     public DefaultMenuDAO(DatabaseHelper dbHelper) {
         this.dbHelper = dbHelper;
     }
 
     /**
-     * Get default menu items for a specific diet, day, and meal
+     * Get default menu items for a specific diet, meal, and day
      */
-    public List<DefaultMenuItem> getDefaultMenuItems(String dietType, String dayOfWeek, String mealType) {
+    public List<DefaultMenuItem> getDefaultMenuItems(String dietType, String mealType, String dayOfWeek) {
         List<DefaultMenuItem> items = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        String selection = "diet_type = ? AND day_of_week = ? AND meal_type = ? AND is_active = 1";
-        String[] selectionArgs = {dietType, dayOfWeek, mealType};
+        String selection = "diet_type = ? AND meal_type = ? AND day_of_week = ?";
+        String[] selectionArgs = {dietType, mealType, dayOfWeek};
 
-        try (Cursor cursor = db.query("DefaultMenuItems", null, selection, selectionArgs,
-                null, null, "sort_order ASC, item_name ASC")) {
+        Cursor cursor = null;
+        try {
+            cursor = db.query("DefaultMenu", null, selection, selectionArgs, null, null, "item_name ASC");
 
-            while (cursor.moveToNext()) {
-                items.add(createDefaultMenuItemFromCursor(cursor));
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    DefaultMenuItem item = new DefaultMenuItem();
+                    item.setId(cursor.getInt(cursor.getColumnIndex("id")));
+                    item.setItemId(cursor.getInt(cursor.getColumnIndex("item_id")));
+                    item.setItemName(cursor.getString(cursor.getColumnIndex("item_name")));
+                    item.setDietType(cursor.getString(cursor.getColumnIndex("diet_type")));
+                    item.setMealType(cursor.getString(cursor.getColumnIndex("meal_type")));
+                    item.setDayOfWeek(cursor.getString(cursor.getColumnIndex("day_of_week")));
+
+                    // Handle potentially null description
+                    int descIndex = cursor.getColumnIndex("description");
+                    if (descIndex != -1) {
+                        item.setDescription(cursor.getString(descIndex));
+                    }
+
+                    // Handle created date
+                    int dateIndex = cursor.getColumnIndex("created_date");
+                    if (dateIndex != -1) {
+                        item.setCreatedDate(cursor.getString(dateIndex));
+                    }
+
+                    items.add(item);
+                } while (cursor.moveToNext());
             }
         } catch (Exception e) {
-            Log.e(TAG, "Error getting default menu items", e);
+            Log.e(TAG, "Error loading default menu items", e);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
         }
 
+        Log.d(TAG, "Loaded " + items.size() + " default menu items for " + dietType + " " + mealType + " " + dayOfWeek);
         return items;
     }
 
     /**
-     * Save default menu items for a specific diet, day, and meal
+     * Save default menu items for a specific combination
      */
-    public boolean saveDefaultMenuItems(String dietType, String dayOfWeek, String mealType, List<DefaultMenuItem> items) {
+    public boolean saveDefaultMenuItems(String dietType, String mealType, String dayOfWeek, List<DefaultMenuItem> items) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         try {
             db.beginTransaction();
 
-            // Delete existing items for this combination
-            String whereClause = "diet_type = ? AND day_of_week = ? AND meal_type = ?";
-            String[] whereArgs = {dietType, dayOfWeek, mealType};
-            db.delete("DefaultMenuItems", whereClause, whereArgs);
+            // First, delete existing items for this combination
+            String deleteSelection = "diet_type = ? AND meal_type = ? AND day_of_week = ?";
+            String[] deleteArgs = {dietType, mealType, dayOfWeek};
+            int deletedRows = db.delete("DefaultMenu", deleteSelection, deleteArgs);
+            Log.d(TAG, "Deleted " + deletedRows + " existing items for " + dietType + " " + mealType + " " + dayOfWeek);
 
-            // Insert new items
-            for (int i = 0; i < items.size(); i++) {
-                DefaultMenuItem item = items.get(i);
+            // Then, insert the new items
+            for (DefaultMenuItem item : items) {
                 ContentValues values = new ContentValues();
-
-                values.put("diet_type", dietType);
-                values.put("day_of_week", dayOfWeek);
-                values.put("meal_type", mealType);
+                values.put("item_id", item.getItemId());
                 values.put("item_name", item.getItemName());
-                values.put("category", item.getCategory());
+                values.put("diet_type", dietType);
+                values.put("meal_type", mealType);
+                values.put("day_of_week", dayOfWeek);
                 values.put("description", item.getDescription());
-                values.put("is_active", 1);
-                values.put("sort_order", i);
+                values.put("created_date", getCurrentTimestamp());
 
-                long result = db.insert("DefaultMenuItems", null, values);
+                long result = db.insert("DefaultMenu", null, values);
                 if (result == -1) {
-                    throw new Exception("Failed to insert item: " + item.getItemName());
+                    Log.e(TAG, "Failed to insert default menu item: " + item.getItemName());
+                    return false;
                 }
             }
 
             db.setTransactionSuccessful();
-            Log.d(TAG, "Successfully saved " + items.size() + " menu items for " + dietType + " " + mealType + " on " + dayOfWeek);
+            Log.d(TAG, "Successfully saved " + items.size() + " default menu items");
             return true;
 
         } catch (Exception e) {
@@ -87,28 +119,28 @@ public class DefaultMenuDAO {
     }
 
     /**
-     * Reset menu items to system defaults
+     * Reset default menu to system defaults
      */
-    public boolean resetToSystemDefaults(String dietType, String mealType) {
+    public boolean resetToDefaults(String dietType, String mealType, String dayOfWeek) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         try {
             db.beginTransaction();
 
-            // Delete all existing items for this diet and meal type
-            String whereClause = "diet_type = ? AND meal_type = ?";
-            String[] whereArgs = {dietType, mealType};
-            db.delete("DefaultMenuItems", whereClause, whereArgs);
+            // Delete current items
+            String deleteSelection = "diet_type = ? AND meal_type = ? AND day_of_week = ?";
+            String[] deleteArgs = {dietType, mealType, dayOfWeek};
+            int deletedRows = db.delete("DefaultMenu", deleteSelection, deleteArgs);
+            Log.d(TAG, "Reset: Deleted " + deletedRows + " items for " + dietType + " " + mealType + " " + dayOfWeek);
 
-            // Insert system defaults based on diet type and meal type
-            insertSystemDefaults(db, dietType, mealType);
+            // Insert system defaults based on meal type and diet
+            insertSystemDefaults(db, dietType, mealType, dayOfWeek);
 
             db.setTransactionSuccessful();
-            Log.d(TAG, "Successfully reset " + dietType + " " + mealType + " to system defaults");
             return true;
 
         } catch (Exception e) {
-            Log.e(TAG, "Error resetting to system defaults", e);
+            Log.e(TAG, "Error resetting to defaults", e);
             return false;
         } finally {
             db.endTransaction();
@@ -116,189 +148,177 @@ public class DefaultMenuDAO {
     }
 
     /**
-     * Insert system default menu items
+     * Insert system default menu items based on diet type and meal
      */
-    private void insertSystemDefaults(SQLiteDatabase db, String dietType, String mealType) {
-        List<DefaultMenuItem> defaults = new ArrayList<>();
+    private void insertSystemDefaults(SQLiteDatabase db, String dietType, String mealType, String dayOfWeek) {
+        Log.d(TAG, "Inserting system defaults for " + dietType + " " + mealType + " " + dayOfWeek);
 
         if ("Breakfast".equals(mealType)) {
-            // Default breakfast items (same for all diet types with some variations)
-            defaults.add(new DefaultMenuItem(dietType, "All Days", mealType, "Scrambled Eggs", "Protein"));
-            defaults.add(new DefaultMenuItem(dietType, "All Days", mealType, "Toast", "Starch"));
-            defaults.add(new DefaultMenuItem(dietType, "All Days", mealType, "Orange Juice", "Beverage"));
-            defaults.add(new DefaultMenuItem(dietType, "All Days", mealType, "Coffee", "Beverage"));
-
-            if ("ADA".equals(dietType)) {
-                defaults.add(new DefaultMenuItem(dietType, "All Days", mealType, "Sugar-Free Syrup", "Condiment"));
-                defaults.add(new DefaultMenuItem(dietType, "All Days", mealType, "2% Milk", "Dairy"));
+            // Breakfast defaults (same for all days)
+            if ("Regular".equals(dietType)) {
+                insertDefaultItem(db, "Scrambled Eggs", dietType, mealType, dayOfWeek);
+                insertDefaultItem(db, "Toast", dietType, mealType, dayOfWeek);
+                insertDefaultItem(db, "Orange Juice", dietType, mealType, dayOfWeek);
+                insertDefaultItem(db, "Coffee", dietType, mealType, dayOfWeek);
+                insertDefaultItem(db, "Butter", dietType, mealType, dayOfWeek);
+                insertDefaultItem(db, "Jelly", dietType, mealType, dayOfWeek);
+            } else if ("ADA".equals(dietType)) {
+                insertDefaultItem(db, "Egg White Omelet", dietType, mealType, dayOfWeek);
+                insertDefaultItem(db, "Whole Wheat Toast", dietType, mealType, dayOfWeek);
+                insertDefaultItem(db, "Sugar-Free Orange Juice", dietType, mealType, dayOfWeek);
+                insertDefaultItem(db, "Black Coffee", dietType, mealType, dayOfWeek);
+                insertDefaultItem(db, "Sugar-Free Jelly", dietType, mealType, dayOfWeek);
             } else if ("Cardiac".equals(dietType)) {
-                defaults.add(new DefaultMenuItem(dietType, "All Days", mealType, "Low-Sodium Butter", "Condiment"));
-                defaults.add(new DefaultMenuItem(dietType, "All Days", mealType, "Fresh Fruit", "Fruit"));
-            } else { // Regular
-                defaults.add(new DefaultMenuItem(dietType, "All Days", mealType, "Butter", "Condiment"));
-                defaults.add(new DefaultMenuItem(dietType, "All Days", mealType, "Whole Milk", "Dairy"));
+                insertDefaultItem(db, "Oatmeal", dietType, mealType, dayOfWeek);
+                insertDefaultItem(db, "Fresh Fruit", dietType, mealType, dayOfWeek);
+                insertDefaultItem(db, "Low-Sodium Orange Juice", dietType, mealType, dayOfWeek);
+                insertDefaultItem(db, "Herbal Tea", dietType, mealType, dayOfWeek);
+                insertDefaultItem(db, "Low-Fat Milk", dietType, mealType, dayOfWeek);
             }
-        } else {
-            // For lunch and dinner, create defaults for each day of the week
-            String[] daysOfWeek = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
-
-            for (String day : daysOfWeek) {
-                if ("Lunch".equals(mealType)) {
-                    addLunchDefaults(defaults, dietType, day);
-                } else if ("Dinner".equals(mealType)) {
-                    addDinnerDefaults(defaults, dietType, day);
+        } else if ("Lunch".equals(mealType)) {
+            // Lunch defaults (vary by day)
+            if ("Regular".equals(dietType)) {
+                if ("Monday".equals(dayOfWeek)) {
+                    insertDefaultItem(db, "Grilled Chicken", dietType, mealType, dayOfWeek);
+                    insertDefaultItem(db, "Rice", dietType, mealType, dayOfWeek);
+                    insertDefaultItem(db, "Green Beans", dietType, mealType, dayOfWeek);
+                    insertDefaultItem(db, "Dinner Roll", dietType, mealType, dayOfWeek);
+                } else if ("Tuesday".equals(dayOfWeek)) {
+                    insertDefaultItem(db, "Beef Stew", dietType, mealType, dayOfWeek);
+                    insertDefaultItem(db, "Mashed Potatoes", dietType, mealType, dayOfWeek);
+                    insertDefaultItem(db, "Carrots", dietType, mealType, dayOfWeek);
+                    insertDefaultItem(db, "Cornbread", dietType, mealType, dayOfWeek);
+                } else {
+                    insertDefaultItem(db, "Baked Fish", dietType, mealType, dayOfWeek);
+                    insertDefaultItem(db, "Baked Potato", dietType, mealType, dayOfWeek);
+                    insertDefaultItem(db, "Mixed Vegetables", dietType, mealType, dayOfWeek);
                 }
+            } else if ("ADA".equals(dietType)) {
+                insertDefaultItem(db, "Grilled Fish", dietType, mealType, dayOfWeek);
+                insertDefaultItem(db, "Brown Rice", dietType, mealType, dayOfWeek);
+                insertDefaultItem(db, "Steamed Broccoli", dietType, mealType, dayOfWeek);
+                insertDefaultItem(db, "Sugar-Free Dessert", dietType, mealType, dayOfWeek);
+            } else if ("Cardiac".equals(dietType)) {
+                insertDefaultItem(db, "Baked Salmon", dietType, mealType, dayOfWeek);
+                insertDefaultItem(db, "Quinoa", dietType, mealType, dayOfWeek);
+                insertDefaultItem(db, "Steamed Vegetables", dietType, mealType, dayOfWeek);
+                insertDefaultItem(db, "Low-Sodium Broth", dietType, mealType, dayOfWeek);
+            }
+        } else if ("Dinner".equals(mealType)) {
+            // Dinner defaults (vary by day)
+            if ("Regular".equals(dietType)) {
+                if ("Monday".equals(dayOfWeek)) {
+                    insertDefaultItem(db, "Roast Beef", dietType, mealType, dayOfWeek);
+                    insertDefaultItem(db, "Roasted Potatoes", dietType, mealType, dayOfWeek);
+                    insertDefaultItem(db, "Corn", dietType, mealType, dayOfWeek);
+                    insertDefaultItem(db, "Chocolate Cake", dietType, mealType, dayOfWeek);
+                } else if ("Tuesday".equals(dayOfWeek)) {
+                    insertDefaultItem(db, "Fried Chicken", dietType, mealType, dayOfWeek);
+                    insertDefaultItem(db, "Mac and Cheese", dietType, mealType, dayOfWeek);
+                    insertDefaultItem(db, "Cole Slaw", dietType, mealType, dayOfWeek);
+                    insertDefaultItem(db, "Apple Pie", dietType, mealType, dayOfWeek);
+                } else {
+                    insertDefaultItem(db, "Pork Chops", dietType, mealType, dayOfWeek);
+                    insertDefaultItem(db, "Rice Pilaf", dietType, mealType, dayOfWeek);
+                    insertDefaultItem(db, "Green Salad", dietType, mealType, dayOfWeek);
+                }
+            } else if ("ADA".equals(dietType)) {
+                insertDefaultItem(db, "Lean Turkey", dietType, mealType, dayOfWeek);
+                insertDefaultItem(db, "Sweet Potato", dietType, mealType, dayOfWeek);
+                insertDefaultItem(db, "Asparagus", dietType, mealType, dayOfWeek);
+                insertDefaultItem(db, "Sugar-Free Pudding", dietType, mealType, dayOfWeek);
+            } else if ("Cardiac".equals(dietType)) {
+                insertDefaultItem(db, "Grilled Tilapia", dietType, mealType, dayOfWeek);
+                insertDefaultItem(db, "Wild Rice", dietType, mealType, dayOfWeek);
+                insertDefaultItem(db, "Steamed Spinach", dietType, mealType, dayOfWeek);
+                insertDefaultItem(db, "Fresh Berries", dietType, mealType, dayOfWeek);
             }
         }
-
-        // Insert all defaults
-        for (int i = 0; i < defaults.size(); i++) {
-            DefaultMenuItem item = defaults.get(i);
-            ContentValues values = new ContentValues();
-
-            values.put("diet_type", item.getDietType());
-            values.put("day_of_week", item.getDayOfWeek());
-            values.put("meal_type", item.getMealType());
-            values.put("item_name", item.getItemName());
-            values.put("category", item.getCategory());
-            values.put("description", item.getDescription());
-            values.put("is_active", 1);
-            values.put("sort_order", i);
-
-            db.insert("DefaultMenuItems", null, values);
-        }
-    }
-
-    private void addLunchDefaults(List<DefaultMenuItem> defaults, String dietType, String day) {
-        // Rotate main dishes by day
-        String[] mainDishes = {"Grilled Chicken", "Turkey Sandwich", "Beef Stew", "Baked Fish", "Pasta", "Soup & Salad", "Chicken Salad"};
-        String[] starches = {"Rice", "Mashed Potatoes", "Pasta", "Baked Potato", "Bread Roll", "Quinoa", "Sweet Potato"};
-        String[] vegetables = {"Green Beans", "Broccoli", "Carrots", "Mixed Vegetables", "Corn", "Peas", "Spinach"};
-
-        int dayIndex = getDayIndex(day);
-
-        defaults.add(new DefaultMenuItem(dietType, day, "Lunch", mainDishes[dayIndex], "Main Dish"));
-        defaults.add(new DefaultMenuItem(dietType, day, "Lunch", starches[dayIndex], "Starch"));
-        defaults.add(new DefaultMenuItem(dietType, day, "Lunch", vegetables[dayIndex], "Vegetable"));
-
-        // Add diet-specific items
-        if ("ADA".equals(dietType)) {
-            defaults.add(new DefaultMenuItem(dietType, day, "Lunch", "Sugar-Free Pudding", "Dessert"));
-            defaults.add(new DefaultMenuItem(dietType, day, "Lunch", "Diet Soda", "Beverage"));
-        } else if ("Cardiac".equals(dietType)) {
-            defaults.add(new DefaultMenuItem(dietType, day, "Lunch", "Fresh Fruit", "Dessert"));
-            defaults.add(new DefaultMenuItem(dietType, day, "Lunch", "Herbal Tea", "Beverage"));
-        } else {
-            defaults.add(new DefaultMenuItem(dietType, day, "Lunch", "Ice Cream", "Dessert"));
-            defaults.add(new DefaultMenuItem(dietType, day, "Lunch", "Iced Tea", "Beverage"));
-        }
-    }
-
-    private void addDinnerDefaults(List<DefaultMenuItem> defaults, String dietType, String day) {
-        // Rotate main dishes by day
-        String[] mainDishes = {"Baked Chicken", "Meat Loaf", "Grilled Salmon", "Pork Chops", "Beef Roast", "Fish & Chips", "BBQ Chicken"};
-        String[] starches = {"Mashed Potatoes", "Rice Pilaf", "Baked Potato", "Pasta", "Dinner Roll", "Wild Rice", "Garlic Bread"};
-        String[] vegetables = {"Steamed Broccoli", "Glazed Carrots", "Green Bean Almondine", "Corn", "Mixed Vegetables", "Asparagus", "Brussels Sprouts"};
-
-        int dayIndex = getDayIndex(day);
-
-        defaults.add(new DefaultMenuItem(dietType, day, "Dinner", mainDishes[dayIndex], "Main Dish"));
-        defaults.add(new DefaultMenuItem(dietType, day, "Dinner", starches[dayIndex], "Starch"));
-        defaults.add(new DefaultMenuItem(dietType, day, "Dinner", vegetables[dayIndex], "Vegetable"));
-
-        // Add diet-specific items
-        if ("ADA".equals(dietType)) {
-            defaults.add(new DefaultMenuItem(dietType, day, "Dinner", "Sugar-Free Jello", "Dessert"));
-            defaults.add(new DefaultMenuItem(dietType, day, "Dinner", "2% Milk", "Beverage"));
-        } else if ("Cardiac".equals(dietType)) {
-            defaults.add(new DefaultMenuItem(dietType, day, "Dinner", "Sorbet", "Dessert"));
-            defaults.add(new DefaultMenuItem(dietType, day, "Dinner", "Low-Sodium Broth", "Beverage"));
-        } else {
-            defaults.add(new DefaultMenuItem(dietType, day, "Dinner", "Chocolate Cake", "Dessert"));
-            defaults.add(new DefaultMenuItem(dietType, day, "Dinner", "Coffee", "Beverage"));
-        }
-    }
-
-    private int getDayIndex(String day) {
-        String[] days = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
-        for (int i = 0; i < days.length; i++) {
-            if (days[i].equals(day)) {
-                return i;
-            }
-        }
-        return 0; // Default to Monday
     }
 
     /**
-     * Get all available diet types that can have default menus
+     * Helper method to insert a single default item
      */
-    public List<String> getAvailableDietTypes() {
-        List<String> dietTypes = new ArrayList<>();
-        dietTypes.add("Regular");
-        dietTypes.add("ADA");
-        dietTypes.add("Cardiac");
-        return dietTypes;
+    private void insertDefaultItem(SQLiteDatabase db, String itemName, String dietType, String mealType, String dayOfWeek) {
+        ContentValues values = new ContentValues();
+        values.put("item_id", 0); // You can link to actual items later if needed
+        values.put("item_name", itemName);
+        values.put("diet_type", dietType);
+        values.put("meal_type", mealType);
+        values.put("day_of_week", dayOfWeek);
+        values.put("created_date", getCurrentTimestamp());
+
+        long result = db.insert("DefaultMenu", null, values);
+        if (result == -1) {
+            Log.e(TAG, "Failed to insert default item: " + itemName);
+        } else {
+            Log.d(TAG, "Inserted default item: " + itemName);
+        }
+    }
+
+    /**
+     * Get default menu items to apply to a new patient
+     */
+    public List<DefaultMenuItem> getDefaultMenuForPatient(String dietType) {
+        List<DefaultMenuItem> allDefaults = new ArrayList<>();
+
+        // Get breakfast items (apply to all days)
+        allDefaults.addAll(getDefaultMenuItems(dietType, "Breakfast", "All Days"));
+
+        // Get lunch and dinner items for each day
+        String[] days = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
+        for (String day : days) {
+            allDefaults.addAll(getDefaultMenuItems(dietType, "Lunch", day));
+            allDefaults.addAll(getDefaultMenuItems(dietType, "Dinner", day));
+        }
+
+        Log.d(TAG, "Retrieved " + allDefaults.size() + " default menu items for new " + dietType + " patient");
+        return allDefaults;
     }
 
     /**
      * Check if default menu items exist for a specific combination
      */
-    public boolean hasDefaultMenuItems(String dietType, String dayOfWeek, String mealType) {
+    public boolean hasDefaultMenuItems(String dietType, String mealType, String dayOfWeek) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String selection = "diet_type = ? AND meal_type = ? AND day_of_week = ?";
+        String[] selectionArgs = {dietType, mealType, dayOfWeek};
 
-        String selection = "diet_type = ? AND day_of_week = ? AND meal_type = ? AND is_active = 1";
-        String[] selectionArgs = {dietType, dayOfWeek, mealType};
-
-        try (Cursor cursor = db.query("DefaultMenuItems", new String[]{"COUNT(*)"},
-                selection, selectionArgs, null, null, null)) {
-
-            if (cursor.moveToFirst()) {
+        Cursor cursor = null;
+        try {
+            cursor = db.query("DefaultMenu", new String[]{"COUNT(*)"}, selection, selectionArgs, null, null, null);
+            if (cursor != null && cursor.moveToFirst()) {
                 return cursor.getInt(0) > 0;
             }
         } catch (Exception e) {
             Log.e(TAG, "Error checking for default menu items", e);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
         }
-
         return false;
     }
 
     /**
-     * Apply default menu items to a patient based on their diet type
+     * Delete all default menu items for a specific diet type
      */
-    public List<DefaultMenuItem> getDefaultsForPatientDiet(String dietType, String dayOfWeek, String mealType) {
-        // If it's a breakfast request, always use "All Days"
-        if ("Breakfast".equalsIgnoreCase(mealType)) {
-            dayOfWeek = "All Days";
+    public boolean deleteDefaultMenusForDiet(String dietType) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        try {
+            int deletedRows = db.delete("DefaultMenu", "diet_type = ?", new String[]{dietType});
+            Log.d(TAG, "Deleted " + deletedRows + " default menu items for diet: " + dietType);
+            return true;
+        } catch (Exception e) {
+            Log.e(TAG, "Error deleting default menus for diet: " + dietType, e);
+            return false;
         }
-
-        return getDefaultMenuItems(dietType, dayOfWeek, mealType);
     }
 
-    private DefaultMenuItem createDefaultMenuItemFromCursor(Cursor cursor) {
-        DefaultMenuItem item = new DefaultMenuItem();
-
-        item.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id")));
-        item.setDietType(cursor.getString(cursor.getColumnIndexOrThrow("diet_type")));
-        item.setDayOfWeek(cursor.getString(cursor.getColumnIndexOrThrow("day_of_week")));
-        item.setMealType(cursor.getString(cursor.getColumnIndexOrThrow("meal_type")));
-        item.setItemName(cursor.getString(cursor.getColumnIndexOrThrow("item_name")));
-        item.setCategory(cursor.getString(cursor.getColumnIndexOrThrow("category")));
-
-        int descIndex = cursor.getColumnIndex("description");
-        if (descIndex >= 0) {
-            item.setDescription(cursor.getString(descIndex));
-        }
-
-        int activeIndex = cursor.getColumnIndex("is_active");
-        if (activeIndex >= 0) {
-            item.setActive(cursor.getInt(activeIndex) == 1);
-        }
-
-        int sortIndex = cursor.getColumnIndex("sort_order");
-        if (sortIndex >= 0) {
-            item.setSortOrder(cursor.getInt(sortIndex));
-        }
-
-        return item;
+    /**
+     * Get current timestamp string
+     */
+    private String getCurrentTimestamp() {
+        return dateFormat.format(new Date());
     }
 }

@@ -1,12 +1,11 @@
 package com.hospital.dietary;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log; // FIXED: Added missing import
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -155,7 +154,6 @@ public class AdminActivity extends AppCompatActivity {
         // Menu buttons
         usersMenuButton = findViewById(R.id.usersMenuButton);
         itemsMenuButton = findViewById(R.id.itemsMenuButton);
-        // FIXED: Don't look for defaultMenuButton if it doesn't exist in layout
         backToMenuButton = findViewById(R.id.backToMenuButton);
 
         // Users management UI
@@ -188,8 +186,26 @@ public class AdminActivity extends AppCompatActivity {
         // Menu button listeners
         usersMenuButton.setOnClickListener(v -> showUsersManagement());
         itemsMenuButton.setOnClickListener(v -> showItemsManagement());
-        // FIXED: Add default menu management as a menu option instead of button
+
+        // NEW: Default menu button listener
+        Button defaultMenuButton = findViewById(R.id.defaultMenuButton);
+        if (defaultMenuButton != null) {
+            defaultMenuButton.setOnClickListener(v -> showDefaultMenuManagement());
+        }
+
         backToMenuButton.setOnClickListener(v -> handleBackNavigation());
+
+        // FIXED: Users list click listener
+        usersListView.setOnItemClickListener((parent, view, position, id) -> {
+            User selectedUser = filteredUsers.get(position);
+            showUserEditDialog(selectedUser);
+        });
+
+        // FIXED: Items list click listener
+        itemsListView.setOnItemClickListener((parent, view, position, id) -> {
+            Item selectedItem = filteredItems.get(position);
+            showItemEditDialog(selectedItem);
+        });
 
         // Users management listeners
         addUserButton.setOnClickListener(v -> showAddUserDialog());
@@ -235,7 +251,14 @@ public class AdminActivity extends AppCompatActivity {
     private void showMainMenu() {
         hideAllContainers();
         mainMenuContainer.setVisibility(View.VISIBLE);
-        setTitle("Admin Panel - " + (currentUser != null ? currentUser.getFullName() : "Administrator"));
+        setTitle("Admin Panel - " + (currentUser != null ? currentUser.getFullName() : currentUsername));
+    }
+
+    // FIXED: Updated navigation methods
+    private void hideAllContainers() {
+        if (mainMenuContainer != null) mainMenuContainer.setVisibility(View.GONE);
+        if (usersContainer != null) usersContainer.setVisibility(View.GONE);
+        if (itemsContainer != null) itemsContainer.setVisibility(View.GONE);
     }
 
     private void showUsersManagement() {
@@ -252,19 +275,191 @@ public class AdminActivity extends AppCompatActivity {
         loadItems();
     }
 
-    // FIXED: Default menu management opens as separate activity
-    private void showDefaultMenuManagement() {
-        Intent intent = new Intent(this, DefaultMenuManagementActivity.class);
-        intent.putExtra("current_user", currentUsername);
-        intent.putExtra("user_role", currentUserRole);
-        intent.putExtra("user_full_name", currentUserFullName);
-        startActivity(intent);
+    // FIXED: User edit dialog
+    private void showUserEditDialog(User user) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Edit User: " + user.getUsername());
+
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setPadding(50, 40, 50, 40);
+
+        // Full Name
+        final EditText fullNameInput = new EditText(this);
+        fullNameInput.setHint("Full Name");
+        fullNameInput.setText(user.getFullName());
+        layout.addView(fullNameInput);
+
+        // Role Spinner
+        final Spinner roleSpinner = new Spinner(this);
+        String[] roles = {"user", "admin"};
+        ArrayAdapter<String> roleAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, roles);
+        roleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        roleSpinner.setAdapter(roleAdapter);
+        roleSpinner.setSelection(user.getRole().equals("admin") ? 1 : 0);
+        layout.addView(roleSpinner);
+
+        // Active Status
+        final CheckBox activeCheckBox = new CheckBox(this);
+        activeCheckBox.setText("User Active");
+        activeCheckBox.setChecked(user.isActive());
+        layout.addView(activeCheckBox);
+
+        builder.setView(layout);
+
+        builder.setPositiveButton("Save Changes", (dialog, which) -> {
+            try {
+                user.setFullName(fullNameInput.getText().toString().trim());
+                user.setRole(roleSpinner.getSelectedItem().toString());
+                user.setActive(activeCheckBox.isChecked());
+
+                boolean success = userDAO.updateUser(user);
+                if (success) {
+                    Toast.makeText(this, "User updated successfully!", Toast.LENGTH_SHORT).show();
+                    loadUsers(); // Refresh the list
+                } else {
+                    Toast.makeText(this, "Failed to update user", Toast.LENGTH_SHORT).show();
+                }
+            } catch (Exception e) {
+                Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        builder.setNeutralButton("Change Password", (dialog, which) -> {
+            showChangePasswordDialog(user);
+        });
+
+        builder.setNegativeButton("Delete User", (dialog, which) -> {
+            showDeleteUserConfirmation(user);
+        });
+
+        builder.setNegativeButton("Cancel", null);
+        builder.show();
     }
 
-    private void hideAllContainers() {
-        mainMenuContainer.setVisibility(View.GONE);
-        usersContainer.setVisibility(View.GONE);
-        itemsContainer.setVisibility(View.GONE);
+    private void showChangePasswordDialog(User user) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Change Password for " + user.getUsername());
+
+        final EditText passwordInput = new EditText(this);
+        passwordInput.setHint("New Password");
+        passwordInput.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        builder.setView(passwordInput);
+
+        builder.setPositiveButton("Change Password", (dialog, which) -> {
+            String newPassword = passwordInput.getText().toString().trim();
+            if (!newPassword.isEmpty()) {
+                user.setPassword(newPassword); // Note: In production, hash this password
+                boolean success = userDAO.updateUser(user);
+                if (success) {
+                    Toast.makeText(this, "Password updated successfully!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "Failed to update password", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(this, "Password cannot be empty", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        builder.setNegativeButton("Cancel", null);
+        builder.show();
+    }
+
+    private void showDeleteUserConfirmation(User user) {
+        new AlertDialog.Builder(this)
+                .setTitle("⚠️ Delete User")
+                .setMessage("Are you sure you want to delete user '" + user.getUsername() + "'?\n\nThis action cannot be undone!")
+                .setPositiveButton("Delete", (dialog, which) -> {
+                    boolean success = userDAO.deleteUser(user.getUserId());
+                    if (success) {
+                        Toast.makeText(this, "User deleted successfully!", Toast.LENGTH_SHORT).show();
+                        loadUsers(); // Refresh the list
+                    } else {
+                        Toast.makeText(this, "Failed to delete user", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private void showItemEditDialog(Item item) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Edit Item: " + item.getName());
+
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setPadding(50, 40, 50, 40);
+
+        // Item Name
+        final EditText nameInput = new EditText(this);
+        nameInput.setHint("Item Name");
+        nameInput.setText(item.getName());
+        layout.addView(nameInput);
+
+        // Category Spinner
+        final Spinner categorySpinner = new Spinner(this);
+        String[] itemCategories = {"Breakfast Items", "Proteins", "Starches", "Vegetables", "Beverages", "Juices", "Desserts", "Fruits", "Dairy"};
+        ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, itemCategories);
+        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        categorySpinner.setAdapter(categoryAdapter);
+        // Set current selection
+        for (int i = 0; i < itemCategories.length; i++) {
+            if (itemCategories[i].equals(item.getCategory())) {
+                categorySpinner.setSelection(i);
+                break;
+            }
+        }
+        layout.addView(categorySpinner);
+
+        // ADA Friendly
+        final CheckBox adaCheckBox = new CheckBox(this);
+        adaCheckBox.setText("ADA Friendly");
+        adaCheckBox.setChecked(item.isAdaFriendly());
+        layout.addView(adaCheckBox);
+
+        builder.setView(layout);
+
+        builder.setPositiveButton("Save Changes", (dialog, which) -> {
+            try {
+                item.setName(nameInput.getText().toString().trim());
+                item.setCategory(categorySpinner.getSelectedItem().toString());
+                item.setAdaFriendly(adaCheckBox.isChecked());
+
+                boolean success = itemDAO.updateItem(item);
+                if (success) {
+                    Toast.makeText(this, "Item updated successfully!", Toast.LENGTH_SHORT).show();
+                    loadItems(); // Refresh the list
+                } else {
+                    Toast.makeText(this, "Failed to update item", Toast.LENGTH_SHORT).show();
+                }
+            } catch (Exception e) {
+                Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        builder.setNegativeButton("Delete Item", (dialog, which) -> {
+            showDeleteItemConfirmation(item);
+        });
+
+        builder.setNeutralButton("Cancel", null);
+        builder.show();
+    }
+
+    private void showDeleteItemConfirmation(Item item) {
+        new AlertDialog.Builder(this)
+                .setTitle("⚠️ Delete Item")
+                .setMessage("Are you sure you want to delete item '" + item.getName() + "'?\n\nThis action cannot be undone!")
+                .setPositiveButton("Delete", (dialog, which) -> {
+                    boolean success = itemDAO.deleteItem(item.getItemId());
+                    if (success) {
+                        Toast.makeText(this, "Item deleted successfully!", Toast.LENGTH_SHORT).show();
+                        loadItems(); // Refresh the list
+                    } else {
+                        Toast.makeText(this, "Failed to delete item", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 
     private void loadUsers() {
@@ -354,15 +549,30 @@ public class AdminActivity extends AppCompatActivity {
                 .show();
     }
 
+    private void showDefaultMenuManagement() {
+        Intent intent = new Intent(this, DefaultMenuManagementActivity.class);
+        intent.putExtra("current_user", currentUsername);
+        intent.putExtra("user_role", currentUserRole);
+        intent.putExtra("user_full_name", currentUserFullName);
+        startActivity(intent);
+    }
+
+    // FIXED: Updated back navigation
     private void handleBackNavigation() {
-        if (wasLaunchedWithDirectMode) {
-            if (mainMenuContainer.getVisibility() == View.VISIBLE) {
-                goToMainMenu();
-            } else {
-                showMainMenu();
-            }
-        } else {
+        // Always go back to the main menu when back is pressed
+        goToMainMenu();
+    }
+
+    @Override
+    public void onBackPressed() {
+        // Check which container is currently visible
+        if (usersContainer.getVisibility() == View.VISIBLE ||
+                itemsContainer.getVisibility() == View.VISIBLE) {
+            // If we're in a sub-menu (users or items), go back to admin main menu
             showMainMenu();
+        } else {
+            // If we're in the admin main menu, go back to main app menu
+            goToMainMenu();
         }
     }
 
@@ -377,19 +587,6 @@ public class AdminActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        if (mainMenuContainer.getVisibility() == View.VISIBLE) {
-            if (wasLaunchedWithDirectMode) {
-                goToMainMenu();
-            } else {
-                showMainMenu();
-            }
-        } else {
-            goToMainMenu();
-        }
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
         if (dbHelper != null) {
@@ -399,10 +596,10 @@ public class AdminActivity extends AppCompatActivity {
 
     // User Adapter Class
     private class UserAdapter extends BaseAdapter {
-        private Context context;
+        private android.content.Context context;
         private List<User> users;
 
-        public UserAdapter(Context context, List<User> users) {
+        public UserAdapter(android.content.Context context, List<User> users) {
             this.context = context;
             this.users = users;
         }
@@ -454,10 +651,10 @@ public class AdminActivity extends AppCompatActivity {
 
     // Item Adapter Class
     private class ItemAdapter extends BaseAdapter {
-        private Context context;
+        private android.content.Context context;
         private List<Item> items;
 
-        public ItemAdapter(Context context, List<Item> items) {
+        public ItemAdapter(android.content.Context context, List<Item> items) {
             this.context = context;
             this.items = items;
         }
@@ -499,8 +696,6 @@ public class AdminActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_admin, menu);
-        // Add default menu management as menu option
-        menu.add(0, R.id.action_default_menus, 0, "Default Menus").setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
         return true;
     }
 
@@ -508,13 +703,10 @@ public class AdminActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                handleBackNavigation();
+                onBackPressed(); // Use the same logic as back button
                 return true;
             case R.id.action_home:
-                goToMainMenu();
-                return true;
-            case R.id.action_default_menus:
-                showDefaultMenuManagement();
+                goToMainMenu(); // Always go to main menu for home action
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
