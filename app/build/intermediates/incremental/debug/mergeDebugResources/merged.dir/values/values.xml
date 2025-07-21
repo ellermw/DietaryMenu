@@ -740,6 +740,7 @@
     <color name="foreground_material_light">@android:color/black</color>
     <color name="highlighted_text_material_dark">#6680cbc4</color>
     <color name="highlighted_text_material_light">#66009688</color>
+    <color name="hospital_logo_background">#FFFFFF</color>
     <color name="ic_launcher_background">#FFFFFF</color>
     <color name="m3_ref_palette_black">#ff000000</color>
     <color name="m3_ref_palette_error0">#ff000000</color>
@@ -2011,24 +2012,16 @@
     <string name="abc_shareactionprovider_share_with">Share with</string>
     <string name="abc_shareactionprovider_share_with_application">Share with <ns2:g example="Mail" id="application_name">%s</ns2:g></string>
     <string name="abc_toolbar_collapse_description">Collapse</string>
-    <string name="access_denied_admin_required">Access denied. Admin privileges required.</string>
-    <string name="account_actions">Account Actions</string>
+    <string name="access_denied">Access denied</string>
     <string name="account_inactive">Account is inactive. Please contact administrator.</string>
-    <string name="account_management">Account Management</string>
-    <string name="action_account">Account</string>
-    <string name="action_logout">Logout</string>
-    <string name="action_settings">Settings</string>
-    <string name="add_item">Add Item</string>
-    <string name="add_user">Add User</string>
-    <string name="added_item">Added: %1$s</string>
+    <string name="active">Active</string>
+    <string name="add">Add</string>
     <string name="additional_options">Additional Options</string>
-    <string name="admin_panel">Admin Panel</string>
+    <string name="admin_required">Admin privileges required</string>
     <string name="admin_tools">Admin Tools</string>
-    <string name="admin_user_not_found">Admin user not found or invalid.</string>
-    <string name="administrator_actions">Administrator Actions</string>
     <string name="androidx_startup" translatable="false">androidx.startup</string>
     <string name="app_name">Hospital Dietary Management</string>
-    <string name="app_version">Version 1.0</string>
+    <string name="app_version">Version 0.0.30</string>
     <string name="appbar_scrolling_view_behavior" translatable="false">com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior</string>
     <string name="back">Back</string>
     <string name="basic_information">Basic Information</string>
@@ -2040,68 +2033,68 @@
     <string description="An accessibility feedback when the bottom sheet drag handle is clicked [CHAR LIMIT=NONE]" name="bottomsheet_drag_handle_clicked">Drag handle double-tapped</string>
     <string description="The content description of bottom sheet drag handles [CHAR LIMIT=NONE]" name="bottomsheet_drag_handle_content_description">Drag handle</string>
     <string name="bread_ok">Bread OK</string>
+    <string name="breakfast">Breakfast</string>
     <string name="cancel">Cancel</string>
+    <string name="cancelled">Cancelled</string>
+    <string name="cardiac">Cardiac</string>
     <string name="change_password">Change Password</string>
-    <string name="change_password_title">Change Password for %1$s</string>
     <string name="character_counter_content_description">Characters entered %1$d of %2$d</string>
     <string name="character_counter_overflowed_content_description">Character limit exceeded %1$d of %2$d</string>
     <string name="character_counter_pattern" translatable="false">%1$d/%2$d</string>
-    <string name="clear">Clear</string>
     <string name="clear_text_end_icon_content_description">Clear text</string>
-    <string name="close">Close</string>
-    <string name="confirm_password_hint">Confirm Password</string>
-    <string name="continue_button">Continue</string>
+    <string name="completed">Completed</string>
+    <string name="confirm">Confirm</string>
+    <string name="confirm_delete">Are you sure you want to delete this item?</string>
+    <string name="confirm_logout">Are you sure you want to logout?</string>
+    <string name="confirm_password_hint">Confirm new password</string>
     <string name="copyright_message">© 2024 Hospital Dietary Management</string>
-    <string name="current_password_hint">Current Password</string>
+    <string name="current_password_hint">Enter current password</string>
     <string name="default_menu_management">Default Menu Management</string>
-    <string name="delete_item">Delete Item</string>
-    <string name="delete_item_message">Are you sure you want to delete item \'%1$s\'?\n\nThis action cannot be undone!</string>
-    <string name="delete_item_title">⚠️ Delete Item</string>
-    <string name="delete_user">Delete User</string>
-    <string name="delete_user_message">Are you sure you want to delete user \'%1$s\'?\n\nThis action cannot be undone!</string>
-    <string name="delete_user_title">⚠️ Delete User</string>
-    <string name="deselect_all">Deselect All</string>
+    <string name="delete">Delete</string>
+    <string name="diabetic">Diabetic</string>
     <string name="dietary_requirements">Dietary Requirements</string>
-    <string name="edit_item">Edit Item</string>
-    <string name="edit_item_title">Edit Item: %1$s</string>
-    <string name="edit_user">Edit User</string>
-    <string name="edit_user_title">Edit User: %1$s</string>
+    <string name="dinner">Dinner</string>
+    <string name="documents">Documents</string>
+    <string name="edit">Edit</string>
     <string name="enter_first_name">Enter first name</string>
     <string name="enter_last_name">Enter last name</string>
+    <string name="error">Error occurred</string>
     <string description="Screen reader announcement for when a checkbox is on error. [CHAR LIMIT=NONE]" name="error_a11y_label">
     Error: invalid
   </string>
-    <string name="error_deleting_data">Error deleting data</string>
     <string name="error_icon_content_description">Error</string>
-    <string name="error_loading_data">Error loading data</string>
-    <string name="error_saving_data">Error saving data</string>
     <string name="existing_patients">Existing Patients</string>
     <string name="exposed_dropdown_menu_content_description">Show dropdown menu</string>
     <string name="extra_gravy">Extra Gravy</string>
     <string name="fab_transformation_scrim_behavior" translatable="false">com.google.android.material.transformation.FabTransformationScrimBehavior</string>
     <string name="fab_transformation_sheet_behavior" translatable="false">com.google.android.material.transformation.FabTransformationSheetBehavior</string>
     <string name="field_required">This field is required</string>
+    <string name="finish">Finish</string>
     <string name="form_incomplete">Please complete all required fields</string>
-    <string name="full_name_hint">Full Name</string>
+    <string name="friday">Friday</string>
+    <string name="galley_stock">Galley Stock</string>
     <string name="hide_bottom_view_on_scroll_behavior" translatable="false">com.google.android.material.behavior.HideBottomViewOnScrollBehavior</string>
     <string name="honey_thick">Honey Thick</string>
     <string description="Content description for an icon that appears in the title area of a dialog" name="icon_content_description">Dialog Icon</string>
+    <string name="inactive">Inactive</string>
+    <string name="info">Information</string>
     <string name="invalid_credentials">Invalid username or password</string>
     <string name="invalid_input">Invalid input</string>
     <string name="item_deleted">Item deleted successfully</string>
     <string name="item_management">Item Management</string>
-    <string name="item_name_hint">Item Name</string>
-    <string name="item_removed">Item removed</string>
     <string name="item_saved">Item saved successfully</string>
+    <string name="item_updated">Item updated successfully</string>
     <string name="item_view_role_description">Tab</string>
-    <string name="last_login">Last login: %1$s</string>
+    <string name="liquid">Liquid</string>
     <string name="liquid_thickness">Liquid Thickness</string>
+    <string name="loading">Loading...</string>
     <string name="login">Login</string>
     <string name="login_error">Login error occurred</string>
     <string name="login_failed">Invalid username or password</string>
     <string name="login_subtitle">Dietary Management Application</string>
     <string name="login_title">Hospital Dietary Management</string>
     <string name="logout">Logout</string>
+    <string name="lunch">Lunch</string>
     <string name="m3_exceed_max_badge_text_suffix" translatable="false"><ns2:g example="Some te" id="part of a long text">%1$s</ns2:g><ns2:g example="…" id="suffix">%2$s</ns2:g></string>
     <string name="m3_ref_typeface_brand_medium" translatable="false">sans-serif-medium</string>
     <string name="m3_ref_typeface_brand_regular" translatable="false">sans-serif</string>
@@ -2118,8 +2111,6 @@
     <string name="m3_sys_motion_easing_standard" translatable="false">cubic-bezier(0.2, 0, 0, 1)</string>
     <string name="m3_sys_motion_easing_standard_accelerate" translatable="false">cubic-bezier(0.3, 0, 1, 1)</string>
     <string name="m3_sys_motion_easing_standard_decelerate" translatable="false">cubic-bezier(0, 0, 0, 1)</string>
-    <string name="manage_items">Manage Items</string>
-    <string name="manage_users">Manage Users</string>
     <string name="material_clock_display_divider" translatable="false">:</string>
     <string description="Description for the toggle to choose between AM and PM [CHAR_LIMIT=NONE]" name="material_clock_toggle_content_description">Select AM or PM</string>
     <string description="Spoken suffix for an hour in the 24-hour clock [CHAR_LIMIT=10]" name="material_hour_24h_suffix"><ns2:g id="number">%1$s</ns2:g> hours</string>
@@ -2145,7 +2136,8 @@
     <string name="meats_only">Meats Only</string>
     <string name="mechanical_chopped">Mechanical Chopped</string>
     <string name="mechanical_ground">Mechanical Ground</string>
-    <string name="menu_reset_to_defaults">Menu reset to defaults</string>
+    <string name="misc">Misc</string>
+    <string name="monday">Monday</string>
     <string description="Content description for new notification (no number count) [CHAR_LIMIT=NONE]" name="mtrl_badge_numberless_content_description">New notification</string>
     <string name="mtrl_checkbox_button_icon_path_checked" translatable="false">M14,18.2 11.4,15.6 10,17 14,21 22,13 20.6,11.6z</string>
     <string name="mtrl_checkbox_button_icon_path_group_name" translatable="false">icon</string>
@@ -2215,12 +2207,10 @@
     <string description="Button text to indicate that the widget will ignore the user&apos;s selection [CHAR_LIMIT=16]" name="mtrl_timepicker_cancel">Cancel</string>
     <string description="Button text to indicate that the widget will save the user&apos;s selection [CHAR_LIMIT=16]" name="mtrl_timepicker_confirm">OK</string>
     <string name="nectar_thick">Nectar Thick</string>
-    <string name="network_error">Network error. Please check your connection.</string>
-    <string name="new_password_hint">New Password</string>
+    <string name="new_password_hint">Enter new password</string>
     <string name="new_patient">Add New Patient</string>
-    <string name="no">No</string>
-    <string name="no_available_items">No available items to add</string>
-    <string name="ok">OK</string>
+    <string name="next">Next</string>
+    <string name="no_data">No data available</string>
     <string name="operations">Operations</string>
     <string name="password">Password</string>
     <string name="password_change_failed">Failed to update password. Please try again.</string>
@@ -2236,42 +2226,44 @@
     <string name="path_password_strike_through" translatable="false">M3.27,4.27 L19.74,20.74</string>
     <string name="patient_info">Patient Info</string>
     <string name="patient_information">Patient Information</string>
+    <string name="pending">Pending</string>
     <string name="pending_orders">Pending Orders</string>
     <string name="physical_modifications">Physical Modifications</string>
     <string name="please_select">Please select an option</string>
+    <string name="production_documents">Production Documents</string>
+    <string name="production_sheets">Production Sheets</string>
     <string name="pudding_thick">Pudding Thick</string>
-    <string name="remove">Remove</string>
-    <string name="remove_item_message">Remove \'%1$s\' from this menu?</string>
-    <string name="remove_item_title">Remove Item</string>
-    <string name="reset_defaults_message">Are you sure you want to reset the current menu to system defaults? This will remove all current items.</string>
-    <string name="reset_defaults_title">Reset to Defaults</string>
+    <string name="pureed">Pureed</string>
+    <string name="regular">Regular</string>
+    <string name="renal">Renal</string>
     <string name="retired_orders">Retired Orders</string>
-    <string name="role_display">Role: %1$s</string>
+    <string name="saturday">Saturday</string>
     <string name="save">Save</string>
-    <string name="search">Search</string>
     <string name="search_menu_title">Search</string>
     <string name="searchbar_scrolling_view_behavior" translatable="false">
     com.google.android.material.search.SearchBar$ScrollingViewBehavior
   </string>
     <string description="Content description for the X button to clear text [CHAR_LIMIT=NONE]" name="searchview_clear_text_content_description">Clear text</string>
     <string description="Content description for the navigation button to return to the previous screen [CHAR_LIMIT=NONE]" name="searchview_navigation_content_description">Back</string>
-    <string name="select_all">Select All</string>
     <string description="Title of the side sheet&apos;s accessibility pane that is spoken by TalkBack when the side sheet appears on screen. [CHAR_LIMIT=NONE]" name="side_sheet_accessibility_pane_title">Side Sheet</string>
     <string name="side_sheet_behavior" translatable="false">com.google.android.material.sidesheet.SideSheetBehavior</string>
     <string name="sign_in">SIGN IN</string>
+    <string name="snack">Snack</string>
+    <string name="soft">Soft</string>
     <string name="special_modifications">Special Modifications</string>
     <string name="status_bar_notification_info_overflow">999+</string>
+    <string name="stock_sheets">Stock Sheets</string>
+    <string name="success">Success</string>
+    <string name="sunday">Sunday</string>
     <string name="texture_modifications">Texture Modifications</string>
-    <string name="unknown_error">An unknown error occurred. Please try again.</string>
-    <string name="user_active">User Active</string>
-    <string name="user_deleted">User deleted successfully</string>
-    <string name="user_information">User Information</string>
+    <string name="thursday">Thursday</string>
+    <string name="tuesday">Tuesday</string>
+    <string name="update">Update</string>
     <string name="user_management">User Management</string>
-    <string name="user_saved">User saved successfully</string>
     <string name="username">Username</string>
+    <string name="warning">Warning</string>
+    <string name="wednesday">Wednesday</string>
     <string name="welcome_message">Welcome, %1$s!</string>
-    <string name="yes">Yes</string>
-    <string name="your_account">Your Account</string>
     <style name="AlertDialog.AppCompat" parent="Base.AlertDialog.AppCompat"/>
     <style name="AlertDialog.AppCompat.Light" parent="Base.AlertDialog.AppCompat.Light"/>
     <style name="Animation.AppCompat.Dialog" parent="Base.Animation.AppCompat.Dialog"/>

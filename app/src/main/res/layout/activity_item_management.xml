@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="#f8fafc">
+
+    <!-- Header -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="📋 Item Management"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="#2c3e50"
+        android:gravity="center"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Controls -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="16dp">
+
+        <Button
+            android:id="@+id/addItemButton"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="Add Item"
+            android:textColor="@android:color/white"
+            android:background="#27ae60"
+            android:layout_marginEnd="8dp" />
+
+        <Button
+            android:id="@+id/refreshButton"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="Refresh"
+            android:textColor="@android:color/white"
+            android:background="#3498db"
+            android:layout_marginStart="8dp" />
+
+    </LinearLayout>
+
+    <!-- Item Count -->
+    <TextView
+        android:id="@+id/itemsCountText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Total Items: 0"
+        android:textSize="14sp"
+        android:textColor="#7f8c8d"
+        android:gravity="center"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Items List -->
+    <ListView
+        android:id="@+id/itemsListView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@android:color/white"
+        android:divider="#ecf0f1"
+        android:dividerHeight="1dp"
+        android:scrollbars="vertical"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Back Button -->
+    <Button
+        android:id="@+id/backButton"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:text="⬅️ Back to Main Menu"
+        android:textSize="16sp"
+        android:textColor="#ffffff"
+        android:background="#34495e"
+        android:elevation="4dp" />
+
+</LinearLayout>

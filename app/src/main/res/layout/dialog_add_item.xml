@@ -1,166 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:orientation="vertical"
     android:padding="16dp">
 
-    <LinearLayout
+    <EditText
+        android:id="@+id/itemNameEditText"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="Item Name"
+        android:inputType="text"
+        android:layout_marginBottom="8dp" />
+
+    <Spinner
+        android:id="@+id/itemCategorySpinner"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginBottom="8dp" />
+
+    <EditText
+        android:id="@+id/itemDescriptionEditText"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="Description (optional)"
+        android:inputType="text"
+        android:layout_marginBottom="8dp" />
+
+    <EditText
+        android:id="@+id/itemSizeEditText"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="Size in ml (optional)"
+        android:inputType="number"
+        android:layout_marginBottom="8dp" />
+
+    <CheckBox
+        android:id="@+id/adaFriendlyCheckBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:text="ADA Friendly" />
 
-        <!-- Item Name -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Item Name *"
-            android:textStyle="bold"
-            android:textColor="#2c3e50"
-            android:layout_marginBottom="4dp" />
-
-        <EditText
-            android:id="@+id/nameInput"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Enter item name"
-            android:inputType="textCapWords"
-            android:background="@android:drawable/edit_text"
-            android:padding="12dp"
-            android:layout_marginBottom="12dp" />
-
-        <!-- Description -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Description"
-            android:textStyle="bold"
-            android:textColor="#2c3e50"
-            android:layout_marginBottom="4dp" />
-
-        <EditText
-            android:id="@+id/descriptionInput"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Enter description (optional)"
-            android:inputType="textMultiLine"
-            android:background="@android:drawable/edit_text"
-            android:padding="12dp"
-            android:layout_marginBottom="12dp"
-            android:minLines="2" />
-
-        <!-- Category -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Category *"
-            android:textStyle="bold"
-            android:textColor="#2c3e50"
-            android:layout_marginBottom="4dp" />
-
-        <Spinner
-            android:id="@+id/categorySpinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:drawable/btn_dropdown"
-            android:padding="12dp"
-            android:layout_marginBottom="12dp" />
-
-        <!-- Meal Type -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Meal Type *"
-            android:textStyle="bold"
-            android:textColor="#2c3e50"
-            android:layout_marginBottom="4dp" />
-
-        <Spinner
-            android:id="@+id/mealTypeSpinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:drawable/btn_dropdown"
-            android:padding="12dp"
-            android:layout_marginBottom="12dp" />
-
-        <!-- Size (for beverages) -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Size (ml)"
-            android:textStyle="bold"
-            android:textColor="#2c3e50"
-            android:layout_marginBottom="4dp" />
-
-        <EditText
-            android:id="@+id/sizeInput"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Enter size in ml (optional)"
-            android:inputType="number"
-            android:background="@android:drawable/edit_text"
-            android:padding="12dp"
-            android:layout_marginBottom="16dp" />
-
-        <!-- Properties Section -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Item Properties"
-            android:textStyle="bold"
-            android:textColor="#2c3e50"
-            android:textSize="16sp"
-            android:layout_marginBottom="8dp" />
-
-        <!-- ADA Friendly -->
-        <CheckBox
-            android:id="@+id/adaFriendlyCheckBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="ADA Friendly (Diabetic-safe)"
-            android:textSize="16sp"
-            android:textColor="#2c3e50"
-            android:layout_marginBottom="8dp" />
-
-        <!-- Is Soda -->
-        <CheckBox
-            android:id="@+id/isSodaCheckBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Is Soda/Carbonated"
-            android:textSize="16sp"
-            android:textColor="#2c3e50"
-            android:layout_marginBottom="8dp" />
-
-        <!-- Is Clear Liquid -->
-        <CheckBox
-            android:id="@+id/isClearLiquidCheckBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Is Clear Liquid"
-            android:textSize="16sp"
-            android:textColor="#2c3e50"
-            android:layout_marginBottom="8dp" />
-
-        <!-- Is Default -->
-        <CheckBox
-            android:id="@+id/isDefaultCheckBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Default item for meal type"
-            android:textSize="16sp"
-            android:textColor="#2c3e50"
-            android:layout_marginBottom="16dp" />
-
-        <!-- Required Fields Note -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="* Required fields"
-            android:textSize="12sp"
-            android:textColor="#7f8c8d"
-            android:textStyle="italic"
-            android:layout_marginTop="8dp" />
-
-    </LinearLayout>
-
-</ScrollView>
+</LinearLayout>

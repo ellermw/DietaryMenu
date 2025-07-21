@@ -86,6 +86,7 @@
                 android:id="@+id/wingSpinner"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
+                android:background="@android:drawable/btn_dropdown"
                 android:layout_marginBottom="12dp" />
 
             <!-- Room Number -->
@@ -101,11 +102,12 @@
                 android:id="@+id/roomNumberSpinner"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:layout_marginBottom="8dp" />
+                android:background="@android:drawable/btn_dropdown"
+                android:layout_marginBottom="12dp" />
 
         </LinearLayout>
 
-        <!-- Dietary Information Section -->
+        <!-- Dietary Requirements Section -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -136,9 +138,10 @@
                 android:id="@+id/dietSpinner"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
+                android:background="@android:drawable/btn_dropdown"
                 android:layout_marginBottom="12dp" />
 
-            <!-- ADA Toggle (only visible when ADA diet is selected) -->
+            <!-- ADA Toggle Container -->
             <LinearLayout
                 android:id="@+id/adaToggleContainer"
                 android:layout_width="match_parent"
@@ -151,7 +154,7 @@
                     android:id="@+id/adaToggleCheckBox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Enable ADA diet restrictions"
+                    android:text="ADA Diet"
                     android:textSize="14sp" />
 
             </LinearLayout>
@@ -169,6 +172,7 @@
                 android:id="@+id/fluidRestrictionSpinner"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
+                android:background="@android:drawable/btn_dropdown"
                 android:layout_marginBottom="12dp" />
 
         </LinearLayout>
@@ -319,7 +323,7 @@
                         android:text="@string/extra_gravy"
                         android:textSize="13sp" />
 
-                    <!-- Meats Only (conditional) -->
+                    <!-- Meats Only Container (shown only when mechanical modifications are selected) -->
                     <LinearLayout
                         android:id="@+id/meatsOnlyContainer"
                         android:layout_width="match_parent"
@@ -334,14 +338,6 @@
                             android:text="@string/meats_only"
                             android:textSize="13sp" />
 
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="(Available with mechanical modifications)"
-                            android:textSize="10sp"
-                            android:textColor="#95a5a6"
-                            android:paddingLeft="28dp" />
-
                     </LinearLayout>
 
                 </LinearLayout>
@@ -355,13 +351,13 @@
             android:id="@+id/savePatientButton"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:text="Save Patient"
+            android:text="💾 Save Patient"
             android:textSize="16sp"
             android:textStyle="bold"
             android:textColor="@android:color/white"
             android:background="#27ae60"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="16dp" />
+            android:elevation="4dp"
+            android:layout_marginTop="16dp" />
 
     </LinearLayout>
 

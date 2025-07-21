@@ -14,7 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class MainMenuActivity extends AppCompatActivity {
 
-    private DatabaseHelper dbHelper;
+    // User data
     private String currentUsername;
     private String currentUserRole;
     private String currentUserFullName;
@@ -22,16 +22,17 @@ public class MainMenuActivity extends AppCompatActivity {
     // UI Components
     private TextView welcomeText;
     private LinearLayout operationsSection;
-    private LinearLayout yourAccountSection;
+    private LinearLayout documentsSection;
     private LinearLayout adminToolsSection;
 
-    // Operations buttons
+    // Operation buttons
     private Button patientInfoButton;
     private Button pendingOrdersButton;
     private Button retiredOrdersButton;
 
-    // Account button
-    private Button accountManagementButton;
+    // Documents buttons (renamed from Account Management)
+    private Button productionDocumentsButton;
+    private Button stockSheetsButton;
 
     // Admin buttons
     private Button userManagementButton;
@@ -46,31 +47,26 @@ public class MainMenuActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
 
-        // Get user information from intent
+        // Get user data from intent
         currentUsername = getIntent().getStringExtra("current_user");
         currentUserRole = getIntent().getStringExtra("user_role");
         currentUserFullName = getIntent().getStringExtra("user_full_name");
 
-        // Initialize database
-        dbHelper = new DatabaseHelper(this);
-
-        // Initialize UI components
+        // Initialize views
         initializeViews();
 
-        // Update UI based on user
+        // Update UI based on user role
         updateUI();
 
-        // Set up button listeners
+        // Set up click listeners
         setupListeners();
     }
 
     private void initializeViews() {
-        // Header
+        // Find views
         welcomeText = findViewById(R.id.welcomeText);
-
-        // Sections
         operationsSection = findViewById(R.id.operationsSection);
-        yourAccountSection = findViewById(R.id.yourAccountSection);
+        documentsSection = findViewById(R.id.documentsSection);
         adminToolsSection = findViewById(R.id.adminToolsSection);
 
         // Operations buttons
@@ -78,8 +74,9 @@ public class MainMenuActivity extends AppCompatActivity {
         pendingOrdersButton = findViewById(R.id.pendingOrdersButton);
         retiredOrdersButton = findViewById(R.id.retiredOrdersButton);
 
-        // Account button
-        accountManagementButton = findViewById(R.id.accountManagementButton);
+        // Documents buttons (renamed from Account Management)
+        productionDocumentsButton = findViewById(R.id.productionDocumentsButton);
+        stockSheetsButton = findViewById(R.id.stockSheetsButton);
 
         // Admin buttons
         userManagementButton = findViewById(R.id.userManagementButton);
@@ -98,7 +95,6 @@ public class MainMenuActivity extends AppCompatActivity {
         }
 
         // Show/hide admin tools section based on role
-        // FIXED: Check for "Admin" with capital A
         boolean isAdmin = "Admin".equalsIgnoreCase(currentUserRole);
         if (adminToolsSection != null) {
             adminToolsSection.setVisibility(isAdmin ? View.VISIBLE : View.GONE);
@@ -111,10 +107,11 @@ public class MainMenuActivity extends AppCompatActivity {
         pendingOrdersButton.setOnClickListener(v -> openPendingOrders());
         retiredOrdersButton.setOnClickListener(v -> openRetiredOrders());
 
-        // Account button
-        accountManagementButton.setOnClickListener(v -> openAccountManagement());
+        // Documents buttons (renamed from Account Management)
+        productionDocumentsButton.setOnClickListener(v -> openProductionDocuments());
+        stockSheetsButton.setOnClickListener(v -> openStockSheets());
 
-        // Admin buttons
+        // Admin buttons - Navigate directly to management pages
         if (userManagementButton != null) {
             userManagementButton.setOnClickListener(v -> openUserManagement());
         }
@@ -153,8 +150,18 @@ public class MainMenuActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    private void openProductionDocuments() {
+        // TODO: Implement Production Documents functionality
+        Toast.makeText(this, "Production Documents - Coming Soon!", Toast.LENGTH_SHORT).show();
+    }
+
+    private void openStockSheets() {
+        // TODO: Implement Stock Sheets functionality
+        Toast.makeText(this, "Stock Sheets - Coming Soon!", Toast.LENGTH_SHORT).show();
+    }
+
     private void openUserManagement() {
-        // FIXED: Navigate directly to UserManagementActivity
+        // Navigate directly to UserManagementActivity
         if (!"Admin".equalsIgnoreCase(currentUserRole)) {
             Toast.makeText(this, "Access denied. Admin privileges required.", Toast.LENGTH_SHORT).show();
             return;
@@ -168,7 +175,7 @@ public class MainMenuActivity extends AppCompatActivity {
     }
 
     private void openItemManagement() {
-        // FIXED: Navigate directly to ItemManagementActivity
+        // Navigate directly to ItemManagementActivity
         if (!"Admin".equalsIgnoreCase(currentUserRole)) {
             Toast.makeText(this, "Access denied. Admin privileges required.", Toast.LENGTH_SHORT).show();
             return;
@@ -182,7 +189,6 @@ public class MainMenuActivity extends AppCompatActivity {
     }
 
     private void openDefaultMenuManagement() {
-        // NEW: Navigate directly to DefaultMenuManagementActivity
         if (!"Admin".equalsIgnoreCase(currentUserRole)) {
             Toast.makeText(this, "Access denied. Admin privileges required.", Toast.LENGTH_SHORT).show();
             return;
@@ -195,26 +201,20 @@ public class MainMenuActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void openAccountManagement() {
-        Intent intent = new Intent(this, AccountManagementActivity.class);
-        intent.putExtra("current_user", currentUsername);
-        intent.putExtra("user_role", currentUserRole);
-        intent.putExtra("user_full_name", currentUserFullName);
-        startActivity(intent);
-    }
-
     private void showLogoutConfirmation() {
         new AlertDialog.Builder(this)
-                .setTitle("Logout")
+                .setTitle("Logout Confirmation")
                 .setMessage("Are you sure you want to logout?")
-                .setPositiveButton("Logout", (dialog, which) -> {
-                    Intent intent = new Intent(this, LoginActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intent);
-                    finish();
-                })
+                .setPositiveButton("Yes", (dialog, which) -> logout())
                 .setNegativeButton("Cancel", null)
                 .show();
+    }
+
+    private void logout() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 
     @Override
@@ -226,9 +226,6 @@ public class MainMenuActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_account:
-                openAccountManagement();
-                return true;
             case R.id.action_logout:
                 showLogoutConfirmation();
                 return true;
@@ -239,15 +236,7 @@ public class MainMenuActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        // Show logout confirmation when back is pressed from main menu
+        // Show logout confirmation when back button is pressed
         showLogoutConfirmation();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (dbHelper != null) {
-            dbHelper.close();
-        }
     }
 }

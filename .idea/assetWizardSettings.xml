@@ -79,7 +79,7 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="imagePath" value="C:\DietaryMenu\icon.png" />
+                                                <entry key="imagePath" value="C:\DietaryMenu\app\src\main\res\drawable\hospital_logo.png" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -113,7 +113,7 @@
                                     <map>
                                       <entry key="backgroundAssetType" value="COLOR" />
                                       <entry key="backgroundColor" value="ffffff" />
-                                      <entry key="generateWebpIcons" value="false" />
+                                      <entry key="outputName" value="hospital_logo" />
                                     </map>
                                   </option>
                                 </PersistentState>

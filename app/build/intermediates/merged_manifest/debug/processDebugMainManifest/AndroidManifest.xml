@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.hospital.dietary"
-    android:versionCode="25"
-    android:versionName="0.0.25" >
+    android:versionCode="30"
+    android:versionName="0.0.30" >
 
     <uses-sdk
         android:minSdkVersion="21"
@@ -47,6 +47,13 @@
             android:exported="false"
             android:theme="@style/Theme.AppCompat.Light" />
 
+        <!-- Documents Activity - Document management -->
+        <activity
+            android:name="com.hospital.dietary.DocumentsActivity"
+            android:exported="false"
+            android:parentActivityName="com.hospital.dietary.MainMenuActivity"
+            android:theme="@style/Theme.AppCompat.Light" />
+
         <!-- Meal Planning Activity - Core meal planning functionality -->
         <activity
             android:name="com.hospital.dietary.MealPlanningActivity"
@@ -55,35 +62,20 @@
             android:theme="@style/Theme.AppCompat.Light"
             android:windowSoftInputMode="adjustResize" />
 
-        <!-- Pending Orders Activity - View pending meal orders -->
+        <!-- Pending Orders Activity - Manage pending orders -->
         <activity
             android:name="com.hospital.dietary.PendingOrdersActivity"
             android:exported="false"
             android:parentActivityName="com.hospital.dietary.MainMenuActivity"
-            android:theme="@style/Theme.AppCompat.Light" />
+            android:theme="@style/Theme.AppCompat.Light"
+            android:windowSoftInputMode="adjustResize" />
 
-        <!-- Retired Orders Activity - View completed orders -->
+        <!-- Retired Orders Activity - View retired orders -->
         <activity
             android:name="com.hospital.dietary.RetiredOrdersActivity"
             android:exported="false"
             android:parentActivityName="com.hospital.dietary.MainMenuActivity"
             android:theme="@style/Theme.AppCompat.Light" />
-
-        <!-- Account Management Activity - User account settings -->
-        <activity
-            android:name="com.hospital.dietary.AccountManagementActivity"
-            android:exported="false"
-            android:parentActivityName="com.hospital.dietary.MainMenuActivity"
-            android:theme="@style/Theme.AppCompat.Light"
-            android:windowSoftInputMode="adjustResize" />
-
-        <!-- Password Change Activity -->
-        <activity
-            android:name="com.hospital.dietary.PasswordChangeActivity"
-            android:exported="false"
-            android:parentActivityName="com.hospital.dietary.LoginActivity"
-            android:theme="@style/Theme.AppCompat.Light"
-            android:windowSoftInputMode="adjustResize" />
 
         <!-- Patient Info Menu Activity - Patient information hub -->
         <activity
@@ -91,6 +83,14 @@
             android:exported="false"
             android:parentActivityName="com.hospital.dietary.MainMenuActivity"
             android:theme="@style/Theme.AppCompat.Light" />
+
+        <!-- Add Patient Activity - Add new patients -->
+        <activity
+            android:name="com.hospital.dietary.AddPatientActivity"
+            android:exported="false"
+            android:parentActivityName="com.hospital.dietary.PatientInfoMenuActivity"
+            android:theme="@style/Theme.AppCompat.Light"
+            android:windowSoftInputMode="adjustResize" />
 
         <!-- New Patient Activity - Add new patients -->
         <activity
@@ -100,78 +100,71 @@
             android:theme="@style/Theme.AppCompat.Light"
             android:windowSoftInputMode="adjustResize" />
 
-        <!-- Existing Patient Activity - View existing patients -->
+        <!-- Patient List Activity - View all patients -->
         <activity
-            android:name="com.hospital.dietary.ExistingPatientActivity"
+            android:name="com.hospital.dietary.PatientListActivity"
             android:exported="false"
             android:parentActivityName="com.hospital.dietary.PatientInfoMenuActivity"
             android:theme="@style/Theme.AppCompat.Light" />
 
-        <!-- Patient Info Activity - Manage patient information -->
-        <activity
-            android:name="com.hospital.dietary.PatientInfoActivity"
-            android:exported="false"
-            android:parentActivityName="com.hospital.dietary.PatientInfoMenuActivity"
-            android:theme="@style/Theme.AppCompat.Light"
-            android:windowSoftInputMode="adjustResize" />
-
-        <!-- Patient Detail Activity - Detailed patient view -->
+        <!-- Patient Detail Activity - View/edit patient details -->
         <activity
             android:name="com.hospital.dietary.PatientDetailActivity"
             android:exported="false"
-            android:parentActivityName="com.hospital.dietary.ExistingPatientActivity"
-            android:theme="@style/Theme.AppCompat.Light" />
+            android:parentActivityName="com.hospital.dietary.PatientListActivity"
+            android:theme="@style/Theme.AppCompat.Light"
+            android:windowSoftInputMode="adjustResize" />
 
-        <!-- Admin Menu Activity - Admin functions -->
+        <!-- Edit Patient Activity - Edit patient information -->
         <activity
-            android:name="com.hospital.dietary.AdminMenuActivity"
+            android:name="com.hospital.dietary.EditPatientActivity"
             android:exported="false"
-            android:parentActivityName="com.hospital.dietary.MainMenuActivity"
-            android:theme="@style/Theme.AppCompat.Light" />
+            android:parentActivityName="com.hospital.dietary.PatientDetailActivity"
+            android:theme="@style/Theme.AppCompat.Light"
+            android:windowSoftInputMode="adjustResize" />
 
-        <!-- Admin Activity - Comprehensive admin management -->
+        <!-- Admin Activity - Administrative functions -->
         <activity
             android:name="com.hospital.dietary.AdminActivity"
             android:exported="false"
             android:parentActivityName="com.hospital.dietary.MainMenuActivity"
             android:theme="@style/Theme.AppCompat.Light" />
 
-        <!-- User Management Activity - Manage users (Admin only) -->
+        <!-- User Management Activity - Manage users -->
         <activity
             android:name="com.hospital.dietary.UserManagementActivity"
-            android:exported="false"
-            android:parentActivityName="com.hospital.dietary.AdminActivity"
-            android:theme="@style/Theme.AppCompat.Light" />
-
-        <!-- Item Management Activity - Manage food items (Admin only) -->
-        <activity
-            android:name="com.hospital.dietary.ItemManagementActivity"
-            android:exported="false"
-            android:parentActivityName="com.hospital.dietary.AdminActivity"
-            android:theme="@style/Theme.AppCompat.Light" />
-
-        <!-- Default Menu Management Activity - Manage default menus (Admin only) -->
-        <activity
-            android:name="com.hospital.dietary.DefaultMenuManagementActivity"
-            android:exported="false"
-            android:parentActivityName="com.hospital.dietary.AdminActivity"
-            android:theme="@style/Theme.AppCompat.Light"
-            android:windowSoftInputMode="adjustResize" />
-
-        <!-- View Orders Activity - View orders by date -->
-        <activity
-            android:name="com.hospital.dietary.ViewOrdersActivity"
             android:exported="false"
             android:parentActivityName="com.hospital.dietary.MainMenuActivity"
             android:theme="@style/Theme.AppCompat.Light" />
 
-        <!-- Main Activity - Original meal planning (keep for compatibility) -->
+        <!-- Item Management Activity - Manage food items -->
         <activity
-            android:name="com.hospital.dietary.MainActivity"
+            android:name="com.hospital.dietary.ItemManagementActivity"
             android:exported="false"
-            android:parentActivityName="com.hospital.dietary.MealPlanningActivity"
+            android:parentActivityName="com.hospital.dietary.MainMenuActivity"
+            android:theme="@style/Theme.AppCompat.Light" />
+
+        <!-- Default Menu Management Activity - Manage default menus -->
+        <activity
+            android:name="com.hospital.dietary.DefaultMenuManagementActivity"
+            android:exported="false"
+            android:parentActivityName="com.hospital.dietary.MainMenuActivity"
+            android:theme="@style/Theme.AppCompat.Light" />
+
+        <!-- Order Management Activity - Manage orders -->
+        <activity
+            android:name="com.hospital.dietary.OrderManagementActivity"
+            android:exported="false"
+            android:parentActivityName="com.hospital.dietary.PatientDetailActivity"
             android:theme="@style/Theme.AppCompat.Light"
             android:windowSoftInputMode="adjustResize" />
+
+        <!-- Account Management Activity - User account settings -->
+        <activity
+            android:name="com.hospital.dietary.AccountManagementActivity"
+            android:exported="false"
+            android:parentActivityName="com.hospital.dietary.MainMenuActivity"
+            android:theme="@style/Theme.AppCompat.Light" />
 
         <provider
             android:name="androidx.startup.InitializationProvider"
