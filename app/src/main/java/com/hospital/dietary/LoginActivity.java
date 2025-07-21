@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,9 +19,8 @@ public class LoginActivity extends AppCompatActivity {
     // UI Components
     private EditText usernameEditText;
     private EditText passwordEditText;
-    private CheckBox showPasswordCheckBox; // FEATURE: Show password toggle
+    private CheckBox showPasswordCheckBox;
     private Button signInButton;
-    private TextView versionText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,68 +31,71 @@ public class LoginActivity extends AppCompatActivity {
         dbHelper = new DatabaseHelper(this);
         userDAO = new UserDAO(dbHelper);
 
-        initializeUI();
+        // Initialize UI components
+        initializeViews();
+
+        // Set up listeners
         setupListeners();
 
-        // Ensure default admin user exists
+        // Create default admin if needed
         createDefaultAdminIfNeeded();
     }
 
-    private void initializeUI() {
+    private void initializeViews() {
         usernameEditText = findViewById(R.id.usernameEditText);
         passwordEditText = findViewById(R.id.passwordEditText);
-        showPasswordCheckBox = findViewById(R.id.showPasswordCheckBox); // FEATURE: Password toggle
+        showPasswordCheckBox = findViewById(R.id.showPasswordCheckBox);
         signInButton = findViewById(R.id.signInButton);
-        versionText = findViewById(R.id.versionText);
-
-        // Set version text
-        versionText.setText(getString(R.string.app_version));
     }
 
     private void setupListeners() {
-        // FEATURE: Show/hide password toggle
+        // Show/hide password toggle
         showPasswordCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
-                // Show password
                 passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
             } else {
-                // Hide password
                 passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
             }
-            // Move cursor to end
             passwordEditText.setSelection(passwordEditText.getText().length());
         });
 
-        // Sign in button
+        // Sign in button click
         signInButton.setOnClickListener(v -> attemptLogin());
-
-        // Enter key on password field
-        passwordEditText.setOnEditorActionListener((v, actionId, event) -> {
-            attemptLogin();
-            return true;
-        });
     }
 
     private void attemptLogin() {
+        // Reset errors
+        usernameEditText.setError(null);
+        passwordEditText.setError(null);
+
+        // Get values
         String username = usernameEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString();
 
-        // Validate input
-        if (username.isEmpty()) {
-            usernameEditText.setError(getString(R.string.username_required));
-            usernameEditText.requestFocus();
-            return;
-        }
+        // Validate inputs
+        boolean cancel = false;
+        View focusView = null;
 
-        if (password.isEmpty()) {
+        if (TextUtils.isEmpty(password)) {
             passwordEditText.setError(getString(R.string.password_required));
-            passwordEditText.requestFocus();
+            focusView = passwordEditText;
+            cancel = true;
+        }
+
+        if (TextUtils.isEmpty(username)) {
+            usernameEditText.setError(getString(R.string.field_required));
+            focusView = usernameEditText;
+            cancel = true;
+        }
+
+        if (cancel) {
+            focusView.requestFocus();
             return;
         }
 
-        // Attempt authentication
+        // Attempt login
         try {
-            User user = userDAO.authenticateUser(username, password);
+            User user = userDAO.validateLogin(username, password);
 
             if (user == null) {
                 Toast.makeText(this, getString(R.string.invalid_credentials), Toast.LENGTH_LONG).show();
@@ -107,7 +110,7 @@ public class LoginActivity extends AppCompatActivity {
             // Update last login
             userDAO.updateLastLogin(user.getUserId());
 
-            // FEATURE: Check if user must change password on first login
+            // FIXED: Check if user must change password on first login
             if (user.isMustChangePassword()) {
                 showForcePasswordChangeDialog(user);
             } else {
@@ -121,7 +124,7 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    // FEATURE: Force password change on first login
+    // FIXED: Force password change dialog
     private void showForcePasswordChangeDialog(User user) {
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_force_password_change, null);
 
@@ -143,16 +146,14 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         AlertDialog dialog = new AlertDialog.Builder(this)
-                .setTitle("Password Change Required")
+                .setTitle(getString(R.string.password_change_required))
                 .setMessage("You must change your password before continuing.")
                 .setView(dialogView)
                 .setCancelable(false)
-                .setPositiveButton("Change Password", null) // Set to null initially
-                .setNegativeButton("Logout", (d, which) -> {
-                    // Return to login screen
-                    usernameEditText.setText("");
-                    passwordEditText.setText("");
-                    showPasswordCheckBox.setChecked(false);
+                .setPositiveButton(getString(R.string.change_password), null)
+                .setNegativeButton(getString(R.string.cancel), (d, which) -> {
+                    // User cancelled, return to login
+                    Toast.makeText(this, "Password change is required to continue.", Toast.LENGTH_SHORT).show();
                 })
                 .create();
 
@@ -162,37 +163,29 @@ public class LoginActivity extends AppCompatActivity {
                 String newPassword = newPasswordEditText.getText().toString();
                 String confirmPassword = confirmPasswordEditText.getText().toString();
 
-                if (newPassword.isEmpty()) {
-                    newPasswordEditText.setError("New password is required");
+                // Validate passwords
+                if (TextUtils.isEmpty(newPassword) || TextUtils.isEmpty(confirmPassword)) {
+                    Toast.makeText(this, getString(R.string.field_required), Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 if (newPassword.length() < 6) {
-                    newPasswordEditText.setError("Password must be at least 6 characters");
+                    Toast.makeText(this, getString(R.string.password_too_short), Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 if (!newPassword.equals(confirmPassword)) {
-                    confirmPasswordEditText.setError("Passwords do not match");
+                    Toast.makeText(this, getString(R.string.passwords_do_not_match), Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                if (newPassword.equals(user.getPassword())) {
-                    newPasswordEditText.setError("New password must be different from current password");
-                    return;
-                }
-
-                // Update password
-                user.setPassword(newPassword);
-                user.setMustChangePassword(false);
-
-                boolean result = userDAO.updateUser(user);
-                if (result) {
+                // Change password
+                if (userDAO.changePassword(user.getUserId(), newPassword)) {
                     dialog.dismiss();
-                    Toast.makeText(this, "Password changed successfully!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.password_changed_success), Toast.LENGTH_SHORT).show();
                     proceedToMainMenu(user);
                 } else {
-                    Toast.makeText(this, "Failed to update password. Please try again.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.password_change_failed), Toast.LENGTH_SHORT).show();
                 }
             });
         });
@@ -215,7 +208,7 @@ public class LoginActivity extends AppCompatActivity {
             // Check if any admin users exist
             if (userDAO.getActiveAdmins().isEmpty()) {
                 // Create default admin user
-                User defaultAdmin = new User("admin", "admin123", "System Administrator", "admin");
+                User defaultAdmin = new User("admin", "admin123", "System Administrator", "Admin");
                 defaultAdmin.setActive(true);
                 defaultAdmin.setMustChangePassword(true); // Force password change on first login
 

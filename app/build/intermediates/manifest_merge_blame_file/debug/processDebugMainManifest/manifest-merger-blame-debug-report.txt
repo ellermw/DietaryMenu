@@ -254,7 +254,7 @@
 151            android:theme="@style/Theme.AppCompat.Light" />
 151-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:135:13-57
 152
-153        <!-- FIXED: New Default Menu Management Activity - Admin only -->
+153        <!-- Default Menu Management Activity - Manage default menus (Admin only) -->
 154        <activity
 154-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:138:9-143:58
 155            android:name="com.hospital.dietary.DefaultMenuManagementActivity"

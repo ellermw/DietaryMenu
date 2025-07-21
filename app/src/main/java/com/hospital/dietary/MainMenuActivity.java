@@ -6,24 +6,39 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.*;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainMenuActivity extends AppCompatActivity {
 
-    // User information
+    private DatabaseHelper dbHelper;
     private String currentUsername;
     private String currentUserRole;
     private String currentUserFullName;
 
     // UI Components
     private TextView welcomeText;
+    private LinearLayout operationsSection;
+    private LinearLayout yourAccountSection;
+    private LinearLayout adminToolsSection;
+
+    // Operations buttons
     private Button patientInfoButton;
     private Button pendingOrdersButton;
     private Button retiredOrdersButton;
+
+    // Account button
+    private Button accountManagementButton;
+
+    // Admin buttons
     private Button userManagementButton;
     private Button itemManagementButton;
-    private Button accountManagementButton; // FEATURE: Account management button
+    private Button defaultMenuManagementButton;
+
+    // Logout button
     private Button logoutButton;
 
     @Override
@@ -36,63 +51,82 @@ public class MainMenuActivity extends AppCompatActivity {
         currentUserRole = getIntent().getStringExtra("user_role");
         currentUserFullName = getIntent().getStringExtra("user_full_name");
 
-        // Set title
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle("Dietary Management");
-        }
+        // Initialize database
+        dbHelper = new DatabaseHelper(this);
 
-        initializeUI();
+        // Initialize UI components
+        initializeViews();
+
+        // Update UI based on user
+        updateUI();
+
+        // Set up button listeners
         setupListeners();
-        updateWelcomeMessage();
-        updateButtonVisibility();
     }
 
-    private void initializeUI() {
+    private void initializeViews() {
+        // Header
         welcomeText = findViewById(R.id.welcomeText);
+
+        // Sections
+        operationsSection = findViewById(R.id.operationsSection);
+        yourAccountSection = findViewById(R.id.yourAccountSection);
+        adminToolsSection = findViewById(R.id.adminToolsSection);
+
+        // Operations buttons
         patientInfoButton = findViewById(R.id.patientInfoButton);
         pendingOrdersButton = findViewById(R.id.pendingOrdersButton);
         retiredOrdersButton = findViewById(R.id.retiredOrdersButton);
+
+        // Account button
+        accountManagementButton = findViewById(R.id.accountManagementButton);
+
+        // Admin buttons
         userManagementButton = findViewById(R.id.userManagementButton);
         itemManagementButton = findViewById(R.id.itemManagementButton);
-        accountManagementButton = findViewById(R.id.accountManagementButton); // FEATURE: New button
+        defaultMenuManagementButton = findViewById(R.id.defaultMenuManagementButton);
+
+        // Logout button
         logoutButton = findViewById(R.id.logoutButton);
     }
 
+    private void updateUI() {
+        // Update welcome message
+        if (welcomeText != null && currentUserFullName != null) {
+            String roleDisplay = "Admin".equalsIgnoreCase(currentUserRole) ? "System Administrator" : currentUserFullName;
+            welcomeText.setText("Welcome, " + roleDisplay + "!");
+        }
+
+        // Show/hide admin tools section based on role
+        // FIXED: Check for "Admin" with capital A
+        boolean isAdmin = "Admin".equalsIgnoreCase(currentUserRole);
+        if (adminToolsSection != null) {
+            adminToolsSection.setVisibility(isAdmin ? View.VISIBLE : View.GONE);
+        }
+    }
+
     private void setupListeners() {
+        // Operations buttons
         patientInfoButton.setOnClickListener(v -> openPatientInfo());
         pendingOrdersButton.setOnClickListener(v -> openPendingOrders());
         retiredOrdersButton.setOnClickListener(v -> openRetiredOrders());
-        userManagementButton.setOnClickListener(v -> openUserManagement());
-        itemManagementButton.setOnClickListener(v -> openItemManagement());
-        accountManagementButton.setOnClickListener(v -> openAccountManagement()); // FEATURE: New listener
-        logoutButton.setOnClickListener(v -> showLogoutConfirmation());
-    }
 
-    private void updateWelcomeMessage() {
-        if (welcomeText != null && currentUserFullName != null) {
-            String welcome = getString(R.string.welcome_message, currentUserFullName);
-            if ("admin".equals(currentUserRole)) {
-                welcome += "\n(Administrator Access)";
-            }
-            welcomeText.setText(welcome);
-        }
-    }
+        // Account button
+        accountManagementButton.setOnClickListener(v -> openAccountManagement());
 
-    private void updateButtonVisibility() {
-        // Show admin buttons only for admin users
-        boolean isAdmin = "admin".equals(currentUserRole);
-
+        // Admin buttons
         if (userManagementButton != null) {
-            userManagementButton.setVisibility(isAdmin ? Button.VISIBLE : Button.GONE);
+            userManagementButton.setOnClickListener(v -> openUserManagement());
         }
         if (itemManagementButton != null) {
-            itemManagementButton.setVisibility(isAdmin ? Button.VISIBLE : Button.GONE);
+            itemManagementButton.setOnClickListener(v -> openItemManagement());
+        }
+        if (defaultMenuManagementButton != null) {
+            defaultMenuManagementButton.setOnClickListener(v -> openDefaultMenuManagement());
         }
 
-        // FEATURE: Account management button is always visible for all users
-        if (accountManagementButton != null) {
-            accountManagementButton.setVisibility(Button.VISIBLE);
-        }
+        // Logout button
+        logoutButton.setOnClickListener(v -> showLogoutConfirmation());
     }
 
     private void openPatientInfo() {
@@ -119,43 +153,48 @@ public class MainMenuActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    /**
-     * FIXED: Open AdminActivity for user management
-     */
     private void openUserManagement() {
-        if (!"admin".equals(currentUserRole)) {
+        // FIXED: Navigate directly to UserManagementActivity
+        if (!"Admin".equalsIgnoreCase(currentUserRole)) {
             Toast.makeText(this, "Access denied. Admin privileges required.", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        Intent intent = new Intent(this, AdminActivity.class);
+        Intent intent = new Intent(this, UserManagementActivity.class);
         intent.putExtra("current_user", currentUsername);
         intent.putExtra("user_role", currentUserRole);
         intent.putExtra("user_full_name", currentUserFullName);
-        intent.putExtra("admin_mode", "users"); // Direct to user management
         startActivity(intent);
     }
 
-    /**
-     * FIXED: Open AdminActivity for item management
-     */
     private void openItemManagement() {
-        if (!"admin".equals(currentUserRole)) {
+        // FIXED: Navigate directly to ItemManagementActivity
+        if (!"Admin".equalsIgnoreCase(currentUserRole)) {
             Toast.makeText(this, "Access denied. Admin privileges required.", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        Intent intent = new Intent(this, AdminActivity.class);
+        Intent intent = new Intent(this, ItemManagementActivity.class);
         intent.putExtra("current_user", currentUsername);
         intent.putExtra("user_role", currentUserRole);
         intent.putExtra("user_full_name", currentUserFullName);
-        intent.putExtra("admin_mode", "items"); // Direct to item management
         startActivity(intent);
     }
 
-    /**
-     * FEATURE: Open account management for password changes
-     */
+    private void openDefaultMenuManagement() {
+        // NEW: Navigate directly to DefaultMenuManagementActivity
+        if (!"Admin".equalsIgnoreCase(currentUserRole)) {
+            Toast.makeText(this, "Access denied. Admin privileges required.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Intent intent = new Intent(this, DefaultMenuManagementActivity.class);
+        intent.putExtra("current_user", currentUsername);
+        intent.putExtra("user_role", currentUserRole);
+        intent.putExtra("user_full_name", currentUserFullName);
+        startActivity(intent);
+    }
+
     private void openAccountManagement() {
         Intent intent = new Intent(this, AccountManagementActivity.class);
         intent.putExtra("current_user", currentUsername);
@@ -202,5 +241,13 @@ public class MainMenuActivity extends AppCompatActivity {
     public void onBackPressed() {
         // Show logout confirmation when back is pressed from main menu
         showLogoutConfirmation();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (dbHelper != null) {
+            dbHelper.close();
+        }
     }
 }

@@ -150,7 +150,7 @@
             android:parentActivityName="com.hospital.dietary.AdminActivity"
             android:theme="@style/Theme.AppCompat.Light" />
 
-        <!-- FIXED: New Default Menu Management Activity - Admin only -->
+        <!-- Default Menu Management Activity - Manage default menus (Admin only) -->
         <activity
             android:name="com.hospital.dietary.DefaultMenuManagementActivity"
             android:exported="false"

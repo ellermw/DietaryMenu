@@ -1,157 +1,319 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#f8f9fa"
-    android:fillViewport="true">
+    android:orientation="vertical"
+    android:background="#f5f7fa">
 
+    <!-- Status Bar Background -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        android:background="#1565C0" />
+
+    <!-- Header Bar -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="20dp"
-        android:gravity="center_horizontal">
+        android:layout_height="56dp"
+        android:background="#1976D2"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp">
 
-        <!-- Welcome Section -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="5:49"
+            android:textColor="@android:color/white"
+            android:textSize="14sp" />
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_speaker"
+            android:layout_marginLeft="8dp"
+            android:tint="@android:color/white" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <!-- Back button -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="←"
+            android:textColor="@android:color/white"
+            android:textSize="24sp"
+            android:paddingRight="16dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hospital Dietary Management"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <!-- Status icons -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="📶📶🔋"
+                android:textColor="@android:color/white" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Main Content -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@android:color/white"
-            android:padding="24dp"
-            android:elevation="4dp"
-            android:layout_marginBottom="20dp">
+            android:padding="20dp">
 
+            <!-- Welcome Header -->
             <TextView
                 android:id="@+id/welcomeText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/welcome_message"
-                android:textSize="20sp"
+                android:text="Welcome, System Administrator!"
+                android:textSize="24sp"
                 android:textStyle="bold"
                 android:textColor="#2c3e50"
-                android:textAlignment="center"
-                android:layout_marginBottom="8dp" />
+                android:gravity="center"
+                android:layout_marginBottom="24dp" />
 
-            <TextView
+            <!-- Operations Section -->
+            <LinearLayout
+                android:id="@+id/operationsSection"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Hospital Dietary Management System"
-                android:textSize="14sp"
-                android:textColor="#7f8c8d"
-                android:textAlignment="center" />
+                android:orientation="vertical"
+                android:background="@android:color/white"
+                android:padding="20dp"
+                android:elevation="2dp"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Operations"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#2c3e50"
+                    android:layout_marginBottom="16dp" />
+
+                <!-- Patient Info Button -->
+                <Button
+                    android:id="@+id/patientInfoButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:text="👤    Patient Info"
+                    android:textSize="16sp"
+                    android:textColor="@android:color/white"
+                    android:gravity="left|center_vertical"
+                    android:paddingLeft="24dp"
+                    android:background="@drawable/button_primary"
+                    android:layout_marginBottom="12dp" />
+
+                <!-- Pending Orders Button -->
+                <Button
+                    android:id="@+id/pendingOrdersButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:text="📋    Pending Orders"
+                    android:textSize="16sp"
+                    android:textColor="@android:color/white"
+                    android:gravity="left|center_vertical"
+                    android:paddingLeft="24dp"
+                    android:background="@drawable/button_primary"
+                    android:layout_marginBottom="12dp" />
+
+                <!-- Retired Orders Button -->
+                <Button
+                    android:id="@+id/retiredOrdersButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:text="✓    Retired Orders"
+                    android:textSize="16sp"
+                    android:textColor="@android:color/white"
+                    android:gravity="left|center_vertical"
+                    android:paddingLeft="24dp"
+                    android:background="@drawable/button_primary" />
+
+            </LinearLayout>
+
+            <!-- Your Account Section -->
+            <LinearLayout
+                android:id="@+id/yourAccountSection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@android:color/white"
+                android:padding="20dp"
+                android:elevation="2dp"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Your Account"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#2c3e50"
+                    android:layout_marginBottom="16dp" />
+
+                <!-- Account Management Button -->
+                <Button
+                    android:id="@+id/accountManagementButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:text="⚙️    Account Management"
+                    android:textSize="16sp"
+                    android:textColor="@android:color/white"
+                    android:gravity="left|center_vertical"
+                    android:paddingLeft="24dp"
+                    android:background="@drawable/button_primary" />
+
+            </LinearLayout>
+
+            <!-- Admin Tools Section (only visible for admins) -->
+            <LinearLayout
+                android:id="@+id/adminToolsSection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@android:color/white"
+                android:padding="20dp"
+                android:elevation="2dp"
+                android:layout_marginBottom="16dp"
+                android:visibility="visible">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Admin Tools"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#2c3e50"
+                    android:layout_marginBottom="16dp" />
+
+                <!-- User Management Button -->
+                <Button
+                    android:id="@+id/userManagementButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:text="👥    User Management"
+                    android:textSize="16sp"
+                    android:textColor="@android:color/white"
+                    android:gravity="left|center_vertical"
+                    android:paddingLeft="24dp"
+                    android:background="@drawable/button_primary"
+                    android:layout_marginBottom="12dp" />
+
+                <!-- Item Management Button -->
+                <Button
+                    android:id="@+id/itemManagementButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:text="📋    Item Management"
+                    android:textSize="16sp"
+                    android:textColor="@android:color/white"
+                    android:gravity="left|center_vertical"
+                    android:paddingLeft="24dp"
+                    android:background="@drawable/button_primary"
+                    android:layout_marginBottom="12dp" />
+
+                <!-- Default Menu Management Button -->
+                <Button
+                    android:id="@+id/defaultMenuManagementButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:text="🍽️    Default Menu Management"
+                    android:textSize="16sp"
+                    android:textColor="@android:color/white"
+                    android:gravity="left|center_vertical"
+                    android:paddingLeft="24dp"
+                    android:background="@drawable/button_primary" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
-        <!-- Main Menu Buttons -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+    </ScrollView>
 
-            <!-- Patient Information -->
-            <Button
-                android:id="@+id/patientInfoButton"
-                android:layout_width="match_parent"
-                android:layout_height="64dp"
-                android:text="@string/patient_info"
-                android:textSize="18sp"
-                android:textColor="@android:color/white"
-                android:background="#3498db"
-                android:elevation="3dp"
-                android:layout_marginBottom="12dp" />
+    <!-- Logout Button -->
+    <Button
+        android:id="@+id/logoutButton"
+        android:layout_width="200dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center_horizontal"
+        android:text="Logout"
+        android:textSize="16sp"
+        android:textColor="@android:color/white"
+        android:background="@drawable/button_rounded"
+        android:layout_marginBottom="20dp"
+        android:layout_marginTop="8dp" />
 
-            <!-- Pending Orders -->
-            <Button
-                android:id="@+id/pendingOrdersButton"
-                android:layout_width="match_parent"
-                android:layout_height="64dp"
-                android:text="@string/pending_orders"
-                android:textSize="18sp"
-                android:textColor="@android:color/white"
-                android:background="#f39c12"
-                android:elevation="3dp"
-                android:layout_marginBottom="12dp" />
+    <!-- Navigation Bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="#000000"
+        android:orientation="horizontal"
+        android:gravity="center">
 
-            <!-- Retired Orders -->
-            <Button
-                android:id="@+id/retiredOrdersButton"
-                android:layout_width="match_parent"
-                android:layout_height="64dp"
-                android:text="@string/retired_orders"
-                android:textSize="18sp"
-                android:textColor="@android:color/white"
-                android:background="#27ae60"
-                android:elevation="3dp"
-                android:layout_marginBottom="20dp" />
-
-            <!-- Divider for Admin Functions -->
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#bdc3c7"
-                android:layout_marginBottom="20dp" />
-
-            <!-- FEATURE: Account Management (Available to all users) -->
-            <Button
-                android:id="@+id/accountManagementButton"
-                android:layout_width="match_parent"
-                android:layout_height="64dp"
-                android:text="@string/account_management"
-                android:textSize="18sp"
-                android:textColor="@android:color/white"
-                android:background="#e74c3c"
-                android:elevation="3dp"
-                android:layout_marginBottom="12dp" />
-
-            <!-- User Management (Admin Only) -->
-            <Button
-                android:id="@+id/userManagementButton"
-                android:layout_width="match_parent"
-                android:layout_height="64dp"
-                android:text="@string/user_management"
-                android:textSize="18sp"
-                android:textColor="@android:color/white"
-                android:background="#9b59b6"
-                android:elevation="3dp"
-                android:layout_marginBottom="12dp"
-                android:visibility="gone" />
-
-            <!-- Item Management (Admin Only) -->
-            <Button
-                android:id="@+id/itemManagementButton"
-                android:layout_width="match_parent"
-                android:layout_height="64dp"
-                android:text="@string/item_management"
-                android:textSize="18sp"
-                android:textColor="@android:color/white"
-                android:background="#16a085"
-                android:elevation="3dp"
-                android:layout_marginBottom="20dp"
-                android:visibility="gone" />
-
-            <!-- Logout -->
-            <Button
-                android:id="@+id/logoutButton"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:text="@string/logout"
-                android:textSize="16sp"
-                android:textColor="@android:color/white"
-                android:background="#95a5a6"
-                android:elevation="2dp" />
-
-        </LinearLayout>
-
-        <!-- Version Information -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/app_version"
-            android:textSize="12sp"
-            android:textColor="#bdc3c7"
-            android:layout_marginTop="24dp" />
+            android:text="◄"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            android:padding="12dp" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="●"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            android:padding="12dp" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="■"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:padding="12dp" />
 
     </LinearLayout>
 
-</ScrollView>
+</LinearLayout>
