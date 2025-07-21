@@ -303,22 +303,146 @@ public class DefaultMenuDAO {
     /**
      * Delete all default menu items for a specific diet type
      */
-    public boolean deleteDefaultMenusForDiet(String dietType) {
+    public boolean deleteDefaultMenuForDiet(String dietType) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         try {
             int deletedRows = db.delete("DefaultMenu", "diet_type = ?", new String[]{dietType});
             Log.d(TAG, "Deleted " + deletedRows + " default menu items for diet: " + dietType);
-            return true;
+            return deletedRows > 0;
         } catch (Exception e) {
-            Log.e(TAG, "Error deleting default menus for diet: " + dietType, e);
+            Log.e(TAG, "Error deleting default menu items for diet: " + dietType, e);
             return false;
         }
     }
 
     /**
-     * Get current timestamp string
+     * Get all available diet types that have default menus configured
+     */
+    public List<String> getAvailableDietTypes() {
+        List<String> dietTypes = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        Cursor cursor = null;
+        try {
+            cursor = db.query(true, "DefaultMenu", new String[]{"diet_type"}, null, null, null, null, "diet_type ASC", null);
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    dietTypes.add(cursor.getString(0));
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error getting available diet types", e);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        return dietTypes;
+    }
+
+    /**
+     * Get current timestamp as string
      */
     private String getCurrentTimestamp() {
         return dateFormat.format(new Date());
+    }
+
+    /**
+     * Get count of default menu items for a specific configuration
+     */
+    public int getItemCount(String dietType, String mealType, String dayOfWeek) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String selection = "diet_type = ? AND meal_type = ? AND day_of_week = ?";
+        String[] selectionArgs = {dietType, mealType, dayOfWeek};
+
+        Cursor cursor = null;
+        try {
+            cursor = db.query("DefaultMenu", new String[]{"COUNT(*)"}, selection, selectionArgs, null, null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                return cursor.getInt(0);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error getting item count", e);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * Update a single default menu item
+     */
+    public boolean updateDefaultMenuItem(DefaultMenuItem item) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("item_name", item.getItemName());
+        values.put("description", item.getDescription());
+
+        try {
+            int rowsAffected = db.update("DefaultMenu", values, "id = ?", new String[]{String.valueOf(item.getId())});
+            return rowsAffected > 0;
+        } catch (Exception e) {
+            Log.e(TAG, "Error updating default menu item", e);
+            return false;
+        }
+    }
+
+    /**
+     * Copy default menu items from one diet type to another
+     */
+    public boolean copyDefaultMenu(String fromDietType, String toDietType) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        try {
+            db.beginTransaction();
+
+            // First, delete existing items for target diet type
+            db.delete("DefaultMenu", "diet_type = ?", new String[]{toDietType});
+
+            // Get all items from source diet type
+            List<DefaultMenuItem> sourceItems = new ArrayList<>();
+            Cursor cursor = db.query("DefaultMenu", null, "diet_type = ?", new String[]{fromDietType}, null, null, null);
+
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    DefaultMenuItem item = new DefaultMenuItem();
+                    item.setItemName(cursor.getString(cursor.getColumnIndex("item_name")));
+                    item.setMealType(cursor.getString(cursor.getColumnIndex("meal_type")));
+                    item.setDayOfWeek(cursor.getString(cursor.getColumnIndex("day_of_week")));
+                    item.setDescription(cursor.getString(cursor.getColumnIndex("description")));
+                    sourceItems.add(item);
+                } while (cursor.moveToNext());
+            }
+
+            if (cursor != null) {
+                cursor.close();
+            }
+
+            // Insert items with new diet type
+            for (DefaultMenuItem item : sourceItems) {
+                ContentValues values = new ContentValues();
+                values.put("item_name", item.getItemName());
+                values.put("diet_type", toDietType);
+                values.put("meal_type", item.getMealType());
+                values.put("day_of_week", item.getDayOfWeek());
+                values.put("description", item.getDescription());
+                values.put("created_date", getCurrentTimestamp());
+
+                db.insert("DefaultMenu", null, values);
+            }
+
+            db.setTransactionSuccessful();
+            Log.d(TAG, "Copied " + sourceItems.size() + " items from " + fromDietType + " to " + toDietType);
+            return true;
+
+        } catch (Exception e) {
+            Log.e(TAG, "Error copying default menu", e);
+            return false;
+        } finally {
+            db.endTransaction();
+        }
     }
 }

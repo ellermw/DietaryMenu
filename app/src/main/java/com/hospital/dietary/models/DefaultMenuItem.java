@@ -1,6 +1,7 @@
 package com.hospital.dietary.models;
 
 public class DefaultMenuItem {
+
     private int id;
     private int itemId;
     private String itemName;
@@ -11,10 +12,10 @@ public class DefaultMenuItem {
     private String createdDate;
 
     // Constructors
-    public DefaultMenuItem() {}
+    public DefaultMenuItem() {
+    }
 
-    public DefaultMenuItem(int itemId, String itemName, String dietType, String mealType, String dayOfWeek) {
-        this.itemId = itemId;
+    public DefaultMenuItem(String itemName, String dietType, String mealType, String dayOfWeek) {
         this.itemName = itemName;
         this.dietType = dietType;
         this.mealType = mealType;
@@ -39,7 +40,7 @@ public class DefaultMenuItem {
     }
 
     public String getItemName() {
-        return itemName;
+        return itemName != null ? itemName : "";
     }
 
     public void setItemName(String itemName) {
@@ -47,7 +48,7 @@ public class DefaultMenuItem {
     }
 
     public String getDietType() {
-        return dietType;
+        return dietType != null ? dietType : "";
     }
 
     public void setDietType(String dietType) {
@@ -55,7 +56,7 @@ public class DefaultMenuItem {
     }
 
     public String getMealType() {
-        return mealType;
+        return mealType != null ? mealType : "";
     }
 
     public void setMealType(String mealType) {
@@ -63,7 +64,7 @@ public class DefaultMenuItem {
     }
 
     public String getDayOfWeek() {
-        return dayOfWeek;
+        return dayOfWeek != null ? dayOfWeek : "";
     }
 
     public void setDayOfWeek(String dayOfWeek) {
@@ -71,7 +72,7 @@ public class DefaultMenuItem {
     }
 
     public String getDescription() {
-        return description;
+        return description != null ? description : "";
     }
 
     public void setDescription(String description) {
@@ -79,18 +80,39 @@ public class DefaultMenuItem {
     }
 
     public String getCreatedDate() {
-        return createdDate;
+        return createdDate != null ? createdDate : "";
     }
 
     public void setCreatedDate(String createdDate) {
         this.createdDate = createdDate;
     }
 
-    // Utility methods
+    // Helper Methods
+    public String getDisplayName() {
+        return getItemName();
+    }
+
+    public String getFullDescription() {
+        StringBuilder desc = new StringBuilder(getItemName());
+
+        if (!getDietType().isEmpty()) {
+            desc.append(" (").append(getDietType()).append(")");
+        }
+
+        if (!getDescription().isEmpty()) {
+            desc.append(" - ").append(getDescription());
+        }
+
+        return desc.toString();
+    }
+
+    public String getConfigurationKey() {
+        return getDietType() + "_" + getMealType() + "_" + getDayOfWeek();
+    }
+
     @Override
     public String toString() {
-        return itemName + " (" + dietType + " - " + mealType +
-                ("Breakfast".equals(mealType) ? "" : " - " + dayOfWeek) + ")";
+        return getItemName() + " - " + getDietType() + " " + getMealType() + " " + getDayOfWeek();
     }
 
     @Override
@@ -99,14 +121,19 @@ public class DefaultMenuItem {
         if (obj == null || getClass() != obj.getClass()) return false;
 
         DefaultMenuItem that = (DefaultMenuItem) obj;
-        return itemId == that.itemId &&
-                dietType.equals(that.dietType) &&
-                mealType.equals(that.mealType) &&
-                dayOfWeek.equals(that.dayOfWeek);
+
+        if (!getItemName().equals(that.getItemName())) return false;
+        if (!getDietType().equals(that.getDietType())) return false;
+        if (!getMealType().equals(that.getMealType())) return false;
+        return getDayOfWeek().equals(that.getDayOfWeek());
     }
 
     @Override
     public int hashCode() {
-        return java.util.Objects.hash(itemId, dietType, mealType, dayOfWeek);
+        int result = getItemName().hashCode();
+        result = 31 * result + getDietType().hashCode();
+        result = 31 * result + getMealType().hashCode();
+        result = 31 * result + getDayOfWeek().hashCode();
+        return result;
     }
 }

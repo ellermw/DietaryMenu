@@ -1,7 +1,5 @@
 package com.hospital.dietary;
 
-import android.app.AlertDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -12,10 +10,13 @@ import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import com.hospital.dietary.dao.PatientDAO;
+import com.hospital.dietary.dao.DefaultMenuDAO;
 import com.hospital.dietary.models.Patient;
-import java.util.ArrayList;
-import java.util.Arrays;
+import com.hospital.dietary.models.DefaultMenuItem;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.ArrayList;
 
 public class NewPatientActivity extends AppCompatActivity {
 
@@ -23,8 +24,7 @@ public class NewPatientActivity extends AppCompatActivity {
 
     private DatabaseHelper dbHelper;
     private PatientDAO patientDAO;
-
-    // User information
+    private DefaultMenuDAO defaultMenuDAO;
     private String currentUsername;
     private String currentUserRole;
     private String currentUserFullName;
@@ -39,7 +39,7 @@ public class NewPatientActivity extends AppCompatActivity {
     private LinearLayout adaToggleContainer;
     private Spinner fluidRestrictionSpinner;
 
-    // FIXED: Updated texture modification checkboxes with new options
+    // Texture modification checkboxes
     private CheckBox mechanicalChoppedCheckBox;
     private CheckBox mechanicalGroundCheckBox;
     private CheckBox biteSizeCheckBox;
@@ -48,36 +48,10 @@ public class NewPatientActivity extends AppCompatActivity {
     private CheckBox puddingThickCheckBox;
     private CheckBox honeyThickCheckBox;
     private CheckBox extraGravyCheckBox;
-
-    // FIXED: New "Meats Only" toggle for Mechanical Ground/Chopped
     private CheckBox meatsOnlyCheckBox;
     private LinearLayout meatsOnlyContainer;
 
     private Button savePatientButton;
-    private Button clearFormButton;
-
-    // FIXED: Corrected diet types to match requirements
-    private String[] dietTypes = {
-            "Select Diet Type",
-            "Regular",
-            "Cardiac",
-            "ADA",
-            "Renal",
-            "Puree",
-            "Full Liquid",
-            "Clear Liquid"
-    };
-
-    // FIXED: Corrected wing/room mappings
-    private String[] wings = {
-            "Select Wing",
-            "1 South",
-            "2 North",
-            "Labor and Delivery",
-            "2 West",
-            "3 North",
-            "ICU"
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +68,7 @@ public class NewPatientActivity extends AppCompatActivity {
         // Initialize database
         dbHelper = new DatabaseHelper(this);
         patientDAO = new PatientDAO(dbHelper);
+        defaultMenuDAO = new DefaultMenuDAO(dbHelper);
 
         // Set title and back button
         if (getSupportActionBar() != null) {
@@ -129,91 +104,107 @@ public class NewPatientActivity extends AppCompatActivity {
         puddingThickCheckBox = findViewById(R.id.puddingThickCheckBox);
         honeyThickCheckBox = findViewById(R.id.honeyThickCheckBox);
         extraGravyCheckBox = findViewById(R.id.extraGravyCheckBox);
-
-        // Meats Only toggle
         meatsOnlyCheckBox = findViewById(R.id.meatsOnlyCheckBox);
         meatsOnlyContainer = findViewById(R.id.meatsOnlyContainer);
 
-        // Action buttons
         savePatientButton = findViewById(R.id.savePatientButton);
-        clearFormButton = findViewById(R.id.clearFormButton);
-
-        // Initially hide ADA toggle and meats only container
-        adaToggleContainer.setVisibility(View.GONE);
-        meatsOnlyContainer.setVisibility(View.GONE);
     }
 
     private void setupSpinners() {
-        // Wing spinner
+        // Wing Spinner
+        String[] wings = {"Select Wing", "1 South", "2 North", "Labor and Delivery", "2 West", "3 North", "ICU"};
         ArrayAdapter<String> wingAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, wings);
         wingAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         wingSpinner.setAdapter(wingAdapter);
 
-        // Diet type spinner
-        ArrayAdapter<String> dietAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, dietTypes);
+        // Room Number Spinner (dynamic based on wing) - Initialize with empty list
+        updateRoomNumbers();
+
+        // Diet Spinner
+        String[] diets = {"Select Diet", "Regular", "ADA", "Cardiac", "Renal", "Clear Liquid", "Full Liquid", "Puree", "Mechanical Chopped", "Mechanical Ground"};
+        ArrayAdapter<String> dietAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, diets);
         dietAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         dietSpinner.setAdapter(dietAdapter);
 
-        // Fluid restriction spinner
+        // Fluid Restriction Spinner
         String[] fluidRestrictions = {
-                "No Restriction",
-                "1500ml",
-                "2000ml",
-                "2500ml",
-                "Other"
+                "No Fluid Restriction",
+                "1000ml (34oz): 120ml, 120ml, 160ml",
+                "1200ml (41oz): 250ml, 170ml, 180ml",
+                "1500ml (51oz): 350ml, 170ml, 180ml",
+                "1800ml (61oz): 360ml, 240ml, 240ml",
+                "2000ml (68oz): 320ml, 240ml, 240ml",
+                "2500ml (85oz): 400ml, 400ml, 400ml"
         };
         ArrayAdapter<String> fluidAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, fluidRestrictions);
         fluidAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         fluidRestrictionSpinner.setAdapter(fluidAdapter);
-
-        // Room number spinner - initially empty, populated when wing is selected
-        updateRoomNumbers();
     }
 
     private void updateRoomNumbers() {
         String selectedWing = wingSpinner.getSelectedItem().toString();
         List<String> roomNumbers = new ArrayList<>();
         roomNumbers.add("Select Room");
-
-        // Generate room numbers based on selected wing
-        if ("1 South".equals(selectedWing)) {
-            for (int i = 101; i <= 120; i++) {
-                roomNumbers.add(String.valueOf(i));
-            }
-        } else if ("2 North".equals(selectedWing)) {
-            for (int i = 201; i <= 220; i++) {
-                roomNumbers.add(String.valueOf(i));
-            }
-        } else if ("Labor and Delivery".equals(selectedWing)) {
-            for (int i = 301; i <= 310; i++) {
-                roomNumbers.add("LD" + (i - 300));
-            }
-        } else if ("2 West".equals(selectedWing)) {
-            for (int i = 221; i <= 240; i++) {
-                roomNumbers.add(String.valueOf(i));
-            }
-        } else if ("3 North".equals(selectedWing)) {
-            for (int i = 301; i <= 320; i++) {
-                roomNumbers.add(String.valueOf(i));
-            }
-        } else if ("ICU".equals(selectedWing)) {
-            for (int i = 1; i <= 12; i++) {
-                roomNumbers.add("ICU" + i);
-            }
+        switch (selectedWing) {
+            case "1 South":
+                // Rooms 106–122
+                for (int i = 106; i <= 122; i++) {
+                    roomNumbers.add(String.valueOf(i));
+                }
+                break;
+            case "2 North":
+                // Rooms 250–264
+                for (int i = 250; i <= 264; i++) {
+                    roomNumbers.add(String.valueOf(i));
+                }
+                break;
+            case "Labor and Delivery":
+                // Rooms LDR1–LDR6
+                for (int i = 1; i <= 6; i++) {
+                    roomNumbers.add("LDR" + i);
+                }
+                break;
+            case "2 West":
+                // Rooms 225–248
+                for (int i = 225; i <= 248; i++) {
+                    roomNumbers.add(String.valueOf(i));
+                }
+                break;
+            case "3 North":
+                // Rooms 349–371
+                for (int i = 349; i <= 371; i++) {
+                    roomNumbers.add(String.valueOf(i));
+                }
+                break;
+            case "ICU":
+                // Rooms ICU1–ICU13
+                for (int i = 1; i <= 13; i++) {
+                    roomNumbers.add("ICU" + i);
+                }
+                break;
+            default:
+                // (optional) handle any other cases
+                break;
         }
-
-        ArrayAdapter<String> roomAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, roomNumbers);
+        ArrayAdapter<String> roomAdapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_spinner_item,
+                roomNumbers
+        );
         roomAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         roomNumberSpinner.setAdapter(roomAdapter);
-        roomNumberSpinner.setSelection(0);
     }
 
     private void setupListeners() {
-        // Wing selection listener
+        // Text change listeners for validation
+        patientFirstNameEditText.addTextChangedListener(validationWatcher);
+        patientLastNameEditText.addTextChangedListener(validationWatcher);
+
+        // Spinner change listeners
         wingSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                updateRoomNumbers();
+                updateRoomNumbers(); // Update room numbers when wing changes
                 updateSaveButtonState();
             }
 
@@ -221,7 +212,6 @@ public class NewPatientActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) {}
         });
 
-        // Room selection listener
         roomNumberSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -232,59 +222,39 @@ public class NewPatientActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) {}
         });
 
-        // FIXED: Diet type selection listener for ADA toggle visibility
         dietSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selectedDiet = dietTypes[position];
+                String selectedDiet = parent.getItemAtPosition(position).toString();
+                updateDietSpecificOptions(selectedDiet);
                 updateSaveButtonState();
-
-                // FIXED: Show ADA toggle for Puree, Full Liquid, or Clear Liquid
-                if ("Puree".equals(selectedDiet) || "Full Liquid".equals(selectedDiet) || "Clear Liquid".equals(selectedDiet)) {
-                    adaToggleContainer.setVisibility(View.VISIBLE);
-                } else {
-                    adaToggleContainer.setVisibility(View.GONE);
-                    adaToggleCheckBox.setChecked(false);
-                }
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {}
         });
 
-        // FIXED: Mechanical Ground/Chopped checkbox listeners for Meats Only toggle
-        mechanicalChoppedCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            updateMeatsOnlyVisibility();
-        });
-
-        mechanicalGroundCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            updateMeatsOnlyVisibility();
-        });
-
-        // FIXED: Save button with proper logging
-        savePatientButton.setOnClickListener(v -> {
-            Log.d(TAG, "Save button clicked");
-            savePatient();
-        });
-
-        // Clear form button
-        clearFormButton.setOnClickListener(v -> clearForm());
-
-        // Text change listeners for validation
-        patientFirstNameEditText.addTextChangedListener(validationWatcher);
-        patientLastNameEditText.addTextChangedListener(validationWatcher);
+        // Save patient button
+        savePatientButton.setOnClickListener(v -> savePatient());
     }
 
-    // FIXED: Update Meats Only toggle visibility
-    private void updateMeatsOnlyVisibility() {
-        boolean showMeatsOnly = mechanicalChoppedCheckBox.isChecked() || mechanicalGroundCheckBox.isChecked();
+    private void updateDietSpecificOptions(String selectedDiet) {
+        // Show/hide ADA toggle for specific diets
+        boolean showAdaToggle = "Regular".equals(selectedDiet) || "Cardiac".equals(selectedDiet);
+        adaToggleContainer.setVisibility(showAdaToggle ? View.VISIBLE : View.GONE);
+        if (!showAdaToggle) {
+            adaToggleCheckBox.setChecked(false);
+        }
+
+        // Show/hide meats only option for specific diets
+        boolean showMeatsOnly = "Mechanical Chopped".equals(selectedDiet) || "Mechanical Ground".equals(selectedDiet);
         meatsOnlyContainer.setVisibility(showMeatsOnly ? View.VISIBLE : View.GONE);
         if (!showMeatsOnly) {
             meatsOnlyCheckBox.setChecked(false);
         }
     }
 
-    // FIXED: Enhanced save patient method with proper error handling
+    // FIXED: Enhanced save patient method with proper meal completion states
     private void savePatient() {
         Log.d(TAG, "savePatient() method called");
 
@@ -340,37 +310,45 @@ public class NewPatientActivity extends AppCompatActivity {
             newPatient.setRoomNumber(roomNumber);
             newPatient.setDiet(diet);
             newPatient.setAdaDiet(adaToggleCheckBox.isChecked());
-            newPatient.setFluidRestriction(fluidRestriction.startsWith("No") ? "No Restriction" : fluidRestriction);
+            newPatient.setFluidRestriction(fluidRestriction.equals("No Fluid Restriction") ? "" : fluidRestriction);
 
-            // Build texture modifications string
-            StringBuilder textureModifications = new StringBuilder();
-            if (mechanicalChoppedCheckBox.isChecked()) textureModifications.append("Mechanical Chopped, ");
-            if (mechanicalGroundCheckBox.isChecked()) textureModifications.append("Mechanical Ground, ");
-            if (biteSizeCheckBox.isChecked()) textureModifications.append("Bite Size, ");
-            if (breadOKCheckBox.isChecked()) textureModifications.append("Bread OK, ");
-            if (nectarThickCheckBox.isChecked()) textureModifications.append("Nectar Thick, ");
-            if (puddingThickCheckBox.isChecked()) textureModifications.append("Pudding Thick, ");
-            if (honeyThickCheckBox.isChecked()) textureModifications.append("Honey Thick, ");
-            if (extraGravyCheckBox.isChecked()) textureModifications.append("Extra Gravy, ");
-            if (meatsOnlyCheckBox.isChecked()) textureModifications.append("Meats Only, ");
+            // Set texture modifications
+            newPatient.setMechanicalChopped(mechanicalChoppedCheckBox.isChecked());
+            newPatient.setMechanicalGround(mechanicalGroundCheckBox.isChecked());
+            newPatient.setBiteSize(biteSizeCheckBox.isChecked());
+            newPatient.setBreadOK(breadOKCheckBox.isChecked());
+            newPatient.setNectarThick(nectarThickCheckBox.isChecked());
+            newPatient.setPuddingThick(puddingThickCheckBox.isChecked());
+            newPatient.setHoneyThick(honeyThickCheckBox.isChecked());
+            newPatient.setExtraGravy(extraGravyCheckBox.isChecked());
+            newPatient.setMeatsOnly(meatsOnlyCheckBox.isChecked());
 
-            if (textureModifications.length() > 0) {
-                textureModifications.setLength(textureModifications.length() - 2); // Remove last comma and space
-            }
-            newPatient.setTextureModifications(textureModifications.toString());
+            // FIXED: Ensure meals are NOT completed when creating new patient
+            newPatient.setBreakfastComplete(false);
+            newPatient.setLunchComplete(false);
+            newPatient.setDinnerComplete(false);
 
-            Log.d(TAG, "Attempting to save patient: " + firstName + " " + lastName);
+            // Set NPO states to false
+            newPatient.setBreakfastNPO(false);
+            newPatient.setLunchNPO(false);
+            newPatient.setDinnerNPO(false);
 
-            // Save to database
+            // Set created date
+            newPatient.setCreatedDate(new Date());
+
+            // Apply default menu items based on diet type and current day
+            applyDefaultMenuItems(newPatient);
+
+            // Save patient to database
             long patientId = patientDAO.addPatient(newPatient);
 
             if (patientId > 0) {
                 Log.d(TAG, "Patient saved successfully with ID: " + patientId);
 
-                String dietName = diet + (adaToggleCheckBox.isChecked() && !diet.contains("ADA") ? " ADA" : "");
+                String dietName = diet + (adaToggleCheckBox.isChecked() ? " + ADA" : "");
                 showSuccess("Patient " + firstName + " " + lastName + " added successfully!\n\n" +
-                        "✅ " + dietName + " diet has been automatically configured with predetermined menu items.\n" +
-                        "All meals are marked as complete.");
+                        "✅ " + dietName + " diet has been configured with default menu items.\n" +
+                        "Patient will appear in Pending Orders until meals are marked complete.");
 
                 clearForm();
             } else {
@@ -383,6 +361,56 @@ public class NewPatientActivity extends AppCompatActivity {
             showError("Error saving patient: " + e.getMessage());
         } finally {
             resetSaveButton();
+        }
+    }
+
+    private void applyDefaultMenuItems(Patient patient) {
+        try {
+            // Get current day of week
+            Calendar calendar = Calendar.getInstance();
+            String[] daysOfWeek = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+            String currentDay = daysOfWeek[calendar.get(Calendar.DAY_OF_WEEK) - 1];
+
+            String dietType = patient.getDiet();
+
+            // Get default menu items for breakfast (same for all days)
+            List<DefaultMenuItem> breakfastItems = defaultMenuDAO.getDefaultMenuItems(dietType, "Breakfast", "All Days");
+            if (!breakfastItems.isEmpty()) {
+                StringBuilder breakfastString = new StringBuilder();
+                for (DefaultMenuItem item : breakfastItems) {
+                    if (breakfastString.length() > 0) breakfastString.append("\n");
+                    breakfastString.append(item.getItemName());
+                }
+                patient.setBreakfastItems(breakfastString.toString());
+            }
+
+            // Get default menu items for lunch (specific to day)
+            List<DefaultMenuItem> lunchItems = defaultMenuDAO.getDefaultMenuItems(dietType, "Lunch", currentDay);
+            if (!lunchItems.isEmpty()) {
+                StringBuilder lunchString = new StringBuilder();
+                for (DefaultMenuItem item : lunchItems) {
+                    if (lunchString.length() > 0) lunchString.append("\n");
+                    lunchString.append(item.getItemName());
+                }
+                patient.setLunchItems(lunchString.toString());
+            }
+
+            // Get default menu items for dinner (specific to day)
+            List<DefaultMenuItem> dinnerItems = defaultMenuDAO.getDefaultMenuItems(dietType, "Dinner", currentDay);
+            if (!dinnerItems.isEmpty()) {
+                StringBuilder dinnerString = new StringBuilder();
+                for (DefaultMenuItem item : dinnerItems) {
+                    if (dinnerString.length() > 0) dinnerString.append("\n");
+                    dinnerString.append(item.getItemName());
+                }
+                patient.setDinnerItems(dinnerString.toString());
+            }
+
+            Log.d(TAG, "Applied default menu items for " + dietType + " diet on " + currentDay);
+
+        } catch (Exception e) {
+            Log.e(TAG, "Error applying default menu items", e);
+            // Continue without default items if there's an error
         }
     }
 
@@ -439,40 +467,21 @@ public class NewPatientActivity extends AppCompatActivity {
                 dietSpinner.getSelectedItemPosition() > 0;
 
         savePatientButton.setEnabled(isValid);
-
-        // Update button appearance based on state
-        if (isValid) {
-            savePatientButton.setBackgroundColor(getResources().getColor(android.R.color.holo_green_dark));
-            savePatientButton.setAlpha(1.0f);
-        } else {
-            savePatientButton.setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
-            savePatientButton.setAlpha(0.5f);
-        }
-
-        Log.d(TAG, "Save button enabled: " + isValid);
+        savePatientButton.setAlpha(isValid ? 1.0f : 0.5f);
     }
 
-    // FIXED: Enhanced error and success dialogs
     private void showError(String message) {
-        new AlertDialog.Builder(this)
-                .setTitle("Error")
-                .setMessage(message)
-                .setPositiveButton("OK", null)
-                .show();
+        Toast.makeText(this, "❌ " + message, Toast.LENGTH_LONG).show();
     }
 
     private void showSuccess(String message) {
-        new AlertDialog.Builder(this)
-                .setTitle("Success!")
-                .setMessage(message)
-                .setPositiveButton("OK", null)
-                .show();
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // No options menu for this activity
-        return false;
+        getMenuInflater().inflate(R.menu.menu_with_home, menu);
+        return true;
     }
 
     @Override
@@ -482,12 +491,8 @@ public class NewPatientActivity extends AppCompatActivity {
                 finish();
                 return true;
             case R.id.action_home:
-                Intent intent = new Intent(this, MainMenuActivity.class);
-                intent.putExtra("current_user", currentUsername);
-                intent.putExtra("user_role", currentUserRole);
-                intent.putExtra("user_full_name", currentUserFullName);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
+                // Go to main menu
+                finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

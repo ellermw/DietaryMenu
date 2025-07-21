@@ -2,135 +2,22 @@ package com.hospital.dietary;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String TAG = "DatabaseHelper";
-    private static final String DATABASE_NAME = "DietaryManagement.db";
-    private static final int DATABASE_VERSION = 7; // FIXED: Incremented for new features
+    private static final String DATABASE_NAME = "DietaryMenu.db";
+    private static final int DATABASE_VERSION = 8; // UPDATED: Incremented version for new table
 
-    // User table
-    private static final String CREATE_USER_TABLE =
-            "CREATE TABLE User (" +
-                    "user_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    "username TEXT UNIQUE NOT NULL, " +
-                    "password TEXT NOT NULL, " +
-                    "full_name TEXT NOT NULL, " +
-                    "role TEXT NOT NULL, " +
-                    "is_active INTEGER NOT NULL DEFAULT 1, " +
-                    "must_change_password INTEGER NOT NULL DEFAULT 0, " +
-                    "created_date TEXT, " +
-                    "last_login TEXT" +
-                    ")";
-
-    // Category table
-    private static final String CREATE_CATEGORY_TABLE =
-            "CREATE TABLE Category (" +
-                    "category_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    "name TEXT NOT NULL UNIQUE, " +
-                    "description TEXT, " +
-                    "sort_order INTEGER DEFAULT 0" +
-                    ")";
-
-    // FIXED: Patient table with all texture modification fields
-    private static final String CREATE_PATIENT_TABLE =
-            "CREATE TABLE PatientInfo (" +
-                    "patient_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    "patient_first_name TEXT NOT NULL, " +
-                    "patient_last_name TEXT NOT NULL, " +
-                    "wing TEXT NOT NULL, " +
-                    "room_number TEXT NOT NULL, " +
-                    "diet_type TEXT NOT NULL, " +
-                    "ada_diet INTEGER NOT NULL DEFAULT 0, " +
-                    "fluid_restriction TEXT, " +
-                    "mechanical_chopped INTEGER NOT NULL DEFAULT 0, " +
-                    "mechanical_ground INTEGER NOT NULL DEFAULT 0, " +
-                    "bite_size INTEGER NOT NULL DEFAULT 0, " +
-                    "bread_ok INTEGER NOT NULL DEFAULT 0, " +
-                    "nectar_thick INTEGER NOT NULL DEFAULT 0, " +
-                    "pudding_thick INTEGER NOT NULL DEFAULT 0, " +
-                    "honey_thick INTEGER NOT NULL DEFAULT 0, " +
-                    "extra_gravy INTEGER NOT NULL DEFAULT 0, " +
-                    "meats_only INTEGER NOT NULL DEFAULT 0, " +
-                    "breakfast_complete INTEGER NOT NULL DEFAULT 0, " +
-                    "lunch_complete INTEGER NOT NULL DEFAULT 0, " +
-                    "dinner_complete INTEGER NOT NULL DEFAULT 0, " +
-                    "breakfast_items TEXT, " +
-                    "lunch_items TEXT, " +
-                    "dinner_items TEXT, " +
-                    "breakfast_juices TEXT, " +
-                    "lunch_juices TEXT, " +
-                    "dinner_juices TEXT, " +
-                    "breakfast_drinks TEXT, " +
-                    "lunch_drinks TEXT, " +
-                    "dinner_drinks TEXT, " +
-                    "created_date TEXT" +
-                    ")";
-
-    // Item table
-    private static final String CREATE_ITEM_TABLE =
-            "CREATE TABLE Item (" +
-                    "item_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    "name TEXT NOT NULL, " +
-                    "category TEXT NOT NULL, " +
-                    "description TEXT, " +
-                    "ada_friendly INTEGER NOT NULL DEFAULT 0, " +
-                    "is_active INTEGER NOT NULL DEFAULT 1, " +
-                    "created_date TEXT" +
-                    ")";
-
-    // FIXED: NEW DefaultMenu table for storing default menu configurations
-    private static final String CREATE_DEFAULT_MENU_TABLE =
-            "CREATE TABLE DefaultMenu (" +
-                    "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    "item_id INTEGER, " +
-                    "item_name TEXT NOT NULL, " +
-                    "diet_type TEXT NOT NULL, " +  // Regular, ADA, Cardiac
-                    "meal_type TEXT NOT NULL, " +   // Breakfast, Lunch, Dinner
-                    "day_of_week TEXT NOT NULL, " + // Monday-Sunday, or "All Days" for breakfast
-                    "description TEXT, " +
-                    "created_date TEXT DEFAULT CURRENT_TIMESTAMP, " +
-                    "FOREIGN KEY(item_id) REFERENCES Item(item_id), " +
-                    "UNIQUE(item_id, diet_type, meal_type, day_of_week)" +
-                    ");";
-
-    // FIXED: Finalized Order table
-    private static final String CREATE_FINALIZED_ORDER_TABLE =
-            "CREATE TABLE FinalizedOrder (" +
-                    "order_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    "patient_id INTEGER NOT NULL, " +
-                    "patient_name TEXT NOT NULL, " +
-                    "wing TEXT NOT NULL, " +
-                    "room TEXT NOT NULL, " +
-                    "order_date TEXT NOT NULL, " +
-                    "diet_type TEXT NOT NULL, " +
-                    "fluid_restriction TEXT, " +
-                    "mechanical_chopped INTEGER NOT NULL DEFAULT 0, " +
-                    "mechanical_ground INTEGER NOT NULL DEFAULT 0, " +
-                    "bite_size INTEGER NOT NULL DEFAULT 0, " +
-                    "bread_ok INTEGER NOT NULL DEFAULT 0, " +
-                    "nectar_thick INTEGER NOT NULL DEFAULT 0, " +
-                    "pudding_thick INTEGER NOT NULL DEFAULT 0, " +
-                    "honey_thick INTEGER NOT NULL DEFAULT 0, " +
-                    "extra_gravy INTEGER NOT NULL DEFAULT 0, " +
-                    "meats_only INTEGER NOT NULL DEFAULT 0, " +
-                    "breakfast_items TEXT, " +
-                    "lunch_items TEXT, " +
-                    "dinner_items TEXT, " +
-                    "breakfast_juices TEXT, " +
-                    "lunch_juices TEXT, " +
-                    "dinner_juices TEXT, " +
-                    "breakfast_drinks TEXT, " +
-                    "lunch_drinks TEXT, " +
-                    "dinner_drinks TEXT" +
-                    ")";
+    // Table Names
+    public static final String TABLE_USERS = "Users";
+    public static final String TABLE_PATIENT_INFO = "PatientInfo";
+    public static final String TABLE_ITEMS = "Items";
+    public static final String TABLE_MEAL_SELECTIONS = "MealSelections";
+    public static final String TABLE_DEFAULT_MENU = "DefaultMenu"; // NEW TABLE
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -138,372 +25,289 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        try {
-            Log.d(TAG, "Creating database tables");
+        Log.d(TAG, "Creating database tables");
 
-            // Create all tables
-            db.execSQL(CREATE_USER_TABLE);
-            db.execSQL(CREATE_CATEGORY_TABLE);
-            db.execSQL(CREATE_PATIENT_TABLE);
-            db.execSQL(CREATE_ITEM_TABLE);
-            db.execSQL(CREATE_DEFAULT_MENU_TABLE); // FIXED: New table
-            db.execSQL(CREATE_FINALIZED_ORDER_TABLE);
+        createUsersTable(db);
+        createPatientInfoTable(db);
+        createItemsTable(db);
+        createMealSelectionsTable(db);
+        createDefaultMenuTable(db); // NEW
 
-            // Insert default data
-            insertDefaultUsers(db);
-            insertDefaultCategories(db);
-            insertDefaultItems(db);
-            insertDefaultMenuItems(db); // FIXED: Insert default menu items
-
-            Log.d(TAG, "Database created successfully");
-
-        } catch (Exception e) {
-            Log.e(TAG, "Error creating database", e);
-            throw e;
-        }
+        insertDefaultUsers(db);
+        insertDefaultItems(db);
+        insertDefaultMenuItems(db); // NEW
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Log.d(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion);
 
-        try {
-            if (oldVersion < 4) {
-                // Add texture modification columns
-                addTextureModificationColumns(db);
-            }
+        if (oldVersion < 8) {
+            // Add DefaultMenu table for version 8
+            createDefaultMenuTable(db);
+            insertDefaultMenuItems(db);
+        }
 
-            if (oldVersion < 5) {
-                // Migrate Patient table to PatientInfo
-                migratePatientTable(db);
-            }
-
-            if (oldVersion < 6) {
-                // FIXED: Add new texture modification columns
-                addNewTextureModificationColumns(db);
-            }
-
-            if (oldVersion < 7) {
-                // FIXED: Add DefaultMenu table
-                createDefaultMenuTable(db);
-                insertDefaultMenuItems(db);
-            }
-
-        } catch (Exception e) {
-            Log.e(TAG, "Error upgrading database", e);
-            // If upgrade fails, recreate database
-            dropAllTables(db);
-            onCreate(db);
+        // Handle other version upgrades as needed
+        if (oldVersion < 7) {
+            // Add any missing columns to existing tables
+            addMissingColumnsToPatientInfo(db);
         }
     }
 
-    // FIXED: Create DefaultMenu table for existing databases
+    private void createUsersTable(SQLiteDatabase db) {
+        String CREATE_USERS_TABLE = "CREATE TABLE " + TABLE_USERS + " (" +
+                "user_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "username TEXT UNIQUE NOT NULL, " +
+                "password TEXT NOT NULL, " +
+                "full_name TEXT, " +
+                "user_role TEXT DEFAULT 'User', " +
+                "is_active INTEGER DEFAULT 1, " +
+                "force_password_change INTEGER DEFAULT 0, " +
+                "created_date TEXT DEFAULT CURRENT_TIMESTAMP, " +
+                "last_login TEXT" +
+                ")";
+        db.execSQL(CREATE_USERS_TABLE);
+        Log.d(TAG, "Users table created");
+    }
+
+    private void createPatientInfoTable(SQLiteDatabase db) {
+        String CREATE_PATIENT_INFO_TABLE = "CREATE TABLE " + TABLE_PATIENT_INFO + " (" +
+                "patient_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "patient_first_name TEXT NOT NULL, " +
+                "patient_last_name TEXT NOT NULL, " +
+                "wing TEXT NOT NULL, " +
+                "room_number TEXT NOT NULL, " +
+                "diet_type TEXT, " +
+                "diet TEXT NOT NULL, " +
+                "ada_diet INTEGER DEFAULT 0, " +
+                "fluid_restriction TEXT, " +
+                "texture_modifications TEXT, " +
+
+                // Texture modification fields
+                "mechanical_chopped INTEGER DEFAULT 0, " +
+                "mechanical_ground INTEGER DEFAULT 0, " +
+                "bite_size INTEGER DEFAULT 0, " +
+                "bread_ok INTEGER DEFAULT 0, " +
+                "nectar_thick INTEGER DEFAULT 0, " +
+                "pudding_thick INTEGER DEFAULT 0, " +
+                "honey_thick INTEGER DEFAULT 0, " +
+                "extra_gravy INTEGER DEFAULT 0, " +
+                "meats_only INTEGER DEFAULT 0, " +
+
+                // Meal completion flags
+                "breakfast_complete INTEGER DEFAULT 0, " +
+                "lunch_complete INTEGER DEFAULT 0, " +
+                "dinner_complete INTEGER DEFAULT 0, " +
+                "breakfast_npo INTEGER DEFAULT 0, " +
+                "lunch_npo INTEGER DEFAULT 0, " +
+                "dinner_npo INTEGER DEFAULT 0, " +
+
+                // Meal items
+                "breakfast_items TEXT, " +
+                "lunch_items TEXT, " +
+                "dinner_items TEXT, " +
+                "breakfast_juices TEXT, " +
+                "lunch_juices TEXT, " +
+                "dinner_juices TEXT, " +
+                "breakfast_drinks TEXT, " +
+                "lunch_drinks TEXT, " +
+                "dinner_drinks TEXT, " +
+
+                "created_date TEXT DEFAULT CURRENT_TIMESTAMP" +
+                ")";
+        db.execSQL(CREATE_PATIENT_INFO_TABLE);
+        Log.d(TAG, "PatientInfo table created");
+    }
+
+    private void createItemsTable(SQLiteDatabase db) {
+        String CREATE_ITEMS_TABLE = "CREATE TABLE " + TABLE_ITEMS + " (" +
+                "item_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "item_name TEXT NOT NULL, " +
+                "category TEXT, " +
+                "description TEXT, " +
+                "is_ada_friendly INTEGER DEFAULT 0, " +
+                "is_active INTEGER DEFAULT 1, " +
+                "created_date TEXT DEFAULT CURRENT_TIMESTAMP" +
+                ")";
+        db.execSQL(CREATE_ITEMS_TABLE);
+        Log.d(TAG, "Items table created");
+    }
+
+    private void createMealSelectionsTable(SQLiteDatabase db) {
+        String CREATE_MEAL_SELECTIONS_TABLE = "CREATE TABLE " + TABLE_MEAL_SELECTIONS + " (" +
+                "selection_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "patient_id INTEGER, " +
+                "item_id INTEGER, " +
+                "meal_type TEXT, " +
+                "selection_date TEXT, " +
+                "FOREIGN KEY(patient_id) REFERENCES " + TABLE_PATIENT_INFO + "(patient_id), " +
+                "FOREIGN KEY(item_id) REFERENCES " + TABLE_ITEMS + "(item_id)" +
+                ")";
+        db.execSQL(CREATE_MEAL_SELECTIONS_TABLE);
+        Log.d(TAG, "MealSelections table created");
+    }
+
+    // NEW: Create DefaultMenu table
     private void createDefaultMenuTable(SQLiteDatabase db) {
-        try {
-            db.execSQL(CREATE_DEFAULT_MENU_TABLE);
-            Log.d(TAG, "Created DefaultMenu table");
-        } catch (Exception e) {
-            Log.e(TAG, "Error creating DefaultMenu table", e);
-        }
+        String CREATE_DEFAULT_MENU_TABLE = "CREATE TABLE " + TABLE_DEFAULT_MENU + " (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "item_id INTEGER DEFAULT 0, " +
+                "item_name TEXT NOT NULL, " +
+                "diet_type TEXT NOT NULL, " +
+                "meal_type TEXT NOT NULL, " +
+                "day_of_week TEXT NOT NULL, " +
+                "description TEXT, " +
+                "created_date TEXT DEFAULT CURRENT_TIMESTAMP, " +
+                "UNIQUE(item_name, diet_type, meal_type, day_of_week)" +
+                ")";
+        db.execSQL(CREATE_DEFAULT_MENU_TABLE);
+        Log.d(TAG, "DefaultMenu table created");
     }
 
-    // FIXED: Add new texture modification columns for version 6+
-    private void addNewTextureModificationColumns(SQLiteDatabase db) {
+    private void addMissingColumnsToPatientInfo(SQLiteDatabase db) {
         try {
-            Log.d(TAG, "Adding new texture modification columns");
-
-            // Check which table exists (Patient or PatientInfo)
-            String tableName = tableExists(db, "PatientInfo") ? "PatientInfo" : "Patient";
-
-            // Add missing columns to patient table
-            try { db.execSQL("ALTER TABLE " + tableName + " ADD COLUMN nectar_thick INTEGER NOT NULL DEFAULT 0"); } catch (Exception e) {}
-            try { db.execSQL("ALTER TABLE " + tableName + " ADD COLUMN pudding_thick INTEGER NOT NULL DEFAULT 0"); } catch (Exception e) {}
-            try { db.execSQL("ALTER TABLE " + tableName + " ADD COLUMN honey_thick INTEGER NOT NULL DEFAULT 0"); } catch (Exception e) {}
-            try { db.execSQL("ALTER TABLE " + tableName + " ADD COLUMN extra_gravy INTEGER NOT NULL DEFAULT 0"); } catch (Exception e) {}
-            try { db.execSQL("ALTER TABLE " + tableName + " ADD COLUMN meats_only INTEGER NOT NULL DEFAULT 0"); } catch (Exception e) {}
-
-            // Add columns to FinalizedOrder table if it exists
-            if (tableExists(db, "FinalizedOrder")) {
-                try { db.execSQL("ALTER TABLE FinalizedOrder ADD COLUMN nectar_thick INTEGER NOT NULL DEFAULT 0"); } catch (Exception e) {}
-                try { db.execSQL("ALTER TABLE FinalizedOrder ADD COLUMN pudding_thick INTEGER NOT NULL DEFAULT 0"); } catch (Exception e) {}
-                try { db.execSQL("ALTER TABLE FinalizedOrder ADD COLUMN honey_thick INTEGER NOT NULL DEFAULT 0"); } catch (Exception e) {}
-                try { db.execSQL("ALTER TABLE FinalizedOrder ADD COLUMN extra_gravy INTEGER NOT NULL DEFAULT 0"); } catch (Exception e) {}
-                try { db.execSQL("ALTER TABLE FinalizedOrder ADD COLUMN meats_only INTEGER NOT NULL DEFAULT 0"); } catch (Exception e) {}
-            }
-
-            Log.d(TAG, "Added new texture modification columns");
+            // Add any missing texture modification columns
+            db.execSQL("ALTER TABLE " + TABLE_PATIENT_INFO + " ADD COLUMN nectar_thick INTEGER DEFAULT 0");
+            db.execSQL("ALTER TABLE " + TABLE_PATIENT_INFO + " ADD COLUMN pudding_thick INTEGER DEFAULT 0");
+            db.execSQL("ALTER TABLE " + TABLE_PATIENT_INFO + " ADD COLUMN honey_thick INTEGER DEFAULT 0");
+            db.execSQL("ALTER TABLE " + TABLE_PATIENT_INFO + " ADD COLUMN extra_gravy INTEGER DEFAULT 0");
+            db.execSQL("ALTER TABLE " + TABLE_PATIENT_INFO + " ADD COLUMN meats_only INTEGER DEFAULT 0");
+            Log.d(TAG, "Added missing columns to PatientInfo table");
         } catch (Exception e) {
-            Log.w(TAG, "Some texture modification columns may already exist: " + e.getMessage());
-        }
-    }
-
-    // FIXED: Add texture modification columns for older versions
-    private void addTextureModificationColumns(SQLiteDatabase db) {
-        try {
-            Log.d(TAG, "Adding basic texture modification columns");
-
-            String tableName = tableExists(db, "PatientInfo") ? "PatientInfo" : "Patient";
-
-            try { db.execSQL("ALTER TABLE " + tableName + " ADD COLUMN mechanical_chopped INTEGER NOT NULL DEFAULT 0"); } catch (Exception e) {}
-            try { db.execSQL("ALTER TABLE " + tableName + " ADD COLUMN mechanical_ground INTEGER NOT NULL DEFAULT 0"); } catch (Exception e) {}
-            try { db.execSQL("ALTER TABLE " + tableName + " ADD COLUMN bite_size INTEGER NOT NULL DEFAULT 0"); } catch (Exception e) {}
-            try { db.execSQL("ALTER TABLE " + tableName + " ADD COLUMN bread_ok INTEGER NOT NULL DEFAULT 0"); } catch (Exception e) {}
-
-            Log.d(TAG, "Added basic texture modification columns");
-        } catch (Exception e) {
-            Log.w(TAG, "Basic texture modification columns may already exist: " + e.getMessage());
-        }
-    }
-
-    private void migratePatientTable(SQLiteDatabase db) {
-        try {
-            Log.d(TAG, "Migrating Patient table to PatientInfo");
-
-            // Check if PatientInfo table already exists
-            if (tableExists(db, "PatientInfo")) {
-                Log.d(TAG, "PatientInfo table already exists, skipping migration");
-                return;
-            }
-
-            // Check if Patient table exists
-            if (tableExists(db, "Patient")) {
-                // Create new PatientInfo table
-                db.execSQL(CREATE_PATIENT_TABLE);
-
-                // Migrate data from Patient to PatientInfo
-                db.execSQL("INSERT INTO PatientInfo (patient_id, patient_first_name, patient_last_name, wing, room_number, " +
-                        "diet_type, ada_diet, fluid_restriction, mechanical_chopped, mechanical_ground, " +
-                        "bite_size, bread_ok, breakfast_complete, lunch_complete, dinner_complete, " +
-                        "breakfast_items, lunch_items, dinner_items, breakfast_juices, lunch_juices, " +
-                        "dinner_juices, breakfast_drinks, lunch_drinks, dinner_drinks, created_date) " +
-                        "SELECT patient_id, patient_first_name, patient_last_name, wing, room_number, " +
-                        "diet_type, ada_diet, fluid_restriction, " +
-                        "COALESCE(mechanical_chopped, 0), COALESCE(mechanical_ground, 0), " +
-                        "COALESCE(bite_size, 0), COALESCE(bread_ok, 0), " +
-                        "breakfast_complete, lunch_complete, dinner_complete, " +
-                        "breakfast_items, lunch_items, dinner_items, breakfast_juices, lunch_juices, " +
-                        "dinner_juices, breakfast_drinks, lunch_drinks, dinner_drinks, created_date " +
-                        "FROM Patient");
-
-                // Drop old Patient table
-                db.execSQL("DROP TABLE Patient");
-                Log.d(TAG, "Successfully migrated Patient table to PatientInfo");
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Error migrating Patient table", e);
-        }
-    }
-
-    private boolean tableExists(SQLiteDatabase db, String tableName) {
-        Cursor cursor = null;
-        try {
-            cursor = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name=?", new String[]{tableName});
-            return cursor != null && cursor.getCount() > 0;
-        } catch (Exception e) {
-            return false;
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
-    }
-
-    private void dropAllTables(SQLiteDatabase db) {
-        try {
-            db.execSQL("DROP TABLE IF EXISTS User");
-            db.execSQL("DROP TABLE IF EXISTS Category");
-            db.execSQL("DROP TABLE IF EXISTS Patient");
-            db.execSQL("DROP TABLE IF EXISTS PatientInfo");
-            db.execSQL("DROP TABLE IF EXISTS Item");
-            db.execSQL("DROP TABLE IF EXISTS DefaultMenu");
-            db.execSQL("DROP TABLE IF EXISTS FinalizedOrder");
-            Log.d(TAG, "Dropped all tables");
-        } catch (Exception e) {
-            Log.e(TAG, "Error dropping tables", e);
-        }
-    }
-
-    // FIXED: Insert default menu items
-    private void insertDefaultMenuItems(SQLiteDatabase db) {
-        Log.d(TAG, "Inserting default menu items");
-
-        try {
-            // Regular Diet - Breakfast (applies to all days)
-            insertDefaultMenuItem(db, "Scrambled Eggs", "Regular", "Breakfast", "All Days");
-            insertDefaultMenuItem(db, "Toast", "Regular", "Breakfast", "All Days");
-            insertDefaultMenuItem(db, "Orange Juice", "Regular", "Breakfast", "All Days");
-            insertDefaultMenuItem(db, "Coffee", "Regular", "Breakfast", "All Days");
-            insertDefaultMenuItem(db, "Butter", "Regular", "Breakfast", "All Days");
-            insertDefaultMenuItem(db, "Jelly", "Regular", "Breakfast", "All Days");
-
-            // Regular Diet - Lunch (Monday example)
-            insertDefaultMenuItem(db, "Grilled Chicken", "Regular", "Lunch", "Monday");
-            insertDefaultMenuItem(db, "Rice", "Regular", "Lunch", "Monday");
-            insertDefaultMenuItem(db, "Green Beans", "Regular", "Lunch", "Monday");
-            insertDefaultMenuItem(db, "Dinner Roll", "Regular", "Lunch", "Monday");
-
-            // Regular Diet - Dinner (Monday example)
-            insertDefaultMenuItem(db, "Roast Beef", "Regular", "Dinner", "Monday");
-            insertDefaultMenuItem(db, "Roasted Potatoes", "Regular", "Dinner", "Monday");
-            insertDefaultMenuItem(db, "Corn", "Regular", "Dinner", "Monday");
-            insertDefaultMenuItem(db, "Chocolate Cake", "Regular", "Dinner", "Monday");
-
-            // ADA Diet - Breakfast
-            insertDefaultMenuItem(db, "Egg White Omelet", "ADA", "Breakfast", "All Days");
-            insertDefaultMenuItem(db, "Whole Wheat Toast", "ADA", "Breakfast", "All Days");
-            insertDefaultMenuItem(db, "Sugar-Free Orange Juice", "ADA", "Breakfast", "All Days");
-            insertDefaultMenuItem(db, "Black Coffee", "ADA", "Breakfast", "All Days");
-            insertDefaultMenuItem(db, "Sugar-Free Jelly", "ADA", "Breakfast", "All Days");
-
-            // ADA Diet - Lunch (Monday example)
-            insertDefaultMenuItem(db, "Grilled Fish", "ADA", "Lunch", "Monday");
-            insertDefaultMenuItem(db, "Brown Rice", "ADA", "Lunch", "Monday");
-            insertDefaultMenuItem(db, "Steamed Broccoli", "ADA", "Lunch", "Monday");
-            insertDefaultMenuItem(db, "Sugar-Free Dessert", "ADA", "Lunch", "Monday");
-
-            // Cardiac Diet - Breakfast
-            insertDefaultMenuItem(db, "Oatmeal", "Cardiac", "Breakfast", "All Days");
-            insertDefaultMenuItem(db, "Fresh Fruit", "Cardiac", "Breakfast", "All Days");
-            insertDefaultMenuItem(db, "Low-Sodium Orange Juice", "Cardiac", "Breakfast", "All Days");
-            insertDefaultMenuItem(db, "Herbal Tea", "Cardiac", "Breakfast", "All Days");
-            insertDefaultMenuItem(db, "Low-Fat Milk", "Cardiac", "Breakfast", "All Days");
-
-            // Cardiac Diet - Lunch (Monday example)
-            insertDefaultMenuItem(db, "Baked Salmon", "Cardiac", "Lunch", "Monday");
-            insertDefaultMenuItem(db, "Quinoa", "Cardiac", "Lunch", "Monday");
-            insertDefaultMenuItem(db, "Steamed Vegetables", "Cardiac", "Lunch", "Monday");
-            insertDefaultMenuItem(db, "Low-Sodium Broth", "Cardiac", "Lunch", "Monday");
-
-            Log.d(TAG, "Default menu items inserted successfully");
-        } catch (Exception e) {
-            Log.e(TAG, "Error inserting default menu items", e);
-        }
-    }
-
-    private void insertDefaultMenuItem(SQLiteDatabase db, String itemName, String dietType, String mealType, String dayOfWeek) {
-        ContentValues values = new ContentValues();
-        values.put("item_id", 0); // You can link to actual items later
-        values.put("item_name", itemName);
-        values.put("diet_type", dietType);
-        values.put("meal_type", mealType);
-        values.put("day_of_week", dayOfWeek);
-        values.put("created_date", getCurrentTimestamp());
-
-        long result = db.insert("DefaultMenu", null, values);
-        if (result == -1) {
-            Log.w(TAG, "Failed to insert default menu item: " + itemName);
+            Log.w(TAG, "Some columns may already exist: " + e.getMessage());
         }
     }
 
     private void insertDefaultUsers(SQLiteDatabase db) {
         try {
-            Log.d(TAG, "Inserting default users");
-
             // Admin user
             ContentValues adminValues = new ContentValues();
             adminValues.put("username", "admin");
-            adminValues.put("password", "admin123"); // In production, hash this
+            adminValues.put("password", "admin123"); // In production, this should be hashed
             adminValues.put("full_name", "System Administrator");
-            adminValues.put("role", "admin");
+            adminValues.put("user_role", "Admin");
             adminValues.put("is_active", 1);
-            adminValues.put("must_change_password", 0);
-            adminValues.put("created_date", getCurrentTimestamp());
-            db.insert("User", null, adminValues);
+            adminValues.put("force_password_change", 0);
+            db.insert(TABLE_USERS, null, adminValues);
 
             // Regular user
             ContentValues userValues = new ContentValues();
-            userValues.put("username", "user");
-            userValues.put("password", "user123"); // In production, hash this
-            userValues.put("full_name", "Regular User");
-            userValues.put("role", "user");
+            userValues.put("username", "dietary");
+            userValues.put("password", "dietary123"); // In production, this should be hashed
+            userValues.put("full_name", "Dietary Staff");
+            userValues.put("user_role", "User");
             userValues.put("is_active", 1);
-            userValues.put("must_change_password", 0);
-            userValues.put("created_date", getCurrentTimestamp());
-            db.insert("User", null, userValues);
+            userValues.put("force_password_change", 0);
+            db.insert(TABLE_USERS, null, userValues);
 
-            Log.d(TAG, "Default users inserted successfully");
+            Log.d(TAG, "Default users inserted");
         } catch (Exception e) {
             Log.e(TAG, "Error inserting default users", e);
         }
     }
 
-    private void insertDefaultCategories(SQLiteDatabase db) {
-        try {
-            Log.d(TAG, "Inserting default categories");
-
-            String[] categories = {
-                    "Breakfast Items", "Proteins", "Starches", "Vegetables",
-                    "Beverages", "Juices", "Desserts", "Fruits", "Dairy"
-            };
-
-            for (int i = 0; i < categories.length; i++) {
-                ContentValues values = new ContentValues();
-                values.put("name", categories[i]);
-                values.put("description", "Default " + categories[i] + " category");
-                values.put("sort_order", i + 1);
-                db.insert("Category", null, values);
-            }
-
-            Log.d(TAG, "Default categories inserted successfully");
-        } catch (Exception e) {
-            Log.e(TAG, "Error inserting default categories", e);
-        }
-    }
-
     private void insertDefaultItems(SQLiteDatabase db) {
         try {
-            Log.d(TAG, "Inserting default items");
+            String[] defaultItems = {
+                    "Scrambled Eggs", "Toast", "Orange Juice", "Coffee", "Butter", "Jelly",
+                    "Grilled Chicken", "Rice", "Green Beans", "Dinner Roll",
+                    "Roast Beef", "Mashed Potatoes", "Carrots", "Chocolate Cake",
+                    "Baked Fish", "Steamed Vegetables", "Salad", "Fruit Cup"
+            };
 
-            // Breakfast Items
-            insertDefaultItem(db, "Scrambled Eggs", "Breakfast Items", "Protein-rich breakfast option", true);
-            insertDefaultItem(db, "Toast", "Breakfast Items", "Bread for breakfast", true);
-            insertDefaultItem(db, "Pancakes", "Breakfast Items", "Sweet breakfast option", false);
-            insertDefaultItem(db, "Oatmeal", "Breakfast Items", "Heart-healthy breakfast", true);
+            for (String itemName : defaultItems) {
+                ContentValues values = new ContentValues();
+                values.put("item_name", itemName);
+                values.put("category", "Main");
+                values.put("is_ada_friendly", 1);
+                values.put("is_active", 1);
+                db.insert(TABLE_ITEMS, null, values);
+            }
 
-            // Proteins
-            insertDefaultItem(db, "Grilled Chicken", "Proteins", "Lean protein source", true);
-            insertDefaultItem(db, "Baked Fish", "Proteins", "Heart-healthy protein", true);
-            insertDefaultItem(db, "Roast Beef", "Proteins", "Traditional protein option", false);
-
-            // Starches
-            insertDefaultItem(db, "Rice", "Starches", "Basic starch option", true);
-            insertDefaultItem(db, "Mashed Potatoes", "Starches", "Comfort food starch", false);
-            insertDefaultItem(db, "Brown Rice", "Starches", "Whole grain option", true);
-
-            // Vegetables
-            insertDefaultItem(db, "Green Beans", "Vegetables", "Fresh vegetable option", true);
-            insertDefaultItem(db, "Carrots", "Vegetables", "Vitamin A rich vegetable", true);
-            insertDefaultItem(db, "Broccoli", "Vegetables", "Nutrient-dense vegetable", true);
-
-            // Beverages
-            insertDefaultItem(db, "Coffee", "Beverages", "Morning beverage", false);
-            insertDefaultItem(db, "Tea", "Beverages", "Afternoon beverage", true);
-            insertDefaultItem(db, "Water", "Beverages", "Essential hydration", true);
-
-            // Juices
-            insertDefaultItem(db, "Orange Juice", "Juices", "Vitamin C rich juice", false);
-            insertDefaultItem(db, "Apple Juice", "Juices", "Sweet fruit juice", false);
-            insertDefaultItem(db, "Sugar-Free Orange Juice", "Juices", "ADA-friendly juice", true);
-
-            Log.d(TAG, "Default items inserted successfully");
+            Log.d(TAG, "Default food items inserted");
         } catch (Exception e) {
             Log.e(TAG, "Error inserting default items", e);
         }
     }
 
-    private void insertDefaultItem(SQLiteDatabase db, String name, String category, String description, boolean adaFriendly) {
-        ContentValues values = new ContentValues();
-        values.put("name", name);
-        values.put("category", category);
-        values.put("description", description);
-        values.put("ada_friendly", adaFriendly ? 1 : 0);
-        values.put("is_active", 1);
-        values.put("created_date", getCurrentTimestamp());
-        db.insert("Item", null, values);
+    // NEW: Insert default menu configurations
+    private void insertDefaultMenuItems(SQLiteDatabase db) {
+        try {
+            // Insert system default menu items for different diet types and meals
+            insertDefaultMenuForDiet(db, "Regular");
+            insertDefaultMenuForDiet(db, "ADA");
+            insertDefaultMenuForDiet(db, "Cardiac");
+
+            Log.d(TAG, "Default menu items inserted");
+        } catch (Exception e) {
+            Log.e(TAG, "Error inserting default menu items", e);
+        }
     }
 
-    private String getCurrentTimestamp() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-        return dateFormat.format(new Date());
+    private void insertDefaultMenuForDiet(SQLiteDatabase db, String dietType) {
+        // Breakfast items (same for all days)
+        insertDefaultMenuItem(db, "Scrambled Eggs", dietType, "Breakfast", "All Days");
+        insertDefaultMenuItem(db, "Toast", dietType, "Breakfast", "All Days");
+        insertDefaultMenuItem(db, "Orange Juice", dietType, "Breakfast", "All Days");
+        insertDefaultMenuItem(db, "Coffee", dietType, "Breakfast", "All Days");
+
+        // Lunch items (day-specific)
+        String[] daysOfWeek = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
+
+        for (String day : daysOfWeek) {
+            if ("Regular".equals(dietType)) {
+                insertDefaultMenuItem(db, "Grilled Chicken", dietType, "Lunch", day);
+                insertDefaultMenuItem(db, "Rice", dietType, "Lunch", day);
+                insertDefaultMenuItem(db, "Green Beans", dietType, "Lunch", day);
+            } else if ("ADA".equals(dietType)) {
+                insertDefaultMenuItem(db, "Grilled Fish", dietType, "Lunch", day);
+                insertDefaultMenuItem(db, "Brown Rice", dietType, "Lunch", day);
+                insertDefaultMenuItem(db, "Steamed Broccoli", dietType, "Lunch", day);
+            } else if ("Cardiac".equals(dietType)) {
+                insertDefaultMenuItem(db, "Baked Salmon", dietType, "Lunch", day);
+                insertDefaultMenuItem(db, "Quinoa", dietType, "Lunch", day);
+                insertDefaultMenuItem(db, "Steamed Vegetables", dietType, "Lunch", day);
+            }
+
+            // Dinner items (day-specific)
+            if ("Regular".equals(dietType)) {
+                insertDefaultMenuItem(db, "Roast Beef", dietType, "Dinner", day);
+                insertDefaultMenuItem(db, "Mashed Potatoes", dietType, "Dinner", day);
+                insertDefaultMenuItem(db, "Carrots", dietType, "Dinner", day);
+            } else if ("ADA".equals(dietType)) {
+                insertDefaultMenuItem(db, "Lean Turkey", dietType, "Dinner", day);
+                insertDefaultMenuItem(db, "Sweet Potato", dietType, "Dinner", day);
+                insertDefaultMenuItem(db, "Asparagus", dietType, "Dinner", day);
+            } else if ("Cardiac".equals(dietType)) {
+                insertDefaultMenuItem(db, "Grilled Tilapia", dietType, "Dinner", day);
+                insertDefaultMenuItem(db, "Wild Rice", dietType, "Dinner", day);
+                insertDefaultMenuItem(db, "Steamed Spinach", dietType, "Dinner", day);
+            }
+        }
+    }
+
+    private void insertDefaultMenuItem(SQLiteDatabase db, String itemName, String dietType, String mealType, String dayOfWeek) {
+        ContentValues values = new ContentValues();
+        values.put("item_name", itemName);
+        values.put("diet_type", dietType);
+        values.put("meal_type", mealType);
+        values.put("day_of_week", dayOfWeek);
+        values.put("description", "System default item for " + dietType + " diet");
+
+        try {
+            db.insert(TABLE_DEFAULT_MENU, null, values);
+        } catch (Exception e) {
+            Log.w(TAG, "Default menu item may already exist: " + itemName + " for " + dietType + " " + mealType + " " + dayOfWeek);
+        }
+    }
+
+    @Override
+    public void onOpen(SQLiteDatabase db) {
+        super.onOpen(db);
+        if (!db.isReadOnly()) {
+            // Enable foreign key constraints
+            db.execSQL("PRAGMA foreign_keys=ON;");
+        }
     }
 }

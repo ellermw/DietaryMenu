@@ -4,17 +4,27 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:padding="12dp"
-    android:background="@android:color/white"
+    android:background="?android:attr/selectableItemBackground"
     android:gravity="center_vertical">
+
+    <!-- Menu Item Icon -->
+    <TextView
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:text="🍽️"
+        android:textSize="20sp"
+        android:gravity="center"
+        android:layout_marginEnd="12dp"
+        android:contentDescription="Menu item" />
 
     <!-- Item Information -->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:orientation="vertical"
-        android:layout_marginEnd="12dp">
+        android:orientation="vertical">
 
+        <!-- Item Name -->
         <TextView
             android:id="@+id/itemNameText"
             android:layout_width="match_parent"
@@ -23,28 +33,33 @@
             android:textSize="16sp"
             android:textStyle="bold"
             android:textColor="#2c3e50"
-            android:layout_marginBottom="2dp" />
+            android:maxLines="1"
+            android:ellipsize="end" />
 
+        <!-- Item Info -->
         <TextView
-            android:id="@+id/itemDescriptionText"
+            android:id="@+id/itemInfoText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Item description or category"
+            android:text="Diet • Meal • Day"
             android:textSize="12sp"
             android:textColor="#7f8c8d"
-            android:visibility="gone" />
+            android:layout_marginTop="2dp"
+            android:maxLines="1"
+            android:ellipsize="end" />
 
     </LinearLayout>
 
-    <!-- Remove Button -->
+    <!-- Delete Button -->
     <Button
-        android:id="@+id/removeItemButton"
-        android:layout_width="60dp"
-        android:layout_height="36dp"
-        android:text="✖️"
-        android:textSize="12sp"
+        android:id="@+id/deleteIcon"
+        android:layout_width="64dp"
+        android:layout_height="32dp"
+        android:text="Delete"
+        android:textSize="10sp"
+        android:layout_marginStart="8dp"
         android:background="#e74c3c"
-        android:textColor="@android:color/white"
-        android:padding="0dp" />
+        android:textColor="#ffffff"
+        android:contentDescription="Delete item" />
 
 </LinearLayout>

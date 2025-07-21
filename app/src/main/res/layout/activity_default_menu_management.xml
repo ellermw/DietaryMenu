@@ -1,222 +1,247 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp"
-    android:background="#f5f5f5">
+    android:background="#f8fafc"
+    android:padding="16dp">
 
-    <!-- Header Section -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@android:color/white"
-        android:padding="16dp"
-        android:elevation="2dp"
-        android:layout_marginBottom="16dp">
+        android:orientation="vertical">
 
+        <!-- Title -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Default Menu Management"
-            android:textSize="20sp"
+            android:text="⚙️ Default Menu Management"
+            android:textSize="24sp"
             android:textStyle="bold"
             android:textColor="#2c3e50"
             android:gravity="center"
             android:layout_marginBottom="8dp" />
 
+        <!-- Instructions -->
         <TextView
-            android:id="@+id/helpText"
+            android:id="@+id/instructionsText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Configure default menu items for Regular, ADA, and Cardiac diets. These defaults will be automatically applied when creating new patients."
+            android:text="Configure default menu items for each diet type, meal, and day combination."
             android:textSize="14sp"
             android:textColor="#7f8c8d"
-            android:gravity="center" />
+            android:background="#ecf0f1"
+            android:padding="12dp"
+            android:layout_marginBottom="16dp" />
 
-    </LinearLayout>
-
-    <!-- Filter Controls -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@android:color/white"
-        android:padding="16dp"
-        android:elevation="2dp"
-        android:layout_marginBottom="16dp">
-
-        <!-- Diet Type Row -->
+        <!-- Selection Section -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="12dp">
+            android:orientation="vertical"
+            android:background="#ffffff"
+            android:padding="16dp"
+            android:layout_marginBottom="16dp"
+            android:elevation="2dp">
 
             <TextView
-                android:layout_width="100dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Configuration Selection"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#2c3e50"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Diet Type -->
+            <TextView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Diet Type:"
-                android:textSize="16sp"
-                android:textColor="#2c3e50"
-                android:layout_gravity="center_vertical" />
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="#34495e"
+                android:layout_marginBottom="4dp" />
 
             <Spinner
                 android:id="@+id/dietTypeSpinner"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:layout_weight="1"
-                android:layout_marginStart="8dp" />
+                android:layout_marginBottom="12dp"
+                android:background="@android:drawable/btn_dropdown" />
 
-        </LinearLayout>
-
-        <!-- Meal Type Row -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="12dp">
-
+            <!-- Meal Type -->
             <TextView
-                android:layout_width="100dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Meal Type:"
-                android:textSize="16sp"
-                android:textColor="#2c3e50"
-                android:layout_gravity="center_vertical" />
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="#34495e"
+                android:layout_marginBottom="4dp" />
 
             <Spinner
                 android:id="@+id/mealTypeSpinner"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:layout_weight="1"
-                android:layout_marginStart="8dp" />
+                android:layout_marginBottom="12dp"
+                android:background="@android:drawable/btn_dropdown" />
 
-        </LinearLayout>
-
-        <!-- Day of Week Row -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="8dp">
-
+            <!-- Day of Week -->
             <TextView
-                android:id="@+id/dayOfWeekLabel"
-                android:layout_width="100dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Day:"
-                android:textSize="16sp"
-                android:textColor="#2c3e50"
-                android:layout_gravity="center_vertical" />
+                android:text="Day of Week:"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="#34495e"
+                android:layout_marginBottom="4dp" />
 
             <Spinner
                 android:id="@+id/dayOfWeekSpinner"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:layout_weight="1"
-                android:layout_marginStart="8dp" />
+                android:layout_marginBottom="8dp"
+                android:background="@android:drawable/btn_dropdown" />
+
+            <!-- Current Configuration Text -->
+            <TextView
+                android:id="@+id/currentConfigText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Select diet type, meal type, and day to configure default menu items."
+                android:textSize="14sp"
+                android:textColor="#27ae60"
+                android:textStyle="italic"
+                android:background="#d5f4e6"
+                android:padding="8dp"
+                android:layout_marginTop="8dp" />
 
         </LinearLayout>
 
-        <!-- Breakfast Note -->
-        <TextView
-            android:id="@+id/breakfastNote"
+        <!-- Menu Items Section -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Breakfast defaults apply to all days of the week"
-            android:textSize="12sp"
-            android:textColor="#e67e22"
-            android:textStyle="italic"
-            android:visibility="gone" />
+            android:orientation="vertical"
+            android:background="#ffffff"
+            android:padding="16dp"
+            android:layout_marginBottom="16dp"
+            android:elevation="2dp">
 
-    </LinearLayout>
+            <!-- Section Header -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="12dp">
 
-    <!-- Menu Items Section -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:background="@android:color/white"
-        android:elevation="2dp">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Menu Items"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#2c3e50" />
 
-        <!-- Header Row -->
+                <Button
+                    android:id="@+id/addItemButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:text="+ Add Item"
+                    android:textSize="12sp"
+                    android:background="#3498db"
+                    android:textColor="#ffffff"
+                    android:paddingLeft="12dp"
+                    android:paddingRight="12dp"
+                    android:enabled="false" />
+
+            </LinearLayout>
+
+            <!-- Menu Items List -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Long press an item to delete it"
+                android:textSize="12sp"
+                android:textColor="#7f8c8d"
+                android:textStyle="italic"
+                android:layout_marginBottom="8dp" />
+
+            <ListView
+                android:id="@+id/menuItemsListView"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:divider="#ecf0f1"
+                android:dividerHeight="1dp"
+                android:scrollbars="vertical"
+                android:background="#f8f9fa" />
+
+        </LinearLayout>
+
+        <!-- Action Buttons -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:background="#3498db"
-            android:padding="12dp">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Menu Items"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="@android:color/white" />
+            android:gravity="center"
+            android:layout_marginBottom="16dp">
 
             <Button
-                android:id="@+id/addMenuItemButton"
-                android:layout_width="wrap_content"
-                android:layout_height="36dp"
-                android:text="+ Add Item"
-                android:textSize="12sp"
-                android:textColor="@android:color/white"
+                android:id="@+id/saveChangesButton"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:text="💾 Save Changes"
+                android:textSize="14sp"
                 android:background="#27ae60"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp" />
+                android:textColor="#ffffff"
+                android:layout_marginEnd="8dp"
+                android:enabled="false" />
+
+            <Button
+                android:id="@+id/resetToDefaultsButton"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:text="🔄 Reset to Defaults"
+                android:textSize="14sp"
+                android:background="#e67e22"
+                android:textColor="#ffffff"
+                android:layout_marginStart="8dp"
+                android:enabled="false" />
 
         </LinearLayout>
 
-        <!-- Menu Items List -->
-        <ListView
-            android:id="@+id/menuItemsListView"
+        <!-- Help Information -->
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:divider="#e0e0e0"
-            android:dividerHeight="1dp"
-            android:background="@android:color/white" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#fff3cd"
+            android:padding="12dp"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="💡 Help"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#856404"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="• Default menu items are automatically applied to new patients\n• Breakfast items apply to all days\n• Lunch and dinner items are specific to each day\n• Staff can still customize individual patient meals in meal planning\n• Use 'Reset to Defaults' to restore system-provided menu items"
+                android:textSize="12sp"
+                android:textColor="#856404"
+                android:lineSpacingExtra="2dp" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
-    <!-- Action Buttons -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="16dp">
-
-        <Button
-            android:id="@+id/saveChangesButton"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_weight="1"
-            android:layout_marginEnd="8dp"
-            android:text="💾 Save Changes"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/white"
-            android:background="#28a745"
-            android:elevation="2dp" />
-
-        <Button
-            android:id="@+id/resetToDefaultsButton"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_weight="1"
-            android:layout_marginStart="8dp"
-            android:text="🔄 Reset Defaults"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/white"
-            android:background="#dc3545"
-            android:elevation="2dp" />
-
-    </LinearLayout>
-
-</LinearLayout>
+</ScrollView>

@@ -1,22 +1,17 @@
 package com.hospital.dietary;
 
 import android.app.AlertDialog;
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.text.InputType;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
-import com.hospital.dietary.dao.ItemDAO;
 import com.hospital.dietary.dao.DefaultMenuDAO;
-import com.hospital.dietary.models.Item;
 import com.hospital.dietary.models.DefaultMenuItem;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class DefaultMenuManagementActivity extends AppCompatActivity {
@@ -24,32 +19,30 @@ public class DefaultMenuManagementActivity extends AppCompatActivity {
     private static final String TAG = "DefaultMenuManagement";
 
     private DatabaseHelper dbHelper;
-    private ItemDAO itemDAO;
     private DefaultMenuDAO defaultMenuDAO;
-
-    // User information
     private String currentUsername;
     private String currentUserRole;
     private String currentUserFullName;
 
     // UI Components
     private Spinner dietTypeSpinner;
-    private Spinner dayOfWeekSpinner;
     private Spinner mealTypeSpinner;
+    private Spinner dayOfWeekSpinner;
     private ListView menuItemsListView;
-    private Button addMenuItemButton;
+    private Button addItemButton;
     private Button saveChangesButton;
     private Button resetToDefaultsButton;
-    private TextView helpText;
-    private TextView breakfastNote;
+    private TextView instructionsText;
+    private TextView currentConfigText;
 
     // Data
-    private List<String> dietTypes = Arrays.asList("Regular", "ADA", "Cardiac");
-    private List<String> daysOfWeek = Arrays.asList("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday");
-    private List<String> mealTypes = Arrays.asList("Breakfast", "Lunch", "Dinner");
     private List<DefaultMenuItem> currentMenuItems = new ArrayList<>();
     private DefaultMenuAdapter menuAdapter;
-    private List<Item> availableItems = new ArrayList<>();
+
+    // Current selection
+    private String selectedDietType = "";
+    private String selectedMealType = "";
+    private String selectedDayOfWeek = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,265 +54,321 @@ public class DefaultMenuManagementActivity extends AppCompatActivity {
         currentUserRole = getIntent().getStringExtra("user_role");
         currentUserFullName = getIntent().getStringExtra("user_full_name");
 
-        // Validate admin access
-        if (!"admin".equals(currentUserRole)) {
-            Toast.makeText(this, "Access denied. Admin privileges required.", Toast.LENGTH_SHORT).show();
+        // Check if user has admin privileges
+        if (!"Admin".equals(currentUserRole)) {
+            Toast.makeText(this, "Access denied. Admin privileges required.", Toast.LENGTH_LONG).show();
             finish();
             return;
         }
 
         // Initialize database
         dbHelper = new DatabaseHelper(this);
-        itemDAO = new ItemDAO(dbHelper);
         defaultMenuDAO = new DefaultMenuDAO(dbHelper);
 
-        // Set up toolbar
+        // Set title and back button
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle("Default Menu Management");
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
         initializeUI();
+        setupSpinners();
         setupListeners();
-        loadAvailableItems();
-        loadCurrentMenuItems();
+        updateInstructions();
     }
 
     private void initializeUI() {
         dietTypeSpinner = findViewById(R.id.dietTypeSpinner);
-        dayOfWeekSpinner = findViewById(R.id.dayOfWeekSpinner);
         mealTypeSpinner = findViewById(R.id.mealTypeSpinner);
+        dayOfWeekSpinner = findViewById(R.id.dayOfWeekSpinner);
         menuItemsListView = findViewById(R.id.menuItemsListView);
-        addMenuItemButton = findViewById(R.id.addMenuItemButton);
+        addItemButton = findViewById(R.id.addItemButton);
         saveChangesButton = findViewById(R.id.saveChangesButton);
         resetToDefaultsButton = findViewById(R.id.resetToDefaultsButton);
-        helpText = findViewById(R.id.helpText);
-        breakfastNote = findViewById(R.id.breakfastNote);
+        instructionsText = findViewById(R.id.instructionsText);
+        currentConfigText = findViewById(R.id.currentConfigText);
 
-        // Set up spinners
-        setupSpinners();
-
-        // Set up list view
-        menuAdapter = new DefaultMenuAdapter(this, currentMenuItems);
+        // Setup menu items adapter
+        menuAdapter = new DefaultMenuAdapter();
         menuItemsListView.setAdapter(menuAdapter);
 
-        // Set help text
-        helpText.setText(getString(R.string.default_menu_help));
+        // Initially disable buttons until a valid selection is made
+        updateButtonStates();
     }
 
     private void setupSpinners() {
         // Diet Type Spinner
+        String[] dietTypes = {"Select Diet Type", "Regular", "ADA", "Cardiac", "Renal", "Clear Liquid", "Full Liquid", "Puree", "Mechanical Chopped", "Mechanical Ground"};
         ArrayAdapter<String> dietAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, dietTypes);
         dietAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         dietTypeSpinner.setAdapter(dietAdapter);
 
-        // Day of Week Spinner
-        ArrayAdapter<String> dayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, daysOfWeek);
-        dayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        dayOfWeekSpinner.setAdapter(dayAdapter);
-
         // Meal Type Spinner
+        String[] mealTypes = {"Select Meal Type", "Breakfast", "Lunch", "Dinner"};
         ArrayAdapter<String> mealAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, mealTypes);
         mealAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mealTypeSpinner.setAdapter(mealAdapter);
+
+        // Day of Week Spinner (Breakfast uses "All Days", Lunch/Dinner use specific days)
+        String[] daysOfWeek = {"Select Day", "All Days", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
+        ArrayAdapter<String> dayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, daysOfWeek);
+        dayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        dayOfWeekSpinner.setAdapter(dayAdapter);
     }
 
     private void setupListeners() {
-        // Spinner change listeners
-        AdapterView.OnItemSelectedListener filterListener = new AdapterView.OnItemSelectedListener() {
+        // Diet type selection
+        dietTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                loadCurrentMenuItems();
-                updateDaySpinnerVisibility();
+                selectedDietType = position > 0 ? parent.getItemAtPosition(position).toString() : "";
+                updateCurrentSelection();
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {}
-        };
+        });
 
-        dietTypeSpinner.setOnItemSelectedListener(filterListener);
-        dayOfWeekSpinner.setOnItemSelectedListener(filterListener);
-        mealTypeSpinner.setOnItemSelectedListener(filterListener);
+        // Meal type selection
+        mealTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedMealType = position > 0 ? parent.getItemAtPosition(position).toString() : "";
+                updateDaySpinnerOptions();
+                updateCurrentSelection();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
+        // Day of week selection
+        dayOfWeekSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedDayOfWeek = position > 0 ? parent.getItemAtPosition(position).toString() : "";
+                updateCurrentSelection();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
 
         // Button listeners
-        addMenuItemButton.setOnClickListener(v -> showAddMenuItemDialog());
-        saveChangesButton.setOnClickListener(v -> saveCurrentChanges());
-        resetToDefaultsButton.setOnClickListener(v -> showResetConfirmation());
+        addItemButton.setOnClickListener(v -> showAddItemDialog());
+        saveChangesButton.setOnClickListener(v -> saveCurrentConfiguration());
+        resetToDefaultsButton.setOnClickListener(v -> showResetConfirmationDialog());
+
+        // Menu item long click for deletion
+        menuItemsListView.setOnItemLongClickListener((parent, view, position, id) -> {
+            showDeleteItemDialog(position);
+            return true;
+        });
     }
 
-    private void updateDaySpinnerVisibility() {
-        // Hide day spinner for breakfast since it applies to all days
-        String selectedMeal = mealTypes.get(mealTypeSpinner.getSelectedItemPosition());
-        if ("Breakfast".equals(selectedMeal)) {
-            dayOfWeekSpinner.setVisibility(View.GONE);
-            findViewById(R.id.dayOfWeekLabel).setVisibility(View.GONE);
-            if (breakfastNote != null) {
-                breakfastNote.setVisibility(View.VISIBLE);
-                breakfastNote.setText(getString(R.string.breakfast_applies_all_days));
-            }
+    private void updateDaySpinnerOptions() {
+        // For breakfast, only "All Days" should be available
+        // For lunch and dinner, specific days should be available
+        if ("Breakfast".equals(selectedMealType)) {
+            String[] breakfastDays = {"Select Day", "All Days"};
+            ArrayAdapter<String> dayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, breakfastDays);
+            dayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            dayOfWeekSpinner.setAdapter(dayAdapter);
         } else {
-            dayOfWeekSpinner.setVisibility(View.VISIBLE);
-            findViewById(R.id.dayOfWeekLabel).setVisibility(View.VISIBLE);
-            if (breakfastNote != null) {
-                breakfastNote.setVisibility(View.GONE);
-            }
+            String[] allDays = {"Select Day", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
+            ArrayAdapter<String> dayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, allDays);
+            dayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            dayOfWeekSpinner.setAdapter(dayAdapter);
         }
+
+        // Reset day selection when meal type changes
+        selectedDayOfWeek = "";
+        dayOfWeekSpinner.setSelection(0);
     }
 
-    private void loadAvailableItems() {
-        try {
-            availableItems.clear();
-            availableItems.addAll(itemDAO.getAllItems());
-        } catch (Exception e) {
-            Toast.makeText(this, "Error loading items: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
-    }
+    private void updateCurrentSelection() {
+        boolean hasValidSelection = !selectedDietType.isEmpty() && !selectedMealType.isEmpty() && !selectedDayOfWeek.isEmpty();
 
-    private void loadCurrentMenuItems() {
-        try {
-            String dietType = dietTypes.get(dietTypeSpinner.getSelectedItemPosition());
-            String mealType = mealTypes.get(mealTypeSpinner.getSelectedItemPosition());
-            String dayOfWeek = "Breakfast".equals(mealType) ? "All Days" :
-                    daysOfWeek.get(dayOfWeekSpinner.getSelectedItemPosition());
-
+        if (hasValidSelection) {
+            loadMenuItemsForSelection();
+            updateCurrentConfigText();
+        } else {
             currentMenuItems.clear();
-            currentMenuItems.addAll(defaultMenuDAO.getDefaultMenuItems(dietType, mealType, dayOfWeek));
+            menuAdapter.notifyDataSetChanged();
+            currentConfigText.setText("Select diet type, meal type, and day to configure default menu items.");
+        }
+
+        updateButtonStates();
+    }
+
+    private void loadMenuItemsForSelection() {
+        try {
+            currentMenuItems.clear();
+            List<DefaultMenuItem> items = defaultMenuDAO.getDefaultMenuItems(selectedDietType, selectedMealType, selectedDayOfWeek);
+            currentMenuItems.addAll(items);
             menuAdapter.notifyDataSetChanged();
 
-            // Update title
-            String title = dietType + " - " + mealType;
-            if (!"Breakfast".equals(mealType)) {
-                title += " - " + dayOfWeek;
-            }
-            setTitle("Default Menu: " + title);
-
+            Log.d(TAG, "Loaded " + items.size() + " menu items for " + selectedDietType + " " + selectedMealType + " " + selectedDayOfWeek);
         } catch (Exception e) {
+            Log.e(TAG, "Error loading menu items", e);
             Toast.makeText(this, "Error loading menu items: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void showAddMenuItemDialog() {
-        // Filter available items based on current diet type
-        String dietType = dietTypes.get(dietTypeSpinner.getSelectedItemPosition());
-        List<Item> filteredItems = new ArrayList<>();
+    private void updateCurrentConfigText() {
+        String configText = "Configuring: " + selectedDietType + " Diet - " + selectedMealType + " - " + selectedDayOfWeek;
+        currentConfigText.setText(configText);
+    }
 
-        for (Item item : availableItems) {
-            // For ADA diet, only show ADA-friendly items
-            if ("ADA".equals(dietType) && !item.isAdaFriendly()) {
-                continue;
+    private void updateInstructions() {
+        String instructions = "Configure default menu items for each diet type, meal, and day combination.\n\n" +
+                "• Select diet type, meal type, and day\n" +
+                "• Add menu items that will automatically be applied to new patients\n" +
+                "• Items can be customized for each patient later in meal planning\n" +
+                "• Breakfast items apply to all days, lunch/dinner items are day-specific";
+        instructionsText.setText(instructions);
+    }
+
+    private void updateButtonStates() {
+        boolean hasValidSelection = !selectedDietType.isEmpty() && !selectedMealType.isEmpty() && !selectedDayOfWeek.isEmpty();
+        boolean hasItems = !currentMenuItems.isEmpty();
+
+        addItemButton.setEnabled(hasValidSelection);
+        saveChangesButton.setEnabled(hasValidSelection && hasItems);
+        resetToDefaultsButton.setEnabled(hasValidSelection);
+
+        addItemButton.setAlpha(hasValidSelection ? 1.0f : 0.5f);
+        saveChangesButton.setAlpha(hasValidSelection && hasItems ? 1.0f : 0.5f);
+        resetToDefaultsButton.setAlpha(hasValidSelection ? 1.0f : 0.5f);
+    }
+
+    private void showAddItemDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Add Menu Item");
+
+        // Create input field
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        input.setHint("Enter menu item name (e.g., Grilled Chicken)");
+        builder.setView(input);
+
+        builder.setPositiveButton("Add", (dialog, which) -> {
+            String itemName = input.getText().toString().trim();
+            if (!itemName.isEmpty()) {
+                addMenuItem(itemName);
+            } else {
+                Toast.makeText(this, "Please enter a menu item name", Toast.LENGTH_SHORT).show();
             }
-            // Don't show items already in the current menu
-            boolean alreadyAdded = false;
-            for (DefaultMenuItem menuItem : currentMenuItems) {
-                if (menuItem.getItemId() == item.getItemId()) {
-                    alreadyAdded = true;
-                    break;
-                }
-            }
-            if (!alreadyAdded) {
-                filteredItems.add(item);
+        });
+
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+        builder.show();
+    }
+
+    private void addMenuItem(String itemName) {
+        // Check for duplicates
+        for (DefaultMenuItem item : currentMenuItems) {
+            if (itemName.equalsIgnoreCase(item.getItemName())) {
+                Toast.makeText(this, "Item already exists in this menu", Toast.LENGTH_SHORT).show();
+                return;
             }
         }
 
-        if (filteredItems.isEmpty()) {
-            Toast.makeText(this, "No available items to add", Toast.LENGTH_SHORT).show();
-            return;
-        }
+        // Create new menu item
+        DefaultMenuItem newItem = new DefaultMenuItem();
+        newItem.setItemName(itemName);
+        newItem.setDietType(selectedDietType);
+        newItem.setMealType(selectedMealType);
+        newItem.setDayOfWeek(selectedDayOfWeek);
+        newItem.setDescription(""); // Can be enhanced later
 
-        // Create dialog
-        String[] itemNames = new String[filteredItems.size()];
-        for (int i = 0; i < filteredItems.size(); i++) {
-            itemNames[i] = filteredItems.get(i).getName() + " (" + filteredItems.get(i).getCategory() + ")";
-        }
+        currentMenuItems.add(newItem);
+        menuAdapter.notifyDataSetChanged();
+        updateButtonStates();
+
+        Toast.makeText(this, "Added: " + itemName, Toast.LENGTH_SHORT).show();
+    }
+
+    private void showDeleteItemDialog(int position) {
+        if (position < 0 || position >= currentMenuItems.size()) return;
+
+        DefaultMenuItem item = currentMenuItems.get(position);
 
         new AlertDialog.Builder(this)
-                .setTitle("Add Menu Item")
-                .setItems(itemNames, (dialog, which) -> {
-                    Item selectedItem = filteredItems.get(which);
-                    addMenuItemToList(selectedItem);
+                .setTitle("Delete Menu Item")
+                .setMessage("Remove \"" + item.getItemName() + "\" from this menu?")
+                .setPositiveButton("Delete", (dialog, which) -> {
+                    currentMenuItems.remove(position);
+                    menuAdapter.notifyDataSetChanged();
+                    updateButtonStates();
+                    Toast.makeText(this, "Removed: " + item.getItemName(), Toast.LENGTH_SHORT).show();
                 })
                 .setNegativeButton("Cancel", null)
                 .show();
     }
 
-    private void addMenuItemToList(Item item) {
-        String dietType = dietTypes.get(dietTypeSpinner.getSelectedItemPosition());
-        String mealType = mealTypes.get(mealTypeSpinner.getSelectedItemPosition());
-        String dayOfWeek = "Breakfast".equals(mealType) ? "All Days" :
-                daysOfWeek.get(dayOfWeekSpinner.getSelectedItemPosition());
+    private void saveCurrentConfiguration() {
+        if (currentMenuItems.isEmpty()) {
+            Toast.makeText(this, "No items to save", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-        DefaultMenuItem menuItem = new DefaultMenuItem();
-        menuItem.setItemId(item.getItemId());
-        menuItem.setItemName(item.getName());
-        menuItem.setDietType(dietType);
-        menuItem.setMealType(mealType);
-        menuItem.setDayOfWeek(dayOfWeek);
-
-        currentMenuItems.add(menuItem);
-        menuAdapter.notifyDataSetChanged();
-
-        Toast.makeText(this, "Added: " + item.getName(), Toast.LENGTH_SHORT).show();
-    }
-
-    private void saveCurrentChanges() {
         try {
-            String dietType = dietTypes.get(dietTypeSpinner.getSelectedItemPosition());
-            String mealType = mealTypes.get(mealTypeSpinner.getSelectedItemPosition());
-            String dayOfWeek = "Breakfast".equals(mealType) ? "All Days" :
-                    daysOfWeek.get(dayOfWeekSpinner.getSelectedItemPosition());
-
-            // Save current menu items
-            boolean success = defaultMenuDAO.saveDefaultMenuItems(dietType, mealType, dayOfWeek, currentMenuItems);
+            boolean success = defaultMenuDAO.saveDefaultMenuItems(selectedDietType, selectedMealType, selectedDayOfWeek, currentMenuItems);
 
             if (success) {
-                Toast.makeText(this, "Default menu saved successfully!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Default menu saved successfully!\n" +
+                                currentMenuItems.size() + " items saved for " + selectedDietType + " " + selectedMealType + " " + selectedDayOfWeek,
+                        Toast.LENGTH_LONG).show();
             } else {
                 Toast.makeText(this, "Failed to save default menu", Toast.LENGTH_SHORT).show();
             }
         } catch (Exception e) {
-            Toast.makeText(this, "Error saving menu: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "Error saving default menu", e);
+            Toast.makeText(this, "Error saving: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
-    private void showResetConfirmation() {
+    private void showResetConfirmationDialog() {
         new AlertDialog.Builder(this)
-                .setTitle("Reset to Defaults")
-                .setMessage("Are you sure you want to reset the current menu to system defaults? This will remove all current items.")
-                .setPositiveButton("Reset", (dialog, which) -> resetToDefaults())
+                .setTitle("Reset to System Defaults")
+                .setMessage("This will replace current items with system defaults for:\n\n" +
+                        selectedDietType + " - " + selectedMealType + " - " + selectedDayOfWeek +
+                        "\n\nAre you sure?")
+                .setPositiveButton("Reset", (dialog, which) -> resetToSystemDefaults())
                 .setNegativeButton("Cancel", null)
                 .show();
     }
 
-    private void resetToDefaults() {
+    private void resetToSystemDefaults() {
         try {
-            String dietType = dietTypes.get(dietTypeSpinner.getSelectedItemPosition());
-            String mealType = mealTypes.get(mealTypeSpinner.getSelectedItemPosition());
-            String dayOfWeek = "Breakfast".equals(mealType) ? "All Days" :
-                    daysOfWeek.get(dayOfWeekSpinner.getSelectedItemPosition());
-
-            boolean success = defaultMenuDAO.resetToDefaults(dietType, mealType, dayOfWeek);
+            boolean success = defaultMenuDAO.resetToDefaults(selectedDietType, selectedMealType, selectedDayOfWeek);
 
             if (success) {
-                loadCurrentMenuItems(); // Refresh the display
-                Toast.makeText(this, "Menu reset to defaults", Toast.LENGTH_SHORT).show();
+                loadMenuItemsForSelection(); // Reload to show system defaults
+                Toast.makeText(this, "Reset to system defaults successfully", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(this, "Failed to reset menu", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Failed to reset to defaults", Toast.LENGTH_SHORT).show();
             }
         } catch (Exception e) {
-            Toast.makeText(this, "Error resetting menu: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "Error resetting to defaults", e);
+            Toast.makeText(this, "Error resetting: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // No options menu needed for this activity
-        return false;
+        getMenuInflater().inflate(R.menu.menu_with_home, menu);
+        return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
+                finish();
+                return true;
+            case R.id.action_home:
                 finish();
                 return true;
             default:
@@ -335,24 +384,19 @@ public class DefaultMenuManagementActivity extends AppCompatActivity {
         }
     }
 
-    // Inner class for the adapter
+    /**
+     * Adapter for displaying default menu items
+     */
     private class DefaultMenuAdapter extends BaseAdapter {
-        private Context context;
-        private List<DefaultMenuItem> items;
-
-        public DefaultMenuAdapter(Context context, List<DefaultMenuItem> items) {
-            this.context = context;
-            this.items = items;
-        }
 
         @Override
         public int getCount() {
-            return items.size();
+            return currentMenuItems.size();
         }
 
         @Override
         public Object getItem(int position) {
-            return items.get(position);
+            return currentMenuItems.get(position);
         }
 
         @Override
@@ -361,44 +405,24 @@ public class DefaultMenuManagementActivity extends AppCompatActivity {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(int position, View convertView, android.view.ViewGroup parent) {
             if (convertView == null) {
-                convertView = LayoutInflater.from(context).inflate(R.layout.item_default_menu, parent, false);
+                convertView = getLayoutInflater().inflate(R.layout.item_default_menu, parent, false);
             }
 
-            DefaultMenuItem item = items.get(position);
+            DefaultMenuItem item = currentMenuItems.get(position);
 
             TextView itemNameText = convertView.findViewById(R.id.itemNameText);
-            TextView itemDescriptionText = convertView.findViewById(R.id.itemDescriptionText);
-            Button removeItemButton = convertView.findViewById(R.id.removeItemButton);
+            TextView itemInfoText = convertView.findViewById(R.id.itemInfoText);
+            ImageView deleteIcon = convertView.findViewById(R.id.deleteIcon);
 
             itemNameText.setText(item.getItemName());
+            itemInfoText.setText(selectedDietType + " • " + selectedMealType + " • " + selectedDayOfWeek);
 
-            // Show description if available
-            if (item.getDescription() != null && !item.getDescription().isEmpty()) {
-                itemDescriptionText.setText(item.getDescription());
-                itemDescriptionText.setVisibility(View.VISIBLE);
-            } else {
-                itemDescriptionText.setVisibility(View.GONE);
-            }
-
-            // Remove button click listener
-            removeItemButton.setOnClickListener(v -> showRemoveItemConfirmation(position, item));
+            // Delete icon click listener
+            deleteIcon.setOnClickListener(v -> showDeleteItemDialog(position));
 
             return convertView;
-        }
-
-        private void showRemoveItemConfirmation(int position, DefaultMenuItem item) {
-            new AlertDialog.Builder(context)
-                    .setTitle("Remove Item")
-                    .setMessage("Remove '" + item.getItemName() + "' from this menu?")
-                    .setPositiveButton("Remove", (dialog, which) -> {
-                        items.remove(position);
-                        notifyDataSetChanged();
-                        Toast.makeText(context, "Item removed", Toast.LENGTH_SHORT).show();
-                    })
-                    .setNegativeButton("Cancel", null)
-                    .show();
         }
     }
 }

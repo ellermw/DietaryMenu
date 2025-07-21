@@ -31,7 +31,7 @@ public class PatientInfoActivity extends AppCompatActivity {
     private EditText searchInput;
     private TextView patientsCountText;
 
-    // UI Components - Patient Edit Section (only basic ones that exist)
+    // UI Components - Patient Edit Section
     private LinearLayout editPatientSection;
     private EditText editFirstNameInput;
     private EditText editLastNameInput;
@@ -108,7 +108,7 @@ public class PatientInfoActivity extends AppCompatActivity {
         searchInput = findViewById(R.id.searchInput);
         patientsCountText = findViewById(R.id.patientsCountText);
 
-        // Patient edit section - only initialize if they exist
+        // Patient edit section
         editPatientSection = findViewById(R.id.editPatientSection);
         editFirstNameInput = findViewById(R.id.editFirstNameInput);
         editLastNameInput = findViewById(R.id.editLastNameInput);
@@ -124,41 +124,40 @@ public class PatientInfoActivity extends AppCompatActivity {
         deletePatientButton = findViewById(R.id.deletePatientButton);
         editMealsButton = findViewById(R.id.editMealsButton);
         backButton = findViewById(R.id.backButton);
-
-        // Initially hide edit section if it exists
-        if (editPatientSection != null) {
-            editPatientSection.setVisibility(View.GONE);
-        }
     }
 
     private void setupSpinners() {
+        // Wing spinner
         if (editWingSpinner != null) {
-            String[] wings = {"1 South", "2 North", "Labor and Delivery", "2 West", "3 North", "ICU"};
+            String[] wings = {"Select Wing", "1 South", "2 North", "Labor and Delivery", "2 West", "3 North", "ICU"};
             ArrayAdapter<String> wingAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, wings);
             wingAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             editWingSpinner.setAdapter(wingAdapter);
+
+            // Set up wing selection listener to update room numbers
+            editWingSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    updateRoomNumbers();
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {}
+            });
         }
 
-        if (editRoomSpinner != null) {
-            List<String> rooms = new ArrayList<>();
-            for (int i = 100; i <= 599; i++) {
-                rooms.add(String.valueOf(i));
-            }
-            ArrayAdapter<String> roomAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, rooms);
-            roomAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            editRoomSpinner.setAdapter(roomAdapter);
-        }
-
+        // Diet spinner
         if (editDietSpinner != null) {
-            String[] diets = {"Regular", "Cardiac", "ADA", "Puree", "Renal", "Full Liquid", "Clear Liquid"};
-            ArrayAdapter<String> dietAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, diets);
+            String[] dietTypes = {"Select Diet", "Regular", "ADA", "Cardiac", "Renal", "Clear Liquid", "Full Liquid", "Puree", "Mechanical Chopped", "Mechanical Ground"};
+            ArrayAdapter<String> dietAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, dietTypes);
             dietAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             editDietSpinner.setAdapter(dietAdapter);
         }
 
+        // FIXED: Fluid restriction spinner with your correct system
         if (editFluidRestrictionSpinner != null) {
             String[] fluidOptions = {
-                    "No Restriction",
+                    "No Fluid Restriction",
                     "1000ml (34oz): 120ml, 120ml, 160ml",
                     "1200ml (41oz): 250ml, 170ml, 180ml",
                     "1500ml (51oz): 350ml, 170ml, 180ml",
@@ -170,6 +169,68 @@ public class PatientInfoActivity extends AppCompatActivity {
             fluidAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             editFluidRestrictionSpinner.setAdapter(fluidAdapter);
         }
+
+        // Initialize room numbers
+        updateRoomNumbers();
+    }
+
+    // FIXED: Added your room number system
+    private void updateRoomNumbers() {
+        if (editWingSpinner == null || editRoomSpinner == null) return;
+
+        String selectedWing = editWingSpinner.getSelectedItem().toString();
+        List<String> roomNumbers = new ArrayList<>();
+        roomNumbers.add("Select Room");
+
+        switch (selectedWing) {
+            case "1 South":
+                // Rooms 106–122
+                for (int i = 106; i <= 122; i++) {
+                    roomNumbers.add(String.valueOf(i));
+                }
+                break;
+            case "2 North":
+                // Rooms 250–264
+                for (int i = 250; i <= 264; i++) {
+                    roomNumbers.add(String.valueOf(i));
+                }
+                break;
+            case "Labor and Delivery":
+                // Rooms LDR1–LDR6
+                for (int i = 1; i <= 6; i++) {
+                    roomNumbers.add("LDR" + i);
+                }
+                break;
+            case "2 West":
+                // Rooms 225–248
+                for (int i = 225; i <= 248; i++) {
+                    roomNumbers.add(String.valueOf(i));
+                }
+                break;
+            case "3 North":
+                // Rooms 349–371
+                for (int i = 349; i <= 371; i++) {
+                    roomNumbers.add(String.valueOf(i));
+                }
+                break;
+            case "ICU":
+                // Rooms ICU1–ICU13
+                for (int i = 1; i <= 13; i++) {
+                    roomNumbers.add("ICU" + i);
+                }
+                break;
+            default:
+                // (optional) handle any other cases
+                break;
+        }
+
+        ArrayAdapter<String> roomAdapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_spinner_item,
+                roomNumbers
+        );
+        roomAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        editRoomSpinner.setAdapter(roomAdapter);
     }
 
     private void setupListeners() {
@@ -187,6 +248,9 @@ public class PatientInfoActivity extends AppCompatActivity {
                     selectedPatient = filteredPatients.get(position);
                     populatePatientForm(selectedPatient);
                     updateButtonStates();
+                    if (editPatientSection != null) {
+                        editPatientSection.setVisibility(View.VISIBLE);
+                    }
                 });
             }
 
@@ -197,27 +261,6 @@ public class PatientInfoActivity extends AppCompatActivity {
                     public void onTextChanged(CharSequence s, int start, int before, int count) {
                         filterPatients();
                     }
-                });
-            }
-
-            // Diet spinner listener for ADA toggle visibility
-            if (editDietSpinner != null && editAdaToggle != null) {
-                editDietSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        String selectedDiet = editDietSpinner.getSelectedItem().toString();
-
-                        // Show ADA toggle for liquid diets
-                        if ("Puree".equals(selectedDiet) || "Full Liquid".equals(selectedDiet) || "Clear Liquid".equals(selectedDiet)) {
-                            editAdaToggle.setVisibility(View.VISIBLE);
-                        } else {
-                            editAdaToggle.setVisibility(View.GONE);
-                            editAdaToggle.setChecked(false);
-                        }
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parent) {}
                 });
             }
 
@@ -253,33 +296,32 @@ public class PatientInfoActivity extends AppCompatActivity {
                 }
             }
 
-            if (patientsAdapter == null && patientsListView != null) {
-                patientsAdapter = new ArrayAdapter<Patient>(this, android.R.layout.simple_list_item_1, filteredPatients) {
+            // Update adapter
+            if (patientsAdapter == null) {
+                patientsAdapter = new ArrayAdapter<Patient>(this, android.R.layout.simple_list_item_2, android.R.id.text1, filteredPatients) {
                     @Override
                     public View getView(int position, View convertView, ViewGroup parent) {
-                        if (convertView == null) {
-                            convertView = getLayoutInflater().inflate(android.R.layout.simple_list_item_1, parent, false);
+                        View view = super.getView(position, convertView, parent);
+                        Patient patient = getItem(position);
+                        TextView text1 = view.findViewById(android.R.id.text1);
+                        TextView text2 = view.findViewById(android.R.id.text2);
+
+                        if (patient != null) {
+                            text1.setText(patient.getFullName());
+                            text2.setText(patient.getWing() + " - Room " + patient.getRoomNumber() + " • " + patient.getDiet());
                         }
 
-                        Patient patient = filteredPatients.get(position);
-                        TextView textView = convertView.findViewById(android.R.id.text1);
-
-                        String displayText = patient.getFullName() + "\n" +
-                                patient.getWing() + " - Room " + patient.getRoomNumber() + "\n" +
-                                "Diet: " + patient.getDiet() + " | " + patient.getMealCompletionStatus();
-
-                        textView.setText(displayText);
-                        return convertView;
+                        return view;
                     }
                 };
                 patientsListView.setAdapter(patientsAdapter);
-            } else if (patientsAdapter != null) {
+            } else {
                 patientsAdapter.notifyDataSetChanged();
             }
 
             // Update count
             if (patientsCountText != null) {
-                patientsCountText.setText("Patients: " + filteredPatients.size());
+                patientsCountText.setText("Showing " + filteredPatients.size() + " of " + allPatients.size() + " patients");
             }
 
         } catch (Exception e) {
@@ -289,16 +331,14 @@ public class PatientInfoActivity extends AppCompatActivity {
     }
 
     private void populatePatientForm(Patient patient) {
-        try {
-            if (editPatientSection != null) {
-                editPatientSection.setVisibility(View.VISIBLE);
-            }
+        if (patient == null) return;
 
+        try {
             // Basic info
             if (editFirstNameInput != null) editFirstNameInput.setText(patient.getPatientFirstName());
             if (editLastNameInput != null) editLastNameInput.setText(patient.getPatientLastName());
 
-            // Set spinners if they exist
+            // Wing selection
             if (editWingSpinner != null) {
                 ArrayAdapter<String> wingAdapter = (ArrayAdapter<String>) editWingSpinner.getAdapter();
                 int wingPosition = wingAdapter.getPosition(patient.getWing());
@@ -307,33 +347,22 @@ public class PatientInfoActivity extends AppCompatActivity {
                 }
             }
 
+            // Room selection (after wing is set, rooms should be populated)
             if (editRoomSpinner != null) {
-                ArrayAdapter<String> roomAdapter = (ArrayAdapter<String>) editRoomSpinner.getAdapter();
-                int roomPosition = roomAdapter.getPosition(patient.getRoomNumber());
-                if (roomPosition >= 0) {
-                    editRoomSpinner.setSelection(roomPosition);
-                }
+                // Wait for room numbers to be updated, then set selection
+                editRoomSpinner.post(() -> {
+                    ArrayAdapter<String> roomAdapter = (ArrayAdapter<String>) editRoomSpinner.getAdapter();
+                    int roomPosition = roomAdapter.getPosition(patient.getRoomNumber());
+                    if (roomPosition >= 0) {
+                        editRoomSpinner.setSelection(roomPosition);
+                    }
+                });
             }
 
-            // Handle diet and ADA toggle
+            // Diet selection
             if (editDietSpinner != null && editAdaToggle != null) {
                 String baseDiet = patient.getDiet();
-                boolean isAda = false;
-
-                if (baseDiet != null && baseDiet.contains("ADA")) {
-                    if (baseDiet.equals("Clear Liquid ADA")) {
-                        baseDiet = "Clear Liquid";
-                        isAda = true;
-                    } else if (baseDiet.equals("Full Liquid ADA")) {
-                        baseDiet = "Full Liquid";
-                        isAda = true;
-                    } else if (baseDiet.equals("Puree ADA")) {
-                        baseDiet = "Puree";
-                        isAda = true;
-                    } else {
-                        baseDiet = baseDiet.replace(" ADA", "");
-                    }
-                }
+                boolean isAda = patient.isAdaDiet();
 
                 ArrayAdapter<String> dietAdapter = (ArrayAdapter<String>) editDietSpinner.getAdapter();
                 int dietPosition = dietAdapter.getPosition(baseDiet);
@@ -342,16 +371,18 @@ public class PatientInfoActivity extends AppCompatActivity {
                 }
 
                 editAdaToggle.setChecked(isAda);
-                boolean showAdaToggle = "Clear Liquid".equals(baseDiet) || "Full Liquid".equals(baseDiet) || "Puree".equals(baseDiet);
-                editAdaToggle.setVisibility(showAdaToggle ? View.VISIBLE : View.GONE);
             }
 
-            // Set fluid restriction
+            // FIXED: Fluid restriction selection with your system
             if (editFluidRestrictionSpinner != null) {
-                String fluidRestriction = patient.getFluidRestriction() != null ? patient.getFluidRestriction() : "No Restriction";
+                String fluidRestriction = patient.getFluidRestriction() != null ? patient.getFluidRestriction() : "No Fluid Restriction";
                 ArrayAdapter<String> fluidAdapter = (ArrayAdapter<String>) editFluidRestrictionSpinner.getAdapter();
+
+                // Find matching fluid restriction
                 for (int i = 0; i < fluidAdapter.getCount(); i++) {
-                    if (fluidAdapter.getItem(i).startsWith(fluidRestriction.split(" ")[0])) {
+                    String option = fluidAdapter.getItem(i);
+                    if ((fluidRestriction.equals("No Fluid Restriction") && option.equals("No Fluid Restriction")) ||
+                            (option.contains(fluidRestriction.split("ml")[0] + "ml") && fluidRestriction.contains("ml"))) {
                         editFluidRestrictionSpinner.setSelection(i);
                         break;
                     }
@@ -375,8 +406,9 @@ public class PatientInfoActivity extends AppCompatActivity {
             String firstName = editFirstNameInput != null ? editFirstNameInput.getText().toString().trim() : "";
             String lastName = editLastNameInput != null ? editLastNameInput.getText().toString().trim() : "";
 
+            // Validate inputs
             if (firstName.isEmpty() || lastName.isEmpty()) {
-                showError("Please enter both first and last name");
+                showError("First name and last name are required");
                 return;
             }
 
@@ -384,29 +416,23 @@ public class PatientInfoActivity extends AppCompatActivity {
             selectedPatient.setPatientFirstName(firstName);
             selectedPatient.setPatientLastName(lastName);
 
-            if (editWingSpinner != null) {
+            if (editWingSpinner != null && editWingSpinner.getSelectedItemPosition() > 0) {
                 selectedPatient.setWing(editWingSpinner.getSelectedItem().toString());
             }
-            if (editRoomSpinner != null) {
+
+            if (editRoomSpinner != null && editRoomSpinner.getSelectedItemPosition() > 0) {
                 selectedPatient.setRoomNumber(editRoomSpinner.getSelectedItem().toString());
             }
 
-            // Handle diet with ADA toggle
-            if (editDietSpinner != null) {
-                String baseDiet = editDietSpinner.getSelectedItem().toString();
-                String finalDiet = baseDiet;
-                if (editAdaToggle != null && editAdaToggle.isChecked() &&
-                        ("Clear Liquid".equals(baseDiet) || "Full Liquid".equals(baseDiet) || "Puree".equals(baseDiet))) {
-                    finalDiet = baseDiet + " ADA";
-                }
-                selectedPatient.setDiet(finalDiet);
-                selectedPatient.setDietType(finalDiet);
+            if (editDietSpinner != null && editDietSpinner.getSelectedItemPosition() > 0) {
+                selectedPatient.setDiet(editDietSpinner.getSelectedItem().toString());
                 selectedPatient.setAdaDiet(editAdaToggle != null ? editAdaToggle.isChecked() : false);
             }
 
+            // FIXED: Fluid restriction handling with your system
             if (editFluidRestrictionSpinner != null) {
                 String fluidRestriction = editFluidRestrictionSpinner.getSelectedItem().toString();
-                selectedPatient.setFluidRestriction(fluidRestriction.startsWith("No") ? "No Restriction" : fluidRestriction);
+                selectedPatient.setFluidRestriction(fluidRestriction.equals("No Fluid Restriction") ? "" : fluidRestriction);
             }
 
             // Save to database
@@ -419,6 +445,7 @@ public class PatientInfoActivity extends AppCompatActivity {
                     editPatientSection.setVisibility(View.GONE);
                 }
                 selectedPatient = null;
+                updateButtonStates();
             } else {
                 showError("Failed to update patient");
             }
@@ -463,26 +490,24 @@ public class PatientInfoActivity extends AppCompatActivity {
             return;
         }
 
-        String patientInfo = selectedPatient.getFullName() + " - " + selectedPatient.getLocationInfo();
+        String patientInfo = selectedPatient.getFullName() + " - " + selectedPatient.getWing() + " Room " + selectedPatient.getRoomNumber();
 
         new AlertDialog.Builder(this)
                 .setTitle("⚠️ Delete Patient")
                 .setMessage("Are you sure you want to permanently delete " + patientInfo +
                         "?\n\nThis will remove:\n• Patient information\n• All meal orders\n• Order history\n\nThis action cannot be undone!")
                 .setPositiveButton("Delete", (dialog, which) -> {
-                    try {
-                        boolean success = patientDAO.deletePatient(selectedPatient.getPatientId());
-
-                        if (success) {
-                            showMessage("Patient " + selectedPatient.getFullName() + " has been deleted.");
-                            loadPatients();
-                            cancelEdit();
-                        } else {
-                            showError("Failed to delete patient. Please try again.");
+                    boolean success = patientDAO.deletePatient(selectedPatient.getPatientId());
+                    if (success) {
+                        showMessage("Patient deleted successfully");
+                        loadPatients();
+                        if (editPatientSection != null) {
+                            editPatientSection.setVisibility(View.GONE);
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        showError("Delete error: " + e.getMessage());
+                        selectedPatient = null;
+                        updateButtonStates();
+                    } else {
+                        showError("Failed to delete patient");
                     }
                 })
                 .setNegativeButton("Cancel", null)
@@ -499,15 +524,11 @@ public class PatientInfoActivity extends AppCompatActivity {
     }
 
     private void showError(String message) {
-        new AlertDialog.Builder(this)
-                .setTitle("Error")
-                .setMessage(message)
-                .setPositiveButton("OK", null)
-                .show();
+        Toast.makeText(this, "❌ " + message, Toast.LENGTH_LONG).show();
     }
 
     private void showMessage(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "✅ " + message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -530,19 +551,9 @@ public class PatientInfoActivity extends AppCompatActivity {
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
                 return true;
-            case R.id.action_refresh:
-                loadPatients();
-                Toast.makeText(this, "Patient list refreshed", Toast.LENGTH_SHORT).show();
-                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        loadPatients();
     }
 
     @Override

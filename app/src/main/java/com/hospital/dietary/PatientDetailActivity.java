@@ -3,45 +3,48 @@ package com.hospital.dietary;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import com.hospital.dietary.dao.PatientDAO;
-import com.hospital.dietary.dao.FinalizedOrderDAO;
 import com.hospital.dietary.models.Patient;
-import com.hospital.dietary.models.FinalizedOrder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 public class PatientDetailActivity extends AppCompatActivity {
 
+    private static final String TAG = "PatientDetailActivity";
+
     private DatabaseHelper dbHelper;
     private PatientDAO patientDAO;
-    private FinalizedOrderDAO finalizedOrderDAO;
-
-    // User information
     private String currentUsername;
     private String currentUserRole;
     private String currentUserFullName;
 
-    // Patient data
-    private Patient currentPatient;
     private int patientId;
+    private Patient currentPatient;
 
-    // UI Components - Patient Info Section
+    // UI Components - Patient Information
     private TextView patientNameText;
-    private TextView roomLocationText;
-    private TextView dietTypeText;
+    private TextView locationText;
+    private TextView dietText;
     private TextView fluidRestrictionText;
-    private TextView textureModsText;
-    private TextView adaStatusText;
+    private TextView textureModificationsText;
+    private TextView createdDateText;
 
-    // UI Components - Meal Plan Section
-    private LinearLayout mealPlanSection;
+    // UI Components - Meal Status
+    private LinearLayout mealStatusSection;
+    private CheckBox breakfastCompleteCheckBox;
+    private CheckBox lunchCompleteCheckBox;
+    private CheckBox dinnerCompleteCheckBox;
+    private TextView orderDateText;
+
+    // UI Components - Meal Items
+    private LinearLayout mealItemsSection;
     private TextView breakfastItemsText;
     private TextView lunchItemsText;
     private TextView dinnerItemsText;
@@ -49,14 +52,7 @@ public class PatientDetailActivity extends AppCompatActivity {
     private TextView lunchDrinksText;
     private TextView dinnerDrinksText;
 
-    // UI Components - Order Status Section
-    private LinearLayout orderStatusSection;
-    private TextView orderDateText;
-    private CheckBox breakfastCompleteCheckBox;
-    private CheckBox lunchCompleteCheckBox;
-    private CheckBox dinnerCompleteCheckBox;
-
-    // Action buttons
+    // UI Components - Action Buttons
     private Button editPatientButton;
     private Button editMealPlanButton;
     private Button deletePatientButton;
@@ -72,9 +68,8 @@ public class PatientDetailActivity extends AppCompatActivity {
         currentUserRole = getIntent().getStringExtra("user_role");
         currentUserFullName = getIntent().getStringExtra("user_full_name");
 
-        // Validate patient ID
         if (patientId == -1) {
-            Toast.makeText(this, "Invalid patient ID", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Error: Invalid patient ID", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
@@ -82,29 +77,36 @@ public class PatientDetailActivity extends AppCompatActivity {
         // Initialize database
         dbHelper = new DatabaseHelper(this);
         patientDAO = new PatientDAO(dbHelper);
-        finalizedOrderDAO = new FinalizedOrderDAO(dbHelper);
 
-        // Set up action bar
+        // Set title
         if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle("Patient Details");
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
         initializeUI();
-        loadPatientData();
         setupListeners();
+        loadPatientData();
     }
 
     private void initializeUI() {
-        // Patient info section
+        // Patient Information
         patientNameText = findViewById(R.id.patientNameText);
-        roomLocationText = findViewById(R.id.roomLocationText);
-        dietTypeText = findViewById(R.id.dietTypeText);
+        locationText = findViewById(R.id.locationText);
+        dietText = findViewById(R.id.dietText);
         fluidRestrictionText = findViewById(R.id.fluidRestrictionText);
-        textureModsText = findViewById(R.id.textureModsText);
-        adaStatusText = findViewById(R.id.adaStatusText);
+        textureModificationsText = findViewById(R.id.textureModificationsText);
+        createdDateText = findViewById(R.id.createdDateText);
 
-        // Meal plan section
-        mealPlanSection = findViewById(R.id.mealPlanSection);
+        // Meal Status Section
+        mealStatusSection = findViewById(R.id.mealStatusSection);
+        breakfastCompleteCheckBox = findViewById(R.id.breakfastCompleteCheckBox);
+        lunchCompleteCheckBox = findViewById(R.id.lunchCompleteCheckBox);
+        dinnerCompleteCheckBox = findViewById(R.id.dinnerCompleteCheckBox);
+        orderDateText = findViewById(R.id.orderDateText);
+
+        // Meal Items Section
+        mealItemsSection = findViewById(R.id.mealItemsSection);
         breakfastItemsText = findViewById(R.id.breakfastItemsText);
         lunchItemsText = findViewById(R.id.lunchItemsText);
         dinnerItemsText = findViewById(R.id.dinnerItemsText);
@@ -112,208 +114,139 @@ public class PatientDetailActivity extends AppCompatActivity {
         lunchDrinksText = findViewById(R.id.lunchDrinksText);
         dinnerDrinksText = findViewById(R.id.dinnerDrinksText);
 
-        // Order status section
-        orderStatusSection = findViewById(R.id.orderStatusSection);
-        orderDateText = findViewById(R.id.orderDateText);
-        breakfastCompleteCheckBox = findViewById(R.id.breakfastCompleteCheckBox);
-        lunchCompleteCheckBox = findViewById(R.id.lunchCompleteCheckBox);
-        dinnerCompleteCheckBox = findViewById(R.id.dinnerCompleteCheckBox);
-
-        // Action buttons
+        // Action Buttons
         editPatientButton = findViewById(R.id.editPatientButton);
         editMealPlanButton = findViewById(R.id.editMealPlanButton);
         deletePatientButton = findViewById(R.id.deletePatientButton);
     }
 
-    // FIXED: Load patient data and populate UI
     private void loadPatientData() {
         try {
-            // Load patient from database
             currentPatient = patientDAO.getPatientById(patientId);
-
             if (currentPatient == null) {
                 Toast.makeText(this, "Patient not found", Toast.LENGTH_SHORT).show();
                 finish();
                 return;
             }
 
-            // Update action bar title
-            if (getSupportActionBar() != null) {
-                getSupportActionBar().setTitle(currentPatient.getPatientFirstName() + " " +
-                        currentPatient.getPatientLastName());
-            }
-
-            // Populate patient information
-            populatePatientInfo();
-
-            // Load and display meal plan
-            loadMealPlan();
-
-            // Load order status
+            populatePatientInformation();
+            populateMealItems();
             loadOrderStatus();
 
         } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(this, "Error loading patient data: " + e.getMessage(), Toast.LENGTH_LONG).show();
-            finish();
+            Log.e(TAG, "Error loading patient data", e);
+            Toast.makeText(this, "Error loading patient data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void populatePatientInfo() {
-        if (currentPatient == null) return;
+    private void populatePatientInformation() {
+        // Patient basic info
+        patientNameText.setText(currentPatient.getFullName());
+        locationText.setText("📍 " + currentPatient.getWing() + " - Room " + currentPatient.getRoomNumber());
 
-        // Patient name
-        patientNameText.setText(currentPatient.getPatientFirstName() + " " +
-                currentPatient.getPatientLastName());
-
-        // Room location
-        roomLocationText.setText(currentPatient.getWing() + " - Room " +
-                currentPatient.getRoomNumber());
-
-        // Diet type
-        dietTypeText.setText(currentPatient.getDietType());
+        String dietInfo = "🍽️ " + currentPatient.getDiet();
+        if (currentPatient.isAdaDiet()) {
+            dietInfo += " (ADA)";
+        }
+        dietText.setText(dietInfo);
 
         // Fluid restriction
         String fluidRestriction = currentPatient.getFluidRestriction();
-        if (fluidRestriction == null || fluidRestriction.equals("No Restriction")) {
-            fluidRestrictionText.setText("No fluid restrictions");
+        if (fluidRestriction != null && !fluidRestriction.trim().isEmpty()) {
+            fluidRestrictionText.setText("💧 Fluid Restriction: " + fluidRestriction);
+            fluidRestrictionText.setVisibility(View.VISIBLE);
         } else {
-            fluidRestrictionText.setText("Fluid restriction: " + fluidRestriction);
+            fluidRestrictionText.setVisibility(View.GONE);
         }
 
-        // FIXED: Texture modifications - show multiple selections
-        StringBuilder textureMods = new StringBuilder();
-        if (currentPatient.isMechanicalChopped()) textureMods.append("Mechanical Chopped, ");
-        if (currentPatient.isMechanicalGround()) textureMods.append("Mechanical Ground, ");
-        if (currentPatient.isBiteSize()) textureMods.append("Bite Size, ");
-        if (currentPatient.isBreadOK()) textureMods.append("Bread OK, ");
+        // Texture modifications
+        StringBuilder textureInfo = new StringBuilder();
+        if (currentPatient.isMechanicalChopped()) textureInfo.append("Mechanical Chopped, ");
+        if (currentPatient.isMechanicalGround()) textureInfo.append("Mechanical Ground, ");
+        if (currentPatient.isBiteSize()) textureInfo.append("Bite Size, ");
+        if (currentPatient.isBreadOK()) textureInfo.append("Bread OK, ");
+        if (currentPatient.isNectarThick()) textureInfo.append("Nectar Thick, ");
+        if (currentPatient.isPuddingThick()) textureInfo.append("Pudding Thick, ");
+        if (currentPatient.isHoneyThick()) textureInfo.append("Honey Thick, ");
+        if (currentPatient.isExtraGravy()) textureInfo.append("Extra Gravy, ");
+        if (currentPatient.isMeatsOnly()) textureInfo.append("Meats Only, ");
 
-        if (textureMods.length() > 0) {
+        if (textureInfo.length() > 0) {
             // Remove trailing comma and space
-            textureMods.setLength(textureMods.length() - 2);
-            textureModsText.setText("Texture: " + textureMods.toString());
+            textureInfo.setLength(textureInfo.length() - 2);
+            textureModificationsText.setText("🔧 Texture Modifications: " + textureInfo.toString());
+            textureModificationsText.setVisibility(View.VISIBLE);
         } else {
-            textureModsText.setText("Texture: Regular");
+            textureModificationsText.setVisibility(View.GONE);
         }
 
-        // ADA status
-        if (currentPatient.isAdaDiet()) {
-            adaStatusText.setText("ADA Diet: Yes");
-            adaStatusText.setVisibility(View.VISIBLE);
-        } else {
-            adaStatusText.setVisibility(View.GONE);
+        // Created date
+        if (currentPatient.getCreatedDate() != null) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMMM dd, yyyy 'at' h:mm a", Locale.getDefault());
+            createdDateText.setText("📅 Created: " + dateFormat.format(currentPatient.getCreatedDate()));
         }
     }
 
-    private void loadMealPlan() {
-        try {
-            // Get today's order for this patient
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-            String today = dateFormat.format(new Date());
-
-            FinalizedOrder todayOrder = finalizedOrderDAO.getOrderByWingRoomAndDate(
-                    currentPatient.getWing(),
-                    currentPatient.getRoomNumber(),
-                    today
-            );
-
-            if (todayOrder != null) {
-                mealPlanSection.setVisibility(View.VISIBLE);
-                populateMealPlan(todayOrder);
-            } else {
-                // Check if there's a meal plan for tomorrow
-                java.util.Calendar cal = java.util.Calendar.getInstance();
-                cal.add(java.util.Calendar.DAY_OF_YEAR, 1);
-                String tomorrow = dateFormat.format(cal.getTime());
-
-                FinalizedOrder tomorrowOrder = finalizedOrderDAO.getOrderByWingRoomAndDate(
-                        currentPatient.getWing(),
-                        currentPatient.getRoomNumber(),
-                        tomorrow
-                );
-
-                if (tomorrowOrder != null) {
-                    mealPlanSection.setVisibility(View.VISIBLE);
-                    populateMealPlan(tomorrowOrder);
-                    orderDateText.setText("Meal Plan for Tomorrow");
-                } else {
-                    // No meal plan found
-                    mealPlanSection.setVisibility(View.GONE);
-                    Toast.makeText(this, "No meal plan found for this patient", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            mealPlanSection.setVisibility(View.GONE);
-            Toast.makeText(this, "Error loading meal plan: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void populateMealPlan(FinalizedOrder order) {
+    private void populateMealItems() {
         // Breakfast items
-        List<String> breakfastItems = order.getBreakfastItems();
-        if (breakfastItems != null && !breakfastItems.isEmpty()) {
-            breakfastItemsText.setText("• " + String.join("\n• ", breakfastItems));
+        String breakfastItems = currentPatient.getBreakfastItems();
+        if (breakfastItems != null && !breakfastItems.trim().isEmpty()) {
+            breakfastItemsText.setText("• " + breakfastItems.replace("\n", "\n• "));
         } else {
             breakfastItemsText.setText("No items selected");
         }
 
         // Lunch items
-        List<String> lunchItems = order.getLunchItems();
-        if (lunchItems != null && !lunchItems.isEmpty()) {
-            lunchItemsText.setText("• " + String.join("\n• ", lunchItems));
+        String lunchItems = currentPatient.getLunchItems();
+        if (lunchItems != null && !lunchItems.trim().isEmpty()) {
+            lunchItemsText.setText("• " + lunchItems.replace("\n", "\n• "));
         } else {
             lunchItemsText.setText("No items selected");
         }
 
         // Dinner items
-        List<String> dinnerItems = order.getDinnerItems();
-        if (dinnerItems != null && !dinnerItems.isEmpty()) {
-            dinnerItemsText.setText("• " + String.join("\n• ", dinnerItems));
+        String dinnerItems = currentPatient.getDinnerItems();
+        if (dinnerItems != null && !dinnerItems.trim().isEmpty()) {
+            dinnerItemsText.setText("• " + dinnerItems.replace("\n", "\n• "));
         } else {
             dinnerItemsText.setText("No items selected");
         }
 
         // Breakfast drinks
-        List<String> breakfastDrinks = order.getBreakfastDrinks();
-        List<String> breakfastJuices = order.getBreakfastJuices();
-        populateDrinks(breakfastDrinksText, breakfastDrinks, breakfastJuices);
+        populateDrinkInfo(breakfastDrinksText, currentPatient.getBreakfastDrinks(), currentPatient.getBreakfastJuices());
 
         // Lunch drinks
-        List<String> lunchDrinks = order.getLunchDrinks();
-        List<String> lunchJuices = order.getLunchJuices();
-        populateDrinks(lunchDrinksText, lunchDrinks, lunchJuices);
+        populateDrinkInfo(lunchDrinksText, currentPatient.getLunchDrinks(), currentPatient.getLunchJuices());
 
         // Dinner drinks
-        List<String> dinnerDrinks = order.getDinnerDrinks();
-        List<String> dinnerJuices = order.getDinnerJuices();
-        populateDrinks(dinnerDrinksText, dinnerDrinks, dinnerJuices);
+        populateDrinkInfo(dinnerDrinksText, currentPatient.getDinnerDrinks(), currentPatient.getDinnerJuices());
     }
 
-    private void populateDrinks(TextView textView, List<String> drinks, List<String> juices) {
-        StringBuilder drinkText = new StringBuilder();
+    private void populateDrinkInfo(TextView textView, String drinks, String juices) {
+        StringBuilder drinkInfo = new StringBuilder();
 
-        if (drinks != null && !drinks.isEmpty()) {
-            for (String drink : drinks) {
+        if (drinks != null && !drinks.trim().isEmpty()) {
+            String[] drinkArray = drinks.split("\n");
+            for (String drink : drinkArray) {
                 if (!drink.trim().isEmpty()) {
-                    drinkText.append("• ").append(drink).append("\n");
+                    if (drinkInfo.length() > 0) drinkInfo.append("\n");
+                    drinkInfo.append("• ").append(drink.trim());
                 }
             }
         }
 
-        if (juices != null && !juices.isEmpty()) {
-            for (String juice : juices) {
+        if (juices != null && !juices.trim().isEmpty()) {
+            String[] juiceArray = juices.split("\n");
+            for (String juice : juiceArray) {
                 if (!juice.trim().isEmpty()) {
-                    drinkText.append("• ").append(juice).append("\n");
+                    if (drinkInfo.length() > 0) drinkInfo.append("\n");
+                    drinkInfo.append("• ").append(juice.trim());
                 }
             }
         }
 
-        if (drinkText.length() > 0) {
-            // Remove trailing newline
-            drinkText.setLength(drinkText.length() - 1);
-            textView.setText(drinkText.toString());
+        if (drinkInfo.length() > 0) {
+            textView.setText(drinkInfo.toString());
         } else {
             textView.setText("No drinks selected");
         }
@@ -332,23 +265,23 @@ public class PatientDetailActivity extends AppCompatActivity {
             SimpleDateFormat displayFormat = new SimpleDateFormat("EEEE, MMMM dd, yyyy", Locale.getDefault());
             orderDateText.setText("Status for " + displayFormat.format(new Date()));
 
-            orderStatusSection.setVisibility(View.VISIBLE);
+            mealStatusSection.setVisibility(View.VISIBLE);
 
         } catch (Exception e) {
             e.printStackTrace();
-            orderStatusSection.setVisibility(View.GONE);
+            mealStatusSection.setVisibility(View.GONE);
         }
     }
 
     private void setupListeners() {
         // Edit patient button
         editPatientButton.setOnClickListener(v -> {
-            Intent intent = new Intent(this, PatientInfoActivity.class);
+            Intent intent = new Intent(this, NewPatientActivity.class);  // Or dedicated edit activity
             intent.putExtra("edit_patient_id", patientId);
             intent.putExtra("current_user", currentUsername);
             intent.putExtra("user_role", currentUserRole);
             intent.putExtra("user_full_name", currentUserFullName);
-            startActivity(intent);
+            startActivityForResult(intent, 1001);
         });
 
         // Edit meal plan button
@@ -358,7 +291,7 @@ public class PatientDetailActivity extends AppCompatActivity {
             intent.putExtra("current_user", currentUsername);
             intent.putExtra("user_role", currentUserRole);
             intent.putExtra("user_full_name", currentUserFullName);
-            startActivity(intent);
+            startActivityForResult(intent, 1002);
         });
 
         // Delete patient button
@@ -425,25 +358,39 @@ public class PatientDetailActivity extends AppCompatActivity {
                 .setTitle("Delete Patient")
                 .setMessage("Are you sure you want to delete patient " +
                         currentPatient.getPatientFirstName() + " " +
-                        currentPatient.getPatientLastName() + "?\n\nThis will also delete all associated meal plans and orders.\n\nThis action cannot be undone.")
-                .setPositiveButton("Delete", (dialog, which) -> {
-                    boolean result = patientDAO.deletePatient(patientId);
-                    if (result) {
-                        Toast.makeText(this, "Patient deleted successfully", Toast.LENGTH_SHORT).show();
-                        finish(); // Close this activity
-                    } else {
-                        Toast.makeText(this, "Failed to delete patient", Toast.LENGTH_SHORT).show();
-                    }
-                })
+                        currentPatient.getPatientLastName() + "?\n\n" +
+                        "This will also delete all associated meal plans and orders.\n\n" +
+                        "This action cannot be undone.")
+                .setPositiveButton("Delete", (dialog, which) -> deletePatient())
                 .setNegativeButton("Cancel", null)
                 .show();
     }
 
+    private void deletePatient() {
+        try {
+            boolean success = patientDAO.deletePatient(patientId);
+
+            if (success) {
+                Toast.makeText(this, "Patient deleted successfully", Toast.LENGTH_SHORT).show();
+                setResult(RESULT_OK);
+                finish();
+            } else {
+                Toast.makeText(this, "Failed to delete patient", Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error deleting patient", e);
+            Toast.makeText(this, "Error deleting patient: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
     @Override
-    protected void onResume() {
-        super.onResume();
-        // Reload patient data when returning from edit screens
-        loadPatientData();
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK) {
+            // Reload patient data if it was edited
+            loadPatientData();
+        }
     }
 
     @Override
@@ -469,8 +416,8 @@ public class PatientDetailActivity extends AppCompatActivity {
             case R.id.action_edit:
                 editPatientButton.performClick();
                 return true;
-            case R.id.action_edit_meals:
-                editMealPlanButton.performClick();
+            case R.id.action_delete:
+                deletePatientButton.performClick();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
