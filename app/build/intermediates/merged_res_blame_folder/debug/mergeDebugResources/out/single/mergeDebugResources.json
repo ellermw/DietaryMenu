@@ -28,6 +28,10 @@
         "source": "com.hospital.dietary.app-main-6:/mipmap-xhdpi/ic_launcher_foreground.png"
     },
     {
+        "merged": "com.hospital.dietary.app-debug-4:/menu_menu_retired_orders.xml.flat",
+        "source": "com.hospital.dietary.app-main-6:/menu/menu_retired_orders.xml"
+    },
+    {
         "merged": "com.hospital.dietary.app-debug-4:/drawable_ic_home.xml.flat",
         "source": "com.hospital.dietary.app-main-6:/drawable/ic_home.xml"
     },
@@ -298,6 +302,10 @@
     {
         "merged": "com.hospital.dietary.app-debug-4:/drawable_ic_user.xml.flat",
         "source": "com.hospital.dietary.app-main-6:/drawable/ic_user.xml"
+    },
+    {
+        "merged": "com.hospital.dietary.app-debug-4:/menu_menu_patient_info.xml.flat",
+        "source": "com.hospital.dietary.app-main-6:/menu/menu_patient_info.xml"
     },
     {
         "merged": "com.hospital.dietary.app-debug-4:/menu_menu_patient_detail.xml.flat",

@@ -20,7 +20,7 @@ public class AdminActivity extends AppCompatActivity {
     private TextView welcomeText;
     private Button userManagementButton;
     private Button itemManagementButton;
-    private Button defaultMenuManagementButton;  // NEW
+    private Button defaultMenuManagementButton;
     private Button accountManagementButton;
     private Button backButton;
 
@@ -54,7 +54,7 @@ public class AdminActivity extends AppCompatActivity {
         welcomeText = findViewById(R.id.welcomeText);
         userManagementButton = findViewById(R.id.userManagementButton);
         itemManagementButton = findViewById(R.id.itemManagementButton);
-        defaultMenuManagementButton = findViewById(R.id.defaultMenuManagementButton);  // NEW
+        defaultMenuManagementButton = findViewById(R.id.defaultMenuManagementButton);
         accountManagementButton = findViewById(R.id.accountManagementButton);
         backButton = findViewById(R.id.backButton);
 
@@ -68,19 +68,26 @@ public class AdminActivity extends AppCompatActivity {
     private void setupListeners() {
         if (userManagementButton != null) {
             userManagementButton.setOnClickListener(v -> {
-                // TODO: Implement UserManagementActivity
-                Toast.makeText(this, "User Management - Coming Soon!", Toast.LENGTH_SHORT).show();
+                // FIXED: Open actual UserManagementActivity
+                Intent intent = new Intent(this, UserManagementActivity.class);
+                intent.putExtra("current_user", currentUsername);
+                intent.putExtra("user_role", currentUserRole);
+                intent.putExtra("user_full_name", currentUserFullName);
+                startActivity(intent);
             });
         }
 
         if (itemManagementButton != null) {
             itemManagementButton.setOnClickListener(v -> {
-                // TODO: Implement ItemManagementActivity
-                Toast.makeText(this, "Item Management - Coming Soon!", Toast.LENGTH_SHORT).show();
+                // FIXED: Open actual ItemManagementActivity
+                Intent intent = new Intent(this, ItemManagementActivity.class);
+                intent.putExtra("current_user", currentUsername);
+                intent.putExtra("user_role", currentUserRole);
+                intent.putExtra("user_full_name", currentUserFullName);
+                startActivity(intent);
             });
         }
 
-        // NEW: Default Menu Management Button
         if (defaultMenuManagementButton != null) {
             defaultMenuManagementButton.setOnClickListener(v -> {
                 Intent intent = new Intent(this, DefaultMenuManagementActivity.class);
@@ -93,8 +100,11 @@ public class AdminActivity extends AppCompatActivity {
 
         if (accountManagementButton != null) {
             accountManagementButton.setOnClickListener(v -> {
-                // TODO: Implement AccountManagementActivity
-                Toast.makeText(this, "Account Management - Coming Soon!", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(this, AccountManagementActivity.class);
+                intent.putExtra("current_user", currentUsername);
+                intent.putExtra("user_role", currentUserRole);
+                intent.putExtra("user_full_name", currentUserFullName);
+                startActivity(intent);
             });
         }
 
@@ -105,7 +115,11 @@ public class AdminActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_admin, menu);
+        try {
+            getMenuInflater().inflate(R.menu.menu_admin, menu);
+        } catch (Exception e) {
+            // Menu file might not exist
+        }
         return true;
     }
 

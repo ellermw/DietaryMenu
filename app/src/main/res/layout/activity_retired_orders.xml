@@ -6,37 +6,37 @@
     android:padding="16dp"
     android:background="#f8fafc">
 
-    <!-- Title Section -->
+    <!-- Header -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:background="@android:color/white"
-        android:padding="16dp"
+        android:padding="20dp"
         android:layout_marginBottom="16dp"
         android:elevation="2dp">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="📅 Retired Orders Archive"
+            android:text="📋 Retired Orders"
             android:textSize="24sp"
             android:textStyle="bold"
-            android:textColor="#1e3a8a"
+            android:textColor="#2c3e50"
             android:gravity="center"
             android:layout_marginBottom="8dp" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="View completed orders from previous days"
+            android:text="View completed meal orders by date"
             android:textSize="16sp"
-            android:textColor="#64748b"
+            android:textColor="#7f8c8d"
             android:gravity="center" />
 
     </LinearLayout>
 
-    <!-- Date Selection Section -->
+    <!-- Date Selection -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -47,153 +47,135 @@
         android:elevation="2dp">
 
         <TextView
-            android:id="@+id/selectedDateText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Viewing orders for: [Date]"
+            android:text="📅 Select Date:"
             android:textSize="16sp"
             android:textStyle="bold"
             android:textColor="#2c3e50"
-            android:gravity="center"
-            android:layout_marginBottom="12dp" />
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/selectedDateText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Selected Date: Loading..."
+            android:textSize="14sp"
+            android:textColor="#34495e"
+            android:background="#ecf0f1"
+            android:padding="12dp"
+            android:layout_marginBottom="8dp" />
 
         <Button
             android:id="@+id/datePickerButton"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:text="📅 Select Date"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/white"
-            android:background="#3b82f6"
-            android:elevation="2dp" />
-
-    </LinearLayout>
-
-    <!-- Orders List Section -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:background="@android:color/white"
-        android:padding="16dp"
-        android:elevation="2dp">
-
-        <!-- Column Headers -->
-        <LinearLayout
-            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="8dp"
-            android:paddingBottom="8dp"
-            android:background="#f1f5f9">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:text="Patient"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:textColor="#2c3e50"
-                android:padding="8dp" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Location"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:textColor="#2c3e50"
-                android:gravity="center"
-                android:padding="8dp" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Status"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:textColor="#2c3e50"
-                android:gravity="end"
-                android:padding="8dp" />
-
-        </LinearLayout>
-
-        <!-- Orders ListView -->
-        <ListView
-            android:id="@+id/retiredOrdersListView"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:divider="#ecf0f1"
-            android:dividerHeight="1dp"
-            android:scrollbars="vertical"
-            android:choiceMode="multipleChoice" />
-
-        <!-- No Orders Message -->
-        <TextView
-            android:id="@+id/noRetiredOrdersText"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:text="📋 No orders found for selected date.\n\nTry choosing a different date from the calendar."
-            android:textSize="18sp"
-            android:textColor="#7f8c8d"
-            android:gravity="center"
-            android:visibility="gone"
-            android:padding="32dp" />
+            android:text="📅 Choose Different Date"
+            android:textSize="14sp"
+            android:background="#3498db"
+            android:textColor="@android:color/white"
+            android:padding="12dp" />
 
     </LinearLayout>
 
-    <!-- Print Buttons Section -->
+    <!-- Action Buttons -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="16dp">
+        android:layout_marginBottom="16dp">
 
         <Button
             android:id="@+id/printAllButton"
             android:layout_width="0dp"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginEnd="8dp"
             android:text="🖨️ Print All"
             android:textSize="14sp"
-            android:textStyle="bold"
+            android:background="#27ae60"
             android:textColor="@android:color/white"
-            android:background="#16a34a"
-            android:enabled="false" />
+            android:layout_marginEnd="8dp"
+            android:padding="12dp" />
 
         <Button
             android:id="@+id/printSelectedButton"
             android:layout_width="0dp"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginStart="8dp"
             android:text="🖨️ Print Selected"
             android:textSize="14sp"
-            android:textStyle="bold"
+            android:background="#f39c12"
             android:textColor="@android:color/white"
-            android:background="#dc2626"
-            android:enabled="false" />
+            android:layout_marginStart="8dp"
+            android:padding="12dp" />
 
     </LinearLayout>
 
-    <!-- Back Button -->
-    <Button
-        android:id="@+id/backButton"
+    <!-- Orders List Header -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginTop="12dp"
-        android:text="← Back to Main Menu"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:textColor="@android:color/white"
-        android:background="#6b7280" />
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="8dp"
+        android:paddingBottom="8dp"
+        android:background="#f1f5f9">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text="Patient"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#2c3e50"
+            android:padding="8dp" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Location"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#2c3e50"
+            android:gravity="center"
+            android:padding="8dp" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Status"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#2c3e50"
+            android:gravity="end"
+            android:padding="8dp" />
+
+    </LinearLayout>
+
+    <!-- Orders ListView -->
+    <ListView
+        android:id="@+id/retiredOrdersListView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:divider="#ecf0f1"
+        android:dividerHeight="1dp"
+        android:scrollbars="vertical"
+        android:choiceMode="multipleChoice" />
+
+    <!-- No Orders Message -->
+    <TextView
+        android:id="@+id/noRetiredOrdersText"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text="📋 No orders found for selected date.\n\nTry choosing a different date from the calendar."
+        android:textSize="18sp"
+        android:textColor="#7f8c8d"
+        android:gravity="center"
+        android:visibility="gone"
+        android:padding="32dp" />
 
 </LinearLayout>

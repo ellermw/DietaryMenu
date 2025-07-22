@@ -31,13 +31,13 @@ public class RetiredOrdersActivity extends AppCompatActivity {
     private String currentUserRole;
     private String currentUserFullName;
 
-    // UI Components that may or may not exist in your layout
-    private Button datePickerButton;
-    private TextView selectedDateText;
-    private ListView retiredOrdersListView;
-    private TextView noRetiredOrdersText;
-    private Button printAllButton;
-    private Button printSelectedButton;
+    // UI Components - only reference IDs that actually exist in the layout
+    private Button datePickerButton; // This exists
+    private TextView selectedDateText; // This exists
+    private ListView retiredOrdersListView; // This exists
+    private TextView noRetiredOrdersText; // This exists
+    private Button printAllButton; // May or may not exist
+    private Button printSelectedButton; // May or may not exist
 
     // Date handling
     private Calendar selectedDate;
@@ -78,57 +78,36 @@ public class RetiredOrdersActivity extends AppCompatActivity {
     }
 
     private void initializeUI() {
-        // Try to find UI elements with various possible IDs
+        // FIXED: Use only the IDs that actually exist in the layout
         datePickerButton = findViewById(R.id.datePickerButton);
-        if (datePickerButton == null) {
-            datePickerButton = findViewById(R.id.selectDateButton);
-        }
-
         selectedDateText = findViewById(R.id.selectedDateText);
-        if (selectedDateText == null) {
-            selectedDateText = findViewById(R.id.selectedDateTextView);
-        }
-
         retiredOrdersListView = findViewById(R.id.retiredOrdersListView);
-        if (retiredOrdersListView == null) {
-            retiredOrdersListView = findViewById(R.id.ordersListView);
-        }
-
-        // Handle different possible IDs for the "no orders" text
         noRetiredOrdersText = findViewById(R.id.noRetiredOrdersText);
-        if (noRetiredOrdersText == null) {
-            noRetiredOrdersText = findViewById(R.id.noOrdersText);
-        }
-        if (noRetiredOrdersText == null) {
-            noRetiredOrdersText = findViewById(R.id.noDataText);
-        }
 
+        // These may or may not exist - handle gracefully
         printAllButton = findViewById(R.id.printAllButton);
         printSelectedButton = findViewById(R.id.printSelectedButton);
 
-        // Set up list view for multiple selection if available
+        // Set up list view for multiple selection if it exists
         if (retiredOrdersListView != null) {
             retiredOrdersListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 
-            // Create adapter
+            // Set up the adapter
             retiredAdapter = new ArrayAdapter<Patient>(this, android.R.layout.simple_list_item_multiple_choice, retiredPatients) {
                 @Override
                 public View getView(int position, View convertView, ViewGroup parent) {
                     View view = super.getView(position, convertView, parent);
 
                     Patient patient = getItem(position);
-                    TextView textView = view.findViewById(android.R.id.text1);
+                    CheckedTextView textView = (CheckedTextView) view.findViewById(android.R.id.text1);
 
-                    if (patient != null && textView != null) {
-                        // FIXED: Show individual meal diets with proper ADA display
-                        String breakfastDiet = getCleanDietDisplay(patient.getBreakfastDiet(), patient.isBreakfastAda());
-                        String lunchDiet = getCleanDietDisplay(patient.getLunchDiet(), patient.isLunchAda());
-                        String dinnerDiet = getCleanDietDisplay(patient.getDinnerDiet(), patient.isDinnerAda());
-
-                        String displayText = String.format("%s - %s\nBreakfast: %s | Lunch: %s | Dinner: %s",
+                    if (patient != null) {
+                        String displayText = String.format("%s\n%s - Room %s | %s\nCompleted: %s",
                                 patient.getFullName(),
-                                patient.getLocationInfo(),
-                                breakfastDiet, lunchDiet, dinnerDiet);
+                                patient.getWing(),
+                                patient.getRoomNumber(),
+                                patient.getDiet(),
+                                getCompletedMealsText(patient));
 
                         textView.setText(displayText);
                     }
@@ -138,31 +117,31 @@ public class RetiredOrdersActivity extends AppCompatActivity {
             };
 
             retiredOrdersListView.setAdapter(retiredAdapter);
+            retiredOrdersListView.setOnItemClickListener((parent, view, position, id) -> {
+                if (position < retiredPatients.size()) {
+                    Patient patient = retiredPatients.get(position);
+                    showOrderDetails(patient);
+                }
+            });
         } else {
-            Log.e(TAG, "retiredOrdersListView not found in layout");
+            Log.w(TAG, "retiredOrdersListView not found in layout");
         }
     }
 
-    // FIXED: Helper method to clean up diet display and avoid duplicate (ADA)
-    private String getCleanDietDisplay(String diet, boolean isAda) {
-        if (diet == null) return "Regular";
+    private String getCompletedMealsText(Patient patient) {
+        List<String> completedMeals = new ArrayList<>();
 
-        String cleanDiet;
-        if (diet.contains("(ADA)") || isAda) {
-            // If diet already contains (ADA) or isAda is true, format it properly
-            if (diet.contains("(ADA)")) {
-                // Diet already has (ADA) in it, use as is
-                cleanDiet = diet;
-            } else {
-                // isAda is true but diet doesn't contain (ADA), add it once
-                cleanDiet = diet + " (ADA)";
-            }
-        } else {
-            // Not an ADA diet, use diet as is
-            cleanDiet = diet;
+        if (patient.isBreakfastComplete() || patient.isBreakfastNPO()) {
+            completedMeals.add("B");
+        }
+        if (patient.isLunchComplete() || patient.isLunchNPO()) {
+            completedMeals.add("L");
+        }
+        if (patient.isDinnerComplete() || patient.isDinnerNPO()) {
+            completedMeals.add("D");
         }
 
-        return cleanDiet;
+        return String.join(", ", completedMeals);
     }
 
     private void setupListeners() {
@@ -174,67 +153,67 @@ public class RetiredOrdersActivity extends AppCompatActivity {
 
         if (printAllButton != null) {
             printAllButton.setOnClickListener(v -> printAllOrders());
-        } else {
-            Log.w(TAG, "printAllButton not found in layout");
         }
 
         if (printSelectedButton != null) {
             printSelectedButton.setOnClickListener(v -> printSelectedOrders());
-        } else {
-            Log.w(TAG, "printSelectedButton not found in layout");
         }
+    }
 
-        if (retiredOrdersListView != null) {
-            retiredOrdersListView.setOnItemClickListener((parent, view, position, id) -> {
-                if (position < retiredPatients.size()) {
-                    Patient patient = retiredPatients.get(position);
-                    showOrderDetails(patient);
-                }
-            });
+    private void updateSelectedDateDisplay() {
+        if (selectedDateText != null && selectedDate != null) {
+            String displayDate = dateFormat.format(selectedDate.getTime());
+            selectedDateText.setText("Viewing orders for: " + displayDate);
         }
     }
 
     private void showDatePicker() {
+        Calendar currentDate = selectedDate != null ? selectedDate : Calendar.getInstance();
+
         DatePickerDialog datePickerDialog = new DatePickerDialog(
                 this,
                 (view, year, month, dayOfMonth) -> {
-                    selectedDate.set(Calendar.YEAR, year);
-                    selectedDate.set(Calendar.MONTH, month);
-                    selectedDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                    selectedDate = Calendar.getInstance();
+                    selectedDate.set(year, month, dayOfMonth);
                     updateSelectedDateDisplay();
                     loadRetiredOrdersForDate();
                 },
-                selectedDate.get(Calendar.YEAR),
-                selectedDate.get(Calendar.MONTH),
-                selectedDate.get(Calendar.DAY_OF_MONTH)
+                currentDate.get(Calendar.YEAR),
+                currentDate.get(Calendar.MONTH),
+                currentDate.get(Calendar.DAY_OF_MONTH)
         );
 
         datePickerDialog.show();
     }
 
-    private void updateSelectedDateDisplay() {
-        if (selectedDateText != null) {
-            String dateString = dateFormat.format(selectedDate.getTime());
-            selectedDateText.setText("Viewing orders for: " + dateString);
-        }
-    }
-
     private void loadRetiredOrdersForDate() {
         try {
-            // For this demo, show completed patients as "retired" orders
             retiredPatients.clear();
-            retiredPatients.addAll(patientDAO.getCompletedPatients());
 
+            // Get all patients with completed meal orders
+            List<Patient> allPatients = patientDAO.getAllPatients();
+
+            for (Patient patient : allPatients) {
+                // Check if patient has at least one completed meal or is all NPO
+                boolean hasCompletedMeals = patient.isBreakfastComplete() || patient.isLunchComplete() || patient.isDinnerComplete();
+                boolean isAllNPO = patient.isBreakfastNPO() && patient.isLunchNPO() && patient.isDinnerNPO();
+                boolean isFullyProcessed = (patient.isBreakfastComplete() || patient.isBreakfastNPO()) &&
+                        (patient.isLunchComplete() || patient.isLunchNPO()) &&
+                        (patient.isDinnerComplete() || patient.isDinnerNPO());
+
+                if (hasCompletedMeals || isAllNPO || isFullyProcessed) {
+                    retiredPatients.add(patient);
+                }
+            }
+
+            // Update UI
             if (retiredPatients.isEmpty()) {
                 if (retiredOrdersListView != null) {
                     retiredOrdersListView.setVisibility(View.GONE);
                 }
                 if (noRetiredOrdersText != null) {
                     noRetiredOrdersText.setVisibility(View.VISIBLE);
-
-                    String dayOfWeek = new SimpleDateFormat("EEEE", Locale.getDefault()).format(selectedDate.getTime());
-                    String dateStr = new SimpleDateFormat("M-d-yyyy", Locale.getDefault()).format(selectedDate.getTime());
-                    noRetiredOrdersText.setText("📋 No completed orders found for " + dayOfWeek + "\n" + dateStr + "\n\nTry choosing a different date from the calendar.");
+                    noRetiredOrdersText.setText("📋 No orders found for selected date.\n\nTry choosing a different date from the calendar.");
                 }
 
                 if (printAllButton != null) printAllButton.setEnabled(false);
@@ -281,137 +260,35 @@ public class RetiredOrdersActivity extends AppCompatActivity {
         details.append("Status: ").append(patient.isLunchNPO() ? "NPO" : "Complete").append("\n\n");
 
         details.append("DINNER - ").append(getCleanDietDisplay(patient.getDinnerDiet(), patient.isDinnerAda())).append("\n");
-        details.append("Status: ").append(patient.isDinnerNPO() ? "NPO" : "Complete");
+        details.append("Status: ").append(patient.isDinnerNPO() ? "NPO" : "Complete").append("\n\n");
 
-        if (patient.getFluidRestriction() != null) {
-            details.append("\n\nFluid Restriction: ").append(patient.getFluidRestriction());
+        // Show texture modifications if any
+        if (!patient.getTextureModifications().isEmpty() && !patient.getTextureModifications().equals("None")) {
+            details.append("Texture Modifications: ").append(patient.getTextureModifications()).append("\n");
         }
 
-        if (patient.getTextureModifications() != null && !patient.getTextureModifications().equals("Regular")) {
-            details.append("\nTexture Modifications: ").append(patient.getTextureModifications());
+        // Show fluid restriction if any
+        if (!patient.getFluidRestriction().isEmpty() && !patient.getFluidRestriction().equals("None")) {
+            details.append("Fluid Restriction: ").append(patient.getFluidRestriction()).append("\n");
         }
 
         new AlertDialog.Builder(this)
                 .setTitle("Order Details")
                 .setMessage(details.toString())
-                .setPositiveButton("Print This Order", (dialog, which) -> printSingleOrder(patient))
-                .setNegativeButton("Close", null)
+                .setPositiveButton("OK", null)
                 .show();
     }
 
-    private void printSingleOrder(Patient patient) {
-        // Create print content with proper date formatting
-        StringBuilder printContent = new StringBuilder();
-
-        // Add date header for printed menu
-        String dayOfWeek = new SimpleDateFormat("EEEE", Locale.getDefault()).format(selectedDate.getTime());
-        String dateHeader = new SimpleDateFormat("M-d-yyyy", Locale.getDefault()).format(selectedDate.getTime());
-
-        printContent.append("========================================\n");
-        printContent.append("         DIETARY MENU\n");
-        printContent.append("========================================\n");
-        printContent.append("        ").append(dayOfWeek).append("\n");
-        printContent.append("        ").append(dateHeader).append("\n");
-        printContent.append("========================================\n\n");
-
-        printContent.append("Patient: ").append(patient.getFullName()).append("\n");
-        printContent.append("Room: ").append(patient.getWing()).append(" - ").append(patient.getRoomNumber()).append("\n\n");
-
-        // Add meal sections with individual diets
-        addMealSection(printContent, "BREAKFAST", patient.isBreakfastNPO(),
-                getCleanDietDisplay(patient.getBreakfastDiet(), patient.isBreakfastAda()));
-        addMealSection(printContent, "LUNCH", patient.isLunchNPO(),
-                getCleanDietDisplay(patient.getLunchDiet(), patient.isLunchAda()));
-        addMealSection(printContent, "DINNER", patient.isDinnerNPO(),
-                getCleanDietDisplay(patient.getDinnerDiet(), patient.isDinnerAda()));
-
-        // TODO: Implement actual printing functionality
-        Toast.makeText(this, "Print Order - " + patient.getFullName() + " (" + dayOfWeek + " " + dateHeader + ")", Toast.LENGTH_LONG).show();
-    }
-
-    private void addMealSection(StringBuilder content, String mealName, boolean isNPO, String diet) {
-        content.append("--- ").append(mealName).append(" ---\n");
-        content.append("Diet: ").append(diet).append("\n");
-
-        if (isNPO) {
-            content.append("NPO (Nothing by mouth)\n\n");
-        } else if (diet.startsWith("Clear Liquid")) {
-            // Add clear liquid items with ADA substitutions if needed
-            boolean isADA = diet.contains("ADA");
-            if (isADA) {
-                content.append("• Apple Juice (ADA)\n");
-                content.append("• Sprite Zero (ADA)\n");
-                content.append("• Sugar Free Jello (ADA)\n");
-            } else {
-                content.append("• Orange Juice\n");
-                content.append("• Sprite\n");
-                content.append("• Jello\n");
-            }
-            content.append("• Clear Broth\n");
-            content.append("• Water\n");
-            content.append("• Tea/Coffee\n\n");
-        } else if (diet.startsWith("Full Liquid")) {
-            // Add full liquid items with ADA substitutions if needed
-            boolean isADA = diet.contains("ADA");
-
-            switch (mealName) {
-                case "BREAKFAST":
-                    content.append("• Apple Juice (120ml)\n");
-                    content.append("• Jello").append(isADA ? " (Sugar Free)" : "").append("\n");
-                    content.append("• Cream of Wheat\n");
-                    content.append("• Coffee (200ml)\n");
-                    content.append("• ").append(isADA ? "2% Milk (240ml)" : "Whole Milk (240ml)").append("\n");
-                    content.append("• ").append(isADA ? "Sprite Zero (355ml)" : "Sprite (355ml)").append("\n");
-                    content.append("• Ensure (240ml)\n\n");
-                    break;
-
-                case "LUNCH":
-                    content.append("• Cranberry Juice (120ml)\n");
-                    content.append("• Jello").append(isADA ? " (Sugar Free)" : "").append("\n");
-                    content.append("• Cream of Chicken Soup\n");
-                    content.append("• Pudding").append(isADA ? " (Sugar Free)" : "").append("\n");
-                    content.append("• ").append(isADA ? "2% Milk (240ml)" : "Whole Milk (240ml)").append("\n");
-                    content.append("• ").append(isADA ? "Sprite Zero (355ml)" : "Sprite (355ml)").append("\n");
-                    content.append("• Ensure (240ml)\n\n");
-                    break;
-
-                case "DINNER":
-                    content.append("• Apple Juice (120ml)\n");
-                    content.append("• Jello").append(isADA ? " (Sugar Free)" : "").append("\n");
-                    content.append("• Tomato Soup\n");
-                    content.append("• Pudding").append(isADA ? " (Sugar Free)" : "").append("\n");
-                    content.append("• ").append(isADA ? "2% Milk (240ml)" : "Whole Milk (240ml)").append("\n");
-                    content.append("• ").append(isADA ? "Sprite Zero (355ml)" : "Sprite (355ml)").append("\n");
-                    content.append("• Ensure (240ml)\n\n");
-                    break;
-            }
-
-        } else if (diet.startsWith("Puree")) {
-            // Add puree diet items
-            switch (mealName) {
-                case "BREAKFAST":
-                    content.append("• Pureed Scrambled Eggs\n");
-                    content.append("• Pureed Oatmeal\n");
-                    content.append("• Apple Juice\n");
-                    content.append("• Coffee\n\n");
-                    break;
-                case "LUNCH":
-                    content.append("• Pureed Chicken\n");
-                    content.append("• Pureed Potatoes\n");
-                    content.append("• Pureed Vegetables\n");
-                    content.append("• Thickened Liquids\n\n");
-                    break;
-                case "DINNER":
-                    content.append("• Pureed Beef\n");
-                    content.append("• Pureed Rice\n");
-                    content.append("• Pureed Carrots\n");
-                    content.append("• Pudding").append(diet.contains("ADA") ? " (Sugar Free)" : "").append("\n\n");
-                    break;
-            }
-        } else {
-            // Regular diet or other diets
-            content.append("Standard items for ").append(diet).append(" diet\n\n");
+    private String getCleanDietDisplay(String diet, boolean isAda) {
+        if (diet == null || diet.isEmpty()) {
+            return "Regular";
         }
+
+        if (isAda && !diet.contains("(ADA)")) {
+            return diet + " (ADA)";
+        }
+
+        return diet;
     }
 
     private void printAllOrders() {
@@ -423,7 +300,6 @@ public class RetiredOrdersActivity extends AppCompatActivity {
         String dayOfWeek = new SimpleDateFormat("EEEE", Locale.getDefault()).format(selectedDate.getTime());
         String dateHeader = new SimpleDateFormat("M-d-yyyy", Locale.getDefault()).format(selectedDate.getTime());
 
-        // Show confirmation dialog
         new AlertDialog.Builder(this)
                 .setTitle("Print All Orders")
                 .setMessage("Print all " + retiredPatients.size() + " orders for " + dayOfWeek + " " + dateHeader + "?")
@@ -441,7 +317,6 @@ public class RetiredOrdersActivity extends AppCompatActivity {
             return;
         }
 
-        // FIXED: Added proper import for SparseBooleanArray
         SparseBooleanArray checkedItems = retiredOrdersListView.getCheckedItemPositions();
         List<Patient> selectedPatients = new ArrayList<>();
 
@@ -468,11 +343,11 @@ public class RetiredOrdersActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Skip menu inflation if menu file doesn't exist
+        // Skip menu inflation if menu file doesn't exist - FIXED
         try {
             getMenuInflater().inflate(R.menu.menu_retired_orders, menu);
         } catch (Exception e) {
-            Log.d(TAG, "Menu file not found, skipping");
+            Log.d(TAG, "Menu file not found, skipping menu inflation");
         }
         return true;
     }

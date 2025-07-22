@@ -103,8 +103,8 @@ public class MealPlanningActivity extends AppCompatActivity {
         lunchSection = findViewById(R.id.lunchSection);
         dinnerSection = findViewById(R.id.dinnerSection);
 
-        // Save button - handle if it doesn't exist
-        saveMealPlanButton = findViewById(R.id.saveMealPlanButton);
+        // Save button - FIXED: Use the correct ID from the layout
+        saveMealPlanButton = findViewById(R.id.saveOrderButton);
         if (saveMealPlanButton == null) {
             // Create a save button dynamically if it doesn't exist in layout
             saveMealPlanButton = new Button(this);
@@ -241,164 +241,27 @@ public class MealPlanningActivity extends AppCompatActivity {
         container.addView(editMealButton);
     }
 
-    private void showSimpleEditMealDietDialog(String mealType, String currentMealDiet, boolean currentMealAda) {
-        // Simple dialog without custom layout
-        String[] diets = {"Regular", "ADA", "Cardiac", "Renal", "Clear Liquid", "Full Liquid", "Puree"};
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Edit " + mealType + " Diet");
-
-        // Find current diet position
-        String baseDiet = currentMealDiet.replace(" (ADA)", "");
-        int currentPosition = 0;
-        for (int i = 0; i < diets.length; i++) {
-            if (diets[i].equals(baseDiet)) {
-                currentPosition = i;
-                break;
-            }
-        }
-
-        builder.setSingleChoiceItems(diets, currentPosition, null);
-
-        // Add ADA checkbox for applicable diets
-        final boolean[] isAda = {currentMealAda};
-        builder.setNeutralButton("Toggle ADA", (dialog, which) -> {
-            isAda[0] = !isAda[0];
-            // Visual feedback
-            Toast.makeText(this, "ADA: " + (isAda[0] ? "ON" : "OFF"), Toast.LENGTH_SHORT).show();
-        });
-
-        builder.setPositiveButton("Save", (dialog, which) -> {
-            ListView listView = ((AlertDialog) dialog).getListView();
-            int selectedPosition = listView.getCheckedItemPosition();
-            if (selectedPosition >= 0) {
-                String newDiet = diets[selectedPosition];
-                saveMealDietChange(mealType, newDiet, isAda[0]);
-            }
-        });
-
-        builder.setNegativeButton("Cancel", null);
-        builder.show();
+    private void showSimpleEditMealDietDialog(String mealType, String currentDiet, boolean isAda) {
+        // Simple implementation
+        Toast.makeText(this, "Edit " + mealType + " diet feature coming soon", Toast.LENGTH_SHORT).show();
     }
 
-    private void saveMealDietChange(String mealType, String newDiet, boolean isAda) {
-        try {
-            // Update the patient's individual meal diet
-            boolean success = patientDAO.updateMealDiet(currentPatient.getPatientId(), mealType, newDiet, isAda);
-
-            if (success) {
-                // Update local patient object
-                switch (mealType.toLowerCase()) {
-                    case "breakfast":
-                        currentPatient.setBreakfastDiet(newDiet);
-                        currentPatient.setBreakfastAda(isAda);
-                        break;
-                    case "lunch":
-                        currentPatient.setLunchDiet(newDiet);
-                        currentPatient.setLunchAda(isAda);
-                        break;
-                    case "dinner":
-                        currentPatient.setDinnerDiet(newDiet);
-                        currentPatient.setDinnerAda(isAda);
-                        break;
-                }
-
-                Toast.makeText(this, mealType + " diet updated successfully!", Toast.LENGTH_SHORT).show();
-
-                // Reload meal items to reflect changes
-                loadMealItems();
-
-            } else {
-                Toast.makeText(this, "Failed to update " + mealType.toLowerCase() + " diet", Toast.LENGTH_SHORT).show();
-            }
-
-        } catch (Exception e) {
-            Toast.makeText(this, "Error updating meal diet: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            Log.e(TAG, "Error updating meal diet", e);
+    private String getPredeterminedItemsForMeal(String mealDiet, String mealType, boolean isAda) {
+        // Simple implementation - return basic items based on meal type
+        switch (mealType.toLowerCase()) {
+            case "breakfast":
+                return "• Standard breakfast items based on " + mealDiet + " diet\n• Items will be provided according to dietary restrictions";
+            case "lunch":
+                return "• Standard lunch items based on " + mealDiet + " diet\n• Items will be provided according to dietary restrictions";
+            case "dinner":
+                return "• Standard dinner items based on " + mealDiet + " diet\n• Items will be provided according to dietary restrictions";
+            default:
+                return "• Items will be provided based on " + mealDiet + " diet";
         }
-    }
-
-    private String getPredeterminedItemsForMeal(String dietType, String mealType, boolean isADA) {
-        StringBuilder items = new StringBuilder();
-
-        if (dietType.contains("Clear Liquid")) {
-            // Clear Liquid diet items
-            if (isADA) {
-                items.append("• Apple Juice (ADA)\n");
-                items.append("• Sprite Zero (ADA)\n");
-                items.append("• Sugar Free Jello (ADA)\n");
-            } else {
-                items.append("• Orange Juice\n");
-                items.append("• Sprite\n");
-                items.append("• Jello\n");
-            }
-            items.append("• Clear Broth\n");
-            items.append("• Water\n");
-            items.append("• Tea/Coffee\n");
-
-        } else if (dietType.contains("Full Liquid")) {
-            // Full Liquid diet items
-            switch (mealType) {
-                case "Breakfast":
-                    items.append("• Apple Juice (120ml)\n");
-                    items.append("• Jello").append(isADA ? " (Sugar Free)" : "").append("\n");
-                    items.append("• Cream of Wheat\n");
-                    items.append("• Coffee (200ml)\n");
-                    items.append("• ").append(isADA ? "2% Milk (240ml)" : "Whole Milk (240ml)").append("\n");
-                    items.append("• ").append(isADA ? "Sprite Zero (355ml)" : "Sprite (355ml)").append("\n");
-                    items.append("• Ensure (240ml)\n");
-                    break;
-
-                case "Lunch":
-                    items.append("• Cranberry Juice (120ml)\n");
-                    items.append("• Jello").append(isADA ? " (Sugar Free)" : "").append("\n");
-                    items.append("• Cream of Chicken Soup\n");
-                    items.append("• Pudding").append(isADA ? " (Sugar Free)" : "").append("\n");
-                    items.append("• ").append(isADA ? "2% Milk (240ml)" : "Whole Milk (240ml)").append("\n");
-                    items.append("• ").append(isADA ? "Sprite Zero (355ml)" : "Sprite (355ml)").append("\n");
-                    items.append("• Ensure (240ml)\n");
-                    break;
-
-                case "Dinner":
-                    items.append("• Apple Juice (120ml)\n");
-                    items.append("• Jello").append(isADA ? " (Sugar Free)" : "").append("\n");
-                    items.append("• Tomato Soup\n");
-                    items.append("• Pudding").append(isADA ? " (Sugar Free)" : "").append("\n");
-                    items.append("• ").append(isADA ? "2% Milk (240ml)" : "Whole Milk (240ml)").append("\n");
-                    items.append("• ").append(isADA ? "Sprite Zero (355ml)" : "Sprite (355ml)").append("\n");
-                    items.append("• Ensure (240ml)\n");
-                    break;
-            }
-
-        } else if (dietType.contains("Puree")) {
-            // Puree diet items
-            switch (mealType) {
-                case "Breakfast":
-                    items.append("• Pureed Scrambled Eggs\n");
-                    items.append("• Pureed Oatmeal\n");
-                    items.append("• Apple Juice\n");
-                    items.append("• Coffee\n");
-                    break;
-                case "Lunch":
-                    items.append("• Pureed Chicken\n");
-                    items.append("• Pureed Potatoes\n");
-                    items.append("• Pureed Vegetables\n");
-                    items.append("• Thickened Liquids\n");
-                    break;
-                case "Dinner":
-                    items.append("• Pureed Beef\n");
-                    items.append("• Pureed Rice\n");
-                    items.append("• Pureed Carrots\n");
-                    items.append("• Pudding").append(isADA ? " (Sugar Free)" : "").append("\n");
-                    break;
-            }
-        }
-
-        return items.toString();
     }
 
     private void loadRegularMealItems() {
-        // For regular diets, add simple text indicating standard items
+        // For non-liquid diets, show standard meal planning interface
         if (breakfastSection != null) {
             TextView breakfastNote = new TextView(this);
             breakfastNote.setText("Standard breakfast items will be provided based on diet type.");
@@ -457,10 +320,14 @@ public class MealPlanningActivity extends AppCompatActivity {
 
             if (success) {
                 Toast.makeText(this, "Meal plan saved successfully!", Toast.LENGTH_SHORT).show();
-                setResult(RESULT_OK);
+
+                // Return to previous activity
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra("meal_plan_saved", true);
+                setResult(RESULT_OK, resultIntent);
                 finish();
             } else {
-                Toast.makeText(this, "Error saving meal plan", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Failed to save meal plan", Toast.LENGTH_SHORT).show();
             }
 
         } catch (Exception e) {
@@ -471,11 +338,10 @@ public class MealPlanningActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Skip menu inflation if menu file doesn't exist
         try {
             getMenuInflater().inflate(R.menu.menu_meal_planning, menu);
         } catch (Exception e) {
-            Log.d(TAG, "Menu file not found, skipping");
+            Log.d(TAG, "Menu file not found, skipping menu inflation");
         }
         return true;
     }
@@ -485,9 +351,6 @@ public class MealPlanningActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
-                return true;
-            case R.id.action_save:
-                saveMealPlan();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

@@ -27,15 +27,12 @@ public class PatientInfoActivity extends AppCompatActivity {
     private String currentUserRole;
     private String currentUserFullName;
 
-    // UI Components that may or may not exist in your layout
-    private Button newPatientButton, pendingOrdersButton, retiredOrdersButton;
-    private ListView existingPatientsListView;
-    private TextView noPatientsText;
-    private EditText searchEditText;
-    private Button searchButton, clearSearchButton;
+    // UI Components - only reference IDs that actually exist
+    private ListView patientsListView; // This is the actual ID in the layout
+    private TextView noPatientsText; // We'll create this dynamically
+    private EditText searchInput; // This is the actual ID in the layout
 
-    // Edit patient dialog components will be created dynamically
-    private AlertDialog editPatientDialog;
+    // No search buttons exist in the layout, so we'll rely on text change listener
 
     private List<Patient> allPatients = new ArrayList<>();
     private List<Patient> displayedPatients = new ArrayList<>();
@@ -68,94 +65,68 @@ public class PatientInfoActivity extends AppCompatActivity {
     }
 
     private void initializeViews() {
-        // Main buttons - handle if they don't exist
-        newPatientButton = findViewById(R.id.newPatientButton);
-        pendingOrdersButton = findViewById(R.id.pendingOrdersButton);
-        retiredOrdersButton = findViewById(R.id.retiredOrdersButton);
+        // FIXED: Use the correct IDs that actually exist in the layout
+        patientsListView = findViewById(R.id.patientsListView);
+        searchInput = findViewById(R.id.searchInput);
 
-        // Patient list - handle if they don't exist
-        existingPatientsListView = findViewById(R.id.existingPatientsListView);
-        if (existingPatientsListView == null) {
-            existingPatientsListView = findViewById(R.id.patientsListView);
-        }
+        // The layout doesn't have noPatientsText, so create it dynamically
+        createNoPatientsTextView();
 
-        noPatientsText = findViewById(R.id.noPatientsText);
-        if (noPatientsText == null) {
-            noPatientsText = findViewById(R.id.noDataText);
+        if (patientsListView == null) {
+            Toast.makeText(this, "Patient list not found in layout", Toast.LENGTH_LONG).show();
+            Log.e(TAG, "ListView with ID patientsListView not found in layout");
         }
-        if (noPatientsText == null) {
-            noPatientsText = findViewById(R.id.emptyText);
-        }
+    }
 
-        // Search functionality - handle if they don't exist
-        searchEditText = findViewById(R.id.searchEditText);
-        if (searchEditText == null) {
-            searchEditText = findViewById(R.id.searchInput);
-        }
+    private void createNoPatientsTextView() {
+        // Create the missing noPatientsText TextView dynamically
+        noPatientsText = new TextView(this);
+        noPatientsText.setText("No patients found");
+        noPatientsText.setTextSize(16);
+        noPatientsText.setTextColor(getResources().getColor(android.R.color.darker_gray));
+        noPatientsText.setPadding(20, 40, 20, 40);
+        noPatientsText.setGravity(android.view.Gravity.CENTER);
+        noPatientsText.setVisibility(View.GONE);
 
-        searchButton = findViewById(R.id.searchButton);
-        if (searchButton == null) {
-            searchButton = findViewById(R.id.btnSearch);
-        }
-
-        clearSearchButton = findViewById(R.id.clearSearchButton);
-        if (clearSearchButton == null) {
-            clearSearchButton = findViewById(R.id.btnClear);
-        }
-
-        // If we can't find the list view, show an error
-        if (existingPatientsListView == null) {
-            Toast.makeText(this, "Patient list not found in layout. Please check layout file.", Toast.LENGTH_LONG).show();
-            Log.e(TAG, "ListView with ID existingPatientsListView not found in layout");
+        // Add it to the root layout
+        ViewGroup rootLayout = findViewById(android.R.id.content);
+        if (rootLayout instanceof ViewGroup) {
+            ((ViewGroup) rootLayout).addView(noPatientsText);
         }
     }
 
     private void setupListeners() {
-        if (newPatientButton != null) {
-            newPatientButton.setOnClickListener(v -> openNewPatient());
-        } else {
-            Log.w(TAG, "newPatientButton not found in layout");
-        }
-
-        if (pendingOrdersButton != null) {
-            pendingOrdersButton.setOnClickListener(v -> openPendingOrders());
-        } else {
-            Log.w(TAG, "pendingOrdersButton not found in layout");
-        }
-
-        if (retiredOrdersButton != null) {
-            retiredOrdersButton.setOnClickListener(v -> openRetiredOrders());
-        } else {
-            Log.w(TAG, "retiredOrdersButton not found in layout");
-        }
-
-        if (searchButton != null) {
-            searchButton.setOnClickListener(v -> performSearch());
-        } else {
-            Log.w(TAG, "searchButton not found in layout");
-        }
-
-        if (clearSearchButton != null) {
-            clearSearchButton.setOnClickListener(v -> clearSearch());
-        } else {
-            Log.w(TAG, "clearSearchButton not found in layout");
-        }
-
         // Set up patients list click listeners
-        if (existingPatientsListView != null) {
-            existingPatientsListView.setOnItemClickListener((parent, view, position, id) -> {
+        if (patientsListView != null) {
+            patientsListView.setOnItemClickListener((parent, view, position, id) -> {
                 if (position < displayedPatients.size()) {
                     Patient patient = displayedPatients.get(position);
                     showPatientOptionsDialog(patient);
                 }
             });
 
-            existingPatientsListView.setOnItemLongClickListener((parent, view, position, id) -> {
+            patientsListView.setOnItemLongClickListener((parent, view, position, id) -> {
                 if (position < displayedPatients.size()) {
                     Patient patient = displayedPatients.get(position);
                     showDeleteConfirmationDialog(patient);
                 }
                 return true;
+            });
+        }
+
+        // Set up search functionality - use TextWatcher since no search button exists
+        if (searchInput != null) {
+            searchInput.addTextChangedListener(new android.text.TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    performSearch();
+                }
+
+                @Override
+                public void afterTextChanged(android.text.Editable s) {}
             });
         }
     }
@@ -176,22 +147,28 @@ public class PatientInfoActivity extends AppCompatActivity {
 
     private void updateDisplayedPatients() {
         displayedPatients.clear();
-        displayedPatients.addAll(allPatients);
 
-        if (existingPatientsListView != null) {
-            if (displayedPatients.isEmpty()) {
-                existingPatientsListView.setVisibility(View.GONE);
-                if (noPatientsText != null) {
-                    noPatientsText.setVisibility(View.VISIBLE);
-                    noPatientsText.setText("No patients found");
-                }
-            } else {
-                existingPatientsListView.setVisibility(View.VISIBLE);
-                if (noPatientsText != null) {
-                    noPatientsText.setVisibility(View.GONE);
-                }
+        String searchQuery = "";
+        if (searchInput != null) {
+            searchQuery = searchInput.getText().toString().toLowerCase().trim();
+        }
 
-                // Create custom adapter for patient display
+        if (searchQuery.isEmpty()) {
+            displayedPatients.addAll(allPatients);
+        } else {
+            for (Patient patient : allPatients) {
+                if (patient.getFullName().toLowerCase().contains(searchQuery) ||
+                        patient.getWing().toLowerCase().contains(searchQuery) ||
+                        patient.getRoomNumber().toLowerCase().contains(searchQuery) ||
+                        patient.getDiet().toLowerCase().contains(searchQuery)) {
+                    displayedPatients.add(patient);
+                }
+            }
+        }
+
+        // Update UI
+        if (patientsListView != null) {
+            if (patientsAdapter == null) {
                 patientsAdapter = new ArrayAdapter<Patient>(this, android.R.layout.simple_list_item_2, android.R.id.text1, displayedPatients) {
                     @Override
                     public View getView(int position, View convertView, ViewGroup parent) {
@@ -203,216 +180,95 @@ public class PatientInfoActivity extends AppCompatActivity {
 
                         if (patient != null) {
                             text1.setText(patient.getFullName());
-                            text2.setText(patient.getLocationInfo() + " • " + patient.getDiet());
+
+                            String statusText = String.format("%s - Room %s | %s",
+                                    patient.getWing(),
+                                    patient.getRoomNumber(),
+                                    patient.getDiet());
+
+                            text2.setText(statusText);
+                            text2.setTextSize(12);
+                            text2.setTextColor(getResources().getColor(android.R.color.darker_gray));
                         }
 
                         return view;
                     }
                 };
-
-                existingPatientsListView.setAdapter(patientsAdapter);
+                patientsListView.setAdapter(patientsAdapter);
+            } else {
+                patientsAdapter.notifyDataSetChanged();
             }
-        } else {
-            // If no ListView found, create a simple text display
-            if (noPatientsText != null) {
-                noPatientsText.setVisibility(View.VISIBLE);
-                if (displayedPatients.isEmpty()) {
-                    noPatientsText.setText("No patients found");
-                } else {
-                    StringBuilder patientsText = new StringBuilder("Patients:\n");
-                    for (Patient patient : displayedPatients) {
-                        patientsText.append("• ").append(patient.getFullName())
-                                .append(" (").append(patient.getLocationInfo()).append(")\n");
+
+            // Show/hide empty state
+            if (displayedPatients.isEmpty()) {
+                patientsListView.setVisibility(View.GONE);
+                if (noPatientsText != null) {
+                    noPatientsText.setVisibility(View.VISIBLE);
+                    if (allPatients.isEmpty()) {
+                        noPatientsText.setText("No patients found.\nAdd a new patient to get started.");
+                    } else {
+                        noPatientsText.setText("No patients match your search criteria.");
                     }
-                    noPatientsText.setText(patientsText.toString());
+                }
+            } else {
+                patientsListView.setVisibility(View.VISIBLE);
+                if (noPatientsText != null) {
+                    noPatientsText.setVisibility(View.GONE);
                 }
             }
         }
     }
 
     private void performSearch() {
-        if (searchEditText == null) {
-            Toast.makeText(this, "Search not available", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        String searchTerm = searchEditText.getText().toString().trim();
-
-        if (searchTerm.isEmpty()) {
-            clearSearch();
-            return;
-        }
-
-        try {
-            List<Patient> searchResults = patientDAO.searchPatients(searchTerm);
-            displayedPatients.clear();
-            displayedPatients.addAll(searchResults);
-
-            if (patientsAdapter != null) {
-                patientsAdapter.notifyDataSetChanged();
-            }
-
-            if (displayedPatients.isEmpty()) {
-                if (noPatientsText != null) {
-                    noPatientsText.setVisibility(View.VISIBLE);
-                    noPatientsText.setText("No patients found matching \"" + searchTerm + "\"");
-                }
-                if (existingPatientsListView != null) {
-                    existingPatientsListView.setVisibility(View.GONE);
-                }
-            } else {
-                if (existingPatientsListView != null) {
-                    existingPatientsListView.setVisibility(View.VISIBLE);
-                }
-                if (noPatientsText != null) {
-                    noPatientsText.setVisibility(View.GONE);
-                }
-            }
-
-            Log.d(TAG, "Search for '" + searchTerm + "' returned " + searchResults.size() + " results");
-
-        } catch (Exception e) {
-            Toast.makeText(this, "Search error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            Log.e(TAG, "Error performing search", e);
-        }
-    }
-
-    private void clearSearch() {
-        if (searchEditText != null) {
-            searchEditText.setText("");
-        }
         updateDisplayedPatients();
     }
 
     private void showPatientOptionsDialog(Patient patient) {
         selectedPatient = patient;
 
-        String[] options = {"Edit Patient", "View Details", "Plan Meals"};
-
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(patient.getFullName())
-                .setItems(options, (dialog, which) -> {
-                    switch (which) {
-                        case 0: // Edit Patient
-                            showEditPatientDialog(patient);
-                            break;
-                        case 1: // View Details
-                            showPatientDetailsDialog(patient);
-                            break;
-                        case 2: // Plan Meals
-                            openMealPlanning(patient);
-                            break;
-                    }
-                })
-                .setNegativeButton("Cancel", null)
-                .show();
-    }
+        builder.setTitle("Patient Options: " + patient.getFullName());
 
-    private void showEditPatientDialog(Patient patient) {
-        // Create a simple edit dialog since your layout files have complex nested structures
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Edit Patient: " + patient.getFullName());
+        String[] options = {"View Details", "Edit Patient", "Plan Meals", "Delete Patient"};
 
-        // Create a simple vertical layout for basic edits
-        LinearLayout layout = new LinearLayout(this);
-        layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setPadding(50, 40, 50, 10);
-
-        // First Name
-        final EditText firstNameInput = new EditText(this);
-        firstNameInput.setText(patient.getPatientFirstName());
-        firstNameInput.setHint("First Name");
-        layout.addView(firstNameInput);
-
-        // Last Name
-        final EditText lastNameInput = new EditText(this);
-        lastNameInput.setText(patient.getPatientLastName());
-        lastNameInput.setHint("Last Name");
-        layout.addView(lastNameInput);
-
-        // Wing Spinner
-        final Spinner wingSpinner = new Spinner(this);
-        String[] wings = {"1 South", "2 North", "Labor and Delivery", "2 West", "3 North", "ICU"};
-        ArrayAdapter<String> wingAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, wings);
-        wingAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        wingSpinner.setAdapter(wingAdapter);
-        // Set current wing
-        for (int i = 0; i < wings.length; i++) {
-            if (wings[i].equals(patient.getWing())) {
-                wingSpinner.setSelection(i);
-                break;
-            }
-        }
-        layout.addView(wingSpinner);
-
-        // Room Input (simplified - you could make this dynamic like in NewPatient)
-        final EditText roomInput = new EditText(this);
-        roomInput.setText(patient.getRoomNumber());
-        roomInput.setHint("Room Number");
-        layout.addView(roomInput);
-
-        // Diet Spinner
-        final Spinner dietSpinner = new Spinner(this);
-        String[] diets = {"Regular", "ADA", "Cardiac", "Renal", "Clear Liquid", "Full Liquid", "Puree"};
-        ArrayAdapter<String> dietAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, diets);
-        dietAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        dietSpinner.setAdapter(dietAdapter);
-        // Set current diet
-        String currentDiet = patient.getDiet().replace(" (ADA)", "");
-        for (int i = 0; i < diets.length; i++) {
-            if (diets[i].equals(currentDiet)) {
-                dietSpinner.setSelection(i);
-                break;
-            }
-        }
-        layout.addView(dietSpinner);
-
-        // ADA CheckBox
-        final CheckBox adaCheckBox = new CheckBox(this);
-        adaCheckBox.setText("ADA Diet");
-        adaCheckBox.setChecked(patient.isAdaDiet());
-        layout.addView(adaCheckBox);
-
-        builder.setView(layout);
-
-        builder.setPositiveButton("Save", (dialog, which) -> {
-            // Update patient with new values
-            patient.setPatientFirstName(firstNameInput.getText().toString().trim());
-            patient.setPatientLastName(lastNameInput.getText().toString().trim());
-            patient.setWing(wingSpinner.getSelectedItem().toString());
-            patient.setRoomNumber(roomInput.getText().toString().trim());
-
-            // Handle diet and ADA
-            String selectedDiet = dietSpinner.getSelectedItem().toString();
-            boolean isAdaSelected = adaCheckBox.isChecked();
-
-            if (isAdaSelected && (selectedDiet.equals("Clear Liquid") || selectedDiet.equals("Full Liquid") || selectedDiet.equals("Puree"))) {
-                patient.setDiet(selectedDiet + " (ADA)");
-                patient.setAdaDiet(true);
-            } else {
-                patient.setDiet(selectedDiet);
-                patient.setAdaDiet(false);
-            }
-
-            // Save to database
-            try {
-                boolean success = patientDAO.updatePatient(patient);
-
-                if (success) {
-                    Toast.makeText(this, "Patient updated successfully!", Toast.LENGTH_SHORT).show();
-                    loadPatients(); // Refresh the list
-                } else {
-                    Toast.makeText(this, "Failed to update patient", Toast.LENGTH_SHORT).show();
-                }
-
-            } catch (Exception e) {
-                Toast.makeText(this, "Error updating patient: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                Log.e(TAG, "Error updating patient", e);
+        builder.setItems(options, (dialog, which) -> {
+            switch (which) {
+                case 0: // View Details
+                    showPatientDetailsDialog(patient);
+                    break;
+                case 1: // Edit Patient
+                    editPatient(patient);
+                    break;
+                case 2: // Plan Meals
+                    planMeals(patient);
+                    break;
+                case 3: // Delete Patient
+                    showDeleteConfirmationDialog(patient);
+                    break;
             }
         });
 
-        builder.setNegativeButton("Cancel", null);
         builder.show();
+    }
+
+    private void editPatient(Patient patient) {
+        Intent intent = new Intent(this, NewPatientActivity.class);
+        intent.putExtra("edit_patient_id", patient.getPatientId());
+        intent.putExtra("current_user", currentUsername);
+        intent.putExtra("user_role", currentUserRole);
+        intent.putExtra("user_full_name", currentUserFullName);
+        startActivityForResult(intent, REQUEST_EDIT_PATIENT);
+    }
+
+    private void planMeals(Patient patient) {
+        Intent intent = new Intent(this, MealPlanningActivity.class);
+        intent.putExtra("patient_id", (long) patient.getPatientId());
+        intent.putExtra("diet", patient.getDiet());
+        intent.putExtra("is_ada_diet", patient.isAdaDiet());
+        intent.putExtra("current_user", currentUsername);
+        intent.putExtra("user_role", currentUserRole);
+        intent.putExtra("user_full_name", currentUserFullName);
+        startActivity(intent);
     }
 
     private void showPatientDetailsDialog(Patient patient) {
@@ -438,62 +294,22 @@ public class PatientInfoActivity extends AppCompatActivity {
         new AlertDialog.Builder(this)
                 .setTitle("Delete Patient")
                 .setMessage("Are you sure you want to delete " + patient.getFullName() + "?")
-                .setPositiveButton("Delete", (dialog, which) -> deletePatient(patient))
+                .setPositiveButton("Delete", (dialog, which) -> {
+                    try {
+                        boolean success = patientDAO.deletePatient(patient.getPatientId());
+                        if (success) {
+                            Toast.makeText(this, "Patient deleted successfully", Toast.LENGTH_SHORT).show();
+                            loadPatients(); // Refresh the list
+                        } else {
+                            Toast.makeText(this, "Failed to delete patient", Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (Exception e) {
+                        Toast.makeText(this, "Error deleting patient: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Log.e(TAG, "Error deleting patient", e);
+                    }
+                })
                 .setNegativeButton("Cancel", null)
-                .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
-    }
-
-    private void deletePatient(Patient patient) {
-        try {
-            boolean success = patientDAO.deletePatient(patient.getPatientId());
-
-            if (success) {
-                Toast.makeText(this, "Patient deleted successfully", Toast.LENGTH_SHORT).show();
-                loadPatients(); // Refresh the list
-            } else {
-                Toast.makeText(this, "Failed to delete patient", Toast.LENGTH_SHORT).show();
-            }
-
-        } catch (Exception e) {
-            Toast.makeText(this, "Error deleting patient: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            Log.e(TAG, "Error deleting patient", e);
-        }
-    }
-
-    private void openNewPatient() {
-        Intent intent = new Intent(this, NewPatientActivity.class);
-        intent.putExtra("current_user", currentUsername);
-        intent.putExtra("user_role", currentUserRole);
-        intent.putExtra("user_full_name", currentUserFullName);
-        startActivityForResult(intent, REQUEST_NEW_PATIENT);
-    }
-
-    private void openPendingOrders() {
-        Intent intent = new Intent(this, PendingOrdersActivity.class);
-        intent.putExtra("current_user", currentUsername);
-        intent.putExtra("user_role", currentUserRole);
-        intent.putExtra("user_full_name", currentUserFullName);
-        startActivity(intent);
-    }
-
-    private void openRetiredOrders() {
-        Intent intent = new Intent(this, RetiredOrdersActivity.class);
-        intent.putExtra("current_user", currentUsername);
-        intent.putExtra("user_role", currentUserRole);
-        intent.putExtra("user_full_name", currentUserFullName);
-        startActivity(intent);
-    }
-
-    private void openMealPlanning(Patient patient) {
-        Intent intent = new Intent(this, MealPlanningActivity.class);
-        intent.putExtra("patient_id", (long) patient.getPatientId());
-        intent.putExtra("diet", patient.getDiet());
-        intent.putExtra("is_ada_diet", patient.isAdaDiet());
-        intent.putExtra("current_user", currentUsername);
-        intent.putExtra("user_role", currentUserRole);
-        intent.putExtra("user_full_name", currentUserFullName);
-        startActivity(intent);
     }
 
     @Override
@@ -516,7 +332,7 @@ public class PatientInfoActivity extends AppCompatActivity {
         try {
             getMenuInflater().inflate(R.menu.menu_patient_info, menu);
         } catch (Exception e) {
-            Log.d(TAG, "Menu file not found, skipping");
+            Log.d(TAG, "Menu file not found, skipping menu inflation");
         }
         return true;
     }

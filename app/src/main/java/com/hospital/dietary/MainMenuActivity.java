@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,6 +28,9 @@ public class MainMenuActivity extends AppCompatActivity {
     private Button userManagementButton;
     private Button itemManagementButton;
     private Button logoutButton;
+
+    // FIXED: Added admin tools section container
+    private LinearLayout adminToolsSection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +64,9 @@ public class MainMenuActivity extends AppCompatActivity {
         userManagementButton = findViewById(R.id.userManagementButton);
         itemManagementButton = findViewById(R.id.itemManagementButton);
         logoutButton = findViewById(R.id.logoutButton);
+
+        // FIXED: Get reference to admin tools section container
+        adminToolsSection = findViewById(R.id.adminToolsSection);
     }
 
     private void setupUserInterface() {
@@ -71,17 +79,27 @@ public class MainMenuActivity extends AppCompatActivity {
         }
         welcomeText.setText(welcomeMessage);
 
-        // Configure buttons based on user role
+        // FIXED: Configure admin tools section based on user role
         if ("Admin".equalsIgnoreCase(currentUserRole)) {
-            // Admin can see all buttons - no changes needed
-            userManagementButton.setEnabled(true);
-            itemManagementButton.setEnabled(true);
+            // Admin users: Show entire admin tools section with full functionality
+            if (adminToolsSection != null) {
+                adminToolsSection.setVisibility(View.VISIBLE);
+            }
+            if (userManagementButton != null) {
+                userManagementButton.setVisibility(View.VISIBLE);
+                userManagementButton.setEnabled(true);
+                userManagementButton.setAlpha(1.0f);
+            }
+            if (itemManagementButton != null) {
+                itemManagementButton.setVisibility(View.VISIBLE);
+                itemManagementButton.setEnabled(true);
+                itemManagementButton.setAlpha(1.0f);
+            }
         } else {
-            // Non-admin users - hide admin tools
-            userManagementButton.setEnabled(false);
-            userManagementButton.setAlpha(0.5f);
-            itemManagementButton.setEnabled(false);
-            itemManagementButton.setAlpha(0.5f);
+            // Non-admin users: Completely hide the entire admin tools section
+            if (adminToolsSection != null) {
+                adminToolsSection.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -95,22 +113,26 @@ public class MainMenuActivity extends AppCompatActivity {
         productionSheetsButton.setOnClickListener(v -> openProductionSheets());
         stockSheetsButton.setOnClickListener(v -> openStockSheets());
 
-        // Admin Tools Section
-        userManagementButton.setOnClickListener(v -> {
-            if ("Admin".equalsIgnoreCase(currentUserRole)) {
-                openUserManagement();
-            } else {
-                showAccessDeniedMessage();
-            }
-        });
+        // Admin Tools Section - FIXED: Only set listeners if buttons exist and user is admin
+        if (userManagementButton != null) {
+            userManagementButton.setOnClickListener(v -> {
+                if ("Admin".equalsIgnoreCase(currentUserRole)) {
+                    openUserManagement();
+                } else {
+                    showAccessDeniedMessage();
+                }
+            });
+        }
 
-        itemManagementButton.setOnClickListener(v -> {
-            if ("Admin".equalsIgnoreCase(currentUserRole)) {
-                openItemManagement();
-            } else {
-                showAccessDeniedMessage();
-            }
-        });
+        if (itemManagementButton != null) {
+            itemManagementButton.setOnClickListener(v -> {
+                if ("Admin".equalsIgnoreCase(currentUserRole)) {
+                    openItemManagement();
+                } else {
+                    showAccessDeniedMessage();
+                }
+            });
+        }
 
         // Logout
         logoutButton.setOnClickListener(v -> showLogoutConfirmation());
