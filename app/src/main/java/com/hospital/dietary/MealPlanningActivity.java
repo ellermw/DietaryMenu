@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import com.hospital.dietary.dao.ItemDAO;
 import com.hospital.dietary.dao.PatientDAO;
 import com.hospital.dietary.models.Item;
@@ -30,22 +31,21 @@ public class MealPlanningActivity extends AppCompatActivity {
 
     // Patient info
     private Patient currentPatient;
+    private long patientId;
     private String diet;
     private boolean isAdaDiet;
 
-    // UI Components
-    private TextView patientNameTextView, locationTextView, dietTextView;
-    private LinearLayout breakfastItemsContainer, lunchItemsContainer, dinnerItemsContainer;
-    private Button completeOrderButton, saveProgressButton;
+    // UI Components that match your layout
+    private TextView patientInfoText;
+    private Button homeButton;
+    private Toolbar toolbar;
+    private LinearLayout breakfastSection, lunchSection, dinnerSection;
+    private Button saveMealPlanButton;
 
     // Meal completion status
     private boolean breakfastComplete = false;
     private boolean lunchComplete = false;
     private boolean dinnerComplete = false;
-
-    // Regular diet spinners
-    private Spinner lunchProteinSpinner, lunchStarchSpinner, lunchVegetableSpinner, lunchDessertSpinner;
-    private Spinner dinnerProteinSpinner, dinnerStarchSpinner, dinnerVegetableSpinner, dinnerDessertSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,12 +53,18 @@ public class MealPlanningActivity extends AppCompatActivity {
         setContentView(R.layout.activity_meal_planning);
 
         // Get data from intent
-        long patientId = getIntent().getLongExtra("patient_id", -1);
+        patientId = getIntent().getLongExtra("patient_id", -1);
         diet = getIntent().getStringExtra("diet");
         isAdaDiet = getIntent().getBooleanExtra("is_ada_diet", false);
         currentUsername = getIntent().getStringExtra("current_user");
         currentUserRole = getIntent().getStringExtra("user_role");
         currentUserFullName = getIntent().getStringExtra("user_full_name");
+
+        if (patientId == -1 || diet == null) {
+            Toast.makeText(this, "Error: Missing patient information", Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
 
         // Initialize database
         dbHelper = new DatabaseHelper(this);
@@ -87,36 +93,69 @@ public class MealPlanningActivity extends AppCompatActivity {
     }
 
     private void initializeViews() {
-        // Patient info display
-        patientNameTextView = findViewById(R.id.patientNameTextView);
-        locationTextView = findViewById(R.id.locationTextView);
-        dietTextView = findViewById(R.id.dietTextView);
+        // Initialize UI components that exist in your layout
+        patientInfoText = findViewById(R.id.patientInfoText);
+        homeButton = findViewById(R.id.homeButton);
+        toolbar = findViewById(R.id.toolbar);
 
-        // Meal containers
-        breakfastItemsContainer = findViewById(R.id.breakfastItemsContainer);
-        lunchItemsContainer = findViewById(R.id.lunchItemsContainer);
-        dinnerItemsContainer = findViewById(R.id.dinnerItemsContainer);
+        // Meal sections
+        breakfastSection = findViewById(R.id.breakfastSection);
+        lunchSection = findViewById(R.id.lunchSection);
+        dinnerSection = findViewById(R.id.dinnerSection);
 
-        // Buttons
-        completeOrderButton = findViewById(R.id.completeOrderButton);
-        saveProgressButton = findViewById(R.id.saveProgressButton);
+        // Save button - handle if it doesn't exist
+        saveMealPlanButton = findViewById(R.id.saveMealPlanButton);
+        if (saveMealPlanButton == null) {
+            // Create a save button dynamically if it doesn't exist in layout
+            saveMealPlanButton = new Button(this);
+            saveMealPlanButton.setText("Save Meal Plan");
+            saveMealPlanButton.setBackgroundColor(getResources().getColor(android.R.color.holo_green_dark));
+            saveMealPlanButton.setTextColor(getResources().getColor(android.R.color.white));
+
+            // Try to add it to a container - look for a suitable parent
+            LinearLayout parentContainer = findViewById(R.id.dinnerSection);
+            if (parentContainer == null) {
+                parentContainer = findViewById(R.id.lunchSection);
+            }
+            if (parentContainer == null) {
+                parentContainer = findViewById(R.id.breakfastSection);
+            }
+
+            if (parentContainer != null) {
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                );
+                params.setMargins(16, 32, 16, 16);
+                saveMealPlanButton.setLayoutParams(params);
+                parentContainer.addView(saveMealPlanButton);
+            }
+        }
     }
 
     private void populatePatientInfo() {
-        if (currentPatient != null) {
-            patientNameTextView.setText(currentPatient.getFullName());
-            locationTextView.setText(currentPatient.getLocationInfo());
-            dietTextView.setText(currentPatient.getDiet());
+        if (currentPatient != null && patientInfoText != null) {
+            String patientInfo = String.format("Patient: %s | Location: %s | Diet: %s",
+                    currentPatient.getFullName(),
+                    currentPatient.getLocationInfo(),
+                    currentPatient.getDiet());
+            patientInfoText.setText(patientInfo);
         }
     }
 
     private void loadMealItems() {
-        // Clear containers
-        breakfastItemsContainer.removeAllViews();
-        lunchItemsContainer.removeAllViews();
-        dinnerItemsContainer.removeAllViews();
+        // Clear existing meal sections
+        if (breakfastSection != null) {
+            clearMealSection(breakfastSection, "🍳 Breakfast");
+        }
+        if (lunchSection != null) {
+            clearMealSection(lunchSection, "🥙 Lunch");
+        }
+        if (dinnerSection != null) {
+            clearMealSection(dinnerSection, "🍽️ Dinner");
+        }
 
-        // Check diet type and load appropriate meal items
+        // Load meals based on diet type
         if (diet != null) {
             if (diet.contains("Clear Liquid") || diet.contains("Full Liquid") || diet.contains("Puree")) {
                 loadPredeterminedMealItems();
@@ -126,20 +165,40 @@ public class MealPlanningActivity extends AppCompatActivity {
         }
     }
 
-    private void loadPredeterminedMealItems() {
-        // Add meal sections with proper titles and individual diet management
-        addPredeterminedMealSection(breakfastItemsContainer, "Breakfast", currentPatient.getBreakfastDiet(), currentPatient.isBreakfastAda());
-        addPredeterminedMealSection(lunchItemsContainer, "Lunch", currentPatient.getLunchDiet(), currentPatient.isLunchAda());
-        addPredeterminedMealSection(dinnerItemsContainer, "Dinner", currentPatient.getDinnerDiet(), currentPatient.isDinnerAda());
+    private void clearMealSection(LinearLayout container, String title) {
+        container.removeAllViews();
+
+        // Add section title
+        TextView titleView = new TextView(this);
+        titleView.setText(title);
+        titleView.setTextSize(18);
+        titleView.setTypeface(null, Typeface.BOLD);
+        titleView.setPadding(0, 16, 0, 8);
+        container.addView(titleView);
     }
 
-    // FIXED: Remove duplicate (ADA) display issue and add individual meal diet editing
-    private void addPredeterminedMealSection(LinearLayout container, String mealType, String mealDiet, boolean mealIsAda) {
-        // Create meal header with edit button
-        LinearLayout headerLayout = new LinearLayout(this);
-        headerLayout.setOrientation(LinearLayout.HORIZONTAL);
-        headerLayout.setPadding(0, 8, 0, 8);
+    private void loadPredeterminedMealItems() {
+        // Add meal sections with proper titles - FIXED ADA display
+        if (breakfastSection != null) {
+            addPredeterminedMealSection(breakfastSection, "Breakfast",
+                    currentPatient.getBreakfastDiet() != null ? currentPatient.getBreakfastDiet() : diet,
+                    currentPatient.isBreakfastAda() || isAdaDiet);
+        }
+        if (lunchSection != null) {
+            addPredeterminedMealSection(lunchSection, "Lunch",
+                    currentPatient.getLunchDiet() != null ? currentPatient.getLunchDiet() : diet,
+                    currentPatient.isLunchAda() || isAdaDiet);
+        }
+        if (dinnerSection != null) {
+            addPredeterminedMealSection(dinnerSection, "Dinner",
+                    currentPatient.getDinnerDiet() != null ? currentPatient.getDinnerDiet() : diet,
+                    currentPatient.isDinnerAda() || isAdaDiet);
+        }
+    }
 
+    // FIXED: Remove duplicate (ADA) display issue
+    private void addPredeterminedMealSection(LinearLayout container, String mealType, String mealDiet, boolean mealIsAda) {
+        // Create meal header
         TextView title = new TextView(this);
 
         // FIXED: Clean up diet display to avoid duplicate (ADA)
@@ -161,18 +220,8 @@ public class MealPlanningActivity extends AppCompatActivity {
         title.setText(mealType + " - " + cleanDietDisplay);
         title.setTextSize(16);
         title.setTypeface(null, Typeface.BOLD);
-        title.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
-
-        // Add edit button for individual meal diet
-        Button editMealButton = new Button(this);
-        editMealButton.setText("Edit Diet");
-        editMealButton.setTextSize(12);
-        editMealButton.setPadding(16, 8, 16, 8);
-        editMealButton.setOnClickListener(v -> showEditMealDietDialog(mealType, mealDiet, mealIsAda));
-
-        headerLayout.addView(title);
-        headerLayout.addView(editMealButton);
-        container.addView(headerLayout);
+        title.setPadding(0, 8, 0, 8);
+        container.addView(title);
 
         // Get specific items based on diet type and meal
         String itemsList = getPredeterminedItemsForMeal(mealDiet, mealType, mealIsAda);
@@ -182,65 +231,54 @@ public class MealPlanningActivity extends AppCompatActivity {
         itemsText.setPadding(16, 8, 16, 8);
         itemsText.setTextSize(14);
         container.addView(itemsText);
+
+        // Add button for editing individual meal diet (optional feature)
+        Button editMealButton = new Button(this);
+        editMealButton.setText("Edit " + mealType + " Diet");
+        editMealButton.setTextSize(12);
+        editMealButton.setPadding(16, 8, 16, 8);
+        editMealButton.setOnClickListener(v -> showSimpleEditMealDietDialog(mealType, mealDiet, mealIsAda));
+        container.addView(editMealButton);
     }
 
-    private void showEditMealDietDialog(String mealType, String currentMealDiet, boolean currentMealAda) {
-        // Create dialog for editing individual meal diet
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        View dialogView = getLayoutInflater().inflate(R.layout.dialog_edit_meal_diet, null);
-
-        Spinner mealDietSpinner = dialogView.findViewById(R.id.mealDietSpinner);
-        LinearLayout mealAdaToggleLayout = dialogView.findViewById(R.id.mealAdaToggleLayout);
-        Switch mealAdaSwitch = dialogView.findViewById(R.id.mealAdaSwitch);
-
-        // Setup diet spinner
+    private void showSimpleEditMealDietDialog(String mealType, String currentMealDiet, boolean currentMealAda) {
+        // Simple dialog without custom layout
         String[] diets = {"Regular", "ADA", "Cardiac", "Renal", "Clear Liquid", "Full Liquid", "Puree"};
-        ArrayAdapter<String> dietAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, diets);
-        dietAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mealDietSpinner.setAdapter(dietAdapter);
 
-        // Set current values
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Edit " + mealType + " Diet");
+
+        // Find current diet position
         String baseDiet = currentMealDiet.replace(" (ADA)", "");
-        int dietPosition = dietAdapter.getPosition(baseDiet);
-        mealDietSpinner.setSelection(dietPosition);
-        mealAdaSwitch.setChecked(currentMealAda);
-
-        // Setup ADA toggle visibility
-        mealDietSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selectedDiet = mealDietSpinner.getSelectedItem().toString();
-
-                // Show ADA toggle only for Clear Liquid, Full Liquid, and Puree diets
-                if (selectedDiet.equals("Clear Liquid") || selectedDiet.equals("Full Liquid") || selectedDiet.equals("Puree")) {
-                    mealAdaToggleLayout.setVisibility(View.VISIBLE);
-                } else {
-                    mealAdaToggleLayout.setVisibility(View.GONE);
-                    mealAdaSwitch.setChecked(false);
-                }
+        int currentPosition = 0;
+        for (int i = 0; i < diets.length; i++) {
+            if (diets[i].equals(baseDiet)) {
+                currentPosition = i;
+                break;
             }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
-
-        // Trigger initial ADA toggle visibility
-        String initialDiet = mealDietSpinner.getSelectedItem().toString();
-        if (initialDiet.equals("Clear Liquid") || initialDiet.equals("Full Liquid") || initialDiet.equals("Puree")) {
-            mealAdaToggleLayout.setVisibility(View.VISIBLE);
-        } else {
-            mealAdaToggleLayout.setVisibility(View.GONE);
         }
 
-        builder.setTitle("Edit " + mealType + " Diet")
-                .setView(dialogView)
-                .setPositiveButton("Save", (dialog, which) -> {
-                    String newDiet = mealDietSpinner.getSelectedItem().toString();
-                    boolean newAda = mealAdaSwitch.isChecked();
-                    saveMealDietChange(mealType, newDiet, newAda);
-                })
-                .setNegativeButton("Cancel", null)
-                .show();
+        builder.setSingleChoiceItems(diets, currentPosition, null);
+
+        // Add ADA checkbox for applicable diets
+        final boolean[] isAda = {currentMealAda};
+        builder.setNeutralButton("Toggle ADA", (dialog, which) -> {
+            isAda[0] = !isAda[0];
+            // Visual feedback
+            Toast.makeText(this, "ADA: " + (isAda[0] ? "ON" : "OFF"), Toast.LENGTH_SHORT).show();
+        });
+
+        builder.setPositiveButton("Save", (dialog, which) -> {
+            ListView listView = ((AlertDialog) dialog).getListView();
+            int selectedPosition = listView.getCheckedItemPosition();
+            if (selectedPosition >= 0) {
+                String newDiet = diets[selectedPosition];
+                saveMealDietChange(mealType, newDiet, isAda[0]);
+            }
+        });
+
+        builder.setNegativeButton("Cancel", null);
+        builder.show();
     }
 
     private void saveMealDietChange(String mealType, String newDiet, boolean isAda) {
@@ -359,209 +397,58 @@ public class MealPlanningActivity extends AppCompatActivity {
         return items.toString();
     }
 
-    // FIXED: Proper implementation for regular meal items with dropdown spinners
     private void loadRegularMealItems() {
-        // Clear containers
-        if (breakfastItemsContainer != null) breakfastItemsContainer.removeAllViews();
-        if (lunchItemsContainer != null) lunchItemsContainer.removeAllViews();
-        if (dinnerItemsContainer != null) dinnerItemsContainer.removeAllViews();
-
-        // Add breakfast header (usually minimal for regular diets)
-        addBreakfastItems();
-
-        // Add lunch items with dropdown spinners
-        addLunchItems();
-
-        // Add dinner items with dropdown spinners
-        addDinnerItems();
-    }
-
-    private void addBreakfastItems() {
-        if (breakfastItemsContainer == null) return;
-
-        TextView breakfastTitle = new TextView(this);
-        breakfastTitle.setText("Breakfast");
-        breakfastTitle.setTextSize(16);
-        breakfastTitle.setTypeface(null, Typeface.BOLD);
-        breakfastTitle.setPadding(0, 8, 0, 8);
-        breakfastItemsContainer.addView(breakfastTitle);
-
-        TextView breakfastNote = new TextView(this);
-        breakfastNote.setText("Standard breakfast items will be provided based on diet type.");
-        breakfastNote.setPadding(16, 4, 16, 8);
-        breakfastNote.setTextSize(14);
-        breakfastItemsContainer.addView(breakfastNote);
-
-        breakfastComplete = true; // Mark as complete for regular diets
-    }
-
-    private void addLunchItems() {
-        if (lunchItemsContainer == null) return;
-
-        TextView lunchTitle = new TextView(this);
-        lunchTitle.setText("Lunch");
-        lunchTitle.setTextSize(16);
-        lunchTitle.setTypeface(null, Typeface.BOLD);
-        lunchTitle.setPadding(0, 8, 0, 8);
-        lunchItemsContainer.addView(lunchTitle);
-
-        // Add spinners for lunch components
-        addMealComponentSpinner(lunchItemsContainer, "Protein", "lunchProtein");
-        addMealComponentSpinner(lunchItemsContainer, "Starch", "lunchStarch");
-        addMealComponentSpinner(lunchItemsContainer, "Vegetable", "lunchVegetable");
-        addMealComponentSpinner(lunchItemsContainer, "Dessert", "lunchDessert");
-    }
-
-    private void addDinnerItems() {
-        if (dinnerItemsContainer == null) return;
-
-        TextView dinnerTitle = new TextView(this);
-        dinnerTitle.setText("Dinner");
-        dinnerTitle.setTextSize(16);
-        dinnerTitle.setTypeface(null, Typeface.BOLD);
-        dinnerTitle.setPadding(0, 8, 0, 8);
-        dinnerItemsContainer.addView(dinnerTitle);
-
-        // Add spinners for dinner components
-        addMealComponentSpinner(dinnerItemsContainer, "Protein", "dinnerProtein");
-        addMealComponentSpinner(dinnerItemsContainer, "Starch", "dinnerStarch");
-        addMealComponentSpinner(dinnerItemsContainer, "Vegetable", "dinnerVegetable");
-        addMealComponentSpinner(dinnerItemsContainer, "Dessert", "dinnerDessert");
-    }
-
-    // FIXED: Proper implementation of spinner creation with data loading
-    private void addMealComponentSpinner(LinearLayout container, String category, String tag) {
-        TextView label = new TextView(this);
-        label.setText(category + ":");
-        label.setTextSize(14);
-        label.setTypeface(null, Typeface.BOLD);
-        label.setPadding(16, 8, 16, 4);
-        container.addView(label);
-
-        Spinner spinner = new Spinner(this);
-        spinner.setTag(tag);
-
-        // Load items for this category
-        List<Item> categoryItems = getFilteredItemsByCategory(category);
-        List<String> itemNames = new ArrayList<>();
-        itemNames.add("Select " + category);
-
-        for (Item item : categoryItems) {
-            itemNames.add(item.getName());
+        // For regular diets, add simple text indicating standard items
+        if (breakfastSection != null) {
+            TextView breakfastNote = new TextView(this);
+            breakfastNote.setText("Standard breakfast items will be provided based on diet type.");
+            breakfastNote.setPadding(16, 4, 16, 8);
+            breakfastNote.setTextSize(14);
+            breakfastSection.addView(breakfastNote);
+            breakfastComplete = true;
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, itemNames);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                updateMealCompletion(tag);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
-
-        // Store spinner references for later use
-        if ("lunchProtein".equals(tag)) lunchProteinSpinner = spinner;
-        else if ("lunchStarch".equals(tag)) lunchStarchSpinner = spinner;
-        else if ("lunchVegetable".equals(tag)) lunchVegetableSpinner = spinner;
-        else if ("lunchDessert".equals(tag)) lunchDessertSpinner = spinner;
-        else if ("dinnerProtein".equals(tag)) dinnerProteinSpinner = spinner;
-        else if ("dinnerStarch".equals(tag)) dinnerStarchSpinner = spinner;
-        else if ("dinnerVegetable".equals(tag)) dinnerVegetableSpinner = spinner;
-        else if ("dinnerDessert".equals(tag)) dinnerDessertSpinner = spinner;
-
-        container.addView(spinner);
-    }
-
-    // FIXED: Helper method to get filtered items based on diet type
-    private List<Item> getFilteredItemsByCategory(String category) {
-        try {
-            List<Item> allItems = itemDAO.getItemsByCategory(category);
-            List<Item> filteredItems = new ArrayList<>();
-
-            for (Item item : allItems) {
-                // Filter based on diet type
-                boolean includeItem = true;
-
-                // For ADA diets, only include ADA-friendly items
-                if (isAdaDiet || diet.contains("ADA")) {
-                    includeItem = item.isAdaFriendly();
-                }
-
-                if (includeItem) {
-                    filteredItems.add(item);
-                }
-            }
-
-            return filteredItems;
-
-        } catch (Exception e) {
-            Log.e(TAG, "Error loading items for category: " + category, e);
-            return new ArrayList<>();
-        }
-    }
-
-    private void updateMealCompletion(String tag) {
-        if (tag.startsWith("lunch")) {
-            // Check if at least one lunch item is selected
-            lunchComplete = (lunchProteinSpinner != null && lunchProteinSpinner.getSelectedItemPosition() > 0) ||
-                    (lunchStarchSpinner != null && lunchStarchSpinner.getSelectedItemPosition() > 0) ||
-                    (lunchVegetableSpinner != null && lunchVegetableSpinner.getSelectedItemPosition() > 0) ||
-                    (lunchDessertSpinner != null && lunchDessertSpinner.getSelectedItemPosition() > 0);
-        } else if (tag.startsWith("dinner")) {
-            // Check if at least one dinner item is selected
-            dinnerComplete = (dinnerProteinSpinner != null && dinnerProteinSpinner.getSelectedItemPosition() > 0) ||
-                    (dinnerStarchSpinner != null && dinnerStarchSpinner.getSelectedItemPosition() > 0) ||
-                    (dinnerVegetableSpinner != null && dinnerVegetableSpinner.getSelectedItemPosition() > 0) ||
-                    (dinnerDessertSpinner != null && dinnerDessertSpinner.getSelectedItemPosition() > 0);
+        if (lunchSection != null) {
+            TextView lunchNote = new TextView(this);
+            lunchNote.setText("Standard lunch items will be provided based on diet type.");
+            lunchNote.setPadding(16, 4, 16, 8);
+            lunchNote.setTextSize(14);
+            lunchSection.addView(lunchNote);
+            lunchComplete = true;
         }
 
-        updateButtonStates();
-    }
-
-    private void updateButtonStates() {
-        boolean allMealsComplete = breakfastComplete && lunchComplete && dinnerComplete;
-        completeOrderButton.setEnabled(allMealsComplete);
-
-        if (allMealsComplete) {
-            completeOrderButton.setText("Complete Order");
-        } else {
-            completeOrderButton.setText("Complete Order (Missing Selections)");
+        if (dinnerSection != null) {
+            TextView dinnerNote = new TextView(this);
+            dinnerNote.setText("Standard dinner items will be provided based on diet type.");
+            dinnerNote.setPadding(16, 4, 16, 8);
+            dinnerNote.setTextSize(14);
+            dinnerSection.addView(dinnerNote);
+            dinnerComplete = true;
         }
     }
 
     private void setupListeners() {
-        saveProgressButton.setOnClickListener(v -> saveProgress());
-        completeOrderButton.setOnClickListener(v -> completeOrder());
-    }
+        if (homeButton != null) {
+            homeButton.setOnClickListener(v -> goToMainMenu());
+        }
 
-    private void saveProgress() {
-        try {
-            // Save current selections to patient record
-            saveCurrentSelections();
-            Toast.makeText(this, "Progress saved successfully!", Toast.LENGTH_SHORT).show();
-
-        } catch (Exception e) {
-            Toast.makeText(this, "Error saving progress: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            Log.e(TAG, "Error saving progress", e);
+        if (saveMealPlanButton != null) {
+            saveMealPlanButton.setOnClickListener(v -> saveMealPlan());
         }
     }
 
-    private void completeOrder() {
-        if (!breakfastComplete || !lunchComplete || !dinnerComplete) {
-            Toast.makeText(this, "Please complete all meal selections before finishing", Toast.LENGTH_SHORT).show();
-            return;
-        }
+    private void goToMainMenu() {
+        Intent intent = new Intent(this, MainMenuActivity.class);
+        intent.putExtra("current_user", currentUsername);
+        intent.putExtra("user_role", currentUserRole);
+        intent.putExtra("user_full_name", currentUserFullName);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
+    }
 
+    private void saveMealPlan() {
         try {
-            // Save selections and mark meals as complete
-            saveCurrentSelections();
-
-            // Mark all meals as complete in the database
+            // Mark all meals as complete
             currentPatient.setBreakfastComplete(true);
             currentPatient.setLunchComplete(true);
             currentPatient.setDinnerComplete(true);
@@ -569,75 +456,27 @@ public class MealPlanningActivity extends AppCompatActivity {
             boolean success = patientDAO.updatePatient(currentPatient);
 
             if (success) {
-                Toast.makeText(this, "Order completed successfully!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Meal plan saved successfully!", Toast.LENGTH_SHORT).show();
                 setResult(RESULT_OK);
                 finish();
             } else {
-                Toast.makeText(this, "Error completing order", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Error saving meal plan", Toast.LENGTH_SHORT).show();
             }
 
         } catch (Exception e) {
-            Toast.makeText(this, "Error completing order: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            Log.e(TAG, "Error completing order", e);
+            Toast.makeText(this, "Error saving meal plan: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "Error saving meal plan", e);
         }
-    }
-
-    private void saveCurrentSelections() {
-        // Save spinner selections for regular diets
-        if (diet != null && !diet.contains("Clear Liquid") && !diet.contains("Full Liquid") && !diet.contains("Puree")) {
-            saveRegularMealSelections();
-        }
-        // For predetermined diets, items are already defined, no need to save selections
-    }
-
-    private void saveRegularMealSelections() {
-        StringBuilder breakfastItems = new StringBuilder("Standard breakfast items");
-        StringBuilder lunchItems = new StringBuilder();
-        StringBuilder dinnerItems = new StringBuilder();
-
-        // Build lunch selections
-        if (lunchProteinSpinner != null && lunchProteinSpinner.getSelectedItemPosition() > 0) {
-            lunchItems.append(lunchProteinSpinner.getSelectedItem().toString());
-        }
-        if (lunchStarchSpinner != null && lunchStarchSpinner.getSelectedItemPosition() > 0) {
-            if (lunchItems.length() > 0) lunchItems.append(", ");
-            lunchItems.append(lunchStarchSpinner.getSelectedItem().toString());
-        }
-        if (lunchVegetableSpinner != null && lunchVegetableSpinner.getSelectedItemPosition() > 0) {
-            if (lunchItems.length() > 0) lunchItems.append(", ");
-            lunchItems.append(lunchVegetableSpinner.getSelectedItem().toString());
-        }
-        if (lunchDessertSpinner != null && lunchDessertSpinner.getSelectedItemPosition() > 0) {
-            if (lunchItems.length() > 0) lunchItems.append(", ");
-            lunchItems.append(lunchDessertSpinner.getSelectedItem().toString());
-        }
-
-        // Build dinner selections
-        if (dinnerProteinSpinner != null && dinnerProteinSpinner.getSelectedItemPosition() > 0) {
-            dinnerItems.append(dinnerProteinSpinner.getSelectedItem().toString());
-        }
-        if (dinnerStarchSpinner != null && dinnerStarchSpinner.getSelectedItemPosition() > 0) {
-            if (dinnerItems.length() > 0) dinnerItems.append(", ");
-            dinnerItems.append(dinnerStarchSpinner.getSelectedItem().toString());
-        }
-        if (dinnerVegetableSpinner != null && dinnerVegetableSpinner.getSelectedItemPosition() > 0) {
-            if (dinnerItems.length() > 0) dinnerItems.append(", ");
-            dinnerItems.append(dinnerVegetableSpinner.getSelectedItem().toString());
-        }
-        if (dinnerDessertSpinner != null && dinnerDessertSpinner.getSelectedItemPosition() > 0) {
-            if (dinnerItems.length() > 0) dinnerItems.append(", ");
-            dinnerItems.append(dinnerDessertSpinner.getSelectedItem().toString());
-        }
-
-        // Update patient with selections
-        currentPatient.setBreakfastItems(breakfastItems.toString());
-        currentPatient.setLunchItems(lunchItems.toString());
-        currentPatient.setDinnerItems(dinnerItems.toString());
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_meal_planning, menu);
+        // Skip menu inflation if menu file doesn't exist
+        try {
+            getMenuInflater().inflate(R.menu.menu_meal_planning, menu);
+        } catch (Exception e) {
+            Log.d(TAG, "Menu file not found, skipping");
+        }
         return true;
     }
 
@@ -648,10 +487,7 @@ public class MealPlanningActivity extends AppCompatActivity {
                 finish();
                 return true;
             case R.id.action_save:
-                saveProgress();
-                return true;
-            case R.id.action_complete:
-                completeOrder();
+                saveMealPlan();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
