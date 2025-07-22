@@ -2,11 +2,9 @@ package com.hospital.dietary;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class PatientInfoMenuActivity extends AppCompatActivity {
@@ -15,10 +13,11 @@ public class PatientInfoMenuActivity extends AppCompatActivity {
     private String currentUserRole;
     private String currentUserFullName;
 
+    // UI Components
+    private TextView backArrow;
     private Button newPatientButton;
-    private Button existingPatientButton;
-    private Button backButton;
-    private TextView welcomeText;
+    private Button existingPatientsButton;
+    private Button backToMainMenuButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,37 +29,50 @@ public class PatientInfoMenuActivity extends AppCompatActivity {
         currentUserRole = getIntent().getStringExtra("user_role");
         currentUserFullName = getIntent().getStringExtra("user_full_name");
 
-        // Set title and enable up button using default action bar
+        // Hide the default action bar since we have custom header
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle("Patient Information");
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().hide();
         }
 
-        initializeUI();
+        initializeViews();
         setupListeners();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_with_home, menu);
-        return true;
+    private void initializeViews() {
+        backArrow = findViewById(R.id.backArrow);
+        newPatientButton = findViewById(R.id.newPatientButton);
+        existingPatientsButton = findViewById(R.id.existingPatientsButton);
+        backToMainMenuButton = findViewById(R.id.backToMainMenuButton);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                return true;
-            case R.id.action_home:
-                goToMainMenu();
-                return true;
-            case R.id.action_refresh:
-                Toast.makeText(this, "Menu refreshed", Toast.LENGTH_SHORT).show();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+    private void setupListeners() {
+        // Back arrow in header
+        backArrow.setOnClickListener(v -> goToMainMenu());
+
+        // New Patient button
+        newPatientButton.setOnClickListener(v -> openNewPatient());
+
+        // Existing Patients button
+        existingPatientsButton.setOnClickListener(v -> openExistingPatients());
+
+        // Back to Main Menu button
+        backToMainMenuButton.setOnClickListener(v -> goToMainMenu());
+    }
+
+    private void openNewPatient() {
+        Intent intent = new Intent(this, NewPatientActivity.class);
+        intent.putExtra("current_user", currentUsername);
+        intent.putExtra("user_role", currentUserRole);
+        intent.putExtra("user_full_name", currentUserFullName);
+        startActivity(intent);
+    }
+
+    private void openExistingPatients() {
+        Intent intent = new Intent(this, ExistingPatientActivity.class);
+        intent.putExtra("current_user", currentUsername);
+        intent.putExtra("user_role", currentUserRole);
+        intent.putExtra("user_full_name", currentUserFullName);
+        startActivity(intent);
     }
 
     private void goToMainMenu() {
@@ -70,45 +82,20 @@ public class PatientInfoMenuActivity extends AppCompatActivity {
         intent.putExtra("user_full_name", currentUserFullName);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
+        finish();
     }
 
-    private void initializeUI() {
-        newPatientButton = findViewById(R.id.newPatientButton);
-        existingPatientButton = findViewById(R.id.existingPatientButton);
-        backButton = findViewById(R.id.backButton);
-        welcomeText = findViewById(R.id.welcomeText);
-
-        // Set welcome text if element exists
-        if (welcomeText != null) {
-            welcomeText.setText("Welcome, " + (currentUserFullName != null ? currentUserFullName : currentUsername) + "!");
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            goToMainMenu();
+            return true;
         }
-
-        setTitle("Patient Information");
+        return super.onOptionsItemSelected(item);
     }
 
-    private void setupListeners() {
-        if (newPatientButton != null) {
-            newPatientButton.setOnClickListener(v -> {
-                Intent intent = new Intent(this, NewPatientActivity.class);
-                intent.putExtra("current_user", currentUsername);
-                intent.putExtra("user_role", currentUserRole);
-                intent.putExtra("user_full_name", currentUserFullName);
-                startActivity(intent);
-            });
-        }
-
-        if (existingPatientButton != null) {
-            existingPatientButton.setOnClickListener(v -> {
-                Intent intent = new Intent(this, ExistingPatientActivity.class);
-                intent.putExtra("current_user", currentUsername);
-                intent.putExtra("user_role", currentUserRole);
-                intent.putExtra("user_full_name", currentUserFullName);
-                startActivity(intent);
-            });
-        }
-
-        if (backButton != null) {
-            backButton.setOnClickListener(v -> finish());
-        }
+    @Override
+    public void onBackPressed() {
+        goToMainMenu();
     }
 }

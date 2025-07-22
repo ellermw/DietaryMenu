@@ -7,6 +7,7 @@
         <item name="colorPrimary">#2196F3</item>
         <item name="colorPrimaryDark">#1976D2</item>
         <item name="colorAccent">#FF5722</item>
+        <item name="android:windowBackground">#f8fafc</item>
     </style>
 
     <!-- Theme for activities that need custom toolbar -->
@@ -16,6 +17,7 @@
         <item name="colorAccent">#FF5722</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="android:windowBackground">#f8fafc</item>
     </style>
 
     <!-- Theme for activities using default action bar -->
@@ -25,6 +27,29 @@
         <item name="colorAccent">#FF5722</item>
         <item name="windowActionBar">true</item>
         <item name="windowNoTitle">false</item>
+        <item name="android:windowBackground">#f8fafc</item>
+    </style>
+
+    <!-- Card style for sections -->
+    <style name="CardStyle">
+        <item name="android:background">@android:color/white</item>
+        <item name="android:elevation">2dp</item>
+        <item name="android:layout_margin">8dp</item>
+        <item name="android:padding">16dp</item>
+    </style>
+
+    <!-- Header styles -->
+    <style name="HeaderStyle">
+        <item name="android:background">#2196F3</item>
+        <item name="android:elevation">4dp</item>
+        <item name="android:padding">16dp</item>
+    </style>
+
+    <style name="HeaderTextStyle">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:gravity">center</item>
     </style>
 
     <!-- Button styles -->
@@ -36,11 +61,57 @@
         <item name="android:padding">12dp</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">@android:color/white</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
     <!-- Primary button style -->
     <style name="ButtonStyle.Primary">
+        <item name="android:background">#2196F3</item>
         <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <!-- Secondary button style -->
+    <style name="ButtonStyle.Secondary">
+        <item name="android:background">#FF9800</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <!-- Menu button style -->
+    <style name="MenuButtonStyle" parent="Widget.AppCompat.Button">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">56dp</item>
+        <item name="android:background">#2196F3</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:gravity">left|center_vertical</item>
+        <item name="android:paddingLeft">24dp</item>
+        <item name="android:layout_marginBottom">12dp</item>
+    </style>
+
+    <!-- Admin button style (two per row) -->
+    <style name="AdminButtonStyle" parent="Widget.AppCompat.Button">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">72dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:background">#2196F3</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:gravity">center</item>
+        <item name="android:padding">8dp</item>
+    </style>
+
+    <!-- Logout button style -->
+    <style name="LogoutButtonStyle" parent="Widget.AppCompat.Button">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:background">@drawable/button_logout_rounded</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:paddingLeft">32dp</item>
+        <item name="android:paddingRight">32dp</item>
     </style>
 
     <!-- Text view styles -->
@@ -48,46 +119,75 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">16sp</item>
-        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textColor">#2c3e50</item>
     </style>
 
     <style name="TextStyle.Title">
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">24sp</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textColor">#2196F3</item>
+        <item name="android:textColor">#2c3e50</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="TextStyle.SectionHeader">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#2c3e50</item>
+        <item name="android:layout_marginBottom">16dp</item>
     </style>
 
     <style name="TextStyle.Label">
         <item name="android:textSize">14sp</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:textColor">#757575</item>
-        <item name="android:layout_marginTop">8dp</item>
-        <item name="android:layout_marginBottom">4dp</item>
+        <item name="android:textColor">#7f8c8d</item>
     </style>
 
-    <!-- Card styles -->
-    <style name="CardStyle" parent="CardView">
-        <item name="cardCornerRadius">8dp</item>
-        <item name="cardElevation">4dp</item>
-        <item name="android:layout_margin">8dp</item>
-        <item name="contentPadding">16dp</item>
+    <style name="TextStyle.Count">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">#7f8c8d</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:background">#e9ecef</item>
+        <item name="android:padding">8dp</item>
     </style>
 
     <!-- Input field styles -->
-    <style name="InputStyle" parent="Widget.AppCompat.EditText">
+    <style name="InputStyle">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_margin">8dp</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:background">@android:drawable/edit_text</item>
         <item name="android:padding">12dp</item>
+        <item name="android:layout_marginBottom">12dp</item>
         <item name="android:textSize">16sp</item>
     </style>
 
-    <!-- Spinner styles -->
-    <style name="SpinnerStyle" parent="Widget.AppCompat.Spinner">
+    <!-- Spinner style -->
+    <style name="SpinnerStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:background">@android:drawable/btn_dropdown</item>
+        <item name="android:padding">12dp</item>
+    </style>
+
+    <!-- List view style -->
+    <style name="ListViewStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:divider">#e0e0e0</item>
+        <item name="android:dividerHeight">1dp</item>
+        <item name="android:background">@android:color/white</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:scrollbars">vertical</item>
+        <item name="android:fastScrollEnabled">true</item>
+    </style>
+
+    <!-- Section container style -->
+    <style name="SectionContainerStyle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_margin">8dp</item>
-        <item name="android:padding">12dp</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:background">@android:color/white</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:layout_marginBottom">16dp</item>
+        <item name="android:elevation">2dp</item>
     </style>
 
 </resources>

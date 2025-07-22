@@ -91,6 +91,13 @@
             android:parentActivityName=".PatientInfoMenuActivity"
             android:theme="@style/Theme.AppCompat.Light" />
 
+        <!-- Existing Patient Activity - View existing patients -->
+        <activity
+            android:name=".ExistingPatientActivity"
+            android:exported="false"
+            android:parentActivityName=".PatientInfoMenuActivity"
+            android:theme="@style/Theme.AppCompat.Light" />
+
         <!-- Patient Detail Activity - View/edit patient details -->
         <activity
             android:name=".PatientDetailActivity"
@@ -107,13 +114,6 @@
             android:theme="@style/Theme.AppCompat.Light"
             android:windowSoftInputMode="adjustResize" />
 
-        <!-- Admin Activity - Administrative functions -->
-        <activity
-            android:name=".AdminActivity"
-            android:exported="false"
-            android:parentActivityName=".MainMenuActivity"
-            android:theme="@style/Theme.AppCompat.Light" />
-
         <!-- User Management Activity - Manage users -->
         <activity
             android:name=".UserManagementActivity"
@@ -126,6 +126,13 @@
             android:name=".ItemManagementActivity"
             android:exported="false"
             android:parentActivityName=".MainMenuActivity"
+            android:theme="@style/Theme.AppCompat.Light" />
+
+        <!-- Category Management Activity - Manage item categories -->
+        <activity
+            android:name=".CategoryManagementActivity"
+            android:exported="false"
+            android:parentActivityName=".ItemManagementActivity"
             android:theme="@style/Theme.AppCompat.Light" />
 
         <!-- Default Menu Management Activity - Manage default menus -->
@@ -146,6 +153,13 @@
         <!-- Account Management Activity - User account settings -->
         <activity
             android:name=".AccountManagementActivity"
+            android:exported="false"
+            android:parentActivityName=".MainMenuActivity"
+            android:theme="@style/Theme.AppCompat.Light" />
+
+        <!-- Admin Activity - Administrative functions -->
+        <activity
+            android:name=".AdminActivity"
             android:exported="false"
             android:parentActivityName=".MainMenuActivity"
             android:theme="@style/Theme.AppCompat.Light" />

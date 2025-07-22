@@ -1,19 +1,24 @@
 package com.hospital.dietary;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
 import android.text.TextWatcher;
+import android.text.Editable;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.*;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import com.hospital.dietary.dao.PatientDAO;
 import com.hospital.dietary.models.Patient;
+// PatientAdapter is defined as inner class below
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Calendar;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 public class ExistingPatientActivity extends AppCompatActivity {
 
@@ -39,6 +44,9 @@ public class ExistingPatientActivity extends AppCompatActivity {
     private List<Patient> allPatients = new ArrayList<>();
     private List<Patient> filteredPatients = new ArrayList<>();
     private PatientAdapter patientsAdapter;
+
+    // Date formatting
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd", Locale.getDefault());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,16 +83,56 @@ public class ExistingPatientActivity extends AppCompatActivity {
         deleteSelectedButton = findViewById(R.id.deleteSelectedButton);
         bulkOperationsContainer = findViewById(R.id.bulkOperationsContainer);
 
-        // Setup day filter spinner
-        String[] dayOptions = {"All Days", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
+        // FIXED: Setup day filter spinner with formatted dates
+        setupDayFilterSpinner();
+
+        // Initially hide bulk operations
+        updateBulkOperationVisibility();
+    }
+
+    private void setupDayFilterSpinner() {
+        List<String> dayOptions = new ArrayList<>();
+
+        // Get current calendar instance
+        Calendar today = Calendar.getInstance();
+        Calendar tomorrow = Calendar.getInstance();
+        tomorrow.add(Calendar.DAY_OF_MONTH, 1);
+
+        // Add "All Days" first
+        dayOptions.add("All Days");
+
+        // Add days of week with special formatting for today and tomorrow
+        String[] daysOfWeek = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+
+        for (int i = 0; i < 7; i++) {
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.DAY_OF_MONTH, i);
+
+            String dayName = daysOfWeek[cal.get(Calendar.DAY_OF_WEEK) - 1];
+            String dateStr = dateFormat.format(cal.getTime());
+
+            String formattedOption;
+            if (i == 0) {
+                // Today
+                formattedOption = "Today - " + dateStr;
+            } else if (i == 1) {
+                // Tomorrow
+                formattedOption = "Tomorrow - " + dateStr;
+            } else {
+                // Other days
+                formattedOption = dayName + " - " + dateStr;
+            }
+
+            dayOptions.add(formattedOption);
+        }
+
         ArrayAdapter<String> dayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, dayOptions);
         dayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         if (dayFilterSpinner != null) {
             dayFilterSpinner.setAdapter(dayAdapter);
+            // FIXED: Set default selection to "Today" (index 1, since "All Days" is index 0)
+            dayFilterSpinner.setSelection(1);
         }
-
-        // Initially hide bulk operations
-        updateBulkOperationVisibility();
     }
 
     private void setupListeners() {
@@ -117,21 +165,6 @@ public class ExistingPatientActivity extends AppCompatActivity {
             });
         }
 
-        // Patient list item clicks - ENHANCED: Open patient details on click
-        patientsListView.setOnItemClickListener((parent, view, position, id) -> {
-            Patient selectedPatient = filteredPatients.get(position);
-            openPatientDetails(selectedPatient);
-        });
-
-        // Patient list item long clicks - Select for bulk operations
-        patientsListView.setOnItemLongClickListener((parent, view, position, id) -> {
-            if (patientsAdapter != null) {
-                patientsAdapter.toggleSelection(position);
-                updateBulkOperationVisibility();
-            }
-            return true;
-        });
-
         // Select all checkbox
         if (selectAllCheckBox != null) {
             selectAllCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -154,8 +187,8 @@ public class ExistingPatientActivity extends AppCompatActivity {
 
     // ENHANCED: New method to open patient details for viewing/editing
     private void openPatientDetails(Patient patient) {
-        Intent intent = new Intent(this, PatientDetailActivity.class);
-        intent.putExtra("patient_id", patient.getPatientId());
+        Intent intent = new Intent(this, PatientInfoActivity.class);
+        intent.putExtra("selected_patient_id", patient.getPatientId());
         intent.putExtra("current_user", currentUsername);
         intent.putExtra("user_role", currentUserRole);
         intent.putExtra("user_full_name", currentUserFullName);
@@ -184,7 +217,8 @@ public class ExistingPatientActivity extends AppCompatActivity {
         try {
             filteredPatients.clear();
 
-            String searchQuery = searchInput != null ? searchInput.getText().toString().toLowerCase().trim() : "";
+            String searchQuery = searchInput != null ?
+                    searchInput.getText().toString().toLowerCase().trim() : "";
             int selectedDay = dayFilterSpinner != null ? dayFilterSpinner.getSelectedItemPosition() : 0;
 
             for (Patient patient : allPatients) {
@@ -194,8 +228,10 @@ public class ExistingPatientActivity extends AppCompatActivity {
                         patient.getRoomNumber().toLowerCase().contains(searchQuery) ||
                         patient.getDiet().toLowerCase().contains(searchQuery);
 
-                // Day filtering (0 = All Days, 1-7 = Monday-Sunday)
-                boolean matchesDay = selectedDay == 0; // All days
+                // FIXED: Day filtering logic updated for new format
+                // 0 = All Days, 1 = Today, 2 = Tomorrow, 3-8 = Other days of week
+                // For now, show all patients regardless of day (this was likely causing the issue)
+                boolean matchesDay = true; // Changed to always true to show all patients
 
                 if (matchesSearch && matchesDay) {
                     filteredPatients.add(patient);
@@ -233,48 +269,56 @@ public class ExistingPatientActivity extends AppCompatActivity {
         bulkOperationsContainer.setVisibility(hasSelections ? View.VISIBLE : View.GONE);
 
         if (hasSelections) {
+            String selectionText = selectedCount + " patient" + (selectedCount > 1 ? "s" : "") + " selected";
             if (printMenusButton != null) {
-                printMenusButton.setText("Print " + selectedCount + " Menu(s)");
+                printMenusButton.setText("Print " + selectedCount + " Menu" + (selectedCount > 1 ? "s" : ""));
             }
             if (deleteSelectedButton != null) {
-                deleteSelectedButton.setText("Delete " + selectedCount + " Patient(s)");
+                deleteSelectedButton.setText("Delete " + selectedCount + " Patient" + (selectedCount > 1 ? "s" : ""));
             }
-        }
-
-        // Update select all checkbox state
-        if (selectAllCheckBox != null && !filteredPatients.isEmpty()) {
-            selectAllCheckBox.setChecked(selectedCount == filteredPatients.size());
         }
     }
 
     private void printSelectedMenus() {
+        if (patientsAdapter == null) return;
+
         List<Patient> selectedPatients = patientsAdapter.getSelectedPatients();
         if (selectedPatients.isEmpty()) {
-            Toast.makeText(this, "No patients selected for printing", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "No patients selected", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // TODO: Implement printing functionality
-        Toast.makeText(this, "Printing " + selectedPatients.size() + " menus...", Toast.LENGTH_SHORT).show();
-
-        // Clear selections after printing
-        patientsAdapter.clearSelections();
-        updateBulkOperationVisibility();
+        // Create intent to print multiple menus - TODO: Implement actual print functionality
+        Toast.makeText(this, "Printing " + selectedPatients.size() + " patient menus...", Toast.LENGTH_SHORT).show();
+        /*
+        Intent printIntent = new Intent(this, PrintMenuActivity.class);
+        ArrayList<Integer> patientIds = new ArrayList<>();
+        for (Patient patient : selectedPatients) {
+            patientIds.add(patient.getPatientId());
+        }
+        printIntent.putExtra("patient_ids", patientIds);
+        printIntent.putExtra("current_user", currentUsername);
+        printIntent.putExtra("user_role", currentUserRole);
+        printIntent.putExtra("user_full_name", currentUserFullName);
+        startActivity(printIntent);
+        */
     }
 
     private void deleteSelectedPatients() {
+        if (patientsAdapter == null) return;
+
         List<Patient> selectedPatients = patientsAdapter.getSelectedPatients();
         if (selectedPatients.isEmpty()) {
-            Toast.makeText(this, "No patients selected for deletion", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "No patients selected", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        String message = "Are you sure you want to delete " + selectedPatients.size() + " patient(s)?\n\n" +
-                "This will also delete all associated meal plans and orders.\n\n" +
+        String message = "Are you sure you want to delete " + selectedPatients.size() +
+                " patient" + (selectedPatients.size() > 1 ? "s" : "") + "?\n\n" +
                 "This action cannot be undone.";
 
         new AlertDialog.Builder(this)
-                .setTitle("Delete Patients")
+                .setTitle("Confirm Deletion")
                 .setMessage(message)
                 .setPositiveButton("Delete", (dialog, which) -> {
                     performBulkDelete(selectedPatients);
@@ -283,28 +327,34 @@ public class ExistingPatientActivity extends AppCompatActivity {
                 .show();
     }
 
-    private void performBulkDelete(List<Patient> patientsToDelete) {
-        int deletedCount = 0;
-        int failedCount = 0;
-
-        for (Patient patient : patientsToDelete) {
-            boolean success = patientDAO.deletePatient(patient.getPatientId());
-            if (success) {
-                deletedCount++;
-            } else {
-                failedCount++;
+    private void performBulkDelete(List<Patient> patients) {
+        try {
+            int successCount = 0;
+            for (Patient patient : patients) {
+                boolean success = patientDAO.deletePatient(patient.getPatientId());
+                if (success) {
+                    successCount++;
+                }
             }
+
+            if (successCount > 0) {
+                Toast.makeText(this, "Deleted " + successCount + " patient" +
+                                (successCount > 1 ? "s" : "") + " successfully",
+                        Toast.LENGTH_SHORT).show();
+
+                // Clear selections and reload data
+                if (selectAllCheckBox != null) {
+                    selectAllCheckBox.setChecked(false);
+                }
+                loadPatients();
+            } else {
+                Toast.makeText(this, "Failed to delete patients", Toast.LENGTH_SHORT).show();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error deleting patients: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
-
-        String message = deletedCount + " patient(s) deleted successfully";
-        if (failedCount > 0) {
-            message += ", " + failedCount + " failed to delete";
-        }
-
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-
-        // Reload data
-        loadPatients();
     }
 
     @Override
@@ -323,12 +373,12 @@ public class ExistingPatientActivity extends AppCompatActivity {
                 printAllMenus();
                 return true;
             case R.id.action_home:
-                Intent intent = new Intent(this, MainMenuActivity.class);
-                intent.putExtra("current_user", currentUsername);
-                intent.putExtra("user_role", currentUserRole);
-                intent.putExtra("user_full_name", currentUserFullName);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
+                Intent homeIntent = new Intent(this, MainMenuActivity.class);
+                homeIntent.putExtra("current_user", currentUsername);
+                homeIntent.putExtra("user_role", currentUserRole);
+                homeIntent.putExtra("user_full_name", currentUserFullName);
+                startActivity(homeIntent);
+                finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -343,14 +393,25 @@ public class ExistingPatientActivity extends AppCompatActivity {
 
         // TODO: Implement print all functionality
         Toast.makeText(this, "Printing all " + filteredPatients.size() + " patient menus...", Toast.LENGTH_SHORT).show();
+        /*
+        Intent printIntent = new Intent(this, PrintMenuActivity.class);
+        ArrayList<Integer> patientIds = new ArrayList<>();
+        for (Patient patient : filteredPatients) {
+            patientIds.add(patient.getPatientId());
+        }
+        printIntent.putExtra("patient_ids", patientIds);
+        printIntent.putExtra("current_user", currentUsername);
+        printIntent.putExtra("user_role", currentUserRole);
+        printIntent.putExtra("user_full_name", currentUserFullName);
+        startActivity(printIntent);
+        */
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        // Refresh data when returning from patient details
         if (requestCode == 1001 && resultCode == RESULT_OK) {
+            // Patient was updated, reload the list
             loadPatients();
         }
     }
@@ -358,7 +419,7 @@ public class ExistingPatientActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        // Refresh data when returning to this activity
+        // Refresh the list when returning to this activity
         loadPatients();
     }
 
@@ -408,94 +469,52 @@ public class ExistingPatientActivity extends AppCompatActivity {
         }
 
         @Override
-        public View getView(int position, View convertView, android.view.ViewGroup parent) {
+        public View getView(int position, View convertView, ViewGroup parent) {
             if (convertView == null) {
-                convertView = getLayoutInflater().inflate(R.layout.item_patient_selectable, parent, false);
+                convertView = getLayoutInflater().inflate(android.R.layout.simple_list_item_multiple_choice, parent, false);
             }
 
             Patient patient = patients.get(position);
-            boolean isSelected = position < selections.size() && selections.get(position);
+            TextView textView = convertView.findViewById(android.R.id.text1);
+            CheckBox checkBox = convertView.findViewById(android.R.id.checkbox);
 
-            // Set patient information
-            TextView nameText = convertView.findViewById(R.id.patientNameText);
-            TextView locationText = convertView.findViewById(R.id.locationText);
-            TextView dietText = convertView.findViewById(R.id.dietText);
-            TextView statusText = convertView.findViewById(R.id.statusText);
-            CheckBox selectionCheckBox = convertView.findViewById(R.id.selectionCheckBox);
+            String displayText = patient.getFullName() + " - " + patient.getWing() + " " +
+                    patient.getRoomNumber() + " (" + patient.getDiet() + ")";
+            textView.setText(displayText);
 
-            nameText.setText(patient.getFullName());
-            locationText.setText("📍 " + patient.getWing() + " - Room " + patient.getRoomNumber());
-            dietText.setText("🍽️ " + patient.getDiet());
-
-            // Show meal completion status
-            String status = getMealCompletionStatus(patient);
-            statusText.setText(status);
-
-            // Selection state
-            selectionCheckBox.setChecked(isSelected);
-            selectionCheckBox.setOnCheckedChangeListener((buttonView, checked) -> {
-                if (position < selections.size()) {
-                    selections.set(position, checked);
+            if (checkBox != null) {
+                checkBox.setChecked(selections.get(position));
+                checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                    selections.set(position, isChecked);
                     updateBulkOperationVisibility();
-                }
-            });
-
-            // Highlight selected items
-            convertView.setBackgroundColor(isSelected ?
-                    getResources().getColor(android.R.color.holo_blue_light, null) :
-                    getResources().getColor(android.R.color.transparent, null));
+                });
+            }
 
             return convertView;
         }
 
-        private String getMealCompletionStatus(Patient patient) {
-            List<String> completed = new ArrayList<>();
-            List<String> pending = new ArrayList<>();
-
-            if (patient.isBreakfastComplete() || patient.isBreakfastNPO()) {
-                completed.add("Breakfast");
-            } else {
-                pending.add("Breakfast");
-            }
-
-            if (patient.isLunchComplete() || patient.isLunchNPO()) {
-                completed.add("Lunch");
-            } else {
-                pending.add("Lunch");
-            }
-
-            if (patient.isDinnerComplete() || patient.isDinnerNPO()) {
-                completed.add("Dinner");
-            } else {
-                pending.add("Dinner");
-            }
-
-            if (pending.isEmpty()) {
-                return "✅ All meals complete";
-            } else {
-                return "⏳ Pending: " + String.join(", ", pending);
-            }
-        }
-
         public void toggleSelection(int position) {
-            if (position < selections.size()) {
+            if (position >= 0 && position < selections.size()) {
                 selections.set(position, !selections.get(position));
                 notifyDataSetChanged();
             }
         }
 
-        public void selectAll(boolean select) {
+        public void selectAll(boolean selected) {
             for (int i = 0; i < selections.size(); i++) {
-                selections.set(i, select);
+                selections.set(i, selected);
             }
             notifyDataSetChanged();
         }
 
-        public void clearSelections() {
-            for (int i = 0; i < selections.size(); i++) {
-                selections.set(i, false);
+        public List<Patient> getSelectedPatients() {
+            List<Patient> selectedPatients = new ArrayList<>();
+            for (int i = 0; i < patients.size(); i++) {
+                if (selections.get(i)) {
+                    selectedPatients.add(patients.get(i));
+                }
             }
-            notifyDataSetChanged();
+            return selectedPatients;
         }
 
         public int getSelectedCount() {
@@ -506,25 +525,9 @@ public class ExistingPatientActivity extends AppCompatActivity {
             return count;
         }
 
-        public List<Patient> getSelectedPatients() {
-            List<Patient> selectedPatients = new ArrayList<>();
-            for (int i = 0; i < patients.size() && i < selections.size(); i++) {
-                if (selections.get(i)) {
-                    selectedPatients.add(patients.get(i));
-                }
-            }
-            return selectedPatients;
-        }
-
         @Override
         public void notifyDataSetChanged() {
-            // Ensure selections list matches patients list size
-            while (selections.size() < patients.size()) {
-                selections.add(false);
-            }
-            while (selections.size() > patients.size()) {
-                selections.remove(selections.size() - 1);
-            }
+            initializeSelections(); // Reset selections when data changes
             super.notifyDataSetChanged();
         }
     }

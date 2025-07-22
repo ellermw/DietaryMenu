@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.hospital.dietary"
-    android:versionCode="30"
-    android:versionName="0.0.30" >
+    android:versionCode="39"
+    android:versionName="0.0.39" >
 
     <uses-sdk
         android:minSdkVersion="21"
@@ -107,6 +107,13 @@
             android:parentActivityName="com.hospital.dietary.PatientInfoMenuActivity"
             android:theme="@style/Theme.AppCompat.Light" />
 
+        <!-- Existing Patient Activity - View existing patients -->
+        <activity
+            android:name="com.hospital.dietary.ExistingPatientActivity"
+            android:exported="false"
+            android:parentActivityName="com.hospital.dietary.PatientInfoMenuActivity"
+            android:theme="@style/Theme.AppCompat.Light" />
+
         <!-- Patient Detail Activity - View/edit patient details -->
         <activity
             android:name="com.hospital.dietary.PatientDetailActivity"
@@ -123,13 +130,6 @@
             android:theme="@style/Theme.AppCompat.Light"
             android:windowSoftInputMode="adjustResize" />
 
-        <!-- Admin Activity - Administrative functions -->
-        <activity
-            android:name="com.hospital.dietary.AdminActivity"
-            android:exported="false"
-            android:parentActivityName="com.hospital.dietary.MainMenuActivity"
-            android:theme="@style/Theme.AppCompat.Light" />
-
         <!-- User Management Activity - Manage users -->
         <activity
             android:name="com.hospital.dietary.UserManagementActivity"
@@ -142,6 +142,13 @@
             android:name="com.hospital.dietary.ItemManagementActivity"
             android:exported="false"
             android:parentActivityName="com.hospital.dietary.MainMenuActivity"
+            android:theme="@style/Theme.AppCompat.Light" />
+
+        <!-- Category Management Activity - Manage item categories -->
+        <activity
+            android:name="com.hospital.dietary.CategoryManagementActivity"
+            android:exported="false"
+            android:parentActivityName="com.hospital.dietary.ItemManagementActivity"
             android:theme="@style/Theme.AppCompat.Light" />
 
         <!-- Default Menu Management Activity - Manage default menus -->
@@ -162,6 +169,13 @@
         <!-- Account Management Activity - User account settings -->
         <activity
             android:name="com.hospital.dietary.AccountManagementActivity"
+            android:exported="false"
+            android:parentActivityName="com.hospital.dietary.MainMenuActivity"
+            android:theme="@style/Theme.AppCompat.Light" />
+
+        <!-- Admin Activity - Administrative functions -->
+        <activity
+            android:name="com.hospital.dietary.AdminActivity"
             android:exported="false"
             android:parentActivityName="com.hospital.dietary.MainMenuActivity"
             android:theme="@style/Theme.AppCompat.Light" />

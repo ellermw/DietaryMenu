@@ -57,7 +57,7 @@ public class PendingOrdersActivity extends AppCompatActivity {
         pendingOrdersListView = findViewById(R.id.pendingOrdersListView);
         noPendingOrdersText = findViewById(R.id.noPendingOrdersText);
 
-        // Set up click listener for meal planning
+        // FIXED: Set up click listener for meal planning
         pendingOrdersListView.setOnItemClickListener((parent, view, position, id) -> {
             Patient selectedPatient = pendingPatients.get(position);
             openMealPlanning(selectedPatient);
@@ -71,7 +71,8 @@ public class PendingOrdersActivity extends AppCompatActivity {
     private void loadPendingOrders() {
         try {
             // Get patients who have incomplete meal orders (not all meals complete)
-            pendingPatients = patientDAO.getPendingPatients();
+            pendingPatients.clear();
+            pendingPatients.addAll(patientDAO.getPendingPatients());
 
             if (pendingPatients.isEmpty()) {
                 pendingOrdersListView.setVisibility(View.GONE);
@@ -81,7 +82,7 @@ public class PendingOrdersActivity extends AppCompatActivity {
                 pendingOrdersListView.setVisibility(View.VISIBLE);
                 noPendingOrdersText.setVisibility(View.GONE);
 
-                // Create adapter for pending patients
+                // FIXED: Create adapter for pending patients with better formatting
                 pendingAdapter = new ArrayAdapter<Patient>(this, android.R.layout.simple_list_item_2, android.R.id.text1, pendingPatients) {
                     @Override
                     public View getView(int position, View convertView, ViewGroup parent) {
@@ -143,13 +144,37 @@ public class PendingOrdersActivity extends AppCompatActivity {
         }
     }
 
+    // FIXED: Properly implement openMealPlanning method
     private void openMealPlanning(Patient patient) {
-        Intent intent = new Intent(this, MealPlanningActivity.class);
-        intent.putExtra("patient_id", patient.getPatientId());
-        intent.putExtra("current_user", currentUsername);
-        intent.putExtra("user_role", currentUserRole);
-        intent.putExtra("user_full_name", currentUserFullName);
-        startActivity(intent);
+        try {
+            Intent intent = new Intent(this, MealPlanningActivity.class);
+            intent.putExtra("patient_id", (long) patient.getPatientId()); // Cast to long
+            intent.putExtra("diet", patient.getDiet());
+            intent.putExtra("is_ada_diet", patient.isAdaDiet());
+            intent.putExtra("current_user", currentUsername);
+            intent.putExtra("user_role", currentUserRole);
+            intent.putExtra("user_full_name", currentUserFullName);
+            startActivityForResult(intent, 1001);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error opening meal planning: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1001 && resultCode == RESULT_OK) {
+            // Meal plan was updated, reload pending orders
+            loadPendingOrders();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Refresh data when returning to this activity
+        loadPendingOrders();
     }
 
     @Override
@@ -169,24 +194,12 @@ public class PendingOrdersActivity extends AppCompatActivity {
                 intent.putExtra("current_user", currentUsername);
                 intent.putExtra("user_role", currentUserRole);
                 intent.putExtra("user_full_name", currentUserFullName);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
-                return true;
-            case R.id.action_refresh:
-                loadPendingOrders();
-                Toast.makeText(this, "Pending orders refreshed", Toast.LENGTH_SHORT).show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        // Always refresh when returning to this activity
-        // This ensures the list updates when patients complete meals
-        loadPendingOrders();
     }
 
     @Override

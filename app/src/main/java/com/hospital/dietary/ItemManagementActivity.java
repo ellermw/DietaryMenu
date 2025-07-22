@@ -3,10 +3,13 @@ package com.hospital.dietary;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
+import com.hospital.dietary.dao.CategoryDAO;
 import com.hospital.dietary.dao.ItemDAO;
 import com.hospital.dietary.models.Item;
 import java.util.ArrayList;
@@ -16,6 +19,7 @@ public class ItemManagementActivity extends AppCompatActivity {
 
     private DatabaseHelper dbHelper;
     private ItemDAO itemDAO;
+    private CategoryDAO categoryDAO;
     private String currentUsername;
     private String currentUserRole;
     private String currentUserFullName;
@@ -24,17 +28,25 @@ public class ItemManagementActivity extends AppCompatActivity {
     private ListView itemsListView;
     private TextView itemsCountText;
     private Button addItemButton;
-    private Button refreshButton;
-    private Button backButton;
+    private Button manageCategoriesButton;
+    private EditText searchEditText;
+    private Spinner categoryFilterSpinner;
 
     // Data
     private List<Item> allItems = new ArrayList<>();
+    private List<Item> filteredItems = new ArrayList<>();
+    private List<String> categories = new ArrayList<>();
     private ArrayAdapter<Item> itemsAdapter;
+    private ArrayAdapter<String> categoryAdapter;
+
+    // Filter state
+    private String currentSearchTerm = "";
+    private String currentCategoryFilter = "All Categories";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_item_management);
+        setContentView(R.layout.activity_item_management_enhanced);
 
         // Get user data from intent
         currentUsername = getIntent().getStringExtra("current_user");
@@ -51,6 +63,7 @@ public class ItemManagementActivity extends AppCompatActivity {
         // Initialize database
         dbHelper = new DatabaseHelper(this);
         itemDAO = new ItemDAO(dbHelper);
+        categoryDAO = new CategoryDAO(dbHelper);
 
         // Set title and back button
         if (getSupportActionBar() != null) {
@@ -61,6 +74,7 @@ public class ItemManagementActivity extends AppCompatActivity {
         // Initialize UI
         initializeViews();
         setupListeners();
+        loadCategories();
         loadItems();
     }
 
@@ -68,64 +82,157 @@ public class ItemManagementActivity extends AppCompatActivity {
         itemsListView = findViewById(R.id.itemsListView);
         itemsCountText = findViewById(R.id.itemsCountText);
         addItemButton = findViewById(R.id.addItemButton);
-        refreshButton = findViewById(R.id.refreshButton);
-        backButton = findViewById(R.id.backButton);
+        manageCategoriesButton = findViewById(R.id.manageCategoriesButton);
+        searchEditText = findViewById(R.id.itemSearchEditText);
+        categoryFilterSpinner = findViewById(R.id.categoryFilterSpinner);
     }
 
     private void setupListeners() {
         addItemButton.setOnClickListener(v -> showAddItemDialog());
-        refreshButton.setOnClickListener(v -> loadItems());
+        manageCategoriesButton.setOnClickListener(v -> openCategoryManagement());
 
-        if (backButton != null) {
-            backButton.setOnClickListener(v -> finish());
-        }
+        // Search functionality
+        searchEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                currentSearchTerm = s.toString().trim();
+                applyFilters();
+            }
+        });
+
+        // Category filter
+        categoryFilterSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                currentCategoryFilter = categories.get(position);
+                applyFilters();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
 
         // Item list click
         itemsListView.setOnItemClickListener((parent, view, position, id) -> {
-            Item selectedItem = allItems.get(position);
+            Item selectedItem = filteredItems.get(position);
             showItemOptionsDialog(selectedItem);
         });
+    }
+
+    private void loadCategories() {
+        categories.clear();
+        categories.add("All Categories");
+
+        List<String> dbCategories = categoryDAO.getAllCategories();
+        categories.addAll(dbCategories);
+
+        // If no categories exist, add default ones
+        if (dbCategories.isEmpty()) {
+            createDefaultCategories();
+            dbCategories = categoryDAO.getAllCategories();
+            categories.addAll(dbCategories);
+        }
+
+        // Update category spinner
+        categoryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categories);
+        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        categoryFilterSpinner.setAdapter(categoryAdapter);
+    }
+
+    private void createDefaultCategories() {
+        String[] defaultCategories = {
+                "Proteins", "Starches", "Vegetables", "Beverages",
+                "Fruits", "Desserts", "Breakfast Items", "Condiments"
+        };
+
+        for (String category : defaultCategories) {
+            categoryDAO.addCategory(category);
+        }
     }
 
     private void loadItems() {
         try {
             allItems = itemDAO.getAllItems();
-
-            // Create adapter
-            itemsAdapter = new ArrayAdapter<Item>(this, android.R.layout.simple_list_item_2, android.R.id.text1, allItems) {
-                @Override
-                public View getView(int position, View convertView, android.view.ViewGroup parent) {
-                    View view = super.getView(position, convertView, parent);
-
-                    Item item = allItems.get(position);
-                    TextView text1 = view.findViewById(android.R.id.text1);
-                    TextView text2 = view.findViewById(android.R.id.text2);
-
-                    text1.setText(item.getName());
-                    String details = "Category: " + item.getCategory();
-                    if (item.isAdaFriendly()) {
-                        details += " | ADA Friendly";
-                    }
-                    if (item.getSizeML() != null && item.getSizeML() > 0) {
-                        details += " | " + item.getSizeML() + "ml";
-                    }
-                    text2.setText(details);
-
-                    return view;
-                }
-            };
-
-            itemsListView.setAdapter(itemsAdapter);
-            itemsCountText.setText("Total Items: " + allItems.size());
-
+            applyFilters();
         } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(this, "Error loading items: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Error loading items: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
+    private void applyFilters() {
+        filteredItems.clear();
+
+        for (Item item : allItems) {
+            // Skip placeholder items
+            if (item.getName().startsWith("Category Placeholder - ")) {
+                continue;
+            }
+
+            boolean matchesSearch = currentSearchTerm.isEmpty() ||
+                    item.getName().toLowerCase().contains(currentSearchTerm.toLowerCase()) ||
+                    item.getCategory().toLowerCase().contains(currentSearchTerm.toLowerCase());
+
+            boolean matchesCategory = currentCategoryFilter.equals("All Categories") ||
+                    item.getCategory().equals(currentCategoryFilter);
+
+            if (matchesSearch && matchesCategory) {
+                filteredItems.add(item);
+            }
+        }
+
+        updateItemsList();
+    }
+
+    private void updateItemsList() {
+        // Create adapter for filtered items
+        itemsAdapter = new ArrayAdapter<Item>(this, android.R.layout.simple_list_item_2, android.R.id.text1, filteredItems) {
+            @Override
+            public View getView(int position, View convertView, android.view.ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+
+                TextView text1 = view.findViewById(android.R.id.text1);
+                TextView text2 = view.findViewById(android.R.id.text2);
+
+                Item item = filteredItems.get(position);
+                text1.setText(item.getName());
+
+                String subtitle = "Category: " + item.getCategory();
+                if (item.isAdaFriendly()) {
+                    subtitle += " • ADA Friendly";
+                }
+                text2.setText(subtitle);
+
+                return view;
+            }
+        };
+
+        itemsListView.setAdapter(itemsAdapter);
+
+        // Update count
+        String countText = "Items: " + filteredItems.size();
+        if (filteredItems.size() != allItems.size() - getPlaceholderItemCount()) {
+            countText += " (filtered from " + (allItems.size() - getPlaceholderItemCount()) + ")";
+        }
+        itemsCountText.setText(countText);
+    }
+
+    private int getPlaceholderItemCount() {
+        int count = 0;
+        for (Item item : allItems) {
+            if (item.getName().startsWith("Category Placeholder - ")) {
+                count++;
+            }
+        }
+        return count;
+    }
+
     private void showAddItemDialog() {
-        // Create a simple dialog with basic fields
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Add New Item");
 
@@ -138,8 +245,8 @@ public class ItemManagementActivity extends AppCompatActivity {
         layout.addView(nameInput);
 
         final Spinner categorySpinner = new Spinner(this);
-        String[] categories = {"Proteins", "Starches", "Vegetables", "Beverages", "Fruits", "Desserts", "Breakfast Items", "Condiments"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categories);
+        List<String> categoriesForSpinner = new ArrayList<>(categoryDAO.getAllCategories());
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categoriesForSpinner);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         categorySpinner.setAdapter(adapter);
         layout.addView(categorySpinner);
@@ -210,14 +317,14 @@ public class ItemManagementActivity extends AppCompatActivity {
         layout.addView(nameInput);
 
         final Spinner categorySpinner = new Spinner(this);
-        String[] categories = {"Proteins", "Starches", "Vegetables", "Beverages", "Fruits", "Desserts", "Breakfast Items", "Condiments"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categories);
+        List<String> categoriesForSpinner = new ArrayList<>(categoryDAO.getAllCategories());
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categoriesForSpinner);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         categorySpinner.setAdapter(adapter);
 
         // Set current category
-        for (int i = 0; i < categories.length; i++) {
-            if (categories[i].equals(item.getCategory())) {
+        for (int i = 0; i < categoriesForSpinner.size(); i++) {
+            if (categoriesForSpinner.get(i).equals(item.getCategory())) {
                 categorySpinner.setSelection(i);
                 break;
             }
@@ -248,6 +355,7 @@ public class ItemManagementActivity extends AppCompatActivity {
             boolean success = itemDAO.updateItem(item);
             if (success) {
                 Toast.makeText(this, "Item updated successfully!", Toast.LENGTH_SHORT).show();
+                loadCategories(); // Reload in case category changed
                 loadItems();
             } else {
                 Toast.makeText(this, "Error updating item", Toast.LENGTH_SHORT).show();
@@ -276,22 +384,27 @@ public class ItemManagementActivity extends AppCompatActivity {
                 .show();
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+    private void openCategoryManagement() {
+        Intent intent = new Intent(this, CategoryManagementActivity.class);
+        intent.putExtra("current_user", currentUsername);
+        intent.putExtra("user_role", currentUserRole);
+        intent.putExtra("user_full_name", currentUserFullName);
+        startActivity(intent);
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (dbHelper != null) {
-            dbHelper.close();
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
         }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadCategories();
+        loadItems();
     }
 }

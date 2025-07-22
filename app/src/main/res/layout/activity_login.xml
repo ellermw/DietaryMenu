@@ -3,168 +3,171 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#f8fafc">
+    android:background="@drawable/login_gradient_background"
+    android:gravity="center"
+    android:padding="32dp">
 
-    <ScrollView
+    <!-- Login Card Container -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/login_card_background"
+        android:padding="40dp"
+        android:elevation="8dp"
+        android:layout_marginHorizontal="16dp">
 
+        <!-- McAlester Regional Health Center Logo Section -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:orientation="horizontal"
             android:gravity="center"
-            android:padding="32dp">
+            android:layout_marginBottom="32dp">
 
-            <!-- Logo Section - Updated with Hospital Logo -->
+            <!-- Blue Cross Logo -->
             <LinearLayout
-                android:layout_width="200dp"
-                android:layout_height="120dp"
-                android:background="@android:color/white"
-                android:gravity="center"
-                android:layout_marginTop="40dp"
-                android:layout_marginBottom="32dp"
-                android:elevation="4dp"
-                android:padding="16dp">
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/blue_cross_logo"
+                android:layout_marginEnd="16dp" />
 
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/hospital_logo"
-                    android:scaleType="centerInside"
-                    android:contentDescription="McAlester Regional Health Center Logo" />
-
-            </LinearLayout>
-
-            <!-- App Title -->
-            <TextView
+            <!-- Hospital Name -->
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Hospital Dietary Management"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:textColor="#2c3e50"
-                android:gravity="center"
-                android:layout_marginBottom="8dp" />
+                android:orientation="vertical">
 
-            <!-- Subtitle -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Dietary Management Application"
-                android:textSize="16sp"
-                android:textColor="#7f8c8d"
-                android:layout_marginBottom="40dp" />
-
-            <!-- Login Form -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@android:color/white"
-                android:padding="24dp"
-                android:elevation="2dp">
-
-                <!-- Username Field -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Username"
-                    android:textSize="14sp"
-                    android:textColor="#2c3e50"
+                    android:text="McAlester Regional"
+                    android:textSize="22sp"
                     android:textStyle="bold"
-                    android:layout_marginBottom="8dp" />
+                    android:textColor="#2c3e50" />
 
-                <EditText
-                    android:id="@+id/usernameEditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:hint="Enter your username"
-                    android:background="@drawable/edit_text_background"
-                    android:paddingLeft="40dp"
-                    android:paddingRight="16dp"
-                    android:drawableLeft="@drawable/ic_person"
-                    android:drawablePadding="12dp"
-                    android:textSize="16sp"
-                    android:inputType="text"
-                    android:layout_marginBottom="20dp" />
-
-                <!-- Password Field -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Password"
-                    android:textSize="14sp"
-                    android:textColor="#2c3e50"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="8dp" />
-
-                <EditText
-                    android:id="@+id/passwordEditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:hint="Enter your password"
-                    android:background="@drawable/edit_text_background"
-                    android:paddingLeft="40dp"
-                    android:paddingRight="16dp"
-                    android:drawableLeft="@drawable/ic_lock"
-                    android:drawablePadding="12dp"
-                    android:textSize="16sp"
-                    android:inputType="textPassword"
-                    android:layout_marginBottom="12dp" />
-
-                <!-- Show Password Checkbox -->
-                <CheckBox
-                    android:id="@+id/showPasswordCheckBox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Show password"
+                    android:text="HEALTH CENTER"
                     android:textSize="14sp"
                     android:textColor="#7f8c8d"
-                    android:layout_marginBottom="24dp" />
-
-                <!-- Sign In Button -->
-                <Button
-                    android:id="@+id/signInButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:text="SIGN IN"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="@android:color/white"
-                    android:background="@drawable/button_primary"
-                    android:elevation="4dp" />
-
-            </LinearLayout>
-
-            <!-- Version and Copyright -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:layout_marginTop="32dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Version 0.0.30"
-                    android:textSize="12sp"
-                    android:textColor="#95a5a6"
-                    android:layout_marginBottom="4dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="© 2024 Hospital Dietary Management"
-                    android:textSize="12sp"
-                    android:textColor="#95a5a6" />
+                    android:letterSpacing="0.1" />
 
             </LinearLayout>
 
         </LinearLayout>
 
-    </ScrollView>
+        <!-- App Title -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Hospital Dietary\nManagement"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="#2c3e50"
+            android:gravity="center"
+            android:lineSpacingMultiplier="1.1"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Subtitle -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Dietary Management Application"
+            android:textSize="16sp"
+            android:textColor="#7f8c8d"
+            android:gravity="center"
+            android:layout_marginBottom="40dp" />
+
+        <!-- Username Field -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@drawable/input_field_background"
+            android:padding="16dp"
+            android:layout_marginBottom="16dp"
+            android:gravity="center_vertical">
+
+            <!-- User Icon -->
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_user"
+                android:layout_marginEnd="12dp"
+                android:alpha="0.6" />
+
+            <EditText
+                android:id="@+id/usernameEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Enter your username"
+                android:textSize="16sp"
+                android:textColor="#2c3e50"
+                android:textColorHint="#95a5a6"
+                android:background="@android:color/transparent"
+                android:inputType="text"
+                android:maxLines="1" />
+
+        </LinearLayout>
+
+        <!-- Password Field -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@drawable/input_field_background"
+            android:padding="16dp"
+            android:layout_marginBottom="16dp"
+            android:gravity="center_vertical">
+
+            <!-- Lock Icon -->
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_lock"
+                android:layout_marginEnd="12dp"
+                android:alpha="0.6" />
+
+            <EditText
+                android:id="@+id/passwordEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Enter your password"
+                android:textSize="16sp"
+                android:textColor="#2c3e50"
+                android:textColorHint="#95a5a6"
+                android:background="@android:color/transparent"
+                android:inputType="textPassword"
+                android:maxLines="1" />
+
+        </LinearLayout>
+
+        <!-- Show Password Checkbox -->
+        <CheckBox
+            android:id="@+id/showPasswordCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Show password"
+            android:textSize="14sp"
+            android:textColor="#7f8c8d"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Sign In Button -->
+        <Button
+            android:id="@+id/signInButton"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="SIGN IN"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#ffffff"
+            android:background="@drawable/signin_button_background"
+            android:elevation="4dp" />
+
+    </LinearLayout>
 
 </LinearLayout>
