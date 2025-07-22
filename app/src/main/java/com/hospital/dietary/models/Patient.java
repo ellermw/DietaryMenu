@@ -52,6 +52,16 @@ public class Patient {
     private String lunchDrinks;
     private String dinnerDrinks;
 
+    // Individual meal diet types
+    private String breakfastDiet;
+    private String lunchDiet;
+    private String dinnerDiet;
+
+    // Individual meal ADA flags
+    private boolean breakfastAda;
+    private boolean lunchAda;
+    private boolean dinnerAda;
+
     // Metadata
     private Date createdDate;
     private List<String> mealSelections;
@@ -80,6 +90,14 @@ public class Patient {
         this.honeyThick = false;
         this.extraGravy = false;
         this.meatsOnly = false;
+
+        // Initialize individual meal diets to null (will use main diet as fallback)
+        this.breakfastDiet = null;
+        this.lunchDiet = null;
+        this.dinnerDiet = null;
+        this.breakfastAda = false;
+        this.lunchAda = false;
+        this.dinnerAda = false;
     }
 
     // Getters and Setters
@@ -166,6 +184,55 @@ public class Patient {
         this.textureModifications = textureModifications;
     }
 
+    // Individual meal diet getters and setters
+    public String getBreakfastDiet() {
+        return breakfastDiet != null ? breakfastDiet : getDiet();
+    }
+
+    public void setBreakfastDiet(String breakfastDiet) {
+        this.breakfastDiet = breakfastDiet;
+    }
+
+    public String getLunchDiet() {
+        return lunchDiet != null ? lunchDiet : getDiet();
+    }
+
+    public void setLunchDiet(String lunchDiet) {
+        this.lunchDiet = lunchDiet;
+    }
+
+    public String getDinnerDiet() {
+        return dinnerDiet != null ? dinnerDiet : getDiet();
+    }
+
+    public void setDinnerDiet(String dinnerDiet) {
+        this.dinnerDiet = dinnerDiet;
+    }
+
+    public boolean isBreakfastAda() {
+        return breakfastAda;
+    }
+
+    public void setBreakfastAda(boolean breakfastAda) {
+        this.breakfastAda = breakfastAda;
+    }
+
+    public boolean isLunchAda() {
+        return lunchAda;
+    }
+
+    public void setLunchAda(boolean lunchAda) {
+        this.lunchAda = lunchAda;
+    }
+
+    public boolean isDinnerAda() {
+        return dinnerAda;
+    }
+
+    public void setDinnerAda(boolean dinnerAda) {
+        this.dinnerAda = dinnerAda;
+    }
+
     // NPO (Nothing by mouth) methods
     public boolean isBreakfastNPO() {
         return breakfastNPO;
@@ -191,7 +258,32 @@ public class Patient {
         this.dinnerNPO = dinnerNPO;
     }
 
-    // Existing texture modification methods
+    // Meal completion methods
+    public boolean isBreakfastComplete() {
+        return breakfastComplete;
+    }
+
+    public void setBreakfastComplete(boolean breakfastComplete) {
+        this.breakfastComplete = breakfastComplete;
+    }
+
+    public boolean isLunchComplete() {
+        return lunchComplete;
+    }
+
+    public void setLunchComplete(boolean lunchComplete) {
+        this.lunchComplete = lunchComplete;
+    }
+
+    public boolean isDinnerComplete() {
+        return dinnerComplete;
+    }
+
+    public void setDinnerComplete(boolean dinnerComplete) {
+        this.dinnerComplete = dinnerComplete;
+    }
+
+    // Texture modification getters and setters
     public boolean isMechanicalChopped() {
         return mechanicalChopped;
     }
@@ -224,7 +316,6 @@ public class Patient {
         this.breadOK = breadOK;
     }
 
-    // FIXED: New texture modification getters and setters
     public boolean isNectarThick() {
         return nectarThick;
     }
@@ -265,32 +356,7 @@ public class Patient {
         this.meatsOnly = meatsOnly;
     }
 
-    // Meal completion methods
-    public boolean isBreakfastComplete() {
-        return breakfastComplete;
-    }
-
-    public void setBreakfastComplete(boolean breakfastComplete) {
-        this.breakfastComplete = breakfastComplete;
-    }
-
-    public boolean isLunchComplete() {
-        return lunchComplete;
-    }
-
-    public void setLunchComplete(boolean lunchComplete) {
-        this.lunchComplete = lunchComplete;
-    }
-
-    public boolean isDinnerComplete() {
-        return dinnerComplete;
-    }
-
-    public void setDinnerComplete(boolean dinnerComplete) {
-        this.dinnerComplete = dinnerComplete;
-    }
-
-    // Breakfast Items
+    // Meal items getters and setters
     public String getBreakfastItems() {
         return breakfastItems != null ? breakfastItems : "";
     }
@@ -393,69 +459,20 @@ public class Patient {
         return (wing != null ? wing : "") + " - " + (roomNumber != null ? roomNumber : "");
     }
 
-    public String getMealCompletionStatus() {
-        int completed = 0;
-        int total = 3;
-
-        if (breakfastComplete || breakfastNPO) completed++;
-        if (lunchComplete || lunchNPO) completed++;
-        if (dinnerComplete || dinnerNPO) completed++;
-
-        if (completed == total) {
-            return "All Meals Complete";
-        } else if (completed == 0) {
-            return "No Meals Complete";
-        } else {
-            return completed + "/" + total + " Meals Complete";
-        }
+    public boolean hasAnyMealComplete() {
+        return breakfastComplete || lunchComplete || dinnerComplete;
     }
 
-    // FIXED: Updated utility methods to check if any texture modifications are applied
-    public boolean hasTextureModifications() {
-        return mechanicalChopped || mechanicalGround || biteSize || !breadOK ||
-                nectarThick || puddingThick || honeyThick || extraGravy;
+    public boolean hasAllMealsComplete() {
+        return breakfastComplete && lunchComplete && dinnerComplete;
     }
 
-    public String getTextureModificationsDescription() {
-        List<String> modifications = new ArrayList<>();
-        if (mechanicalChopped) modifications.add("Mechanical Chopped");
-        if (mechanicalGround) modifications.add("Mechanical Ground");
-        if (biteSize) modifications.add("Bite Size");
-        if (!breadOK) modifications.add("No Bread");
-        if (nectarThick) modifications.add("Nectar Thick");
-        if (puddingThick) modifications.add("Pudding Thick");
-        if (honeyThick) modifications.add("Honey Thick");
-        if (extraGravy) modifications.add("Extra Gravy");
-        if (meatsOnly && (mechanicalChopped || mechanicalGround)) modifications.add("Meats Only");
-
-        return modifications.isEmpty() ? "None" : String.join(", ", modifications);
+    public boolean isPendingAnyMeal() {
+        return !breakfastComplete || !lunchComplete || !dinnerComplete;
     }
 
     @Override
     public String toString() {
-        return "Patient{" +
-                "patientId=" + patientId +
-                ", fullName='" + getFullName() + '\'' +
-                ", location='" + getLocationInfo() + '\'' +
-                ", diet='" + getDiet() + '\'' +
-                ", adaDiet=" + adaDiet +
-                ", fluidRestriction='" + fluidRestriction + '\'' +
-                ", textureModifications='" + getTextureModificationsDescription() + '\'' +
-                ", mealStatus='" + getMealCompletionStatus() + '\'' +
-                '}';
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-
-        Patient patient = (Patient) obj;
-        return patientId == patient.patientId;
-    }
-
-    @Override
-    public int hashCode() {
-        return patientId;
+        return getFullName() + " - " + getLocationInfo() + " (" + getDiet() + ")";
     }
 }

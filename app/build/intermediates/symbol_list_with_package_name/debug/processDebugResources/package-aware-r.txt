@@ -3013,6 +3013,7 @@ drawable abc_textfield_search_activated_mtrl_alpha
 drawable abc_textfield_search_default_mtrl_alpha
 drawable abc_textfield_search_material
 drawable abc_vector_test
+drawable ada_toggle_background
 drawable avd_hide_password
 drawable avd_show_password
 drawable blue_cross_logo
@@ -3140,6 +3141,7 @@ drawable notify_panel_notification_icon_bg
 drawable remove_button_background
 drawable rounded_border
 drawable signin_button_background
+drawable spinner_background
 drawable test_level_drawable
 drawable tooltip_frame_dark
 drawable tooltip_frame_light
@@ -3577,6 +3579,9 @@ id material_timepicker_ok_button
 id material_timepicker_view
 id material_value_index
 id matrix
+id mealAdaSwitch
+id mealAdaToggleLayout
+id mealDietSpinner
 id mealItemsSection
 id mealStatusSection
 id mealSummaryText
@@ -4070,6 +4075,7 @@ layout dialog_edit_user
 layout dialog_force_password_change
 layout dialog_item_form
 layout dialog_login
+layout dialog_meal_edit_diet
 layout dialog_reset_password
 layout dialog_user_form
 layout drink_item

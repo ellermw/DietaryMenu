@@ -1,24 +1,26 @@
 package com.hospital.dietary;
 
 import android.app.DatePickerDialog;
-import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import com.hospital.dietary.dao.PatientDAO;
 import com.hospital.dietary.models.Patient;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 public class RetiredOrdersActivity extends AppCompatActivity {
+
+    private static final String TAG = "RetiredOrdersActivity";
 
     private DatabaseHelper dbHelper;
     private PatientDAO patientDAO;
@@ -27,19 +29,11 @@ public class RetiredOrdersActivity extends AppCompatActivity {
     private String currentUserFullName;
 
     // UI Components
-    private Button datePickerButton;
-    private TextView selectedDateText;
+    private Button selectDateButton, printAllButton;
+    private TextView selectedDateTextView, noOrdersText;
     private ListView retiredOrdersListView;
-    private TextView noRetiredOrdersText;
-    private Button printAllButton;
-    private Button printSelectedButton;
 
-    // Date handling
     private Calendar selectedDate;
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMMM d, yyyy", Locale.getDefault());
-    private SimpleDateFormat dateFormatShort = new SimpleDateFormat("M/d/yyyy", Locale.getDefault());
-    private SimpleDateFormat dbDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-
     private List<Patient> retiredPatients = new ArrayList<>();
     private ArrayAdapter<Patient> retiredAdapter;
 
@@ -57,66 +51,32 @@ public class RetiredOrdersActivity extends AppCompatActivity {
         dbHelper = new DatabaseHelper(this);
         patientDAO = new PatientDAO(dbHelper);
 
-        // Set title and enable up button
+        // Set title
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle("Retired Orders");
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        // Initialize selected date to today
-        selectedDate = Calendar.getInstance();
-        selectedDate.add(Calendar.DAY_OF_MONTH, -1); // Default to yesterday
-
-        initializeUI();
+        initializeViews();
         setupListeners();
+
+        // Set today as default selected date
+        selectedDate = Calendar.getInstance();
         updateSelectedDateDisplay();
-        loadRetiredOrdersForDate();
+        loadRetiredOrders();
     }
 
-    private void initializeUI() {
-        datePickerButton = findViewById(R.id.datePickerButton);
-        selectedDateText = findViewById(R.id.selectedDateText);
+    private void initializeViews() {
+        selectDateButton = findViewById(R.id.selectDateButton);
+        selectedDateTextView = findViewById(R.id.selectedDateTextView);
         retiredOrdersListView = findViewById(R.id.retiredOrdersListView);
-        noRetiredOrdersText = findViewById(R.id.noRetiredOrdersText);
+        noOrdersText = findViewById(R.id.noOrdersText);
         printAllButton = findViewById(R.id.printAllButton);
-        printSelectedButton = findViewById(R.id.printSelectedButton);
-
-        // Set up list view for multiple selection
-        retiredOrdersListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-
-        // Create adapter
-        retiredAdapter = new ArrayAdapter<Patient>(this, android.R.layout.simple_list_item_multiple_choice, retiredPatients) {
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                if (convertView == null) {
-                    convertView = getLayoutInflater().inflate(android.R.layout.simple_list_item_multiple_choice, parent, false);
-                }
-
-                Patient patient = getItem(position);
-                CheckedTextView textView = (CheckedTextView) convertView;
-
-                String displayText = patient.getPatientFirstName() + " " + patient.getPatientLastName() +
-                        " - " + patient.getWing() + " Room " + patient.getRoomNumber() +
-                        "\nDiet: " + patient.getDiet() + " | " + patient.getMealCompletionStatus();
-
-                textView.setText(displayText);
-                return convertView;
-            }
-        };
-
-        retiredOrdersListView.setAdapter(retiredAdapter);
     }
 
     private void setupListeners() {
-        datePickerButton.setOnClickListener(v -> showDatePicker());
-
-        if (printAllButton != null) {
-            printAllButton.setOnClickListener(v -> printAllOrders());
-        }
-
-        if (printSelectedButton != null) {
-            printSelectedButton.setOnClickListener(v -> printSelectedOrders());
-        }
+        selectDateButton.setOnClickListener(v -> showDatePicker());
+        printAllButton.setOnClickListener(v -> printAllOrders());
 
         retiredOrdersListView.setOnItemClickListener((parent, view, position, id) -> {
             Patient patient = retiredPatients.get(position);
@@ -132,83 +92,123 @@ public class RetiredOrdersActivity extends AppCompatActivity {
                     selectedDate.set(Calendar.MONTH, month);
                     selectedDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                     updateSelectedDateDisplay();
-                    loadRetiredOrdersForDate();
+                    loadRetiredOrders();
                 },
                 selectedDate.get(Calendar.YEAR),
                 selectedDate.get(Calendar.MONTH),
                 selectedDate.get(Calendar.DAY_OF_MONTH)
         );
 
-        // Set max date to yesterday (can't view future orders)
-        Calendar maxDate = Calendar.getInstance();
-        maxDate.add(Calendar.DAY_OF_MONTH, -1);
-        datePickerDialog.getDatePicker().setMaxDate(maxDate.getTimeInMillis());
-
-        datePickerDialog.setTitle("Select Date to View Orders");
         datePickerDialog.show();
     }
 
     private void updateSelectedDateDisplay() {
-        String dateString = dateFormat.format(selectedDate.getTime());
-        selectedDateText.setText("Viewing orders for: " + dateString);
-        datePickerButton.setText("📅 Change Date (" + dateFormatShort.format(selectedDate.getTime()) + ")");
+        SimpleDateFormat displayFormat = new SimpleDateFormat("EEEE, MMMM d, yyyy", Locale.getDefault());
+        String dateString = displayFormat.format(selectedDate.getTime());
+        selectedDateTextView.setText("Selected Date: " + dateString);
     }
 
-    private void loadRetiredOrdersForDate() {
+    private void loadRetiredOrders() {
         try {
-            String selectedDateString = dbDateFormat.format(selectedDate.getTime());
-            retiredPatients = patientDAO.getOrdersByDate(selectedDateString);
+            // For this demo, show completed patients as "retired" orders
+            retiredPatients.clear();
+            retiredPatients.addAll(patientDAO.getCompletedPatients());
 
             if (retiredPatients.isEmpty()) {
                 retiredOrdersListView.setVisibility(View.GONE);
-                noRetiredOrdersText.setVisibility(View.VISIBLE);
-                noRetiredOrdersText.setText("No orders found for " + dateFormat.format(selectedDate.getTime()) +
-                        "\n\nTry selecting a different date.");
+                noOrdersText.setVisibility(View.VISIBLE);
+                printAllButton.setVisibility(View.GONE);
 
-                if (printAllButton != null) printAllButton.setEnabled(false);
-                if (printSelectedButton != null) printSelectedButton.setEnabled(false);
+                String dayOfWeek = new SimpleDateFormat("EEEE", Locale.getDefault()).format(selectedDate.getTime());
+                String dateStr = new SimpleDateFormat("M-d-yyyy", Locale.getDefault()).format(selectedDate.getTime());
+                noOrdersText.setText("No completed orders found for " + dayOfWeek + "\n" + dateStr);
             } else {
                 retiredOrdersListView.setVisibility(View.VISIBLE);
-                noRetiredOrdersText.setVisibility(View.GONE);
-                retiredAdapter.notifyDataSetChanged();
+                noOrdersText.setVisibility(View.GONE);
+                printAllButton.setVisibility(View.VISIBLE);
 
-                if (printAllButton != null) printAllButton.setEnabled(true);
-                if (printSelectedButton != null) printSelectedButton.setEnabled(true);
+                // Create adapter for retired orders
+                retiredAdapter = new ArrayAdapter<Patient>(this, android.R.layout.simple_list_item_2, android.R.id.text1, retiredPatients) {
+                    @Override
+                    public View getView(int position, View convertView, ViewGroup parent) {
+                        View view = super.getView(position, convertView, parent);
+
+                        Patient patient = getItem(position);
+                        TextView text1 = view.findViewById(android.R.id.text1);
+                        TextView text2 = view.findViewById(android.R.id.text2);
+
+                        if (patient != null) {
+                            text1.setText(patient.getFullName());
+
+                            // FIXED: Show individual meal diets with proper ADA display
+                            String breakfastDiet = getCleanDietDisplay(patient.getBreakfastDiet(), patient.isBreakfastAda());
+                            String lunchDiet = getCleanDietDisplay(patient.getLunchDiet(), patient.isLunchAda());
+                            String dinnerDiet = getCleanDietDisplay(patient.getDinnerDiet(), patient.isDinnerAda());
+
+                            String mealInfo = String.format("Breakfast - %s • Lunch - %s • Dinner - %s",
+                                    breakfastDiet, lunchDiet, dinnerDiet);
+
+                            text2.setText(patient.getLocationInfo() + "\n" + mealInfo);
+                        }
+
+                        return view;
+                    }
+                };
+
+                retiredOrdersListView.setAdapter(retiredAdapter);
             }
 
+            Log.d(TAG, "Loaded " + retiredPatients.size() + " retired orders");
+
         } catch (Exception e) {
-            Toast.makeText(this, "Error loading orders: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Error loading retired orders: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "Error loading retired orders", e);
         }
+    }
+
+    // FIXED: Helper method to clean up diet display and avoid duplicate (ADA)
+    private String getCleanDietDisplay(String diet, boolean isAda) {
+        if (diet == null) return "Regular";
+
+        String cleanDiet;
+        if (diet.contains("(ADA)") || isAda) {
+            // If diet already contains (ADA) or isAda is true, format it properly
+            if (diet.contains("(ADA)")) {
+                // Diet already has (ADA) in it, use as is
+                cleanDiet = diet;
+            } else {
+                // isAda is true but diet doesn't contain (ADA), add it once
+                cleanDiet = diet + " (ADA)";
+            }
+        } else {
+            // Not an ADA diet, use diet as is
+            cleanDiet = diet;
+        }
+
+        return cleanDiet;
     }
 
     private void showOrderDetails(Patient patient) {
         StringBuilder details = new StringBuilder();
 
-        // Add date header with day of week
         String dayOfWeek = new SimpleDateFormat("EEEE", Locale.getDefault()).format(selectedDate.getTime());
-        String dateHeader = new SimpleDateFormat("M/d/yyyy", Locale.getDefault()).format(selectedDate.getTime());
-
-        details.append("=== ").append(dayOfWeek).append(" ===\n");
-        details.append(dateHeader).append("\n\n");
+        String dateHeader = new SimpleDateFormat("M-d-yyyy", Locale.getDefault()).format(selectedDate.getTime());
 
         details.append("Patient: ").append(patient.getFullName()).append("\n");
-        details.append("Location: ").append(patient.getWing()).append(" - Room ").append(patient.getRoomNumber()).append("\n");
-        details.append("Diet: ").append(patient.getDiet()).append("\n");
+        details.append("Room: ").append(patient.getLocationInfo()).append("\n");
+        details.append("Date: ").append(dayOfWeek).append(" ").append(dateHeader).append("\n\n");
 
-        if (patient.getFluidRestriction() != null) {
-            details.append("Fluid Restriction: ").append(patient.getFluidRestriction()).append("\n");
-        }
+        // FIXED: Show individual meal diets with proper formatting
+        details.append("BREAKFAST - ").append(getCleanDietDisplay(patient.getBreakfastDiet(), patient.isBreakfastAda())).append("\n");
+        details.append("Status: ").append(patient.isBreakfastNPO() ? "NPO" : "Complete").append("\n\n");
 
-        if (patient.getTextureModifications() != null) {
-            details.append("Texture Modifications: ").append(patient.getTextureModifications()).append("\n");
-        }
+        details.append("LUNCH - ").append(getCleanDietDisplay(patient.getLunchDiet(), patient.isLunchAda())).append("\n");
+        details.append("Status: ").append(patient.isLunchNPO() ? "NPO" : "Complete").append("\n\n");
 
-        details.append("\nMeal Status:\n");
-        details.append("Breakfast: ").append(patient.isBreakfastNPO() ? "NPO" : "Complete").append("\n");
-        details.append("Lunch: ").append(patient.isLunchNPO() ? "NPO" : "Complete").append("\n");
-        details.append("Dinner: ").append(patient.isDinnerNPO() ? "NPO" : "Complete");
+        details.append("DINNER - ").append(getCleanDietDisplay(patient.getDinnerDiet(), patient.isDinnerAda())).append("\n");
+        details.append("Status: ").append(patient.isDinnerNPO() ? "NPO" : "Complete");
 
-        new android.app.AlertDialog.Builder(this)
+        new AlertDialog.Builder(this)
                 .setTitle("Order Details")
                 .setMessage(details.toString())
                 .setPositiveButton("Print This Order", (dialog, which) -> printSingleOrder(patient))
@@ -232,13 +232,15 @@ public class RetiredOrdersActivity extends AppCompatActivity {
         printContent.append("========================================\n\n");
 
         printContent.append("Patient: ").append(patient.getFullName()).append("\n");
-        printContent.append("Room: ").append(patient.getWing()).append(" - ").append(patient.getRoomNumber()).append("\n");
-        printContent.append("Diet: ").append(patient.getDiet()).append("\n\n");
+        printContent.append("Room: ").append(patient.getWing()).append(" - ").append(patient.getRoomNumber()).append("\n\n");
 
-        // Add meal sections
-        addMealSection(printContent, "BREAKFAST", patient.isBreakfastNPO(), patient.getDiet());
-        addMealSection(printContent, "LUNCH", patient.isLunchNPO(), patient.getDiet());
-        addMealSection(printContent, "DINNER", patient.isDinnerNPO(), patient.getDiet());
+        // Add meal sections with individual diets
+        addMealSection(printContent, "BREAKFAST", patient.isBreakfastNPO(),
+                getCleanDietDisplay(patient.getBreakfastDiet(), patient.isBreakfastAda()));
+        addMealSection(printContent, "LUNCH", patient.isLunchNPO(),
+                getCleanDietDisplay(patient.getLunchDiet(), patient.isLunchAda()));
+        addMealSection(printContent, "DINNER", patient.isDinnerNPO(),
+                getCleanDietDisplay(patient.getDinnerDiet(), patient.isDinnerAda()));
 
         // TODO: Implement actual printing functionality
         Toast.makeText(this, "Print Order - " + patient.getFullName() + " (" + dayOfWeek + " " + dateHeader + ")", Toast.LENGTH_LONG).show();
@@ -246,6 +248,7 @@ public class RetiredOrdersActivity extends AppCompatActivity {
 
     private void addMealSection(StringBuilder content, String mealName, boolean isNPO, String diet) {
         content.append("--- ").append(mealName).append(" ---\n");
+        content.append("Diet: ").append(diet).append("\n");
 
         if (isNPO) {
             content.append("NPO (Nothing by mouth)\n\n");
@@ -299,9 +302,32 @@ public class RetiredOrdersActivity extends AppCompatActivity {
                     content.append("• Ensure (240ml)\n\n");
                     break;
             }
+
+        } else if (diet.startsWith("Puree")) {
+            // Add puree diet items
+            switch (mealName) {
+                case "BREAKFAST":
+                    content.append("• Pureed Scrambled Eggs\n");
+                    content.append("• Pureed Oatmeal\n");
+                    content.append("• Apple Juice\n");
+                    content.append("• Coffee\n\n");
+                    break;
+                case "LUNCH":
+                    content.append("• Pureed Chicken\n");
+                    content.append("• Pureed Potatoes\n");
+                    content.append("• Pureed Vegetables\n");
+                    content.append("• Thickened Liquids\n\n");
+                    break;
+                case "DINNER":
+                    content.append("• Pureed Beef\n");
+                    content.append("• Pureed Rice\n");
+                    content.append("• Pureed Carrots\n");
+                    content.append("• Pudding").append(diet.contains("ADA") ? " (Sugar Free)" : "").append("\n\n");
+                    break;
+            }
         } else {
-            content.append("Regular meal items\n");
-            content.append("(Meal planning completed)\n\n");
+            // Regular diet or other diets
+            content.append("Standard items for ").append(diet).append(" diet\n\n");
         }
     }
 
@@ -314,36 +340,21 @@ public class RetiredOrdersActivity extends AppCompatActivity {
         String dayOfWeek = new SimpleDateFormat("EEEE", Locale.getDefault()).format(selectedDate.getTime());
         String dateHeader = new SimpleDateFormat("M-d-yyyy", Locale.getDefault()).format(selectedDate.getTime());
 
-        // TODO: Implement batch printing functionality
-        Toast.makeText(this, "Print All Orders - " + retiredPatients.size() + " orders for " + dayOfWeek + " " + dateHeader, Toast.LENGTH_LONG).show();
-    }
-
-    private void printSelectedOrders() {
-        android.util.SparseBooleanArray selectedItems = retiredOrdersListView.getCheckedItemPositions();
-        List<Patient> selectedPatients = new ArrayList<>();
-
-        for (int i = 0; i < selectedItems.size(); i++) {
-            int position = selectedItems.keyAt(i);
-            if (selectedItems.valueAt(i)) {
-                selectedPatients.add(retiredPatients.get(position));
-            }
-        }
-
-        if (selectedPatients.isEmpty()) {
-            Toast.makeText(this, "No orders selected", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        String dayOfWeek = new SimpleDateFormat("EEEE", Locale.getDefault()).format(selectedDate.getTime());
-        String dateHeader = new SimpleDateFormat("M-d-yyyy", Locale.getDefault()).format(selectedDate.getTime());
-
-        // TODO: Implement selected printing functionality
-        Toast.makeText(this, "Print Selected Orders - " + selectedPatients.size() + " orders for " + dayOfWeek + " " + dateHeader, Toast.LENGTH_LONG).show();
+        // Show confirmation dialog
+        new AlertDialog.Builder(this)
+                .setTitle("Print All Orders")
+                .setMessage("Print all " + retiredPatients.size() + " orders for " + dayOfWeek + " " + dateHeader + "?")
+                .setPositiveButton("Print", (dialog, which) -> {
+                    // TODO: Implement actual printing functionality
+                    Toast.makeText(this, "Print All Orders - " + retiredPatients.size() + " orders (" + dayOfWeek + " " + dateHeader + ")", Toast.LENGTH_LONG).show();
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_with_home, menu);
+        getMenuInflater().inflate(R.menu.menu_retired_orders, menu);
         return true;
     }
 
@@ -353,25 +364,18 @@ public class RetiredOrdersActivity extends AppCompatActivity {
             case android.R.id.home:
                 finish();
                 return true;
-            case R.id.action_home:
-                goToMainMenu();
-                return true;
             case R.id.action_refresh:
-                loadRetiredOrdersForDate();
-                Toast.makeText(this, "Orders refreshed for " + dateFormatShort.format(selectedDate.getTime()), Toast.LENGTH_SHORT).show();
+                loadRetiredOrders();
+                return true;
+            case R.id.action_print_all:
+                printAllOrders();
+                return true;
+            case R.id.action_select_date:
+                showDatePicker();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    private void goToMainMenu() {
-        Intent intent = new Intent(this, MainMenuActivity.class);
-        intent.putExtra("current_user", currentUsername);
-        intent.putExtra("user_role", currentUserRole);
-        intent.putExtra("user_full_name", currentUserFullName);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        startActivity(intent);
     }
 
     @Override

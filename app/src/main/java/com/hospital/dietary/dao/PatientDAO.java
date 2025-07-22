@@ -68,6 +68,15 @@ public class PatientDAO {
         values.put("breakfast_drinks", patient.getBreakfastDrinks());
         values.put("lunch_drinks", patient.getLunchDrinks());
         values.put("dinner_drinks", patient.getDinnerDrinks());
+
+        // Individual meal diet fields
+        values.put("breakfast_diet", patient.getBreakfastDiet());
+        values.put("lunch_diet", patient.getLunchDiet());
+        values.put("dinner_diet", patient.getDinnerDiet());
+        values.put("breakfast_ada", patient.isBreakfastAda() ? 1 : 0);
+        values.put("lunch_ada", patient.isLunchAda() ? 1 : 0);
+        values.put("dinner_ada", patient.isDinnerAda() ? 1 : 0);
+
         values.put("created_date", dateFormat.format(patient.getCreatedDate()));
 
         long result = db.insert("PatientInfo", null, values);
@@ -127,6 +136,14 @@ public class PatientDAO {
         values.put("lunch_drinks", patient.getLunchDrinks());
         values.put("dinner_drinks", patient.getDinnerDrinks());
 
+        // Individual meal diet fields
+        values.put("breakfast_diet", patient.getBreakfastDiet());
+        values.put("lunch_diet", patient.getLunchDiet());
+        values.put("dinner_diet", patient.getDinnerDiet());
+        values.put("breakfast_ada", patient.isBreakfastAda() ? 1 : 0);
+        values.put("lunch_ada", patient.isLunchAda() ? 1 : 0);
+        values.put("dinner_ada", patient.isDinnerAda() ? 1 : 0);
+
         int rowsAffected = db.update("PatientInfo", values, "patient_id = ?",
                 new String[]{String.valueOf(patient.getPatientId())});
 
@@ -136,6 +153,48 @@ public class PatientDAO {
             Log.d(TAG, "Patient updated successfully: " + patient.getFullName());
         } else {
             Log.e(TAG, "Failed to update patient: " + patient.getFullName());
+        }
+
+        return success;
+    }
+
+    /**
+     * Update individual meal diet
+     */
+    public boolean updateMealDiet(int patientId, String meal, String diet, boolean isAda) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        String dietField, adaField;
+        switch (meal.toLowerCase()) {
+            case "breakfast":
+                dietField = "breakfast_diet";
+                adaField = "breakfast_ada";
+                break;
+            case "lunch":
+                dietField = "lunch_diet";
+                adaField = "lunch_ada";
+                break;
+            case "dinner":
+                dietField = "dinner_diet";
+                adaField = "dinner_ada";
+                break;
+            default:
+                Log.e(TAG, "Invalid meal type: " + meal);
+                return false;
+        }
+
+        values.put(dietField, diet);
+        values.put(adaField, isAda ? 1 : 0);
+
+        int rowsAffected = db.update("PatientInfo", values, "patient_id = ?",
+                new String[]{String.valueOf(patientId)});
+
+        boolean success = rowsAffected > 0;
+        if (success) {
+            Log.d(TAG, "Updated " + meal + " diet for patient ID " + patientId + " to " + diet + (isAda ? " (ADA)" : ""));
+        } else {
+            Log.e(TAG, "Failed to update " + meal + " diet for patient ID " + patientId);
         }
 
         return success;
@@ -169,7 +228,7 @@ public class PatientDAO {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
         try (Cursor cursor = db.query("PatientInfo", null, null, null, null, null,
-                "wing ASC, room_number ASC")) {
+                "patient_last_name ASC, patient_first_name ASC")) {
 
             while (cursor.moveToNext()) {
                 patients.add(createPatientFromCursor(cursor));
@@ -182,308 +241,243 @@ public class PatientDAO {
     }
 
     /**
-     * FIXED: Get patients with pending orders - shows ALL patients that have incomplete meals
+     * Get patients with pending meal orders
      */
     public List<Patient> getPendingPatients() {
-        List<Patient> patients = new ArrayList<>();
+        List<Patient> pendingPatients = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        // A patient is pending if ANY meal is incomplete AND not NPO
-        String selection = "(breakfast_complete = 0 AND breakfast_npo = 0) OR " +
-                "(lunch_complete = 0 AND lunch_npo = 0) OR " +
-                "(dinner_complete = 0 AND dinner_npo = 0)";
+        String selection = "breakfast_complete = 0 OR lunch_complete = 0 OR dinner_complete = 0";
 
         try (Cursor cursor = db.query("PatientInfo", null, selection, null, null, null,
-                "wing ASC, room_number ASC")) {
+                "patient_last_name ASC, patient_first_name ASC")) {
 
             while (cursor.moveToNext()) {
-                patients.add(createPatientFromCursor(cursor));
+                pendingPatients.add(createPatientFromCursor(cursor));
             }
         } catch (Exception e) {
             Log.e(TAG, "Error getting pending patients", e);
         }
 
-        Log.d(TAG, "Found " + patients.size() + " pending patients");
-        return patients;
+        Log.d(TAG, "Found " + pendingPatients.size() + " patients with pending meals");
+        return pendingPatients;
     }
 
     /**
-     * Get patients with completed orders (for finished orders view)
+     * Get patients with completed meal orders
      */
     public List<Patient> getCompletedPatients() {
-        List<Patient> patients = new ArrayList<>();
+        List<Patient> completedPatients = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        // A patient is completed if ALL meals are either complete OR NPO
-        String selection = "(breakfast_complete = 1 OR breakfast_npo = 1) AND " +
-                "(lunch_complete = 1 OR lunch_npo = 1) AND " +
-                "(dinner_complete = 1 OR dinner_npo = 1)";
+        String selection = "breakfast_complete = 1 AND lunch_complete = 1 AND dinner_complete = 1";
 
         try (Cursor cursor = db.query("PatientInfo", null, selection, null, null, null,
-                "wing ASC, room_number ASC")) {
+                "patient_last_name ASC, patient_first_name ASC")) {
 
             while (cursor.moveToNext()) {
-                patients.add(createPatientFromCursor(cursor));
+                completedPatients.add(createPatientFromCursor(cursor));
             }
         } catch (Exception e) {
             Log.e(TAG, "Error getting completed patients", e);
         }
 
-        return patients;
+        return completedPatients;
     }
 
     /**
-     * Get orders by date (for retired orders view)
+     * Delete patient by ID
      */
-    public List<Patient> getOrdersByDate(String dateString) {
+    public boolean deletePatient(int patientId) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        int rowsDeleted = db.delete("PatientInfo", "patient_id = ?",
+                new String[]{String.valueOf(patientId)});
+
+        boolean success = rowsDeleted > 0;
+        if (success) {
+            Log.d(TAG, "Patient deleted successfully: " + patientId);
+        } else {
+            Log.e(TAG, "Failed to delete patient: " + patientId);
+        }
+
+        return success;
+    }
+
+    /**
+     * Search patients by name or room
+     */
+    public List<Patient> searchPatients(String searchTerm) {
         List<Patient> patients = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        // For now, return completed patients (you can enhance this to filter by actual date)
-        try (Cursor cursor = db.query("PatientInfo", null, null, null, null, null,
-                "wing ASC, room_number ASC")) {
+        String selection = "patient_first_name LIKE ? OR patient_last_name LIKE ? OR room_number LIKE ?";
+        String[] selectionArgs = {"%" + searchTerm + "%", "%" + searchTerm + "%", "%" + searchTerm + "%"};
+
+        try (Cursor cursor = db.query("PatientInfo", null, selection, selectionArgs, null, null,
+                "patient_last_name ASC, patient_first_name ASC")) {
 
             while (cursor.moveToNext()) {
                 patients.add(createPatientFromCursor(cursor));
             }
         } catch (Exception e) {
-            Log.e(TAG, "Error getting orders by date: " + dateString, e);
+            Log.e(TAG, "Error searching patients", e);
         }
 
         return patients;
     }
 
     /**
-     * Get patient by room location
+     * Get patients by wing
      */
-    public Patient getPatientInRoom(String wing, String roomNumber) {
+    public List<Patient> getPatientsByWing(String wing) {
+        List<Patient> patients = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Patient patient = null;
 
-        try (Cursor cursor = db.query("PatientInfo", null, "wing = ? AND room_number = ?",
-                new String[]{wing, roomNumber}, null, null, null)) {
+        try (Cursor cursor = db.query("PatientInfo", null, "wing = ?",
+                new String[]{wing}, null, null, "room_number ASC")) {
 
-            if (cursor.moveToFirst()) {
-                patient = createPatientFromCursor(cursor);
+            while (cursor.moveToNext()) {
+                patients.add(createPatientFromCursor(cursor));
             }
         } catch (Exception e) {
-            Log.e(TAG, "Error getting patient in room: " + wing + " " + roomNumber, e);
+            Log.e(TAG, "Error getting patients by wing: " + wing, e);
         }
 
-        return patient;
+        return patients;
     }
 
     /**
-     * Delete a patient
+     * Helper method to create Patient object from cursor
      */
-    public boolean deletePatient(int patientId) {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
+    private Patient createPatientFromCursor(Cursor cursor) {
+        Patient patient = new Patient();
 
-        try {
-            db.beginTransaction();
+        patient.setPatientId(cursor.getInt(cursor.getColumnIndexOrThrow("patient_id")));
+        patient.setPatientFirstName(cursor.getString(cursor.getColumnIndexOrThrow("patient_first_name")));
+        patient.setPatientLastName(cursor.getString(cursor.getColumnIndexOrThrow("patient_last_name")));
+        patient.setWing(cursor.getString(cursor.getColumnIndexOrThrow("wing")));
+        patient.setRoomNumber(cursor.getString(cursor.getColumnIndexOrThrow("room_number")));
+        patient.setDietType(cursor.getString(cursor.getColumnIndexOrThrow("diet_type")));
+        patient.setDiet(cursor.getString(cursor.getColumnIndexOrThrow("diet")));
+        patient.setAdaDiet(cursor.getInt(cursor.getColumnIndexOrThrow("ada_diet")) == 1);
+        patient.setFluidRestriction(cursor.getString(cursor.getColumnIndexOrThrow("fluid_restriction")));
+        patient.setTextureModifications(cursor.getString(cursor.getColumnIndexOrThrow("texture_modifications")));
 
-            // Delete from PatientInfo table
-            int rowsAffected = db.delete("PatientInfo", "patient_id = ?",
-                    new String[]{String.valueOf(patientId)});
+        // Texture modification flags
+        patient.setMechanicalChopped(cursor.getInt(cursor.getColumnIndexOrThrow("mechanical_chopped")) == 1);
+        patient.setMechanicalGround(cursor.getInt(cursor.getColumnIndexOrThrow("mechanical_ground")) == 1);
+        patient.setBiteSize(cursor.getInt(cursor.getColumnIndexOrThrow("bite_size")) == 1);
+        patient.setBreadOK(cursor.getInt(cursor.getColumnIndexOrThrow("bread_ok")) == 1);
+        patient.setNectarThick(cursor.getInt(cursor.getColumnIndexOrThrow("nectar_thick")) == 1);
+        patient.setPuddingThick(cursor.getInt(cursor.getColumnIndexOrThrow("pudding_thick")) == 1);
+        patient.setHoneyThick(cursor.getInt(cursor.getColumnIndexOrThrow("honey_thick")) == 1);
+        patient.setExtraGravy(cursor.getInt(cursor.getColumnIndexOrThrow("extra_gravy")) == 1);
+        patient.setMeatsOnly(cursor.getInt(cursor.getColumnIndexOrThrow("meats_only")) == 1);
 
-            // Also delete from MealSelections table if it exists
-            try {
-                db.delete("MealSelections", "patient_id = ?",
-                        new String[]{String.valueOf(patientId)});
-            } catch (Exception e) {
-                Log.w(TAG, "Could not delete meal selections (table may not exist): " + e.getMessage());
-            }
+        // Meal completion flags
+        patient.setBreakfastComplete(cursor.getInt(cursor.getColumnIndexOrThrow("breakfast_complete")) == 1);
+        patient.setLunchComplete(cursor.getInt(cursor.getColumnIndexOrThrow("lunch_complete")) == 1);
+        patient.setDinnerComplete(cursor.getInt(cursor.getColumnIndexOrThrow("dinner_complete")) == 1);
 
-            db.setTransactionSuccessful();
-            Log.d(TAG, "Patient " + patientId + " deleted successfully");
-            return rowsAffected > 0;
+        // NPO flags
+        patient.setBreakfastNPO(cursor.getInt(cursor.getColumnIndexOrThrow("breakfast_npo")) == 1);
+        patient.setLunchNPO(cursor.getInt(cursor.getColumnIndexOrThrow("lunch_npo")) == 1);
+        patient.setDinnerNPO(cursor.getInt(cursor.getColumnIndexOrThrow("dinner_npo")) == 1);
 
-        } catch (Exception e) {
-            Log.e(TAG, "Error deleting patient: " + patientId, e);
-            return false;
-        } finally {
-            db.endTransaction();
+        // Meal items
+        patient.setBreakfastItems(cursor.getString(cursor.getColumnIndexOrThrow("breakfast_items")));
+        patient.setLunchItems(cursor.getString(cursor.getColumnIndexOrThrow("lunch_items")));
+        patient.setDinnerItems(cursor.getString(cursor.getColumnIndexOrThrow("dinner_items")));
+
+        // Drink items
+        patient.setBreakfastJuices(cursor.getString(cursor.getColumnIndexOrThrow("breakfast_juices")));
+        patient.setLunchJuices(cursor.getString(cursor.getColumnIndexOrThrow("lunch_juices")));
+        patient.setDinnerJuices(cursor.getString(cursor.getColumnIndexOrThrow("dinner_juices")));
+        patient.setBreakfastDrinks(cursor.getString(cursor.getColumnIndexOrThrow("breakfast_drinks")));
+        patient.setLunchDrinks(cursor.getString(cursor.getColumnIndexOrThrow("lunch_drinks")));
+        patient.setDinnerDrinks(cursor.getString(cursor.getColumnIndexOrThrow("dinner_drinks")));
+
+        // Individual meal diet fields (handle potential null values)
+        int breakfastDietIndex = cursor.getColumnIndex("breakfast_diet");
+        int lunchDietIndex = cursor.getColumnIndex("lunch_diet");
+        int dinnerDietIndex = cursor.getColumnIndex("dinner_diet");
+        int breakfastAdaIndex = cursor.getColumnIndex("breakfast_ada");
+        int lunchAdaIndex = cursor.getColumnIndex("lunch_ada");
+        int dinnerAdaIndex = cursor.getColumnIndex("dinner_ada");
+
+        if (breakfastDietIndex != -1) {
+            patient.setBreakfastDiet(cursor.getString(breakfastDietIndex));
         }
+        if (lunchDietIndex != -1) {
+            patient.setLunchDiet(cursor.getString(lunchDietIndex));
+        }
+        if (dinnerDietIndex != -1) {
+            patient.setDinnerDiet(cursor.getString(dinnerDietIndex));
+        }
+        if (breakfastAdaIndex != -1) {
+            patient.setBreakfastAda(cursor.getInt(breakfastAdaIndex) == 1);
+        }
+        if (lunchAdaIndex != -1) {
+            patient.setLunchAda(cursor.getInt(lunchAdaIndex) == 1);
+        }
+        if (dinnerAdaIndex != -1) {
+            patient.setDinnerAda(cursor.getInt(dinnerAdaIndex) == 1);
+        }
+
+        // Created date
+        try {
+            String dateString = cursor.getString(cursor.getColumnIndexOrThrow("created_date"));
+            if (dateString != null) {
+                patient.setCreatedDate(dateFormat.parse(dateString));
+            }
+        } catch (ParseException e) {
+            Log.e(TAG, "Error parsing created date", e);
+            patient.setCreatedDate(new Date());
+        }
+
+        return patient;
     }
 
     /**
      * Save meal selections for a patient
      */
     private void saveMealSelections(Patient patient) {
-        // This method can be enhanced to save detailed meal selections
-        // For now, it's a placeholder for future meal selection functionality
-        Log.d(TAG, "Meal selections saved for patient: " + patient.getPatientId());
+        // This method can be used to save additional meal selection data if needed
+        // Currently, meal items are stored as strings in the patient record
+        Log.d(TAG, "Meal selections saved for patient: " + patient.getFullName());
     }
 
     /**
-     * Create a Patient object from database cursor
+     * Get count of patients by status
      */
-    private Patient createPatientFromCursor(Cursor cursor) {
-        Patient patient = new Patient();
+    public int getPendingPatientsCount() {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String query = "SELECT COUNT(*) FROM PatientInfo WHERE breakfast_complete = 0 OR lunch_complete = 0 OR dinner_complete = 0";
 
-        try {
-            // Basic patient information
-            patient.setPatientId(cursor.getInt(cursor.getColumnIndexOrThrow("patient_id")));
-            patient.setPatientFirstName(cursor.getString(cursor.getColumnIndexOrThrow("patient_first_name")));
-            patient.setPatientLastName(cursor.getString(cursor.getColumnIndexOrThrow("patient_last_name")));
-            patient.setWing(cursor.getString(cursor.getColumnIndexOrThrow("wing")));
-            patient.setRoomNumber(cursor.getString(cursor.getColumnIndexOrThrow("room_number")));
-
-            // Diet information
-            int dietTypeIdx = cursor.getColumnIndex("diet_type");
-            if (dietTypeIdx >= 0) {
-                patient.setDietType(cursor.getString(dietTypeIdx));
+        try (Cursor cursor = db.rawQuery(query, null)) {
+            if (cursor.moveToFirst()) {
+                return cursor.getInt(0);
             }
-
-            patient.setDiet(cursor.getString(cursor.getColumnIndexOrThrow("diet")));
-            patient.setAdaDiet(cursor.getInt(cursor.getColumnIndexOrThrow("ada_diet")) == 1);
-
-            // Fluid restriction
-            int fluidRestrictionIdx = cursor.getColumnIndex("fluid_restriction");
-            if (fluidRestrictionIdx >= 0) {
-                patient.setFluidRestriction(cursor.getString(fluidRestrictionIdx));
-            }
-
-            // Texture modifications
-            int textureModificationsIdx = cursor.getColumnIndex("texture_modifications");
-            if (textureModificationsIdx >= 0) {
-                patient.setTextureModifications(cursor.getString(textureModificationsIdx));
-            }
-
-            // Individual texture modification fields
-            int mechanicalChoppedIdx = cursor.getColumnIndex("mechanical_chopped");
-            if (mechanicalChoppedIdx >= 0) {
-                patient.setMechanicalChopped(cursor.getInt(mechanicalChoppedIdx) == 1);
-            }
-
-            int mechanicalGroundIdx = cursor.getColumnIndex("mechanical_ground");
-            if (mechanicalGroundIdx >= 0) {
-                patient.setMechanicalGround(cursor.getInt(mechanicalGroundIdx) == 1);
-            }
-
-            int biteSizeIdx = cursor.getColumnIndex("bite_size");
-            if (biteSizeIdx >= 0) {
-                patient.setBiteSize(cursor.getInt(biteSizeIdx) == 1);
-            }
-
-            int breadOKIdx = cursor.getColumnIndex("bread_ok");
-            if (breadOKIdx >= 0) {
-                patient.setBreadOK(cursor.getInt(breadOKIdx) == 1);
-            }
-
-            // New texture modification fields
-            int nectarThickIdx = cursor.getColumnIndex("nectar_thick");
-            if (nectarThickIdx >= 0) {
-                patient.setNectarThick(cursor.getInt(nectarThickIdx) == 1);
-            }
-
-            int puddingThickIdx = cursor.getColumnIndex("pudding_thick");
-            if (puddingThickIdx >= 0) {
-                patient.setPuddingThick(cursor.getInt(puddingThickIdx) == 1);
-            }
-
-            int honeyThickIdx = cursor.getColumnIndex("honey_thick");
-            if (honeyThickIdx >= 0) {
-                patient.setHoneyThick(cursor.getInt(honeyThickIdx) == 1);
-            }
-
-            int extraGravyIdx = cursor.getColumnIndex("extra_gravy");
-            if (extraGravyIdx >= 0) {
-                patient.setExtraGravy(cursor.getInt(extraGravyIdx) == 1);
-            }
-
-            int meatsOnlyIdx = cursor.getColumnIndex("meats_only");
-            if (meatsOnlyIdx >= 0) {
-                patient.setMeatsOnly(cursor.getInt(meatsOnlyIdx) == 1);
-            }
-
-            // Meal completion flags
-            patient.setBreakfastComplete(cursor.getInt(cursor.getColumnIndexOrThrow("breakfast_complete")) == 1);
-            patient.setLunchComplete(cursor.getInt(cursor.getColumnIndexOrThrow("lunch_complete")) == 1);
-            patient.setDinnerComplete(cursor.getInt(cursor.getColumnIndexOrThrow("dinner_complete")) == 1);
-
-            // NPO flags
-            int breakfastNPOIdx = cursor.getColumnIndex("breakfast_npo");
-            if (breakfastNPOIdx >= 0) {
-                patient.setBreakfastNPO(cursor.getInt(breakfastNPOIdx) == 1);
-            }
-
-            int lunchNPOIdx = cursor.getColumnIndex("lunch_npo");
-            if (lunchNPOIdx >= 0) {
-                patient.setLunchNPO(cursor.getInt(lunchNPOIdx) == 1);
-            }
-
-            int dinnerNPOIdx = cursor.getColumnIndex("dinner_npo");
-            if (dinnerNPOIdx >= 0) {
-                patient.setDinnerNPO(cursor.getInt(dinnerNPOIdx) == 1);
-            }
-
-            // Meal items
-            int breakfastItemsIdx = cursor.getColumnIndex("breakfast_items");
-            if (breakfastItemsIdx >= 0) {
-                patient.setBreakfastItems(cursor.getString(breakfastItemsIdx));
-            }
-
-            int lunchItemsIdx = cursor.getColumnIndex("lunch_items");
-            if (lunchItemsIdx >= 0) {
-                patient.setLunchItems(cursor.getString(lunchItemsIdx));
-            }
-
-            int dinnerItemsIdx = cursor.getColumnIndex("dinner_items");
-            if (dinnerItemsIdx >= 0) {
-                patient.setDinnerItems(cursor.getString(dinnerItemsIdx));
-            }
-
-            // Juice items
-            int breakfastJuicesIdx = cursor.getColumnIndex("breakfast_juices");
-            if (breakfastJuicesIdx >= 0) {
-                patient.setBreakfastJuices(cursor.getString(breakfastJuicesIdx));
-            }
-
-            int lunchJuicesIdx = cursor.getColumnIndex("lunch_juices");
-            if (lunchJuicesIdx >= 0) {
-                patient.setLunchJuices(cursor.getString(lunchJuicesIdx));
-            }
-
-            int dinnerJuicesIdx = cursor.getColumnIndex("dinner_juices");
-            if (dinnerJuicesIdx >= 0) {
-                patient.setDinnerJuices(cursor.getString(dinnerJuicesIdx));
-            }
-
-            // Drink items
-            int breakfastDrinksIdx = cursor.getColumnIndex("breakfast_drinks");
-            if (breakfastDrinksIdx >= 0) {
-                patient.setBreakfastDrinks(cursor.getString(breakfastDrinksIdx));
-            }
-
-            int lunchDrinksIdx = cursor.getColumnIndex("lunch_drinks");
-            if (lunchDrinksIdx >= 0) {
-                patient.setLunchDrinks(cursor.getString(lunchDrinksIdx));
-            }
-
-            int dinnerDrinksIdx = cursor.getColumnIndex("dinner_drinks");
-            if (dinnerDrinksIdx >= 0) {
-                patient.setDinnerDrinks(cursor.getString(dinnerDrinksIdx));
-            }
-
-            // Created date
-            int createdDateIdx = cursor.getColumnIndex("created_date");
-            if (createdDateIdx >= 0) {
-                String createdDateStr = cursor.getString(createdDateIdx);
-                if (createdDateStr != null) {
-                    try {
-                        patient.setCreatedDate(dateFormat.parse(createdDateStr));
-                    } catch (ParseException e) {
-                        Log.w(TAG, "Error parsing created date: " + createdDateStr);
-                        patient.setCreatedDate(new Date());
-                    }
-                }
-            }
-
         } catch (Exception e) {
-            Log.e(TAG, "Error creating patient from cursor", e);
+            Log.e(TAG, "Error getting pending patients count", e);
         }
 
-        return patient;
+        return 0;
+    }
+
+    public int getCompletedPatientsCount() {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String query = "SELECT COUNT(*) FROM PatientInfo WHERE breakfast_complete = 1 AND lunch_complete = 1 AND dinner_complete = 1";
+
+        try (Cursor cursor = db.rawQuery(query, null)) {
+            if (cursor.moveToFirst()) {
+                return cursor.getInt(0);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error getting completed patients count", e);
+        }
+
+        return 0;
     }
 }
