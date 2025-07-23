@@ -29,7 +29,7 @@ public class MainMenuActivity extends AppCompatActivity {
     private Button itemManagementButton;
     private Button logoutButton;
 
-    // FIXED: Admin tools section container
+    // Admin tools section container
     private LinearLayout adminToolsSection;
 
     @Override
@@ -69,7 +69,7 @@ public class MainMenuActivity extends AppCompatActivity {
         itemManagementButton = findViewById(R.id.itemManagementButton);
         logoutButton = findViewById(R.id.logoutButton);
 
-        // FIXED: Get reference to admin tools section container
+        // Get reference to admin tools section container
         adminToolsSection = findViewById(R.id.adminToolsSection);
     }
 
@@ -83,14 +83,15 @@ public class MainMenuActivity extends AppCompatActivity {
         }
         welcomeText.setText(welcomeMessage);
 
-        // FIXED: Configure admin tools section based on user role
+        // Configure admin tools section based on user role
         configureAdminAccess();
     }
 
     private void configureAdminAccess() {
-        // FIXED: Check for both "Admin" and "Administrator" role values
-        boolean isAdmin = "Admin".equalsIgnoreCase(currentUserRole) ||
-                "Administrator".equalsIgnoreCase(currentUserRole);
+        // Check for both "Admin" and "Administrator" role values (case-insensitive)
+        boolean isAdmin = currentUserRole != null &&
+                ("Admin".equalsIgnoreCase(currentUserRole.trim()) ||
+                        "Administrator".equalsIgnoreCase(currentUserRole.trim()));
 
         // Debug logging to see what role we're getting
         android.util.Log.d("MainMenu", "Current user role: '" + currentUserRole + "', isAdmin: " + isAdmin);
@@ -99,19 +100,6 @@ public class MainMenuActivity extends AppCompatActivity {
             if (isAdmin) {
                 // Show admin tools section for admin users
                 adminToolsSection.setVisibility(View.VISIBLE);
-
-                // Ensure admin buttons are visible and enabled
-                if (userManagementButton != null) {
-                    userManagementButton.setVisibility(View.VISIBLE);
-                    userManagementButton.setEnabled(true);
-                    userManagementButton.setAlpha(1.0f);
-                }
-                if (itemManagementButton != null) {
-                    itemManagementButton.setVisibility(View.VISIBLE);
-                    itemManagementButton.setEnabled(true);
-                    itemManagementButton.setAlpha(1.0f);
-                }
-
                 android.util.Log.d("MainMenu", "Admin tools section made visible");
             } else {
                 // Hide admin tools section for non-admin users
@@ -135,7 +123,7 @@ public class MainMenuActivity extends AppCompatActivity {
             retiredOrdersButton.setOnClickListener(v -> openRetiredOrders());
         }
 
-        // Documents Section
+        // Documents Section - FIXED: Show "Coming Soon" instead of navigating
         if (productionSheetsButton != null) {
             productionSheetsButton.setOnClickListener(v -> openProductionSheets());
         }
@@ -143,25 +131,13 @@ public class MainMenuActivity extends AppCompatActivity {
             stockSheetsButton.setOnClickListener(v -> openStockSheets());
         }
 
-        // Admin Tools Section - FIXED: Check for both Admin and Administrator roles
+        // Admin Tools Section - FIXED: Removed role checking since section is hidden for non-admins
         if (userManagementButton != null) {
-            userManagementButton.setOnClickListener(v -> {
-                if ("Admin".equalsIgnoreCase(currentUserRole) || "Administrator".equalsIgnoreCase(currentUserRole)) {
-                    openUserManagement();
-                } else {
-                    showAccessDeniedMessage();
-                }
-            });
+            userManagementButton.setOnClickListener(v -> openUserManagement());
         }
 
         if (itemManagementButton != null) {
-            itemManagementButton.setOnClickListener(v -> {
-                if ("Admin".equalsIgnoreCase(currentUserRole) || "Administrator".equalsIgnoreCase(currentUserRole)) {
-                    openItemManagement();
-                } else {
-                    showAccessDeniedMessage();
-                }
-            });
+            itemManagementButton.setOnClickListener(v -> openItemManagement());
         }
 
         // Logout
@@ -196,23 +172,13 @@ public class MainMenuActivity extends AppCompatActivity {
     }
 
     private void openProductionSheets() {
-        // Create intent to open DocumentsActivity with production sheets filter
-        Intent intent = new Intent(this, DocumentsActivity.class);
-        intent.putExtra("current_user", currentUsername);
-        intent.putExtra("user_role", currentUserRole);
-        intent.putExtra("user_full_name", currentUserFullName);
-        intent.putExtra("document_type", "production");
-        startActivity(intent);
+        // FIXED: Show "coming soon" message instead of navigating to DocumentsActivity
+        Toast.makeText(this, "Production Sheets - Coming Soon!", Toast.LENGTH_SHORT).show();
     }
 
     private void openStockSheets() {
-        // Create intent to open DocumentsActivity with stock sheets filter
-        Intent intent = new Intent(this, DocumentsActivity.class);
-        intent.putExtra("current_user", currentUsername);
-        intent.putExtra("user_role", currentUserRole);
-        intent.putExtra("user_full_name", currentUserFullName);
-        intent.putExtra("document_type", "stock");
-        startActivity(intent);
+        // FIXED: Show "coming soon" message instead of navigating to DocumentsActivity
+        Toast.makeText(this, "Stock Sheets - Coming Soon!", Toast.LENGTH_SHORT).show();
     }
 
     private void openUserManagement() {
@@ -229,10 +195,6 @@ public class MainMenuActivity extends AppCompatActivity {
         intent.putExtra("user_role", currentUserRole);
         intent.putExtra("user_full_name", currentUserFullName);
         startActivity(intent);
-    }
-
-    private void showAccessDeniedMessage() {
-        Toast.makeText(this, "Access denied. Administrator privileges required.", Toast.LENGTH_LONG).show();
     }
 
     private void showLogoutConfirmation() {

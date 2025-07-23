@@ -13,12 +13,13 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import com.hospital.dietary.dao.PatientDAO;
 import com.hospital.dietary.models.Patient;
-// PatientAdapter is defined as inner class below
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Calendar;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+import android.util.SparseBooleanArray;
+import android.graphics.Typeface;
 
 public class ExistingPatientActivity extends AppCompatActivity {
 
@@ -44,9 +45,11 @@ public class ExistingPatientActivity extends AppCompatActivity {
     private List<Patient> allPatients = new ArrayList<>();
     private List<Patient> filteredPatients = new ArrayList<>();
     private PatientAdapter patientsAdapter;
+    private DayFilterAdapter dayFilterAdapter;
 
     // Date formatting
     private SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd", Locale.getDefault());
+    private int todaySelectionIndex = 0; // Track which index is "Today" for default selection
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +86,7 @@ public class ExistingPatientActivity extends AppCompatActivity {
         deleteSelectedButton = findViewById(R.id.deleteSelectedButton);
         bulkOperationsContainer = findViewById(R.id.bulkOperationsContainer);
 
-        // FIXED: Setup day filter spinner with formatted dates
+        // Setup day filter spinner with proper Sunday-Saturday format
         setupDayFilterSpinner();
 
         // Initially hide bulk operations
@@ -93,45 +96,49 @@ public class ExistingPatientActivity extends AppCompatActivity {
     private void setupDayFilterSpinner() {
         List<String> dayOptions = new ArrayList<>();
 
-        // Get current calendar instance
-        Calendar today = Calendar.getInstance();
-        Calendar tomorrow = Calendar.getInstance();
-        tomorrow.add(Calendar.DAY_OF_MONTH, 1);
-
         // Add "All Days" first
         dayOptions.add("All Days");
 
-        // Add days of week with special formatting for today and tomorrow
-        String[] daysOfWeek = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+        // Get current day of week
+        Calendar today = Calendar.getInstance();
+        int currentDayOfWeek = today.get(Calendar.DAY_OF_WEEK); // Sunday = 1, Monday = 2, etc.
 
+        // Calculate the date for each day of the current week starting from Sunday
+        Calendar weekStart = Calendar.getInstance();
+        // Set to Sunday of current week
+        weekStart.add(Calendar.DAY_OF_MONTH, -(currentDayOfWeek - 1));
+
+        String[] dayNames = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+
+        // Generate Sunday through Saturday for the current week
         for (int i = 0; i < 7; i++) {
-            Calendar cal = Calendar.getInstance();
-            cal.add(Calendar.DAY_OF_MONTH, i);
+            Calendar dayCalendar = Calendar.getInstance();
+            dayCalendar.setTime(weekStart.getTime());
+            dayCalendar.add(Calendar.DAY_OF_MONTH, i);
 
-            String dayName = daysOfWeek[cal.get(Calendar.DAY_OF_WEEK) - 1];
-            String dateStr = dateFormat.format(cal.getTime());
+            String dayName = dayNames[i];
+            String dateStr = dateFormat.format(dayCalendar.getTime());
 
             String formattedOption;
-            if (i == 0) {
-                // Today
+            // Check if this day is today
+            if (dayCalendar.get(Calendar.DAY_OF_YEAR) == today.get(Calendar.DAY_OF_YEAR) &&
+                    dayCalendar.get(Calendar.YEAR) == today.get(Calendar.YEAR)) {
                 formattedOption = "Today - " + dateStr;
-            } else if (i == 1) {
-                // Tomorrow
-                formattedOption = "Tomorrow - " + dateStr;
+                todaySelectionIndex = i + 1; // +1 because "All Days" is at index 0
             } else {
-                // Other days
                 formattedOption = dayName + " - " + dateStr;
             }
 
             dayOptions.add(formattedOption);
         }
 
-        ArrayAdapter<String> dayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, dayOptions);
-        dayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Create custom adapter with highlighted selected item
+        dayFilterAdapter = new DayFilterAdapter(this, dayOptions, todaySelectionIndex);
+
         if (dayFilterSpinner != null) {
-            dayFilterSpinner.setAdapter(dayAdapter);
-            // FIXED: Set default selection to "Today" (index 1, since "All Days" is index 0)
-            dayFilterSpinner.setSelection(1);
+            dayFilterSpinner.setAdapter(dayFilterAdapter);
+            // Set default selection to "Today"
+            dayFilterSpinner.setSelection(todaySelectionIndex);
         }
     }
 
@@ -157,11 +164,23 @@ public class ExistingPatientActivity extends AppCompatActivity {
             dayFilterSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    // Update the adapter to refresh styling
+                    if (dayFilterAdapter != null) {
+                        dayFilterAdapter.updateSelectedPosition(position);
+                    }
                     filterPatients();
                 }
 
                 @Override
                 public void onNothingSelected(AdapterView<?> parent) {}
+            });
+        }
+
+        // Patient list item click
+        if (patientsListView != null) {
+            patientsListView.setOnItemClickListener((parent, view, position, id) -> {
+                Patient selectedPatient = filteredPatients.get(position);
+                openPatientDetails(selectedPatient);
             });
         }
 
@@ -185,20 +204,18 @@ public class ExistingPatientActivity extends AppCompatActivity {
         }
     }
 
-    // ENHANCED: New method to open patient details for viewing/editing
     private void openPatientDetails(Patient patient) {
-        Intent intent = new Intent(this, PatientInfoActivity.class);
-        intent.putExtra("selected_patient_id", patient.getPatientId());
+        Intent intent = new Intent(this, PatientDetailActivity.class);
+        intent.putExtra("patient_id", patient.getPatientId());
         intent.putExtra("current_user", currentUsername);
         intent.putExtra("user_role", currentUserRole);
         intent.putExtra("user_full_name", currentUserFullName);
-        startActivityForResult(intent, 1001);
+        startActivity(intent);
     }
 
     private void loadPatients() {
         try {
             allPatients.clear();
-            // Load ALL patients
             allPatients.addAll(patientDAO.getAllPatients());
 
             // Clear select all checkbox when reloading data
@@ -219,7 +236,7 @@ public class ExistingPatientActivity extends AppCompatActivity {
 
             String searchQuery = searchInput != null ?
                     searchInput.getText().toString().toLowerCase().trim() : "";
-            int selectedDay = dayFilterSpinner != null ? dayFilterSpinner.getSelectedItemPosition() : 0;
+            int selectedDayIndex = dayFilterSpinner != null ? dayFilterSpinner.getSelectedItemPosition() : 0;
 
             for (Patient patient : allPatients) {
                 boolean matchesSearch = searchQuery.isEmpty() ||
@@ -228,10 +245,15 @@ public class ExistingPatientActivity extends AppCompatActivity {
                         patient.getRoomNumber().toLowerCase().contains(searchQuery) ||
                         patient.getDiet().toLowerCase().contains(searchQuery);
 
-                // FIXED: Day filtering logic updated for new format
-                // 0 = All Days, 1 = Today, 2 = Tomorrow, 3-8 = Other days of week
-                // For now, show all patients regardless of day (this was likely causing the issue)
-                boolean matchesDay = true; // Changed to always true to show all patients
+                // Day filtering logic
+                boolean matchesDay = true; // Default to show all patients
+
+                if (selectedDayIndex > 0) { // 0 = "All Days", so only filter if specific day selected
+                    // For now, we'll show all patients regardless of selected day
+                    // In the future, this could be enhanced to filter by actual meal planning dates
+                    // or patient admission dates if that functionality is needed
+                    matchesDay = true;
+                }
 
                 if (matchesSearch && matchesDay) {
                     filteredPatients.add(patient);
@@ -248,7 +270,11 @@ public class ExistingPatientActivity extends AppCompatActivity {
 
             // Update count
             if (patientsCountText != null) {
-                patientsCountText.setText("Showing " + filteredPatients.size() + " of " + allPatients.size() + " patients");
+                String selectedDayText = "";
+                if (selectedDayIndex > 0 && dayFilterSpinner != null) {
+                    selectedDayText = " for " + dayFilterSpinner.getSelectedItem().toString();
+                }
+                patientsCountText.setText("Showing " + filteredPatients.size() + " of " + allPatients.size() + " patients" + selectedDayText);
             }
 
             // Update bulk operations visibility
@@ -269,7 +295,6 @@ public class ExistingPatientActivity extends AppCompatActivity {
         bulkOperationsContainer.setVisibility(hasSelections ? View.VISIBLE : View.GONE);
 
         if (hasSelections) {
-            String selectionText = selectedCount + " patient" + (selectedCount > 1 ? "s" : "") + " selected";
             if (printMenusButton != null) {
                 printMenusButton.setText("Print " + selectedCount + " Menu" + (selectedCount > 1 ? "s" : ""));
             }
@@ -284,24 +309,23 @@ public class ExistingPatientActivity extends AppCompatActivity {
 
         List<Patient> selectedPatients = patientsAdapter.getSelectedPatients();
         if (selectedPatients.isEmpty()) {
-            Toast.makeText(this, "No patients selected", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "No patients selected for printing", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Create intent to print multiple menus - TODO: Implement actual print functionality
-        Toast.makeText(this, "Printing " + selectedPatients.size() + " patient menus...", Toast.LENGTH_SHORT).show();
-        /*
-        Intent printIntent = new Intent(this, PrintMenuActivity.class);
-        ArrayList<Integer> patientIds = new ArrayList<>();
+        // TODO: Implement printing functionality
+        String message = "Printing menus for " + selectedPatients.size() + " patient" +
+                (selectedPatients.size() > 1 ? "s" : "") + ":\n\n";
+
         for (Patient patient : selectedPatients) {
-            patientIds.add(patient.getPatientId());
+            message += "• " + patient.getFullName() + " (" + patient.getWing() + " " + patient.getRoomNumber() + ")\n";
         }
-        printIntent.putExtra("patient_ids", patientIds);
-        printIntent.putExtra("current_user", currentUsername);
-        printIntent.putExtra("user_role", currentUserRole);
-        printIntent.putExtra("user_full_name", currentUserFullName);
-        startActivity(printIntent);
-        */
+
+        new AlertDialog.Builder(this)
+                .setTitle("Print Menus")
+                .setMessage(message + "\nPrinting functionality coming soon!")
+                .setPositiveButton("OK", null)
+                .show();
     }
 
     private void deleteSelectedPatients() {
@@ -309,57 +333,55 @@ public class ExistingPatientActivity extends AppCompatActivity {
 
         List<Patient> selectedPatients = patientsAdapter.getSelectedPatients();
         if (selectedPatients.isEmpty()) {
-            Toast.makeText(this, "No patients selected", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "No patients selected for deletion", Toast.LENGTH_SHORT).show();
             return;
         }
 
         String message = "Are you sure you want to delete " + selectedPatients.size() +
-                " patient" + (selectedPatients.size() > 1 ? "s" : "") + "?\n\n" +
-                "This action cannot be undone.";
+                " patient" + (selectedPatients.size() > 1 ? "s" : "") + "?\n\n";
+
+        for (Patient patient : selectedPatients) {
+            message += "• " + patient.getFullName() + "\n";
+        }
+
+        message += "\nThis action cannot be undone.";
 
         new AlertDialog.Builder(this)
                 .setTitle("Confirm Deletion")
                 .setMessage(message)
                 .setPositiveButton("Delete", (dialog, which) -> {
-                    performBulkDelete(selectedPatients);
+                    try {
+                        int deletedCount = 0;
+                        for (Patient patient : selectedPatients) {
+                            if (patientDAO.deletePatient(patient.getPatientId())) {
+                                deletedCount++;
+                            }
+                        }
+
+                        if (deletedCount > 0) {
+                            Toast.makeText(this, deletedCount + " patient" + (deletedCount > 1 ? "s" : "") + " deleted successfully", Toast.LENGTH_SHORT).show();
+                            loadPatients(); // Reload the list
+                        } else {
+                            Toast.makeText(this, "Failed to delete patients", Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (Exception e) {
+                        Toast.makeText(this, "Error deleting patients: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    }
                 })
                 .setNegativeButton("Cancel", null)
                 .show();
     }
 
-    private void performBulkDelete(List<Patient> patients) {
-        try {
-            int successCount = 0;
-            for (Patient patient : patients) {
-                boolean success = patientDAO.deletePatient(patient.getPatientId());
-                if (success) {
-                    successCount++;
-                }
-            }
-
-            if (successCount > 0) {
-                Toast.makeText(this, "Deleted " + successCount + " patient" +
-                                (successCount > 1 ? "s" : "") + " successfully",
-                        Toast.LENGTH_SHORT).show();
-
-                // Clear selections and reload data
-                if (selectAllCheckBox != null) {
-                    selectAllCheckBox.setChecked(false);
-                }
-                loadPatients();
-            } else {
-                Toast.makeText(this, "Failed to delete patients", Toast.LENGTH_SHORT).show();
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(this, "Error deleting patients: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Refresh patient list when returning to this activity
+        loadPatients();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_existing_patients, menu);
+        getMenuInflater().inflate(R.menu.menu_patient_info, menu);
         return true;
     }
 
@@ -369,88 +391,101 @@ public class ExistingPatientActivity extends AppCompatActivity {
             case android.R.id.home:
                 finish();
                 return true;
-            case R.id.action_print_all:
-                printAllMenus();
+            case R.id.action_add_patient:
+                Intent addPatientIntent = new Intent(this, NewPatientActivity.class);
+                addPatientIntent.putExtra("current_user", currentUsername);
+                addPatientIntent.putExtra("user_role", currentUserRole);
+                addPatientIntent.putExtra("user_full_name", currentUserFullName);
+                startActivity(addPatientIntent);
                 return true;
-            case R.id.action_home:
-                Intent homeIntent = new Intent(this, MainMenuActivity.class);
-                homeIntent.putExtra("current_user", currentUsername);
-                homeIntent.putExtra("user_role", currentUserRole);
-                homeIntent.putExtra("user_full_name", currentUserFullName);
-                startActivity(homeIntent);
-                finish();
+            case R.id.action_refresh:
+                loadPatients();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    private void printAllMenus() {
-        if (filteredPatients.isEmpty()) {
-            Toast.makeText(this, "No patients to print", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // TODO: Implement print all functionality
-        Toast.makeText(this, "Printing all " + filteredPatients.size() + " patient menus...", Toast.LENGTH_SHORT).show();
-        /*
-        Intent printIntent = new Intent(this, PrintMenuActivity.class);
-        ArrayList<Integer> patientIds = new ArrayList<>();
-        for (Patient patient : filteredPatients) {
-            patientIds.add(patient.getPatientId());
-        }
-        printIntent.putExtra("patient_ids", patientIds);
-        printIntent.putExtra("current_user", currentUsername);
-        printIntent.putExtra("user_role", currentUserRole);
-        printIntent.putExtra("user_full_name", currentUserFullName);
-        startActivity(printIntent);
-        */
-    }
-
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1001 && resultCode == RESULT_OK) {
-            // Patient was updated, reload the list
-            loadPatients();
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
+
+    // Custom adapter for day filter spinner with highlighted selected item
+    private class DayFilterAdapter extends ArrayAdapter<String> {
+        private int selectedPosition;
+        private List<String> items;
+
+        public DayFilterAdapter(ExistingPatientActivity context, List<String> items, int selectedPosition) {
+            super(context, android.R.layout.simple_spinner_item, items);
+            this.items = items;
+            this.selectedPosition = selectedPosition;
+            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View view = super.getView(position, convertView, parent);
+            TextView textView = (TextView) view;
+
+            // Style the currently selected item in the spinner button
+            if (position == dayFilterSpinner.getSelectedItemPosition()) {
+                textView.setTypeface(textView.getTypeface(), Typeface.BOLD);
+                textView.setTextColor(0xFF2196F3); // Blue color
+                textView.setTextSize(16);
+            } else {
+                textView.setTypeface(Typeface.DEFAULT);
+                textView.setTextColor(0xFF2c3e50); // Dark gray
+                textView.setTextSize(14);
+            }
+
+            return view;
+        }
+
+        @Override
+        public View getDropDownView(int position, View convertView, ViewGroup parent) {
+            View view = super.getDropDownView(position, convertView, parent);
+            TextView textView = (TextView) view;
+
+            // Style items in the dropdown list
+            if (position == dayFilterSpinner.getSelectedItemPosition()) {
+                // Highlight selected item
+                textView.setTypeface(textView.getTypeface(), Typeface.BOLD);
+                textView.setTextColor(0xFF2196F3); // Blue color
+                textView.setBackgroundColor(0xFFE3F2FD); // Light blue background
+                textView.setPadding(20, 16, 20, 16);
+            } else if (items.get(position).startsWith("Today")) {
+                // Special styling for "Today" even when not selected
+                textView.setTypeface(textView.getTypeface(), Typeface.BOLD);
+                textView.setTextColor(0xFF4CAF50); // Green color for today
+                textView.setBackgroundColor(0xFFFFFFFF); // White background
+                textView.setPadding(20, 16, 20, 16);
+            } else {
+                // Normal styling for other items
+                textView.setTypeface(Typeface.DEFAULT);
+                textView.setTextColor(0xFF2c3e50); // Dark gray
+                textView.setBackgroundColor(0xFFFFFFFF); // White background
+                textView.setPadding(20, 16, 20, 16);
+            }
+
+            return view;
+        }
+
+        public void updateSelectedPosition(int position) {
+            this.selectedPosition = position;
+            notifyDataSetChanged();
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        // Refresh the list when returning to this activity
-        loadPatients();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (dbHelper != null) {
-            dbHelper.close();
-        }
-    }
-
-    /**
-     * Enhanced Patient Adapter with selection functionality
-     */
+    // PatientAdapter inner class for managing patient list display and selection
     private class PatientAdapter extends BaseAdapter {
         private List<Patient> patients;
-        private List<Boolean> selections;
-        private ExistingPatientActivity context;
+        private SparseBooleanArray selectedItems;
 
         public PatientAdapter(ExistingPatientActivity context, List<Patient> patients) {
-            this.context = context;
             this.patients = patients;
-            this.selections = new ArrayList<>();
-            initializeSelections();
-        }
-
-        private void initializeSelections() {
-            selections.clear();
-            for (int i = 0; i < patients.size(); i++) {
-                selections.add(false);
-            }
+            this.selectedItems = new SparseBooleanArray();
         }
 
         @Override
@@ -475,60 +510,61 @@ public class ExistingPatientActivity extends AppCompatActivity {
             }
 
             Patient patient = patients.get(position);
-            TextView textView = convertView.findViewById(android.R.id.text1);
-            CheckBox checkBox = convertView.findViewById(android.R.id.checkbox);
+            CheckedTextView checkedTextView = (CheckedTextView) convertView;
 
-            String displayText = patient.getFullName() + " - " + patient.getWing() + " " +
-                    patient.getRoomNumber() + " (" + patient.getDiet() + ")";
-            textView.setText(displayText);
+            String displayText = patient.getFullName() + "\n" +
+                    patient.getWing() + " " + patient.getRoomNumber() + " | " +
+                    patient.getDiet();
 
-            if (checkBox != null) {
-                checkBox.setChecked(selections.get(position));
-                checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                    selections.set(position, isChecked);
-                    updateBulkOperationVisibility();
-                });
-            }
+            checkedTextView.setText(displayText);
+            checkedTextView.setChecked(selectedItems.get(position, false));
+
+            checkedTextView.setOnClickListener(v -> {
+                boolean isChecked = !selectedItems.get(position, false);
+                selectedItems.put(position, isChecked);
+                checkedTextView.setChecked(isChecked);
+                updateBulkOperationVisibility();
+
+                // Update select all checkbox state
+                if (selectAllCheckBox != null) {
+                    selectAllCheckBox.setChecked(getSelectedCount() == getCount());
+                }
+            });
 
             return convertView;
         }
 
-        public void toggleSelection(int position) {
-            if (position >= 0 && position < selections.size()) {
-                selections.set(position, !selections.get(position));
-                notifyDataSetChanged();
-            }
-        }
-
-        public void selectAll(boolean selected) {
-            for (int i = 0; i < selections.size(); i++) {
-                selections.set(i, selected);
+        public void selectAll(boolean select) {
+            selectedItems.clear();
+            if (select) {
+                for (int i = 0; i < getCount(); i++) {
+                    selectedItems.put(i, true);
+                }
             }
             notifyDataSetChanged();
         }
 
-        public List<Patient> getSelectedPatients() {
-            List<Patient> selectedPatients = new ArrayList<>();
-            for (int i = 0; i < patients.size(); i++) {
-                if (selections.get(i)) {
-                    selectedPatients.add(patients.get(i));
-                }
-            }
-            return selectedPatients;
-        }
-
         public int getSelectedCount() {
             int count = 0;
-            for (Boolean selected : selections) {
-                if (selected) count++;
+            for (int i = 0; i < selectedItems.size(); i++) {
+                if (selectedItems.valueAt(i)) {
+                    count++;
+                }
             }
             return count;
         }
 
-        @Override
-        public void notifyDataSetChanged() {
-            initializeSelections(); // Reset selections when data changes
-            super.notifyDataSetChanged();
+        public List<Patient> getSelectedPatients() {
+            List<Patient> selected = new ArrayList<>();
+            for (int i = 0; i < selectedItems.size(); i++) {
+                if (selectedItems.valueAt(i)) {
+                    int position = selectedItems.keyAt(i);
+                    if (position < patients.size()) {
+                        selected.add(patients.get(position));
+                    }
+                }
+            }
+            return selected;
         }
     }
 }

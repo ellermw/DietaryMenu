@@ -1,139 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#f8fafc">
+    android:background="#f8f9fa">
 
-    <!-- Blue Header Section -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="#2196F3"
-        android:padding="16dp"
-        android:elevation="4dp"
-        android:gravity="center_vertical">
-
-        <!-- Back Arrow -->
-        <TextView
-            android:id="@+id/backArrow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="←"
-            android:textSize="24sp"
-            android:textColor="@android:color/white"
-            android:textStyle="bold"
-            android:clickable="true"
-            android:focusable="true"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:padding="8dp"
-            android:layout_marginEnd="16dp" />
-
-        <!-- Title -->
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Patient Information"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/white" />
-
-    </LinearLayout>
-
-    <!-- Content Section -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
         android:orientation="vertical"
-        android:padding="24dp"
-        android:gravity="center">
+        android:padding="16dp">
 
-        <!-- Title and Subtitle -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Patient Information"
-            android:textSize="32sp"
-            android:textStyle="bold"
-            android:textColor="#2c3e50"
-            android:gravity="center"
-            android:layout_marginBottom="8dp" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Choose how you'd like to manage patient information"
-            android:textSize="16sp"
-            android:textColor="#64748b"
-            android:gravity="center"
-            android:layout_marginBottom="48dp"
-            android:lineSpacingExtra="4dp" />
-
-        <!-- Buttons Card -->
+        <!-- Header Card -->
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@android:color/white"
-            android:padding="24dp"
-            android:layout_marginBottom="32dp"
-            android:elevation="2dp">
+            style="@style/HeaderCard">
+
+            <TextView
+                style="@style/AppTitle"
+                android:text="👤 Patient Information" />
+
+            <TextView
+                style="@style/WelcomeText"
+                android:text="Choose how you'd like to manage patient information" />
+
+        </LinearLayout>
+
+        <!-- Patient Options Section -->
+        <LinearLayout
+            style="@style/CardSection">
+
+            <TextView
+                style="@style/SectionTitle"
+                android:text="Patient Management" />
 
             <!-- New Patient Button -->
             <Button
                 android:id="@+id/newPatientButton"
-                android:layout_width="match_parent"
-                android:layout_height="80dp"
-                android:text="👤  New Patient"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="@android:color/white"
-                android:background="#2196F3"
-                android:layout_marginBottom="16dp"
-                android:gravity="center"
-                android:elevation="2dp" />
+                style="@style/MainMenuButton.Green"
+                android:text="👤  New Patient" />
 
             <!-- Existing Patients Button -->
             <Button
                 android:id="@+id/existingPatientsButton"
-                android:layout_width="match_parent"
-                android:layout_height="80dp"
+                style="@style/MainMenuButton.Primary"
                 android:text="👥  Existing Patients"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="@android:color/white"
-                android:background="#2196F3"
-                android:gravity="center"
-                android:elevation="2dp" />
+                android:layout_marginBottom="0dp" />
 
         </LinearLayout>
 
     </LinearLayout>
 
-    <!-- Bottom Section -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="24dp"
-        android:gravity="center">
-
-        <!-- Back to Main Menu Button -->
-        <Button
-            android:id="@+id/backToMainMenuButton"
-            android:layout_width="wrap_content"
-            android:layout_height="48dp"
-            android:text="Back to Main Menu"
-            android:textSize="16sp"
-            android:textColor="#64748b"
-            android:background="@drawable/button_back_rounded"
-            android:paddingLeft="32dp"
-            android:paddingRight="32dp"
-            android:textStyle="bold" />
-
-    </LinearLayout>
-
-</LinearLayout>
+</ScrollView>

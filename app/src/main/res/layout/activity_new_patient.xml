@@ -1,364 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#f8f9fa">
+<resources>
+    <!-- App Name -->
+    <string name="app_name">Hospital Dietary Management</string>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+    <!-- Login strings -->
+    <string name="login_title">Hospital Dietary Management</string>
+    <string name="login_subtitle">Dietary Management Application</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="sign_in">SIGN IN</string>
+    <string name="login">Login</string>
+    <string name="welcome_message">Welcome, %1$s!</string>
+    <string name="login_failed">Invalid username or password</string>
+    <string name="invalid_credentials">Invalid username or password</string>
+    <string name="account_inactive">Account is inactive. Please contact administrator.</string>
+    <string name="login_error">Login error occurred</string>
+    <string name="app_version">Version 0.0.45</string>
+    <string name="copyright_message">© 2025 Hospital Dietary Management</string>
 
-        <!-- Header -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/new_patient"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:textColor="#2c3e50"
-            android:gravity="center"
-            android:layout_marginBottom="24dp" />
+    <!-- Password management strings -->
+    <string name="password_required">Password is required</string>
+    <string name="password_change_required">Password Change Required</string>
+    <string name="change_password">Change Password</string>
+    <string name="password_too_short">Password must be at least 6 characters</string>
+    <string name="passwords_do_not_match">Passwords do not match</string>
+    <string name="password_changed_success">Password changed successfully!</string>
+    <string name="password_change_failed">Password change failed</string>
+    <string name="new_password">New Password</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="current_password">Current Password</string>
 
-        <!-- Basic Information Section -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="#ffffff"
-            android:padding="16dp"
-            android:layout_marginBottom="16dp">
+    <!-- Main menu strings -->
+    <string name="patient_information">Patient Information</string>
+    <string name="patient_info">Patient Info</string>
+    <string name="pending_orders">Pending Orders</string>
+    <string name="retired_orders">Retired Orders</string>
+    <string name="user_management">User Management</string>
+    <string name="item_management">Item Management</string>
+    <string name="default_menu_management">Default Menu Management</string>
+    <string name="documents">Documents</string>
+    <string name="logout">Logout</string>
+    <string name="operations">Operations</string>
+    <string name="admin_tools">Admin Tools</string>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/basic_information"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="#2c3e50"
-                android:layout_marginBottom="12dp" />
+    <!-- Documents strings -->
+    <string name="production_sheets">Production Sheets</string>
+    <string name="stock_sheets">Stock Sheets</string>
+    <string name="galley_stock">Galley Stock</string>
+    <string name="misc">Misc</string>
+    <string name="production_documents">Production Documents</string>
+    <string name="stock_documents">Stock Documents</string>
 
-            <!-- First Name -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="First Name *"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="4dp" />
+    <!-- Patient Information strings -->
+    <string name="new_patient">New Patient</string>
+    <string name="existing_patients">Existing Patients</string>
+    <string name="patient_details">Patient Details</string>
+    <string name="add_patient">Add Patient</string>
+    <string name="edit_patient">Edit Patient</string>
+    <string name="patient_name">Patient Name</string>
+    <string name="patient_location">Patient Location</string>
+    <string name="diet_type">Diet Type</string>
+    <string name="basic_information">Basic Information</string>
+    <string name="dietary_requirements">Dietary Requirements</string>
+    <string name="texture_modifications">Texture Modifications</string>
+    <string name="physical_modifications">Physical Modifications</string>
+    <string name="mechanical_chopped">Mechanical Chopped</string>
+    <string name="mechanical_ground">Mechanical Ground</string>
+    <string name="bite_size">Bite Size</string>
+    <string name="bread_ok">Bread OK</string>
+    <string name="liquid_thickness">Liquid Thickness</string>
+    <string name="nectar_thick">Nectar Thick</string>
+    <string name="pudding_thick">Pudding Thick</string>
+    <string name="honey_thick">Honey Thick</string>
+    <string name="special_modifications">Special Modifications</string>
+    <string name="extra_gravy">Extra Gravy</string>
+    <string name="meats_only">Meats Only</string>
 
-            <EditText
-                android:id="@+id/patientFirstNameEditText"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:hint="Enter first name"
-                android:inputType="textPersonName|textCapWords"
-                android:layout_marginBottom="12dp" />
+    <!-- General UI strings -->
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
+    <string name="add">Add</string>
+    <string name="search">Search</string>
+    <string name="filter">Filter</string>
+    <string name="all">All</string>
+    <string name="none">None</string>
+    <string name="loading">Loading...</string>
+    <string name="error">Error</string>
+    <string name="success">Success</string>
+    <string name="confirm">Confirm</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="ok">OK</string>
 
-            <!-- Last Name -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Last Name *"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="4dp" />
+    <!-- Error messages -->
+    <string name="error_loading_data">Error loading data</string>
+    <string name="error_saving_data">Error saving data</string>
+    <string name="error_deleting_data">Error deleting data</string>
+    <string name="error_network">Network error</string>
+    <string name="error_unknown">Unknown error occurred</string>
 
-            <EditText
-                android:id="@+id/patientLastNameEditText"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:hint="Enter last name"
-                android:inputType="textPersonName|textCapWords"
-                android:layout_marginBottom="12dp" />
+    <!-- Success messages -->
+    <string name="data_saved_successfully">Data saved successfully</string>
+    <string name="data_deleted_successfully">Data deleted successfully</string>
+    <string name="operation_completed">Operation completed successfully</string>
 
-            <!-- Wing -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Wing *"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="4dp" />
-
-            <Spinner
-                android:id="@+id/wingSpinner"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:background="@android:drawable/btn_dropdown"
-                android:layout_marginBottom="12dp" />
-
-            <!-- Room Number -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Room Number *"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="4dp" />
-
-            <Spinner
-                android:id="@+id/roomNumberSpinner"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:background="@android:drawable/btn_dropdown"
-                android:layout_marginBottom="12dp" />
-
-        </LinearLayout>
-
-        <!-- Dietary Requirements Section -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="#ffffff"
-            android:padding="16dp"
-            android:layout_marginBottom="16dp">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/dietary_requirements"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="#2c3e50"
-                android:layout_marginBottom="12dp" />
-
-            <!-- Diet Type -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Diet Type *"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="4dp" />
-
-            <Spinner
-                android:id="@+id/dietSpinner"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:background="@android:drawable/btn_dropdown"
-                android:layout_marginBottom="12dp" />
-
-            <!-- ADA Toggle Container -->
-            <LinearLayout
-                android:id="@+id/adaToggleContainer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:visibility="gone"
-                android:layout_marginBottom="12dp">
-
-                <CheckBox
-                    android:id="@+id/adaToggleCheckBox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="ADA Diet"
-                    android:textSize="14sp" />
-
-            </LinearLayout>
-
-            <!-- Fluid Restriction -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Fluid Restriction"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="4dp" />
-
-            <Spinner
-                android:id="@+id/fluidRestrictionSpinner"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:background="@android:drawable/btn_dropdown"
-                android:layout_marginBottom="12dp" />
-
-        </LinearLayout>
-
-        <!-- Texture Modifications Section -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="#ffffff"
-            android:padding="16dp"
-            android:layout_marginBottom="16dp">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/texture_modifications"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="#2c3e50"
-                android:layout_marginBottom="8dp" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Select applicable texture modifications (multiple selections allowed)"
-                android:textSize="12sp"
-                android:textColor="#7f8c8d"
-                android:layout_marginBottom="16dp" />
-
-            <!-- Horizontal Layout for Three Sections -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:baselineAligned="false">
-
-                <!-- Physical Modifications Column -->
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:paddingRight="8dp">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/physical_modifications"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        android:textColor="#34495e"
-                        android:layout_marginBottom="8dp" />
-
-                    <CheckBox
-                        android:id="@+id/mechanicalChoppedCheckBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/mechanical_chopped"
-                        android:textSize="13sp" />
-
-                    <CheckBox
-                        android:id="@+id/mechanicalGroundCheckBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/mechanical_ground"
-                        android:textSize="13sp" />
-
-                    <CheckBox
-                        android:id="@+id/biteSizeCheckBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/bite_size"
-                        android:textSize="13sp" />
-
-                    <CheckBox
-                        android:id="@+id/breadOKCheckBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/bread_ok"
-                        android:textSize="13sp"
-                        android:checked="true" />
-
-                </LinearLayout>
-
-                <!-- Liquid Thickness Column -->
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:paddingLeft="8dp"
-                    android:paddingRight="8dp">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/liquid_thickness"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        android:textColor="#34495e"
-                        android:layout_marginBottom="8dp" />
-
-                    <CheckBox
-                        android:id="@+id/nectarThickCheckBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/nectar_thick"
-                        android:textSize="13sp" />
-
-                    <CheckBox
-                        android:id="@+id/puddingThickCheckBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/pudding_thick"
-                        android:textSize="13sp" />
-
-                    <CheckBox
-                        android:id="@+id/honeyThickCheckBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/honey_thick"
-                        android:textSize="13sp" />
-
-                </LinearLayout>
-
-                <!-- Special Modifications Column -->
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:paddingLeft="8dp">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/special_modifications"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        android:textColor="#34495e"
-                        android:layout_marginBottom="8dp" />
-
-                    <CheckBox
-                        android:id="@+id/extraGravyCheckBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/extra_gravy"
-                        android:textSize="13sp" />
-
-                    <!-- Meats Only Container (shown only when mechanical modifications are selected) -->
-                    <LinearLayout
-                        android:id="@+id/meatsOnlyContainer"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:visibility="gone">
-
-                        <CheckBox
-                            android:id="@+id/meatsOnlyCheckBox"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/meats_only"
-                            android:textSize="13sp" />
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <!-- Save Button -->
-        <Button
-            android:id="@+id/savePatientButton"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:text="💾 Save Patient"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/white"
-            android:background="#27ae60"
-            android:elevation="4dp"
-            android:layout_marginTop="16dp" />
-
-    </LinearLayout>
-
-</ScrollView>
+</resources>

@@ -23,6 +23,24 @@
         <item name="windowNoTitle">false</item>
         <!-- Corner radius for Material components -->
         <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.App.MediumComponent</item>
+        <!-- Dialog theme override for consistency -->
+        <item name="alertDialogTheme">@style/CustomAlertDialog</item>
+    </style>
+
+    <!-- Custom Alert Dialog Theme for device consistency -->
+    <style name="CustomAlertDialog" parent="Theme.MaterialComponents.DayNight.Dialog.Alert">
+        <item name="android:background">#FFFFFF</item>
+        <item name="android:textColor">#2c3e50</item>
+        <item name="android:textColorPrimary">#2c3e50</item>
+        <item name="android:textColorSecondary">#7f8c8d</item>
+        <item name="buttonBarButtonStyle">@style/CustomDialogButton</item>
+    </style>
+
+    <!-- Custom Dialog Button Style -->
+    <style name="CustomDialogButton" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">#2196F3</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
     <!-- Custom shape appearance for rounded corners -->

@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Button;
-import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class PatientInfoMenuActivity extends AppCompatActivity {
@@ -14,10 +13,8 @@ public class PatientInfoMenuActivity extends AppCompatActivity {
     private String currentUserFullName;
 
     // UI Components
-    private TextView backArrow;
     private Button newPatientButton;
     private Button existingPatientsButton;
-    private Button backToMainMenuButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,9 +26,10 @@ public class PatientInfoMenuActivity extends AppCompatActivity {
         currentUserRole = getIntent().getStringExtra("user_role");
         currentUserFullName = getIntent().getStringExtra("user_full_name");
 
-        // Hide the default action bar since we have custom header
+        // Set title and back button in action bar
         if (getSupportActionBar() != null) {
-            getSupportActionBar().hide();
+            getSupportActionBar().setTitle("Patient Information");
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
         initializeViews();
@@ -39,24 +37,16 @@ public class PatientInfoMenuActivity extends AppCompatActivity {
     }
 
     private void initializeViews() {
-        backArrow = findViewById(R.id.backArrow);
         newPatientButton = findViewById(R.id.newPatientButton);
         existingPatientsButton = findViewById(R.id.existingPatientsButton);
-        backToMainMenuButton = findViewById(R.id.backToMainMenuButton);
     }
 
     private void setupListeners() {
-        // Back arrow in header
-        backArrow.setOnClickListener(v -> goToMainMenu());
-
         // New Patient button
         newPatientButton.setOnClickListener(v -> openNewPatient());
 
         // Existing Patients button
         existingPatientsButton.setOnClickListener(v -> openExistingPatients());
-
-        // Back to Main Menu button
-        backToMainMenuButton.setOnClickListener(v -> goToMainMenu());
     }
 
     private void openNewPatient() {

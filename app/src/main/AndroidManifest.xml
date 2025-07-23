@@ -68,6 +68,14 @@
             android:parentActivityName=".MainMenuActivity"
             android:theme="@style/AppTheme" />
 
+        <!-- FIXED: Added missing ExistingPatientActivity -->
+        <activity
+            android:name=".ExistingPatientActivity"
+            android:exported="false"
+            android:parentActivityName=".PatientInfoMenuActivity"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="adjustResize" />
+
         <!-- Add Patient Activity - Add new patients -->
         <activity
             android:name=".AddPatientActivity"
@@ -87,6 +95,13 @@
         <!-- Patient Detail Activity - Individual patient details -->
         <activity
             android:name=".PatientDetailActivity"
+            android:exported="false"
+            android:parentActivityName=".ExistingPatientActivity"
+            android:theme="@style/AppTheme" />
+
+        <!-- Patient Info Activity - Patient information management -->
+        <activity
+            android:name=".PatientInfoActivity"
             android:exported="false"
             android:parentActivityName=".PatientInfoMenuActivity"
             android:theme="@style/AppTheme" />

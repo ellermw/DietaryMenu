@@ -53,8 +53,12 @@ public class ItemManagementActivity extends AppCompatActivity {
         currentUserRole = getIntent().getStringExtra("user_role");
         currentUserFullName = getIntent().getStringExtra("user_full_name");
 
-        // Check admin access
-        if (!"Admin".equalsIgnoreCase(currentUserRole)) {
+        // FIXED: Check admin access for both "Admin" and "Administrator" roles (case-insensitive)
+        boolean isAdmin = currentUserRole != null &&
+                ("Admin".equalsIgnoreCase(currentUserRole.trim()) ||
+                        "Administrator".equalsIgnoreCase(currentUserRole.trim()));
+
+        if (!isAdmin) {
             Toast.makeText(this, "Access denied. Admin privileges required.", Toast.LENGTH_LONG).show();
             finish();
             return;
@@ -126,33 +130,19 @@ public class ItemManagementActivity extends AppCompatActivity {
     }
 
     private void loadCategories() {
-        categories.clear();
-        categories.add("All Categories");
-
-        List<String> dbCategories = categoryDAO.getAllCategories();
-        categories.addAll(dbCategories);
-
-        // If no categories exist, add default ones
-        if (dbCategories.isEmpty()) {
-            createDefaultCategories();
-            dbCategories = categoryDAO.getAllCategories();
+        try {
+            categories.clear();
+            categories.add("All Categories");
+            // FIXED: Use getAllCategories() method that exists
+            List<String> dbCategories = categoryDAO.getAllCategories();
             categories.addAll(dbCategories);
-        }
 
-        // Update category spinner
-        categoryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categories);
-        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        categoryFilterSpinner.setAdapter(categoryAdapter);
-    }
+            categoryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categories);
+            categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            categoryFilterSpinner.setAdapter(categoryAdapter);
 
-    private void createDefaultCategories() {
-        String[] defaultCategories = {
-                "Proteins", "Starches", "Vegetables", "Beverages",
-                "Fruits", "Desserts", "Breakfast Items", "Condiments"
-        };
-
-        for (String category : defaultCategories) {
-            categoryDAO.addCategory(category);
+        } catch (Exception e) {
+            Toast.makeText(this, "Error loading categories: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -160,6 +150,7 @@ public class ItemManagementActivity extends AppCompatActivity {
         try {
             allItems = itemDAO.getAllItems();
             applyFilters();
+
         } catch (Exception e) {
             Toast.makeText(this, "Error loading items: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
@@ -169,127 +160,154 @@ public class ItemManagementActivity extends AppCompatActivity {
         filteredItems.clear();
 
         for (Item item : allItems) {
-            // Skip placeholder items
-            if (item.getName().startsWith("Category Placeholder - ")) {
-                continue;
-            }
-
             boolean matchesSearch = currentSearchTerm.isEmpty() ||
                     item.getName().toLowerCase().contains(currentSearchTerm.toLowerCase()) ||
-                    item.getCategory().toLowerCase().contains(currentSearchTerm.toLowerCase());
+                    item.getDescription().toLowerCase().contains(currentSearchTerm.toLowerCase());
 
             boolean matchesCategory = currentCategoryFilter.equals("All Categories") ||
-                    item.getCategory().equals(currentCategoryFilter);
+                    currentCategoryFilter.equals(item.getCategory());
 
             if (matchesSearch && matchesCategory) {
                 filteredItems.add(item);
             }
         }
 
-        updateItemsList();
+        updateListView();
     }
 
-    private void updateItemsList() {
-        // Create adapter for filtered items
-        itemsAdapter = new ArrayAdapter<Item>(this, android.R.layout.simple_list_item_2, android.R.id.text1, filteredItems) {
-            @Override
-            public View getView(int position, View convertView, android.view.ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
+    private void updateListView() {
+        if (itemsAdapter == null) {
+            itemsAdapter = new ArrayAdapter<Item>(this, android.R.layout.simple_list_item_2,
+                    android.R.id.text1, filteredItems) {
+                @Override
+                public View getView(int position, View convertView, android.view.ViewGroup parent) {
+                    View view = super.getView(position, convertView, parent);
 
-                TextView text1 = view.findViewById(android.R.id.text1);
-                TextView text2 = view.findViewById(android.R.id.text2);
+                    Item item = filteredItems.get(position);
+                    TextView text1 = view.findViewById(android.R.id.text1);
+                    TextView text2 = view.findViewById(android.R.id.text2);
 
-                Item item = filteredItems.get(position);
-                text1.setText(item.getName());
+                    text1.setText(item.getName());
+                    // FIXED: Remove price display since Item doesn't have price field
+                    text2.setText("Category: " + item.getCategory() +
+                            " | ADA: " + (item.isAdaFriendly() ? "Yes" : "No"));
 
-                String subtitle = "Category: " + item.getCategory();
-                if (item.isAdaFriendly()) {
-                    subtitle += " • ADA Friendly";
+                    return view;
                 }
-                text2.setText(subtitle);
-
-                return view;
-            }
-        };
-
-        itemsListView.setAdapter(itemsAdapter);
+            };
+            itemsListView.setAdapter(itemsAdapter);
+        } else {
+            itemsAdapter.notifyDataSetChanged();
+        }
 
         // Update count
-        String countText = "Items: " + filteredItems.size();
-        if (filteredItems.size() != allItems.size() - getPlaceholderItemCount()) {
-            countText += " (filtered from " + (allItems.size() - getPlaceholderItemCount()) + ")";
-        }
-        itemsCountText.setText(countText);
-    }
-
-    private int getPlaceholderItemCount() {
-        int count = 0;
-        for (Item item : allItems) {
-            if (item.getName().startsWith("Category Placeholder - ")) {
-                count++;
+        if (itemsCountText != null) {
+            String countText = filteredItems.size() + " of " + allItems.size() + " items";
+            if (!currentSearchTerm.isEmpty() || !currentCategoryFilter.equals("All Categories")) {
+                countText += " (filtered)";
             }
+            itemsCountText.setText(countText);
         }
-        return count;
     }
 
     private void showAddItemDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Add New Item");
-
+        // Create dialog layout
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setPadding(50, 50, 50, 50);
+        layout.setPadding(50, 40, 50, 10);
 
-        final EditText nameInput = new EditText(this);
-        nameInput.setHint("Item Name");
-        layout.addView(nameInput);
+        // Name field
+        TextView nameLabel = new TextView(this);
+        nameLabel.setText("Item Name:");
+        layout.addView(nameLabel);
 
-        final Spinner categorySpinner = new Spinner(this);
-        List<String> categoriesForSpinner = new ArrayList<>(categoryDAO.getAllCategories());
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categoriesForSpinner);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        categorySpinner.setAdapter(adapter);
+        EditText nameEdit = new EditText(this);
+        nameEdit.setHint("Enter item name");
+        layout.addView(nameEdit);
+
+        // Description field
+        TextView descLabel = new TextView(this);
+        descLabel.setText("Description:");
+        layout.addView(descLabel);
+
+        EditText descEdit = new EditText(this);
+        descEdit.setHint("Enter description");
+        layout.addView(descEdit);
+
+        // Category spinner
+        TextView categoryLabel = new TextView(this);
+        categoryLabel.setText("Category:");
+        layout.addView(categoryLabel);
+
+        Spinner categorySpinner = new Spinner(this);
+        // FIXED: Use getAllCategories() method that exists
+        List<String> categoryNames = categoryDAO.getAllCategories();
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, categoryNames);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        categorySpinner.setAdapter(spinnerAdapter);
         layout.addView(categorySpinner);
 
-        final CheckBox adaCheckBox = new CheckBox(this);
+        // ADA Friendly checkbox
+        CheckBox adaCheckBox = new CheckBox(this);
         adaCheckBox.setText("ADA Friendly");
         layout.addView(adaCheckBox);
 
-        builder.setView(layout);
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle("Add New Item")
+                .setView(layout)
+                .setPositiveButton("Add", null)
+                .setNegativeButton("Cancel", null)
+                .create();
 
-        builder.setPositiveButton("Add", (dialog, which) -> {
-            String name = nameInput.getText().toString().trim();
-            String category = categorySpinner.getSelectedItem().toString();
-            boolean adaFriendly = adaCheckBox.isChecked();
+        dialog.setOnShowListener(dialogInterface -> {
+            Button addButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            addButton.setOnClickListener(v -> {
+                String name = nameEdit.getText().toString().trim();
+                String description = descEdit.getText().toString().trim();
+                String category = categorySpinner.getSelectedItem().toString();
+                boolean adaFriendly = adaCheckBox.isChecked();
 
-            if (name.isEmpty()) {
-                Toast.makeText(this, "Item name is required", Toast.LENGTH_SHORT).show();
-                return;
-            }
+                if (validateItemInput(name, description)) {
+                    Item newItem = new Item();
+                    newItem.setName(name);
+                    newItem.setDescription(description);
+                    newItem.setCategory(category);
+                    newItem.setAdaFriendly(adaFriendly);
 
-            Item newItem = new Item();
-            newItem.setName(name);
-            newItem.setCategory(category);
-            newItem.setAdaFriendly(adaFriendly);
-
-            long result = itemDAO.addItem(newItem);
-            if (result > 0) {
-                Toast.makeText(this, "Item added successfully!", Toast.LENGTH_SHORT).show();
-                loadItems();
-            } else {
-                Toast.makeText(this, "Error adding item", Toast.LENGTH_SHORT).show();
-            }
+                    // FIXED: addItem returns long, check if > 0
+                    long result = itemDAO.addItem(newItem);
+                    if (result > 0) {
+                        Toast.makeText(this, "Item added successfully!", Toast.LENGTH_SHORT).show();
+                        loadItems();
+                        dialog.dismiss();
+                    } else {
+                        Toast.makeText(this, "Error adding item", Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
         });
 
-        builder.setNegativeButton("Cancel", null);
-        builder.show();
+        dialog.show();
+    }
+
+    private boolean validateItemInput(String name, String description) {
+        if (name.isEmpty()) {
+            Toast.makeText(this, "Item name is required", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (description.isEmpty()) {
+            Toast.makeText(this, "Description is required", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
     }
 
     private void showItemOptionsDialog(Item item) {
         String[] options = {"Edit Item", "Delete Item"};
 
-        new AlertDialog.Builder(this)
-                .setTitle("Item: " + item.getName())
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(item.getName())
                 .setItems(options, (dialog, which) -> {
                     switch (which) {
                         case 0:
@@ -304,80 +322,101 @@ public class ItemManagementActivity extends AppCompatActivity {
     }
 
     private void showEditItemDialog(Item item) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Edit Item: " + item.getName());
-
+        // Create dialog layout
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setPadding(50, 50, 50, 50);
+        layout.setPadding(50, 40, 50, 10);
 
-        final EditText nameInput = new EditText(this);
-        nameInput.setHint("Item Name");
-        nameInput.setText(item.getName());
-        layout.addView(nameInput);
+        // Name field
+        TextView nameLabel = new TextView(this);
+        nameLabel.setText("Item Name:");
+        layout.addView(nameLabel);
 
-        final Spinner categorySpinner = new Spinner(this);
-        List<String> categoriesForSpinner = new ArrayList<>(categoryDAO.getAllCategories());
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categoriesForSpinner);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        categorySpinner.setAdapter(adapter);
+        EditText nameEdit = new EditText(this);
+        nameEdit.setText(item.getName());
+        layout.addView(nameEdit);
+
+        // Description field
+        TextView descLabel = new TextView(this);
+        descLabel.setText("Description:");
+        layout.addView(descLabel);
+
+        EditText descEdit = new EditText(this);
+        descEdit.setText(item.getDescription());
+        layout.addView(descEdit);
+
+        // Category spinner
+        TextView categoryLabel = new TextView(this);
+        categoryLabel.setText("Category:");
+        layout.addView(categoryLabel);
+
+        Spinner categorySpinner = new Spinner(this);
+        // FIXED: Use getAllCategories() method that exists
+        List<String> categoryNames = categoryDAO.getAllCategories();
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, categoryNames);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        categorySpinner.setAdapter(spinnerAdapter);
 
         // Set current category
-        for (int i = 0; i < categoriesForSpinner.size(); i++) {
-            if (categoriesForSpinner.get(i).equals(item.getCategory())) {
-                categorySpinner.setSelection(i);
-                break;
-            }
+        int categoryPosition = categoryNames.indexOf(item.getCategory());
+        if (categoryPosition >= 0) {
+            categorySpinner.setSelection(categoryPosition);
         }
         layout.addView(categorySpinner);
 
-        final CheckBox adaCheckBox = new CheckBox(this);
+        // ADA Friendly checkbox
+        CheckBox adaCheckBox = new CheckBox(this);
         adaCheckBox.setText("ADA Friendly");
         adaCheckBox.setChecked(item.isAdaFriendly());
         layout.addView(adaCheckBox);
 
-        builder.setView(layout);
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle("Edit Item")
+                .setView(layout)
+                .setPositiveButton("Update", null)
+                .setNegativeButton("Cancel", null)
+                .create();
 
-        builder.setPositiveButton("Save", (dialog, which) -> {
-            String name = nameInput.getText().toString().trim();
-            String category = categorySpinner.getSelectedItem().toString();
-            boolean adaFriendly = adaCheckBox.isChecked();
+        dialog.setOnShowListener(dialogInterface -> {
+            Button updateButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            updateButton.setOnClickListener(v -> {
+                String name = nameEdit.getText().toString().trim();
+                String description = descEdit.getText().toString().trim();
+                String category = categorySpinner.getSelectedItem().toString();
+                boolean adaFriendly = adaCheckBox.isChecked();
 
-            if (name.isEmpty()) {
-                Toast.makeText(this, "Item name is required", Toast.LENGTH_SHORT).show();
-                return;
-            }
+                if (validateItemInput(name, description)) {
+                    item.setName(name);
+                    item.setDescription(description);
+                    item.setCategory(category);
+                    item.setAdaFriendly(adaFriendly);
 
-            item.setName(name);
-            item.setCategory(category);
-            item.setAdaFriendly(adaFriendly);
-
-            boolean success = itemDAO.updateItem(item);
-            if (success) {
-                Toast.makeText(this, "Item updated successfully!", Toast.LENGTH_SHORT).show();
-                loadCategories(); // Reload in case category changed
-                loadItems();
-            } else {
-                Toast.makeText(this, "Error updating item", Toast.LENGTH_SHORT).show();
-            }
+                    if (itemDAO.updateItem(item)) {
+                        Toast.makeText(this, "Item updated successfully!", Toast.LENGTH_SHORT).show();
+                        loadItems();
+                        dialog.dismiss();
+                    } else {
+                        Toast.makeText(this, "Error updating item", Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
         });
 
-        builder.setNegativeButton("Cancel", null);
-        builder.show();
+        dialog.show();
     }
 
     private void showDeleteItemConfirmation(Item item) {
         new AlertDialog.Builder(this)
                 .setTitle("Delete Item")
-                .setMessage("Are you sure you want to delete '" + item.getName() + "'?\n\nThis cannot be undone!")
+                .setMessage("Are you sure you want to delete '" + item.getName() + "'?\n\nThis action cannot be undone.")
                 .setPositiveButton("Delete", (dialog, which) -> {
-                    boolean success = itemDAO.deleteItem(item.getItemId());
-
-                    if (success) {
+                    // FIXED: Use deleteItem method with itemId
+                    if (itemDAO.deleteItem(item.getItemId())) {
                         Toast.makeText(this, "Item deleted successfully!", Toast.LENGTH_SHORT).show();
                         loadItems();
                     } else {
-                        Toast.makeText(this, "Error deleting item", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Error deleting item", Toast.LENGTH_LONG).show();
                     }
                 })
                 .setNegativeButton("Cancel", null)
@@ -389,7 +428,17 @@ public class ItemManagementActivity extends AppCompatActivity {
         intent.putExtra("current_user", currentUsername);
         intent.putExtra("user_role", currentUserRole);
         intent.putExtra("user_full_name", currentUserFullName);
-        startActivity(intent);
+        startActivityForResult(intent, 100); // Use request code to refresh categories when returning
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 100) {
+            // Refresh categories when returning from CategoryManagementActivity
+            loadCategories();
+            loadItems();
+        }
     }
 
     @Override
@@ -402,9 +451,8 @@ public class ItemManagementActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        loadCategories();
-        loadItems();
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 }
