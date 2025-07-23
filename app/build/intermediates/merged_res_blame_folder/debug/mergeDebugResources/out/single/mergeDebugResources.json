@@ -44,6 +44,10 @@
         "source": "com.hospital.dietary.app-main-6:/mipmap-hdpi/ic_launcher_foreground.png"
     },
     {
+        "merged": "com.hospital.dietary.app-debug-4:/drawable_button_orange.xml.flat",
+        "source": "com.hospital.dietary.app-main-6:/drawable/button_orange.xml"
+    },
+    {
         "merged": "com.hospital.dietary.app-debug-4:/layout_activity_existing_patient.xml.flat",
         "source": "com.hospital.dietary.app-main-6:/layout/activity_existing_patient.xml"
     },
@@ -84,8 +88,16 @@
         "source": "com.hospital.dietary.app-main-6:/mipmap-xxxhdpi/hospital_logo.webp"
     },
     {
+        "merged": "com.hospital.dietary.app-debug-4:/drawable_button_logout.xml.flat",
+        "source": "com.hospital.dietary.app-main-6:/drawable/button_logout.xml"
+    },
+    {
         "merged": "com.hospital.dietary.app-debug-4:/layout_dialog_add_user.xml.flat",
         "source": "com.hospital.dietary.app-main-6:/layout/dialog_add_user.xml"
+    },
+    {
+        "merged": "com.hospital.dietary.app-debug-4:/drawable_button_gray.xml.flat",
+        "source": "com.hospital.dietary.app-main-6:/drawable/button_gray.xml"
     },
     {
         "merged": "com.hospital.dietary.app-debug-4:/drawable_button_secondary.xml.flat",
@@ -124,6 +136,10 @@
         "source": "com.hospital.dietary.app-main-6:/mipmap-mdpi/hospital_logo.webp"
     },
     {
+        "merged": "com.hospital.dietary.app-debug-4:/drawable_button_pink.xml.flat",
+        "source": "com.hospital.dietary.app-main-6:/drawable/button_pink.xml"
+    },
+    {
         "merged": "com.hospital.dietary.app-debug-4:/mipmap-hdpi_ic_launcher.png.flat",
         "source": "com.hospital.dietary.app-main-6:/mipmap-hdpi/ic_launcher.png"
     },
@@ -138,6 +154,10 @@
     {
         "merged": "com.hospital.dietary.app-debug-4:/layout_activity_view_orders.xml.flat",
         "source": "com.hospital.dietary.app-main-6:/layout/activity_view_orders.xml"
+    },
+    {
+        "merged": "com.hospital.dietary.app-debug-4:/drawable_button_purple.xml.flat",
+        "source": "com.hospital.dietary.app-main-6:/drawable/button_purple.xml"
     },
     {
         "merged": "com.hospital.dietary.app-debug-4:/mipmap-xxxhdpi_ic_launcher_foreground.png.flat",
@@ -376,6 +396,10 @@
         "source": "com.hospital.dietary.app-main-6:/mipmap-mdpi/ic_launcher.png"
     },
     {
+        "merged": "com.hospital.dietary.app-debug-4:/drawable_button_green.xml.flat",
+        "source": "com.hospital.dietary.app-main-6:/drawable/button_green.xml"
+    },
+    {
         "merged": "com.hospital.dietary.app-debug-4:/layout_dialog_change_password.xml.flat",
         "source": "com.hospital.dietary.app-main-6:/layout/dialog_change_password.xml"
     },
@@ -510,6 +534,10 @@
     {
         "merged": "com.hospital.dietary.app-debug-4:/xml_backup_rules.xml.flat",
         "source": "com.hospital.dietary.app-main-6:/xml/backup_rules.xml"
+    },
+    {
+        "merged": "com.hospital.dietary.app-debug-4:/drawable_header_card_background.xml.flat",
+        "source": "com.hospital.dietary.app-main-6:/drawable/header_card_background.xml"
     },
     {
         "merged": "com.hospital.dietary.app-debug-4:/mipmap-xhdpi_ic_launcher_round.png.flat",

@@ -29,7 +29,7 @@ public class MainMenuActivity extends AppCompatActivity {
     private Button itemManagementButton;
     private Button logoutButton;
 
-    // FIXED: Added admin tools section container
+    // FIXED: Admin tools section container
     private LinearLayout adminToolsSection;
 
     @Override
@@ -41,6 +41,10 @@ public class MainMenuActivity extends AppCompatActivity {
         currentUsername = getIntent().getStringExtra("current_user");
         currentUserRole = getIntent().getStringExtra("user_role");
         currentUserFullName = getIntent().getStringExtra("user_full_name");
+
+        // Ensure we have at least basic user info
+        if (currentUsername == null) currentUsername = "User";
+        if (currentUserRole == null) currentUserRole = "Staff";
 
         // Set title
         if (getSupportActionBar() != null) {
@@ -80,43 +84,69 @@ public class MainMenuActivity extends AppCompatActivity {
         welcomeText.setText(welcomeMessage);
 
         // FIXED: Configure admin tools section based on user role
-        if ("Admin".equalsIgnoreCase(currentUserRole)) {
-            // Admin users: Show entire admin tools section with full functionality
-            if (adminToolsSection != null) {
+        configureAdminAccess();
+    }
+
+    private void configureAdminAccess() {
+        // FIXED: Check for both "Admin" and "Administrator" role values
+        boolean isAdmin = "Admin".equalsIgnoreCase(currentUserRole) ||
+                "Administrator".equalsIgnoreCase(currentUserRole);
+
+        // Debug logging to see what role we're getting
+        android.util.Log.d("MainMenu", "Current user role: '" + currentUserRole + "', isAdmin: " + isAdmin);
+
+        if (adminToolsSection != null) {
+            if (isAdmin) {
+                // Show admin tools section for admin users
                 adminToolsSection.setVisibility(View.VISIBLE);
-            }
-            if (userManagementButton != null) {
-                userManagementButton.setVisibility(View.VISIBLE);
-                userManagementButton.setEnabled(true);
-                userManagementButton.setAlpha(1.0f);
-            }
-            if (itemManagementButton != null) {
-                itemManagementButton.setVisibility(View.VISIBLE);
-                itemManagementButton.setEnabled(true);
-                itemManagementButton.setAlpha(1.0f);
+
+                // Ensure admin buttons are visible and enabled
+                if (userManagementButton != null) {
+                    userManagementButton.setVisibility(View.VISIBLE);
+                    userManagementButton.setEnabled(true);
+                    userManagementButton.setAlpha(1.0f);
+                }
+                if (itemManagementButton != null) {
+                    itemManagementButton.setVisibility(View.VISIBLE);
+                    itemManagementButton.setEnabled(true);
+                    itemManagementButton.setAlpha(1.0f);
+                }
+
+                android.util.Log.d("MainMenu", "Admin tools section made visible");
+            } else {
+                // Hide admin tools section for non-admin users
+                adminToolsSection.setVisibility(View.GONE);
+                android.util.Log.d("MainMenu", "Admin tools section hidden for non-admin user");
             }
         } else {
-            // Non-admin users: Completely hide the entire admin tools section
-            if (adminToolsSection != null) {
-                adminToolsSection.setVisibility(View.GONE);
-            }
+            android.util.Log.e("MainMenu", "Admin tools section is null!");
         }
     }
 
     private void setupListeners() {
         // Operations Section
-        patientInfoButton.setOnClickListener(v -> openPatientInfo());
-        pendingOrdersButton.setOnClickListener(v -> openPendingOrders());
-        retiredOrdersButton.setOnClickListener(v -> openRetiredOrders());
+        if (patientInfoButton != null) {
+            patientInfoButton.setOnClickListener(v -> openPatientInfo());
+        }
+        if (pendingOrdersButton != null) {
+            pendingOrdersButton.setOnClickListener(v -> openPendingOrders());
+        }
+        if (retiredOrdersButton != null) {
+            retiredOrdersButton.setOnClickListener(v -> openRetiredOrders());
+        }
 
         // Documents Section
-        productionSheetsButton.setOnClickListener(v -> openProductionSheets());
-        stockSheetsButton.setOnClickListener(v -> openStockSheets());
+        if (productionSheetsButton != null) {
+            productionSheetsButton.setOnClickListener(v -> openProductionSheets());
+        }
+        if (stockSheetsButton != null) {
+            stockSheetsButton.setOnClickListener(v -> openStockSheets());
+        }
 
-        // Admin Tools Section - FIXED: Only set listeners if buttons exist and user is admin
+        // Admin Tools Section - FIXED: Check for both Admin and Administrator roles
         if (userManagementButton != null) {
             userManagementButton.setOnClickListener(v -> {
-                if ("Admin".equalsIgnoreCase(currentUserRole)) {
+                if ("Admin".equalsIgnoreCase(currentUserRole) || "Administrator".equalsIgnoreCase(currentUserRole)) {
                     openUserManagement();
                 } else {
                     showAccessDeniedMessage();
@@ -126,7 +156,7 @@ public class MainMenuActivity extends AppCompatActivity {
 
         if (itemManagementButton != null) {
             itemManagementButton.setOnClickListener(v -> {
-                if ("Admin".equalsIgnoreCase(currentUserRole)) {
+                if ("Admin".equalsIgnoreCase(currentUserRole) || "Administrator".equalsIgnoreCase(currentUserRole)) {
                     openItemManagement();
                 } else {
                     showAccessDeniedMessage();
@@ -135,9 +165,12 @@ public class MainMenuActivity extends AppCompatActivity {
         }
 
         // Logout
-        logoutButton.setOnClickListener(v -> showLogoutConfirmation());
+        if (logoutButton != null) {
+            logoutButton.setOnClickListener(v -> showLogoutConfirmation());
+        }
     }
 
+    // Navigation methods
     private void openPatientInfo() {
         Intent intent = new Intent(this, PatientInfoMenuActivity.class);
         intent.putExtra("current_user", currentUsername);
@@ -163,13 +196,23 @@ public class MainMenuActivity extends AppCompatActivity {
     }
 
     private void openProductionSheets() {
-        // Placeholder - to be implemented later
-        Toast.makeText(this, "Production Sheets - Coming Soon!", Toast.LENGTH_SHORT).show();
+        // Create intent to open DocumentsActivity with production sheets filter
+        Intent intent = new Intent(this, DocumentsActivity.class);
+        intent.putExtra("current_user", currentUsername);
+        intent.putExtra("user_role", currentUserRole);
+        intent.putExtra("user_full_name", currentUserFullName);
+        intent.putExtra("document_type", "production");
+        startActivity(intent);
     }
 
     private void openStockSheets() {
-        // Placeholder - to be implemented later
-        Toast.makeText(this, "Stock Sheets - Coming Soon!", Toast.LENGTH_SHORT).show();
+        // Create intent to open DocumentsActivity with stock sheets filter
+        Intent intent = new Intent(this, DocumentsActivity.class);
+        intent.putExtra("current_user", currentUsername);
+        intent.putExtra("user_role", currentUserRole);
+        intent.putExtra("user_full_name", currentUserFullName);
+        intent.putExtra("document_type", "stock");
+        startActivity(intent);
     }
 
     private void openUserManagement() {
@@ -189,63 +232,42 @@ public class MainMenuActivity extends AppCompatActivity {
     }
 
     private void showAccessDeniedMessage() {
-        Toast.makeText(this, "Access denied. Admin privileges required.", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Access denied. Administrator privileges required.", Toast.LENGTH_LONG).show();
     }
 
     private void showLogoutConfirmation() {
         new AlertDialog.Builder(this)
                 .setTitle("Logout")
                 .setMessage("Are you sure you want to logout?")
-                .setPositiveButton("Logout", (dialog, which) -> {
-                    // Clear user session and return to login
-                    Intent intent = new Intent(this, LoginActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intent);
-                    finish();
-                })
-                .setNegativeButton("Cancel", null)
+                .setPositiveButton("Yes", (dialog, which) -> logout())
+                .setNegativeButton("No", null)
                 .show();
+    }
+
+    private void logout() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        // For main menu, we don't need a complex menu - just keep it simple
+        // Most functionality is accessible through the main interface
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.action_account) {
-            openAccountManagement();
-            return true;
-        } else if (id == R.id.action_logout) {
-            showLogoutConfirmation();
-            return true;
-        }
-
+        // Handle any basic menu items here if needed
         return super.onOptionsItemSelected(item);
-    }
-
-    private void openAccountManagement() {
-        Intent intent = new Intent(this, AccountManagementActivity.class);
-        intent.putExtra("current_user", currentUsername);
-        intent.putExtra("user_role", currentUserRole);
-        intent.putExtra("user_full_name", currentUserFullName);
-        startActivity(intent);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        // Refresh user interface when returning to this activity
-        setupUserInterface();
-    }
-
-    @Override
-    public void onBackPressed() {
-        // Show logout confirmation when back button is pressed from main menu
-        showLogoutConfirmation();
+        // Refresh admin access configuration when returning to main menu
+        configureAdminAccess();
     }
 }

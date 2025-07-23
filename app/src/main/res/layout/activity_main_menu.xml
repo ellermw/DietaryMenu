@@ -10,226 +10,124 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Header -->
+        <!-- Header Card -->
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@android:color/white"
-            android:padding="20dp"
-            android:layout_marginBottom="16dp"
-            android:elevation="2dp">
+            style="@style/HeaderCard">
 
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="🏥 Hospital Dietary Management"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:textColor="#2c3e50"
-                android:gravity="center"
-                android:layout_marginBottom="8dp" />
+                style="@style/AppTitle"
+                android:text="🏥 Hospital Dietary Management" />
 
             <TextView
                 android:id="@+id/welcomeText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Welcome!"
-                android:textSize="16sp"
-                android:textColor="#7f8c8d"
-                android:gravity="center" />
+                style="@style/WelcomeText"
+                android:text="Welcome!" />
 
         </LinearLayout>
 
         <!-- Operations Section -->
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@android:color/white"
-            android:padding="16dp"
-            android:layout_marginBottom="16dp"
-            android:elevation="2dp">
+            style="@style/CardSection">
 
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Operations"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="#2c3e50"
-                android:layout_marginBottom="16dp" />
+                style="@style/SectionTitle"
+                android:text="Operations" />
 
-            <!-- First row of operation buttons -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="12dp">
+            <!-- Patient Info Button -->
+            <Button
+                android:id="@+id/patientInfoButton"
+                style="@style/MainMenuButton.Green"
+                android:text="👤  Patient Info" />
 
-                <Button
-                    android:id="@+id/patientInfoButton"
-                    android:layout_width="0dp"
-                    android:layout_height="72dp"
-                    android:layout_weight="1"
-                    android:text="👥  Patient Info"
-                    android:textSize="14sp"
-                    android:textColor="@android:color/white"
-                    android:gravity="center"
-                    android:background="#4CAF50"
-                    android:layout_marginEnd="8dp"
-                    android:textStyle="bold"
-                    android:padding="8dp" />
+            <!-- Pending Orders Button -->
+            <Button
+                android:id="@+id/pendingOrdersButton"
+                style="@style/MainMenuButton.Orange"
+                android:text="📋  Pending Orders" />
 
-                <Button
-                    android:id="@+id/pendingOrdersButton"
-                    android:layout_width="0dp"
-                    android:layout_height="72dp"
-                    android:layout_weight="1"
-                    android:text="⏳  Pending Orders"
-                    android:textSize="14sp"
-                    android:textColor="@android:color/white"
-                    android:gravity="center"
-                    android:background="#FF9800"
-                    android:layout_marginStart="8dp"
-                    android:textStyle="bold"
-                    android:padding="8dp" />
-
-            </LinearLayout>
-
-            <!-- Second row of operation buttons -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/retiredOrdersButton"
-                    android:layout_width="0dp"
-                    android:layout_height="72dp"
-                    android:layout_weight="1"
-                    android:text="📋  Retired Orders"
-                    android:textSize="14sp"
-                    android:textColor="@android:color/white"
-                    android:gravity="center"
-                    android:background="#607D8B"
-                    android:layout_marginEnd="8dp"
-                    android:textStyle="bold"
-                    android:padding="8dp" />
-
-            </LinearLayout>
+            <!-- Retired Orders Button -->
+            <Button
+                android:id="@+id/retiredOrdersButton"
+                style="@style/MainMenuButton.Gray"
+                android:text="✅  Retired Orders"
+                android:layout_marginBottom="0dp" />
 
         </LinearLayout>
 
         <!-- Documents Section -->
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@android:color/white"
-            android:padding="16dp"
-            android:layout_marginBottom="16dp"
-            android:elevation="2dp">
+            style="@style/CardSection">
 
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Documents"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="#2c3e50"
-                android:layout_marginBottom="16dp" />
+                style="@style/SectionTitle"
+                android:text="Documents" />
 
+            <!-- Documents buttons row -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_marginBottom="0dp">
 
                 <Button
                     android:id="@+id/productionSheetsButton"
+                    style="@style/MainMenuButton.Primary"
                     android:layout_width="0dp"
-                    android:layout_height="72dp"
                     android:layout_weight="1"
-                    android:text="📄  Production Sheets"
+                    android:layout_marginEnd="6dp"
+                    android:layout_marginBottom="0dp"
                     android:textSize="14sp"
-                    android:textColor="@android:color/white"
-                    android:gravity="center"
-                    android:background="#2196F3"
-                    android:layout_marginEnd="8dp"
-                    android:textStyle="bold"
-                    android:padding="8dp" />
+                    android:text="📄  Production Sheets" />
 
                 <Button
                     android:id="@+id/stockSheetsButton"
+                    style="@style/MainMenuButton.Primary"
                     android:layout_width="0dp"
-                    android:layout_height="72dp"
                     android:layout_weight="1"
-                    android:text="📊  Stock Sheets"
+                    android:layout_marginStart="6dp"
+                    android:layout_marginBottom="0dp"
                     android:textSize="14sp"
-                    android:textColor="@android:color/white"
-                    android:gravity="center"
-                    android:background="#2196F3"
-                    android:layout_marginStart="8dp"
-                    android:textStyle="bold"
-                    android:padding="8dp" />
+                    android:text="📊  Stock Sheets" />
 
             </LinearLayout>
 
         </LinearLayout>
 
-        <!-- Admin Tools Section - FIXED: Added ID for visibility control -->
+        <!-- Admin Tools Section -->
         <LinearLayout
             android:id="@+id/adminToolsSection"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@android:color/white"
-            android:padding="16dp"
-            android:layout_marginBottom="16dp"
-            android:elevation="2dp">
+            style="@style/CardSection">
 
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Admin Tools"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="#2c3e50"
-                android:layout_marginBottom="16dp" />
+                style="@style/SectionTitle"
+                android:text="Admin Tools" />
 
-            <!-- Admin buttons -->
+            <!-- Admin buttons row -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_marginBottom="0dp">
 
                 <Button
                     android:id="@+id/userManagementButton"
+                    style="@style/MainMenuButton.Purple"
                     android:layout_width="0dp"
-                    android:layout_height="72dp"
                     android:layout_weight="1"
-                    android:text="👥  User Management"
+                    android:layout_marginEnd="6dp"
+                    android:layout_marginBottom="0dp"
                     android:textSize="14sp"
-                    android:textColor="@android:color/white"
-                    android:gravity="center"
-                    android:background="#9C27B0"
-                    android:layout_marginEnd="8dp"
-                    android:textStyle="bold"
-                    android:padding="8dp" />
+                    android:text="👥  User Management" />
 
                 <Button
                     android:id="@+id/itemManagementButton"
+                    style="@style/MainMenuButton.Pink"
                     android:layout_width="0dp"
-                    android:layout_height="72dp"
                     android:layout_weight="1"
-                    android:text="🍽️  Item Management"
+                    android:layout_marginStart="6dp"
+                    android:layout_marginBottom="0dp"
                     android:textSize="14sp"
-                    android:textColor="@android:color/white"
-                    android:gravity="center"
-                    android:background="#E91E63"
-                    android:layout_marginStart="8dp"
-                    android:textStyle="bold"
-                    android:padding="8dp" />
+                    android:text="📋  Item Management" />
 
             </LinearLayout>
 
@@ -240,20 +138,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@android:color/white"
-            android:padding="16dp"
-            android:elevation="2dp">
+            android:gravity="center"
+            android:layout_marginTop="8dp">
 
             <Button
                 android:id="@+id/logoutButton"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:text="🚪  Logout"
-                android:textSize="16sp"
-                android:textColor="@android:color/white"
-                android:gravity="center"
-                android:background="#F44336"
-                android:textStyle="bold" />
+                style="@style/LogoutButton"
+                android:text="Logout" />
 
         </LinearLayout>
 
