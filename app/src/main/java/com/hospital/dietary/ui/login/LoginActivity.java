@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import com.hospital.dietary.R;
 import com.hospital.dietary.data.entities.UserEntity;
-import com.hospital.dietary.ui.main.MainMenuActivity;
+import com.hospital.dietary.MainMenuActivity;
 
 /**
  * LoginActivity - Migrated to use MVVM pattern
