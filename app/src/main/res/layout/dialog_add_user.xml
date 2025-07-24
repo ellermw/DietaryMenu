@@ -6,7 +6,7 @@
     android:padding="16dp">
 
     <EditText
-        android:id="@+id/usernameEditText"
+        android:id="@+id/usernameInput"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:hint="Username"
@@ -14,15 +14,15 @@
         android:layout_marginBottom="8dp" />
 
     <EditText
-        android:id="@+id/passwordEditText"
+        android:id="@+id/passwordInput"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:hint="Password (min 6 characters)"
+        android:hint="Password"
         android:inputType="textPassword"
         android:layout_marginBottom="8dp" />
 
     <EditText
-        android:id="@+id/fullNameEditText"
+        android:id="@+id/fullNameInput"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:hint="Full Name"
@@ -39,6 +39,7 @@
         android:id="@+id/activeCheckBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="User Active" />
+        android:text="User Active"
+        android:checked="true" />
 
 </LinearLayout>

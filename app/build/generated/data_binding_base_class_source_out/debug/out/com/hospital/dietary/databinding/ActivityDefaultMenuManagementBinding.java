@@ -5,8 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
@@ -20,7 +20,7 @@ import java.lang.String;
 
 public final class ActivityDefaultMenuManagementBinding implements ViewBinding {
   @NonNull
-  private final ScrollView rootView;
+  private final LinearLayout rootView;
 
   @NonNull
   public final Button addItemButton;
@@ -49,7 +49,7 @@ public final class ActivityDefaultMenuManagementBinding implements ViewBinding {
   @NonNull
   public final Button saveChangesButton;
 
-  private ActivityDefaultMenuManagementBinding(@NonNull ScrollView rootView,
+  private ActivityDefaultMenuManagementBinding(@NonNull LinearLayout rootView,
       @NonNull Button addItemButton, @NonNull TextView currentConfigText,
       @NonNull Spinner dayOfWeekSpinner, @NonNull Spinner dietTypeSpinner,
       @NonNull TextView instructionsText, @NonNull Spinner mealTypeSpinner,
@@ -69,7 +69,7 @@ public final class ActivityDefaultMenuManagementBinding implements ViewBinding {
 
   @Override
   @NonNull
-  public ScrollView getRoot() {
+  public LinearLayout getRoot() {
     return rootView;
   }
 
@@ -148,7 +148,7 @@ public final class ActivityDefaultMenuManagementBinding implements ViewBinding {
         break missingId;
       }
 
-      return new ActivityDefaultMenuManagementBinding((ScrollView) rootView, addItemButton,
+      return new ActivityDefaultMenuManagementBinding((LinearLayout) rootView, addItemButton,
           currentConfigText, dayOfWeekSpinner, dietTypeSpinner, instructionsText, mealTypeSpinner,
           menuItemsListView, resetToDefaultsButton, saveChangesButton);
     }

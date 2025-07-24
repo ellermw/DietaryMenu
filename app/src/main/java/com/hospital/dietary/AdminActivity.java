@@ -36,6 +36,7 @@ public class AdminActivity extends AppCompatActivity {
 
         // Check if user has admin privileges
         if (!"Admin".equals(currentUserRole)) {
+            Toast.makeText(this, "Access denied. Admin privileges required.", Toast.LENGTH_LONG).show();
             finish();
             return;
         }
@@ -68,7 +69,6 @@ public class AdminActivity extends AppCompatActivity {
     private void setupListeners() {
         if (userManagementButton != null) {
             userManagementButton.setOnClickListener(v -> {
-                // FIXED: Open actual UserManagementActivity
                 Intent intent = new Intent(this, UserManagementActivity.class);
                 intent.putExtra("current_user", currentUsername);
                 intent.putExtra("user_role", currentUserRole);
@@ -79,7 +79,6 @@ public class AdminActivity extends AppCompatActivity {
 
         if (itemManagementButton != null) {
             itemManagementButton.setOnClickListener(v -> {
-                // FIXED: Open actual ItemManagementActivity
                 Intent intent = new Intent(this, ItemManagementActivity.class);
                 intent.putExtra("current_user", currentUsername);
                 intent.putExtra("user_role", currentUserRole);
@@ -137,6 +136,18 @@ public class AdminActivity extends AppCompatActivity {
                 intent.putExtra("user_full_name", currentUserFullName);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
+                return true;
+            case R.id.action_default_menus:
+                // Open default menu management directly from menu
+                Intent defaultMenuIntent = new Intent(this, DefaultMenuManagementActivity.class);
+                defaultMenuIntent.putExtra("current_user", currentUsername);
+                defaultMenuIntent.putExtra("user_role", currentUserRole);
+                defaultMenuIntent.putExtra("user_full_name", currentUserFullName);
+                startActivity(defaultMenuIntent);
+                return true;
+            case R.id.action_refresh:
+                // Refresh the current view if needed
+                recreate();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

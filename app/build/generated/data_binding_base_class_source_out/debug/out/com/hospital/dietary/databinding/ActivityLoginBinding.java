@@ -8,7 +8,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.viewbinding.ViewBinding;
@@ -26,9 +26,6 @@ public final class ActivityLoginBinding implements ViewBinding {
   public final EditText passwordEditText;
 
   @NonNull
-  public final ProgressBar progressBar;
-
-  @NonNull
   public final CheckBox showPasswordCheckBox;
 
   @NonNull
@@ -37,15 +34,18 @@ public final class ActivityLoginBinding implements ViewBinding {
   @NonNull
   public final EditText usernameEditText;
 
+  @NonNull
+  public final TextView versionText;
+
   private ActivityLoginBinding(@NonNull LinearLayout rootView, @NonNull EditText passwordEditText,
-      @NonNull ProgressBar progressBar, @NonNull CheckBox showPasswordCheckBox,
-      @NonNull Button signInButton, @NonNull EditText usernameEditText) {
+      @NonNull CheckBox showPasswordCheckBox, @NonNull Button signInButton,
+      @NonNull EditText usernameEditText, @NonNull TextView versionText) {
     this.rootView = rootView;
     this.passwordEditText = passwordEditText;
-    this.progressBar = progressBar;
     this.showPasswordCheckBox = showPasswordCheckBox;
     this.signInButton = signInButton;
     this.usernameEditText = usernameEditText;
+    this.versionText = versionText;
   }
 
   @Override
@@ -81,12 +81,6 @@ public final class ActivityLoginBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.progressBar;
-      ProgressBar progressBar = ViewBindings.findChildViewById(rootView, id);
-      if (progressBar == null) {
-        break missingId;
-      }
-
       id = R.id.showPasswordCheckBox;
       CheckBox showPasswordCheckBox = ViewBindings.findChildViewById(rootView, id);
       if (showPasswordCheckBox == null) {
@@ -105,8 +99,14 @@ public final class ActivityLoginBinding implements ViewBinding {
         break missingId;
       }
 
-      return new ActivityLoginBinding((LinearLayout) rootView, passwordEditText, progressBar,
-          showPasswordCheckBox, signInButton, usernameEditText);
+      id = R.id.versionText;
+      TextView versionText = ViewBindings.findChildViewById(rootView, id);
+      if (versionText == null) {
+        break missingId;
+      }
+
+      return new ActivityLoginBinding((LinearLayout) rootView, passwordEditText,
+          showPasswordCheckBox, signInButton, usernameEditText, versionText);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

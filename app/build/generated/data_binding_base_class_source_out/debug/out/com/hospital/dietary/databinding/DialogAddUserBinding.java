@@ -25,26 +25,26 @@ public final class DialogAddUserBinding implements ViewBinding {
   public final CheckBox activeCheckBox;
 
   @NonNull
-  public final EditText fullNameEditText;
+  public final EditText fullNameInput;
 
   @NonNull
-  public final EditText passwordEditText;
+  public final EditText passwordInput;
 
   @NonNull
   public final Spinner roleSpinner;
 
   @NonNull
-  public final EditText usernameEditText;
+  public final EditText usernameInput;
 
   private DialogAddUserBinding(@NonNull LinearLayout rootView, @NonNull CheckBox activeCheckBox,
-      @NonNull EditText fullNameEditText, @NonNull EditText passwordEditText,
-      @NonNull Spinner roleSpinner, @NonNull EditText usernameEditText) {
+      @NonNull EditText fullNameInput, @NonNull EditText passwordInput,
+      @NonNull Spinner roleSpinner, @NonNull EditText usernameInput) {
     this.rootView = rootView;
     this.activeCheckBox = activeCheckBox;
-    this.fullNameEditText = fullNameEditText;
-    this.passwordEditText = passwordEditText;
+    this.fullNameInput = fullNameInput;
+    this.passwordInput = passwordInput;
     this.roleSpinner = roleSpinner;
-    this.usernameEditText = usernameEditText;
+    this.usernameInput = usernameInput;
   }
 
   @Override
@@ -80,15 +80,15 @@ public final class DialogAddUserBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.fullNameEditText;
-      EditText fullNameEditText = ViewBindings.findChildViewById(rootView, id);
-      if (fullNameEditText == null) {
+      id = R.id.fullNameInput;
+      EditText fullNameInput = ViewBindings.findChildViewById(rootView, id);
+      if (fullNameInput == null) {
         break missingId;
       }
 
-      id = R.id.passwordEditText;
-      EditText passwordEditText = ViewBindings.findChildViewById(rootView, id);
-      if (passwordEditText == null) {
+      id = R.id.passwordInput;
+      EditText passwordInput = ViewBindings.findChildViewById(rootView, id);
+      if (passwordInput == null) {
         break missingId;
       }
 
@@ -98,14 +98,14 @@ public final class DialogAddUserBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.usernameEditText;
-      EditText usernameEditText = ViewBindings.findChildViewById(rootView, id);
-      if (usernameEditText == null) {
+      id = R.id.usernameInput;
+      EditText usernameInput = ViewBindings.findChildViewById(rootView, id);
+      if (usernameInput == null) {
         break missingId;
       }
 
-      return new DialogAddUserBinding((LinearLayout) rootView, activeCheckBox, fullNameEditText,
-          passwordEditText, roleSpinner, usernameEditText);
+      return new DialogAddUserBinding((LinearLayout) rootView, activeCheckBox, fullNameInput,
+          passwordInput, roleSpinner, usernameInput);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

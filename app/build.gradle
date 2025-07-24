@@ -10,8 +10,8 @@ android {
         applicationId "com.hospital.dietary"
         minSdk = 21
         targetSdk = 34
-        versionCode 46  // Incremented for migration
-        versionName "0.1.0"  // Updated to 0.1.0 for major architecture change
+        versionCode 47  // Incremented from 46
+        versionName "0.1.1"  // Updated from 0.1.0
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 

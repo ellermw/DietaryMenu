@@ -4,33 +4,18 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.CheckBox;
-import android.widget.TextView;
+import android.widget.*;
 import com.hospital.dietary.models.Patient;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class PatientAdapter extends BaseAdapter {
-
     private Context context;
     private List<Patient> patients;
-    private Set<Integer> selectedPositions;
-    private LayoutInflater inflater;
+    private Set<Integer> selectedPositions = new HashSet<>();
 
     public PatientAdapter(Context context, List<Patient> patients) {
         this.context = context;
-        this.patients = new ArrayList<>(patients);
-        this.selectedPositions = new HashSet<>();
-        this.inflater = LayoutInflater.from(context);
-    }
-
-    public void updateData(List<Patient> newPatients) {
-        this.patients.clear();
-        this.patients.addAll(newPatients);
-        notifyDataSetChanged();
+        this.patients = patients;
     }
 
     @Override
@@ -53,7 +38,7 @@ public class PatientAdapter extends BaseAdapter {
         ViewHolder holder;
 
         if (convertView == null) {
-            convertView = inflater.inflate(R.layout.item_patient, parent, false);
+            convertView = LayoutInflater.from(context).inflate(R.layout.item_patient_list, parent, false);
             holder = new ViewHolder();
             holder.patientNameText = convertView.findViewById(R.id.patientNameText);
             holder.patientLocationText = convertView.findViewById(R.id.patientLocationText);
@@ -90,9 +75,8 @@ public class PatientAdapter extends BaseAdapter {
             } else {
                 selectedPositions.remove(position);
             }
-            if (context instanceof ExistingPatientsActivity) {
-                ((ExistingPatientsActivity) context).updateBulkOperationVisibility();
-            }
+            // Notify parent activity if needed
+            notifyDataSetChanged();
         });
 
         return convertView;

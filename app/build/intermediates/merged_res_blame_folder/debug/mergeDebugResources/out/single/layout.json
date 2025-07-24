@@ -104,6 +104,10 @@
         "source": "com.hospital.dietary.app-main-6:/layout/item_order_row.xml"
     },
     {
+        "merged": "com.hospital.dietary.app-mergeDebugResources-3:/layout/item_patient_list.xml",
+        "source": "com.hospital.dietary.app-main-6:/layout/item_patient_list.xml"
+    },
+    {
         "merged": "com.hospital.dietary.app-mergeDebugResources-3:/layout/activity_edit_patient.xml",
         "source": "com.hospital.dietary.app-main-6:/layout/activity_edit_patient.xml"
     },

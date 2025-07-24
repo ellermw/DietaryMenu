@@ -5,8 +5,17 @@
     android:orientation="vertical"
     android:padding="16dp">
 
+    <TextView
+        android:id="@+id/usernameText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Username: "
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
+
     <EditText
-        android:id="@+id/editFullNameEditText"
+        android:id="@+id/fullNameInput"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:hint="Full Name"
@@ -14,15 +23,30 @@
         android:layout_marginBottom="8dp" />
 
     <Spinner
-        android:id="@+id/editRoleSpinner"
+        android:id="@+id/roleSpinner"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_marginBottom="8dp" />
 
     <CheckBox
-        android:id="@+id/editActiveCheckBox"
+        android:id="@+id/activeCheckBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="User Active" />
+        android:text="User Active"
+        android:layout_marginBottom="16dp" />
+
+    <Button
+        android:id="@+id/changePasswordButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Change Password"
+        android:layout_marginBottom="8dp" />
+
+    <Button
+        android:id="@+id/deleteButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Delete User"
+        android:backgroundTint="#e74c3c" />
 
 </LinearLayout>

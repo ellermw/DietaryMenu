@@ -27,6 +27,7 @@ public class MainMenuActivity extends AppCompatActivity {
     private Button stockSheetsButton;
     private Button userManagementButton;
     private Button itemManagementButton;
+    private Button defaultMenuManagementButton;
     private Button logoutButton;
 
     // Admin tools section container
@@ -67,6 +68,7 @@ public class MainMenuActivity extends AppCompatActivity {
         stockSheetsButton = findViewById(R.id.stockSheetsButton);
         userManagementButton = findViewById(R.id.userManagementButton);
         itemManagementButton = findViewById(R.id.itemManagementButton);
+        defaultMenuManagementButton = findViewById(R.id.defaultMenuManagementButton);
         logoutButton = findViewById(R.id.logoutButton);
 
         // Get reference to admin tools section container
@@ -112,92 +114,89 @@ public class MainMenuActivity extends AppCompatActivity {
     }
 
     private void setupListeners() {
-        // Operations Section
+        // Patient Info button
         if (patientInfoButton != null) {
-            patientInfoButton.setOnClickListener(v -> openPatientInfo());
+            patientInfoButton.setOnClickListener(v -> {
+                Intent intent = new Intent(this, PatientInfoMenuActivity.class);
+                intent.putExtra("current_user", currentUsername);
+                intent.putExtra("user_role", currentUserRole);
+                intent.putExtra("user_full_name", currentUserFullName);
+                startActivity(intent);
+            });
         }
+
+        // Pending Orders button
         if (pendingOrdersButton != null) {
-            pendingOrdersButton.setOnClickListener(v -> openPendingOrders());
+            pendingOrdersButton.setOnClickListener(v -> {
+                Intent intent = new Intent(this, PendingOrdersActivity.class);
+                intent.putExtra("current_user", currentUsername);
+                intent.putExtra("user_role", currentUserRole);
+                intent.putExtra("user_full_name", currentUserFullName);
+                startActivity(intent);
+            });
         }
+
+        // Retired Orders button
         if (retiredOrdersButton != null) {
-            retiredOrdersButton.setOnClickListener(v -> openRetiredOrders());
+            retiredOrdersButton.setOnClickListener(v -> {
+                Toast.makeText(this, "Retired Orders feature coming soon", Toast.LENGTH_SHORT).show();
+            });
         }
 
-        // Documents Section - FIXED: Show "Coming Soon" instead of navigating
+        // Production Sheets button
         if (productionSheetsButton != null) {
-            productionSheetsButton.setOnClickListener(v -> openProductionSheets());
+            productionSheetsButton.setOnClickListener(v -> {
+                Toast.makeText(this, "Production Sheets feature coming soon", Toast.LENGTH_SHORT).show();
+            });
         }
+
+        // Stock Sheets button
         if (stockSheetsButton != null) {
-            stockSheetsButton.setOnClickListener(v -> openStockSheets());
+            stockSheetsButton.setOnClickListener(v -> {
+                Toast.makeText(this, "Stock Sheets feature coming soon", Toast.LENGTH_SHORT).show();
+            });
         }
 
-        // Admin Tools Section - FIXED: Removed role checking since section is hidden for non-admins
+        // User Management button (Admin only)
         if (userManagementButton != null) {
-            userManagementButton.setOnClickListener(v -> openUserManagement());
+            userManagementButton.setOnClickListener(v -> {
+                Intent intent = new Intent(this, UserManagementActivity.class);
+                intent.putExtra("current_user", currentUsername);
+                intent.putExtra("user_role", currentUserRole);
+                intent.putExtra("user_full_name", currentUserFullName);
+                startActivity(intent);
+            });
         }
 
+        // Item Management button (Admin only)
         if (itemManagementButton != null) {
-            itemManagementButton.setOnClickListener(v -> openItemManagement());
+            itemManagementButton.setOnClickListener(v -> {
+                Intent intent = new Intent(this, ItemManagementActivity.class);
+                intent.putExtra("current_user", currentUsername);
+                intent.putExtra("user_role", currentUserRole);
+                intent.putExtra("user_full_name", currentUserFullName);
+                startActivity(intent);
+            });
         }
 
-        // Logout
+        // Default Menu Management button (Admin only)
+        if (defaultMenuManagementButton != null) {
+            defaultMenuManagementButton.setOnClickListener(v -> {
+                Intent intent = new Intent(this, DefaultMenuManagementActivity.class);
+                intent.putExtra("current_user", currentUsername);
+                intent.putExtra("user_role", currentUserRole);
+                intent.putExtra("user_full_name", currentUserFullName);
+                startActivity(intent);
+            });
+        }
+
+        // Logout button
         if (logoutButton != null) {
-            logoutButton.setOnClickListener(v -> showLogoutConfirmation());
+            logoutButton.setOnClickListener(v -> confirmLogout());
         }
     }
 
-    // Navigation methods
-    private void openPatientInfo() {
-        Intent intent = new Intent(this, PatientInfoMenuActivity.class);
-        intent.putExtra("current_user", currentUsername);
-        intent.putExtra("user_role", currentUserRole);
-        intent.putExtra("user_full_name", currentUserFullName);
-        startActivity(intent);
-    }
-
-    private void openPendingOrders() {
-        Intent intent = new Intent(this, PendingOrdersActivity.class);
-        intent.putExtra("current_user", currentUsername);
-        intent.putExtra("user_role", currentUserRole);
-        intent.putExtra("user_full_name", currentUserFullName);
-        startActivity(intent);
-    }
-
-    private void openRetiredOrders() {
-        Intent intent = new Intent(this, RetiredOrdersActivity.class);
-        intent.putExtra("current_user", currentUsername);
-        intent.putExtra("user_role", currentUserRole);
-        intent.putExtra("user_full_name", currentUserFullName);
-        startActivity(intent);
-    }
-
-    private void openProductionSheets() {
-        // FIXED: Show "coming soon" message instead of navigating to DocumentsActivity
-        Toast.makeText(this, "Production Sheets - Coming Soon!", Toast.LENGTH_SHORT).show();
-    }
-
-    private void openStockSheets() {
-        // FIXED: Show "coming soon" message instead of navigating to DocumentsActivity
-        Toast.makeText(this, "Stock Sheets - Coming Soon!", Toast.LENGTH_SHORT).show();
-    }
-
-    private void openUserManagement() {
-        Intent intent = new Intent(this, UserManagementActivity.class);
-        intent.putExtra("current_user", currentUsername);
-        intent.putExtra("user_role", currentUserRole);
-        intent.putExtra("user_full_name", currentUserFullName);
-        startActivity(intent);
-    }
-
-    private void openItemManagement() {
-        Intent intent = new Intent(this, ItemManagementActivity.class);
-        intent.putExtra("current_user", currentUsername);
-        intent.putExtra("user_role", currentUserRole);
-        intent.putExtra("user_full_name", currentUserFullName);
-        startActivity(intent);
-    }
-
-    private void showLogoutConfirmation() {
+    private void confirmLogout() {
         new AlertDialog.Builder(this)
                 .setTitle("Logout")
                 .setMessage("Are you sure you want to logout?")
@@ -215,21 +214,37 @@ public class MainMenuActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // For main menu, we don't need a complex menu - just keep it simple
-        // Most functionality is accessible through the main interface
+        getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle any basic menu items here if needed
-        return super.onOptionsItemSelected(item);
+        switch (item.getItemId()) {
+            case R.id.action_account:
+                Intent accountIntent = new Intent(this, AccountManagementActivity.class);
+                accountIntent.putExtra("current_user", currentUsername);
+                accountIntent.putExtra("user_role", currentUserRole);
+                accountIntent.putExtra("user_full_name", currentUserFullName);
+                startActivity(accountIntent);
+                return true;
+
+            case R.id.action_refresh:
+                recreate();
+                return true;
+
+            case R.id.action_logout:
+                confirmLogout();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        // Refresh admin access configuration when returning to main menu
-        configureAdminAccess();
+    public void onBackPressed() {
+        // Prevent going back to login screen
+        confirmLogout();
     }
 }

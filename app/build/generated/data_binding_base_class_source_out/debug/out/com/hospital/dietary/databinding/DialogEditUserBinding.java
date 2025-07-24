@@ -4,10 +4,12 @@ package com.hospital.dietary.databinding;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.viewbinding.ViewBinding;
@@ -22,21 +24,34 @@ public final class DialogEditUserBinding implements ViewBinding {
   private final LinearLayout rootView;
 
   @NonNull
-  public final CheckBox editActiveCheckBox;
+  public final CheckBox activeCheckBox;
 
   @NonNull
-  public final EditText editFullNameEditText;
+  public final Button changePasswordButton;
 
   @NonNull
-  public final Spinner editRoleSpinner;
+  public final Button deleteButton;
 
-  private DialogEditUserBinding(@NonNull LinearLayout rootView,
-      @NonNull CheckBox editActiveCheckBox, @NonNull EditText editFullNameEditText,
-      @NonNull Spinner editRoleSpinner) {
+  @NonNull
+  public final EditText fullNameInput;
+
+  @NonNull
+  public final Spinner roleSpinner;
+
+  @NonNull
+  public final TextView usernameText;
+
+  private DialogEditUserBinding(@NonNull LinearLayout rootView, @NonNull CheckBox activeCheckBox,
+      @NonNull Button changePasswordButton, @NonNull Button deleteButton,
+      @NonNull EditText fullNameInput, @NonNull Spinner roleSpinner,
+      @NonNull TextView usernameText) {
     this.rootView = rootView;
-    this.editActiveCheckBox = editActiveCheckBox;
-    this.editFullNameEditText = editFullNameEditText;
-    this.editRoleSpinner = editRoleSpinner;
+    this.activeCheckBox = activeCheckBox;
+    this.changePasswordButton = changePasswordButton;
+    this.deleteButton = deleteButton;
+    this.fullNameInput = fullNameInput;
+    this.roleSpinner = roleSpinner;
+    this.usernameText = usernameText;
   }
 
   @Override
@@ -66,26 +81,44 @@ public final class DialogEditUserBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
-      id = R.id.editActiveCheckBox;
-      CheckBox editActiveCheckBox = ViewBindings.findChildViewById(rootView, id);
-      if (editActiveCheckBox == null) {
+      id = R.id.activeCheckBox;
+      CheckBox activeCheckBox = ViewBindings.findChildViewById(rootView, id);
+      if (activeCheckBox == null) {
         break missingId;
       }
 
-      id = R.id.editFullNameEditText;
-      EditText editFullNameEditText = ViewBindings.findChildViewById(rootView, id);
-      if (editFullNameEditText == null) {
+      id = R.id.changePasswordButton;
+      Button changePasswordButton = ViewBindings.findChildViewById(rootView, id);
+      if (changePasswordButton == null) {
         break missingId;
       }
 
-      id = R.id.editRoleSpinner;
-      Spinner editRoleSpinner = ViewBindings.findChildViewById(rootView, id);
-      if (editRoleSpinner == null) {
+      id = R.id.deleteButton;
+      Button deleteButton = ViewBindings.findChildViewById(rootView, id);
+      if (deleteButton == null) {
         break missingId;
       }
 
-      return new DialogEditUserBinding((LinearLayout) rootView, editActiveCheckBox,
-          editFullNameEditText, editRoleSpinner);
+      id = R.id.fullNameInput;
+      EditText fullNameInput = ViewBindings.findChildViewById(rootView, id);
+      if (fullNameInput == null) {
+        break missingId;
+      }
+
+      id = R.id.roleSpinner;
+      Spinner roleSpinner = ViewBindings.findChildViewById(rootView, id);
+      if (roleSpinner == null) {
+        break missingId;
+      }
+
+      id = R.id.usernameText;
+      TextView usernameText = ViewBindings.findChildViewById(rootView, id);
+      if (usernameText == null) {
+        break missingId;
+      }
+
+      return new DialogEditUserBinding((LinearLayout) rootView, activeCheckBox,
+          changePasswordButton, deleteButton, fullNameInput, roleSpinner, usernameText);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

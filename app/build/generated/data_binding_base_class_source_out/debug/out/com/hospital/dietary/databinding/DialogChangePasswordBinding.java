@@ -20,16 +20,16 @@ public final class DialogChangePasswordBinding implements ViewBinding {
   private final LinearLayout rootView;
 
   @NonNull
-  public final EditText confirmPasswordInput;
+  public final EditText confirmPasswordEditText;
 
   @NonNull
-  public final EditText newPasswordInput;
+  public final EditText newPasswordEditText;
 
   private DialogChangePasswordBinding(@NonNull LinearLayout rootView,
-      @NonNull EditText confirmPasswordInput, @NonNull EditText newPasswordInput) {
+      @NonNull EditText confirmPasswordEditText, @NonNull EditText newPasswordEditText) {
     this.rootView = rootView;
-    this.confirmPasswordInput = confirmPasswordInput;
-    this.newPasswordInput = newPasswordInput;
+    this.confirmPasswordEditText = confirmPasswordEditText;
+    this.newPasswordEditText = newPasswordEditText;
   }
 
   @Override
@@ -59,20 +59,20 @@ public final class DialogChangePasswordBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
-      id = R.id.confirmPasswordInput;
-      EditText confirmPasswordInput = ViewBindings.findChildViewById(rootView, id);
-      if (confirmPasswordInput == null) {
+      id = R.id.confirmPasswordEditText;
+      EditText confirmPasswordEditText = ViewBindings.findChildViewById(rootView, id);
+      if (confirmPasswordEditText == null) {
         break missingId;
       }
 
-      id = R.id.newPasswordInput;
-      EditText newPasswordInput = ViewBindings.findChildViewById(rootView, id);
-      if (newPasswordInput == null) {
+      id = R.id.newPasswordEditText;
+      EditText newPasswordEditText = ViewBindings.findChildViewById(rootView, id);
+      if (newPasswordEditText == null) {
         break missingId;
       }
 
-      return new DialogChangePasswordBinding((LinearLayout) rootView, confirmPasswordInput,
-          newPasswordInput);
+      return new DialogChangePasswordBinding((LinearLayout) rootView, confirmPasswordEditText,
+          newPasswordEditText);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));
