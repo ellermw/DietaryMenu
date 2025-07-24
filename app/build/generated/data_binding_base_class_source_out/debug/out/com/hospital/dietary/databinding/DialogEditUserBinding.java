@@ -9,7 +9,6 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
-import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.viewbinding.ViewBinding;
@@ -38,20 +37,15 @@ public final class DialogEditUserBinding implements ViewBinding {
   @NonNull
   public final Spinner roleSpinner;
 
-  @NonNull
-  public final TextView usernameText;
-
   private DialogEditUserBinding(@NonNull LinearLayout rootView, @NonNull CheckBox activeCheckBox,
       @NonNull Button changePasswordButton, @NonNull Button deleteButton,
-      @NonNull EditText fullNameInput, @NonNull Spinner roleSpinner,
-      @NonNull TextView usernameText) {
+      @NonNull EditText fullNameInput, @NonNull Spinner roleSpinner) {
     this.rootView = rootView;
     this.activeCheckBox = activeCheckBox;
     this.changePasswordButton = changePasswordButton;
     this.deleteButton = deleteButton;
     this.fullNameInput = fullNameInput;
     this.roleSpinner = roleSpinner;
-    this.usernameText = usernameText;
   }
 
   @Override
@@ -111,14 +105,8 @@ public final class DialogEditUserBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.usernameText;
-      TextView usernameText = ViewBindings.findChildViewById(rootView, id);
-      if (usernameText == null) {
-        break missingId;
-      }
-
       return new DialogEditUserBinding((LinearLayout) rootView, activeCheckBox,
-          changePasswordButton, deleteButton, fullNameInput, roleSpinner, usernameText);
+          changePasswordButton, deleteButton, fullNameInput, roleSpinner);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

@@ -3,43 +3,75 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="24dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Username"
+        android:textSize="14sp"
+        android:textColor="#666666"
+        android:layout_marginBottom="8dp" />
 
     <EditText
         android:id="@+id/usernameInput"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:hint="Username"
         android:inputType="text"
+        android:hint="Enter username"
+        android:background="@drawable/edit_text_background"
+        android:padding="12dp"
+        android:layout_marginBottom="16dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Password"
+        android:textSize="14sp"
+        android:textColor="#666666"
         android:layout_marginBottom="8dp" />
 
     <EditText
         android:id="@+id/passwordInput"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:hint="Password"
         android:inputType="textPassword"
+        android:hint="Enter password"
+        android:background="@drawable/edit_text_background"
+        android:padding="12dp"
+        android:layout_marginBottom="16dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Full Name"
+        android:textSize="14sp"
+        android:textColor="#666666"
         android:layout_marginBottom="8dp" />
 
     <EditText
         android:id="@+id/fullNameInput"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:hint="Full Name"
         android:inputType="textPersonName"
+        android:hint="Enter full name"
+        android:background="@drawable/edit_text_background"
+        android:padding="12dp"
+        android:layout_marginBottom="16dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Role"
+        android:textSize="14sp"
+        android:textColor="#666666"
         android:layout_marginBottom="8dp" />
 
     <Spinner
         android:id="@+id/roleSpinner"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:layout_marginBottom="8dp" />
-
-    <CheckBox
-        android:id="@+id/activeCheckBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="User Active"
-        android:checked="true" />
+        android:background="@drawable/spinner_background"
+        android:layout_marginBottom="16dp" />
 
 </LinearLayout>

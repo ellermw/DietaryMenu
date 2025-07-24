@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:background="?android:attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true">
+
+    <!-- Main Row -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <!-- Patient Info Section -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/patientNameText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="John Doe"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#2c3e50"
+                android:layout_marginBottom="2dp" />
+
+            <TextView
+                android:id="@+id/dietText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Regular Diet"
+                android:textSize="14sp"
+                android:textColor="#7f8c8d" />
+
+        </LinearLayout>
+
+        <!-- Location Section -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/locationText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="North - 101"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="#3498db"
+                android:gravity="center" />
+
+        </LinearLayout>
+
+        <!-- Status Section -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="end">
+
+            <TextView
+                android:id="@+id/statusText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="3 meals pending"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="#e67e22"
+                android:background="#fef5e7"
+                android:padding="4dp"
+                android:gravity="center" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Restrictions Row (if any) -->
+    <TextView
+        android:id="@+id/restrictionsText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Fluid: 1500ml | Texture: Mechanical Ground"
+        android:textSize="12sp"
+        android:textColor="#e74c3c"
+        android:layout_marginTop="4dp"
+        android:padding="4dp"
+        android:background="#fdf2f2"
+        android:visibility="gone" />
+
+</LinearLayout>

@@ -20,10 +20,6 @@
         "source": "com.hospital.dietary.app-main-6:/drawable/clear_liquid_item_background.xml"
     },
     {
-        "merged": "com.hospital.dietary.app-debug-4:/layout_menu_existing_patients.xml.flat",
-        "source": "com.hospital.dietary.app-main-6:/layout/menu_existing_patients.xml"
-    },
-    {
         "merged": "com.hospital.dietary.app-debug-4:/menu_menu_meal_planning.xml.flat",
         "source": "com.hospital.dietary.app-main-6:/menu/menu_meal_planning.xml"
     },
@@ -68,6 +64,10 @@
         "source": "com.hospital.dietary.app-main-6:/layout/item_user_row.xml"
     },
     {
+        "merged": "com.hospital.dietary.app-debug-4:/drawable_search_input_background.xml.flat",
+        "source": "com.hospital.dietary.app-main-6:/drawable/search_input_background.xml"
+    },
+    {
         "merged": "com.hospital.dietary.app-debug-4:/mipmap-anydpi-v26_hospital_logo_round.xml.flat",
         "source": "com.hospital.dietary.app-main-6:/mipmap-anydpi-v26/hospital_logo_round.xml"
     },
@@ -94,6 +94,10 @@
     {
         "merged": "com.hospital.dietary.app-debug-4:/drawable_button_logout.xml.flat",
         "source": "com.hospital.dietary.app-main-6:/drawable/button_logout.xml"
+    },
+    {
+        "merged": "com.hospital.dietary.app-debug-4:/layout_dialog_password_policy.xml.flat",
+        "source": "com.hospital.dietary.app-main-6:/layout/dialog_password_policy.xml"
     },
     {
         "merged": "com.hospital.dietary.app-debug-4:/drawable_stat_card_background.xml.flat",
@@ -218,6 +222,10 @@
     {
         "merged": "com.hospital.dietary.app-debug-4:/drawable_edit_text_background.xml.flat",
         "source": "com.hospital.dietary.app-main-6:/drawable/edit_text_background.xml"
+    },
+    {
+        "merged": "com.hospital.dietary.app-debug-4:/layout_dialog_change_user_password.xml.flat",
+        "source": "com.hospital.dietary.app-main-6:/layout/dialog_change_user_password.xml"
     },
     {
         "merged": "com.hospital.dietary.app-debug-4:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
@@ -362,6 +370,10 @@
     {
         "merged": "com.hospital.dietary.app-debug-4:/layout_dialog_transfer_room.xml.flat",
         "source": "com.hospital.dietary.app-main-6:/layout/dialog_transfer_room.xml"
+    },
+    {
+        "merged": "com.hospital.dietary.app-debug-4:/drawable_button_red.xml.flat",
+        "source": "com.hospital.dietary.app-main-6:/drawable/button_red.xml"
     },
     {
         "merged": "com.hospital.dietary.app-debug-4:/layout_item_admin_row.xml.flat",

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="#f8fafc">
+
+    <!-- Title -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="🔐 Admin Panel"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:textColor="#2c3e50"
+        android:gravity="center"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Welcome Message -->
+    <TextView
+        android:id="@+id/welcomeText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Welcome to Admin Panel!"
+        android:textSize="16sp"
+        android:textColor="#7f8c8d"
+        android:gravity="center"
+        android:layout_marginBottom="24dp" />
+
+    <!-- Admin Options Container -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <!-- User Management Button -->
+        <Button
+            android:id="@+id/userManagementButton"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:text="👥 User Management"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#ffffff"
+            android:background="#3498db"
+            android:layout_marginBottom="12dp"
+            android:elevation="4dp" />
+
+        <!-- Item Management Button -->
+        <Button
+            android:id="@+id/itemManagementButton"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:text="🍽️ Item Management"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#ffffff"
+            android:background="#27ae60"
+            android:layout_marginBottom="12dp"
+            android:elevation="4dp" />
+
+        <!-- NEW: Default Menu Management Button -->
+        <Button
+            android:id="@+id/defaultMenuManagementButton"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:text="📋 Default Menu Management"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#ffffff"
+            android:background="#9b59b6"
+            android:layout_marginBottom="12dp"
+            android:elevation="4dp" />
+
+        <!-- Account Management Button -->
+        <Button
+            android:id="@+id/accountManagementButton"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:text="⚙️ Account Management"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#ffffff"
+            android:background="#e67e22"
+            android:layout_marginBottom="12dp"
+            android:elevation="4dp" />
+
+        <!-- Back Button -->
+        <Button
+            android:id="@+id/backButton"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="⬅️ Back to Main Menu"
+            android:textSize="16sp"
+            android:textColor="#7f8c8d"
+            android:background="#ecf0f1"
+            android:layout_marginTop="16dp" />
+
+    </LinearLayout>
+
+    <!-- Admin Info Footer -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Admin access required for all operations.\nChanges affect all users and patient data."
+        android:textSize="12sp"
+        android:textColor="#95a5a6"
+        android:gravity="center"
+        android:layout_marginTop="16dp"
+        android:background="#fff3cd"
+        android:padding="8dp" />
+
+</LinearLayout>

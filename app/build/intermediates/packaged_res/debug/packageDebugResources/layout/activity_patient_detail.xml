@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="#f8f9fa">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Toolbar -->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+        <!-- Content -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Patient Information Card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Patient Information"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#2c3e50"
+                        android:layout_marginBottom="16dp" />
+
+                    <TextView
+                        android:id="@+id/patientNameText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="John Doe"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:textColor="#34495e"
+                        android:layout_marginBottom="8dp" />
+
+                    <TextView
+                        android:id="@+id/locationText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="1st Wing - Room 101"
+                        android:textSize="16sp"
+                        android:textColor="#7f8c8d"
+                        android:layout_marginBottom="4dp" />
+
+                    <TextView
+                        android:id="@+id/dietText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Diet: Regular"
+                        android:textSize="16sp"
+                        android:textColor="#34495e"
+                        android:layout_marginBottom="4dp" />
+
+                    <TextView
+                        android:id="@+id/fluidRestrictionText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Fluid Restriction: None"
+                        android:textSize="16sp"
+                        android:textColor="#34495e"
+                        android:layout_marginBottom="4dp" />
+
+                    <TextView
+                        android:id="@+id/textureModificationsText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Texture Modifications: None"
+                        android:textSize="16sp"
+                        android:textColor="#34495e"
+                        android:layout_marginBottom="4dp" />
+
+                    <TextView
+                        android:id="@+id/createdDateText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Added: Jan 01, 2024"
+                        android:textSize="14sp"
+                        android:textColor="#95a5a6"
+                        android:layout_marginTop="8dp" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Meal Status Card -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/mealStatusSection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Meal Status"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#2c3e50"
+                        android:layout_marginBottom="16dp" />
+
+                    <TextView
+                        android:id="@+id/orderDateText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Order Date: Not ordered yet"
+                        android:textSize="14sp"
+                        android:textColor="#7f8c8d"
+                        android:layout_marginBottom="12dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <CheckBox
+                            android:id="@+id/breakfastCompleteCheckBox"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Breakfast"
+                            android:enabled="false" />
+
+                        <CheckBox
+                            android:id="@+id/lunchCompleteCheckBox"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Lunch"
+                            android:enabled="false" />
+
+                        <CheckBox
+                            android:id="@+id/dinnerCompleteCheckBox"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Dinner"
+                            android:enabled="false" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Meal Items Card -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/mealItemsSection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="2dp"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Meal Plan"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#2c3e50"
+                        android:layout_marginBottom="16dp" />
+
+                    <!-- Breakfast -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Breakfast"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="#34495e"
+                        android:layout_marginBottom="4dp" />
+
+                    <TextView
+                        android:id="@+id/breakfastItemsText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Items: "
+                        android:textSize="14sp"
+                        android:textColor="#7f8c8d"
+                        android:layout_marginBottom="2dp"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/breakfastDrinksText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Drinks: "
+                        android:textSize="14sp"
+                        android:textColor="#7f8c8d"
+                        android:layout_marginBottom="12dp"
+                        android:visibility="gone" />
+
+                    <!-- Lunch -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Lunch"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="#34495e"
+                        android:layout_marginBottom="4dp" />
+
+                    <TextView
+                        android:id="@+id/lunchItemsText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Items: "
+                        android:textSize="14sp"
+                        android:textColor="#7f8c8d"
+                        android:layout_marginBottom="2dp"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/lunchDrinksText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Drinks: "
+                        android:textSize="14sp"
+                        android:textColor="#7f8c8d"
+                        android:layout_marginBottom="12dp"
+                        android:visibility="gone" />
+
+                    <!-- Dinner -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Dinner"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="#34495e"
+                        android:layout_marginBottom="4dp" />
+
+                    <TextView
+                        android:id="@+id/dinnerItemsText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Items: "
+                        android:textSize="14sp"
+                        android:textColor="#7f8c8d"
+                        android:layout_marginBottom="2dp"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/dinnerDrinksText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Drinks: "
+                        android:textSize="14sp"
+                        android:textColor="#7f8c8d"
+                        android:visibility="gone" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Action Buttons -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="8dp">
+
+                <Button
+                    android:id="@+id/editPatientButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:text="✏️  Edit Patient Info"
+                    android:textColor="@android:color/white"
+                    android:background="#3498db"
+                    android:layout_marginBottom="8dp" />
+
+                <Button
+                    android:id="@+id/editMealPlanButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:text="🍽️  Edit Meal Plan"
+                    android:textColor="@android:color/white"
+                    android:background="#27ae60"
+                    android:layout_marginBottom="8dp" />
+
+                <Button
+                    android:id="@+id/deletePatientButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:text="🗑️  Delete Patient"
+                    android:textColor="@android:color/white"
+                    android:background="#e74c3c" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>

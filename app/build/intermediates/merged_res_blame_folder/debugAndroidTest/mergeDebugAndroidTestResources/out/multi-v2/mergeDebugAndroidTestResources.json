@@ -4,7 +4,7 @@
             "outputFile": "com.hospital.dietary.test.app-debugAndroidTest-3:/values_values.arsc.flat",
             "map": [
                 {
-                    "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\caches\\8.13\\transforms\\835e87e7b33a0c275b575702534fdade\\transformed\\core-1.5.0\\res\\values\\values.xml",
+                    "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\caches\\8.13\\transforms\\86cc4d70592cbd392d14c8181a4a4855\\transformed\\jetified-core-1.5.0\\res\\values\\values.xml",
                     "from": {
                         "startLines": "4,11",
                         "startColumns": "0,0",
@@ -28,7 +28,7 @@
             "outputFile": "com.hospital.dietary.test.app-debugAndroidTest-3:/values-v28_values-v28.arsc.flat",
             "map": [
                 {
-                    "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\caches\\8.13\\transforms\\835e87e7b33a0c275b575702534fdade\\transformed\\core-1.5.0\\res\\values-v28\\values.xml",
+                    "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\caches\\8.13\\transforms\\86cc4d70592cbd392d14c8181a4a4855\\transformed\\jetified-core-1.5.0\\res\\values-v28\\values.xml",
                     "from": {
                         "startLines": "4,13",
                         "startColumns": "0,0",
@@ -52,7 +52,7 @@
             "outputFile": "com.hospital.dietary.test.app-debugAndroidTest-3:/values-v18_values-v18.arsc.flat",
             "map": [
                 {
-                    "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\caches\\8.13\\transforms\\835e87e7b33a0c275b575702534fdade\\transformed\\core-1.5.0\\res\\values-v18\\values.xml",
+                    "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\caches\\8.13\\transforms\\86cc4d70592cbd392d14c8181a4a4855\\transformed\\jetified-core-1.5.0\\res\\values-v18\\values.xml",
                     "from": {
                         "startLines": "4,12",
                         "startColumns": "0,0",
@@ -76,7 +76,7 @@
             "outputFile": "com.hospital.dietary.test.app-debugAndroidTest-3:/values-v21_values-v21.arsc.flat",
             "map": [
                 {
-                    "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\caches\\8.13\\transforms\\835e87e7b33a0c275b575702534fdade\\transformed\\core-1.5.0\\res\\values-v21\\values.xml",
+                    "source": "C:\\Users\\mieks\\.jdks\\corretto-19.0.2\\caches\\8.13\\transforms\\86cc4d70592cbd392d14c8181a4a4855\\transformed\\jetified-core-1.5.0\\res\\values-v21\\values.xml",
                     "from": {
                         "startLines": "4,13",
                         "startColumns": "0,0",

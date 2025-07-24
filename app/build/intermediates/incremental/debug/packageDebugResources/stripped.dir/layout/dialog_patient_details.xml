@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="24dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Patient Name and Location -->
+        <TextView
+            android:id="@+id/patientNameText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Patient Name"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#2c3e50"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:id="@+id/patientLocationText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Wing - Room"
+            android:textSize="16sp"
+            android:textColor="#7f8c8d"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#E3E4E8"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Diet Information -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Diet Type"
+            android:textSize="14sp"
+            android:textColor="#7f8c8d"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:id="@+id/patientDietText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Regular"
+            android:textSize="16sp"
+            android:textColor="#2c3e50"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Fluid Restrictions -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Fluid Restrictions"
+            android:textSize="14sp"
+            android:textColor="#7f8c8d"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:id="@+id/patientRestrictionsText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="None"
+            android:textSize="16sp"
+            android:textColor="#2c3e50"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Texture Modifications -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Texture Modifications"
+            android:textSize="14sp"
+            android:textColor="#7f8c8d"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:id="@+id/patientModificationsText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="None"
+            android:textSize="16sp"
+            android:textColor="#2c3e50"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#E3E4E8"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Meal Status -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Meal Status"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#2c3e50"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/patientBreakfastText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Breakfast: Pending"
+            android:textSize="16sp"
+            android:textColor="#2c3e50"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:id="@+id/patientLunchText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Lunch: Pending"
+            android:textSize="16sp"
+            android:textColor="#2c3e50"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:id="@+id/patientDinnerText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Dinner: Pending"
+            android:textSize="16sp"
+            android:textColor="#2c3e50" />
+
+    </LinearLayout>
+
+</ScrollView>

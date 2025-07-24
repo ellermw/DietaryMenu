@@ -12,6 +12,10 @@
         "source": "com.hospital.dietary.app-main-6:/layout/activity_category_management.xml"
     },
     {
+        "merged": "com.hospital.dietary.app-mergeDebugResources-3:/layout/dialog_change_user_password.xml",
+        "source": "com.hospital.dietary.app-main-6:/layout/dialog_change_user_password.xml"
+    },
+    {
         "merged": "com.hospital.dietary.app-mergeDebugResources-3:/layout/activity_default_menu_management.xml",
         "source": "com.hospital.dietary.app-main-6:/layout/activity_default_menu_management.xml"
     },
@@ -60,10 +64,6 @@
         "source": "com.hospital.dietary.app-main-6:/layout/dialog_add_drink.xml"
     },
     {
-        "merged": "com.hospital.dietary.app-mergeDebugResources-3:/layout/menu_existing_patients.xml",
-        "source": "com.hospital.dietary.app-main-6:/layout/menu_existing_patients.xml"
-    },
-    {
         "merged": "com.hospital.dietary.app-mergeDebugResources-3:/layout/dialog_add_edit_user.xml",
         "source": "com.hospital.dietary.app-main-6:/layout/dialog_add_edit_user.xml"
     },
@@ -90,6 +90,10 @@
     {
         "merged": "com.hospital.dietary.app-mergeDebugResources-3:/layout/drink_item.xml",
         "source": "com.hospital.dietary.app-main-6:/layout/drink_item.xml"
+    },
+    {
+        "merged": "com.hospital.dietary.app-mergeDebugResources-3:/layout/dialog_password_policy.xml",
+        "source": "com.hospital.dietary.app-main-6:/layout/dialog_password_policy.xml"
     },
     {
         "merged": "com.hospital.dietary.app-mergeDebugResources-3:/layout/item_admin_row.xml",

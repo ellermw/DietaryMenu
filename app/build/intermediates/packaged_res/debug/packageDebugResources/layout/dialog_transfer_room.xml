@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Select New Location"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#2c3e50"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Wing Selection -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Wing"
+        android:textSize="14sp"
+        android:textColor="#7f8c8d"
+        android:layout_marginBottom="4dp" />
+
+    <Spinner
+        android:id="@+id/transferWingSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@drawable/input_field_background"
+        android:padding="8dp"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Room Selection -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Room"
+        android:textSize="14sp"
+        android:textColor="#7f8c8d"
+        android:layout_marginBottom="4dp" />
+
+    <Spinner
+        android:id="@+id/transferRoomSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@drawable/input_field_background"
+        android:padding="8dp"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="⚠️ Note: Room availability will be checked before transfer"
+        android:textSize="12sp"
+        android:textColor="#e74c3c"
+        android:textStyle="italic" />
+
+</LinearLayout>

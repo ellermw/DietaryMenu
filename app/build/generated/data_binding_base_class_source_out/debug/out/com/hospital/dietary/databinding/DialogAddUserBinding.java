@@ -4,7 +4,6 @@ package com.hospital.dietary.databinding;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -22,9 +21,6 @@ public final class DialogAddUserBinding implements ViewBinding {
   private final LinearLayout rootView;
 
   @NonNull
-  public final CheckBox activeCheckBox;
-
-  @NonNull
   public final EditText fullNameInput;
 
   @NonNull
@@ -36,11 +32,10 @@ public final class DialogAddUserBinding implements ViewBinding {
   @NonNull
   public final EditText usernameInput;
 
-  private DialogAddUserBinding(@NonNull LinearLayout rootView, @NonNull CheckBox activeCheckBox,
-      @NonNull EditText fullNameInput, @NonNull EditText passwordInput,
-      @NonNull Spinner roleSpinner, @NonNull EditText usernameInput) {
+  private DialogAddUserBinding(@NonNull LinearLayout rootView, @NonNull EditText fullNameInput,
+      @NonNull EditText passwordInput, @NonNull Spinner roleSpinner,
+      @NonNull EditText usernameInput) {
     this.rootView = rootView;
-    this.activeCheckBox = activeCheckBox;
     this.fullNameInput = fullNameInput;
     this.passwordInput = passwordInput;
     this.roleSpinner = roleSpinner;
@@ -74,12 +69,6 @@ public final class DialogAddUserBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
-      id = R.id.activeCheckBox;
-      CheckBox activeCheckBox = ViewBindings.findChildViewById(rootView, id);
-      if (activeCheckBox == null) {
-        break missingId;
-      }
-
       id = R.id.fullNameInput;
       EditText fullNameInput = ViewBindings.findChildViewById(rootView, id);
       if (fullNameInput == null) {
@@ -104,8 +93,8 @@ public final class DialogAddUserBinding implements ViewBinding {
         break missingId;
       }
 
-      return new DialogAddUserBinding((LinearLayout) rootView, activeCheckBox, fullNameInput,
-          passwordInput, roleSpinner, usernameInput);
+      return new DialogAddUserBinding((LinearLayout) rootView, fullNameInput, passwordInput,
+          roleSpinner, usernameInput);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

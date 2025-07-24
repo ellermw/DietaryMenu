@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#f8f9fa">
+    android:background="#f8fafc">
 
     <!-- Toolbar -->
     <androidx.appcompat.widget.Toolbar
@@ -15,13 +15,13 @@
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
-    <!-- Search and Filter Section -->
+    <!-- Search and Filter Container -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="@android:color/white"
         android:padding="16dp"
+        android:background="@android:color/white"
         android:elevation="2dp">
 
         <!-- Search Input -->
@@ -29,20 +29,20 @@
             android:id="@+id/searchInput"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:hint="Search patients..."
-            android:inputType="text"
+            android:hint="🔍 Search patients by name, location, or diet..."
             android:padding="12dp"
-            android:background="@android:drawable/editbox_background"
-            android:drawableStart="@android:drawable/ic_menu_search"
-            android:drawablePadding="8dp"
-            android:layout_marginBottom="12dp" />
+            android:background="@drawable/search_input_background"
+            android:textSize="16sp"
+            android:inputType="text"
+            android:maxLines="1" />
 
         <!-- Day Filter -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:layout_marginTop="12dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -55,9 +55,12 @@
             <Spinner
                 android:id="@+id/dayFilterSpinner"
                 android:layout_width="0dp"
-                android:layout_height="48dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@android:drawable/btn_dropdown" />
+                android:minHeight="48dp"
+                android:dropDownVerticalOffset="48dp"
+                android:popupBackground="@android:color/white"
+                android:background="@drawable/spinner_background" />
 
         </LinearLayout>
 
@@ -122,39 +125,9 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:divider="#e0e0e0"
+        android:divider="#ecf0f1"
         android:dividerHeight="1dp"
-        android:background="@android:color/white" />
-
-    <!-- Empty State -->
-    <LinearLayout
-        android:id="@+id/emptyStateContainer"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:padding="32dp"
-        android:visibility="gone">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="No patients found"
-            android:textSize="18sp"
-            android:textColor="#7f8c8d"
-            android:layout_marginBottom="16dp" />
-
-        <Button
-            android:id="@+id/addPatientEmptyButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Add New Patient"
-            android:textColor="@android:color/white"
-            android:background="#27ae60"
-            android:paddingStart="24dp"
-            android:paddingEnd="24dp" />
-
-    </LinearLayout>
+        android:scrollbars="vertical"
+        android:fadeScrollbars="false" />
 
 </LinearLayout>

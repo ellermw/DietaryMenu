@@ -26,9 +26,6 @@ public final class ActivityExistingPatientsBinding implements ViewBinding {
   private final LinearLayout rootView;
 
   @NonNull
-  public final Button addPatientEmptyButton;
-
-  @NonNull
   public final LinearLayout bulkOperationsContainer;
 
   @NonNull
@@ -36,9 +33,6 @@ public final class ActivityExistingPatientsBinding implements ViewBinding {
 
   @NonNull
   public final Button deleteSelectedButton;
-
-  @NonNull
-  public final LinearLayout emptyStateContainer;
 
   @NonNull
   public final TextView patientsCountText;
@@ -59,18 +53,15 @@ public final class ActivityExistingPatientsBinding implements ViewBinding {
   public final Toolbar toolbar;
 
   private ActivityExistingPatientsBinding(@NonNull LinearLayout rootView,
-      @NonNull Button addPatientEmptyButton, @NonNull LinearLayout bulkOperationsContainer,
-      @NonNull Spinner dayFilterSpinner, @NonNull Button deleteSelectedButton,
-      @NonNull LinearLayout emptyStateContainer, @NonNull TextView patientsCountText,
+      @NonNull LinearLayout bulkOperationsContainer, @NonNull Spinner dayFilterSpinner,
+      @NonNull Button deleteSelectedButton, @NonNull TextView patientsCountText,
       @NonNull ListView patientsListView, @NonNull Button printMenusButton,
       @NonNull EditText searchInput, @NonNull CheckBox selectAllCheckBox,
       @NonNull Toolbar toolbar) {
     this.rootView = rootView;
-    this.addPatientEmptyButton = addPatientEmptyButton;
     this.bulkOperationsContainer = bulkOperationsContainer;
     this.dayFilterSpinner = dayFilterSpinner;
     this.deleteSelectedButton = deleteSelectedButton;
-    this.emptyStateContainer = emptyStateContainer;
     this.patientsCountText = patientsCountText;
     this.patientsListView = patientsListView;
     this.printMenusButton = printMenusButton;
@@ -106,12 +97,6 @@ public final class ActivityExistingPatientsBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
-      id = R.id.addPatientEmptyButton;
-      Button addPatientEmptyButton = ViewBindings.findChildViewById(rootView, id);
-      if (addPatientEmptyButton == null) {
-        break missingId;
-      }
-
       id = R.id.bulkOperationsContainer;
       LinearLayout bulkOperationsContainer = ViewBindings.findChildViewById(rootView, id);
       if (bulkOperationsContainer == null) {
@@ -127,12 +112,6 @@ public final class ActivityExistingPatientsBinding implements ViewBinding {
       id = R.id.deleteSelectedButton;
       Button deleteSelectedButton = ViewBindings.findChildViewById(rootView, id);
       if (deleteSelectedButton == null) {
-        break missingId;
-      }
-
-      id = R.id.emptyStateContainer;
-      LinearLayout emptyStateContainer = ViewBindings.findChildViewById(rootView, id);
-      if (emptyStateContainer == null) {
         break missingId;
       }
 
@@ -172,10 +151,9 @@ public final class ActivityExistingPatientsBinding implements ViewBinding {
         break missingId;
       }
 
-      return new ActivityExistingPatientsBinding((LinearLayout) rootView, addPatientEmptyButton,
-          bulkOperationsContainer, dayFilterSpinner, deleteSelectedButton, emptyStateContainer,
-          patientsCountText, patientsListView, printMenusButton, searchInput, selectAllCheckBox,
-          toolbar);
+      return new ActivityExistingPatientsBinding((LinearLayout) rootView, bulkOperationsContainer,
+          dayFilterSpinner, deleteSelectedButton, patientsCountText, patientsListView,
+          printMenusButton, searchInput, selectAllCheckBox, toolbar);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

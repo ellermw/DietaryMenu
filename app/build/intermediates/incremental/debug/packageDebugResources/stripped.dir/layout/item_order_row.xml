@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="12dp"
+    android:background="@android:color/white"
+    android:gravity="center_vertical">
+
+    <!-- Checkbox for selection -->
+    <CheckBox
+        android:id="@+id/orderCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="12dp"
+        android:focusable="false"
+        android:clickable="false" />
+
+    <!-- Order Information -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/patientNameText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Patient Name"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#2c3e50"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:id="@+id/patientDetailsText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Wing - Room • Diet • Restrictions"
+            android:textSize="13sp"
+            android:textColor="#7f8c8d"
+            android:layout_marginBottom="2dp" />
+
+        <TextView
+            android:id="@+id/orderTimeText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Ordered: 12:30 PM"
+            android:textSize="11sp"
+            android:textColor="#95a5a6" />
+
+    </LinearLayout>
+
+    <!-- Order Status Indicator -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_marginStart="8dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="✓"
+            android:textSize="20sp"
+            android:textColor="#27ae60"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="FINAL"
+            android:textSize="10sp"
+            android:textColor="#27ae60"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+</LinearLayout>
