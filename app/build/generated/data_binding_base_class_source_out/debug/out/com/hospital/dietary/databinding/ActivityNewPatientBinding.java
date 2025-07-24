@@ -4,7 +4,7 @@ package com.hospital.dietary.databinding;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.resources;
+import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.viewbinding.ViewBinding;
@@ -14,15 +14,15 @@ import java.lang.Override;
 
 public final class ActivityNewPatientBinding implements ViewBinding {
   @NonNull
-  private final resources rootView;
+  private final LinearLayout rootView;
 
-  private ActivityNewPatientBinding(@NonNull resources rootView) {
+  private ActivityNewPatientBinding(@NonNull LinearLayout rootView) {
     this.rootView = rootView;
   }
 
   @Override
   @NonNull
-  public resources getRoot() {
+  public LinearLayout getRoot() {
     return rootView;
   }
 
@@ -47,6 +47,6 @@ public final class ActivityNewPatientBinding implements ViewBinding {
       throw new NullPointerException("rootView");
     }
 
-    return new ActivityNewPatientBinding((resources) rootView);
+    return new ActivityNewPatientBinding((LinearLayout) rootView);
   }
 }

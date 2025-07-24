@@ -1,69 +1,281 @@
 package com.hospital.dietary.models;
 
-import com.hospital.dietary.data.entities.PatientEntity;
-
+/**
+ * Patient model class for backward compatibility
+ */
 public class Patient {
-    private PatientEntity entity;
+    private long patientId; // Changed from int to long
+    private String patientFirstName;
+    private String patientLastName;
+    private String wing;
+    private String roomNumber;
+    private String dietType;
+    private String diet;
+    private boolean adaDiet;
+    private String fluidRestriction;
+    private String textureModifications;
+    private boolean mechanicalChopped;
+    private boolean mechanicalGround;
+    private boolean biteSize;
+    private boolean breadOK;
+    private boolean nectarThick;
+    private boolean puddingThick;
+    private boolean honeyThick;
+    private boolean extraGravy;
+    private boolean meatsOnly;
+    private boolean isPuree;
+    private String allergies;
+    private String likes;
+    private String dislikes;
+    private String comments;
+    private String preferredDrink;
+    private String drinkVariety;
+    private boolean breakfastComplete;
+    private boolean lunchComplete;
+    private boolean dinnerComplete;
 
-    public Patient() {
-        this.entity = new PatientEntity();
+    // Constructors
+    public Patient() {}
+
+    // Getters and Setters
+    public long getPatientId() {
+        return patientId;
     }
 
-    public Patient(PatientEntity entity) {
-        this.entity = entity;
+    public void setPatientId(long patientId) {
+        this.patientId = patientId;
     }
 
-    public long getPatientId() { return entity.getPatientId(); }
-    public void setPatientId(long id) { entity.setPatientId(id); }
+    public String getPatientFirstName() {
+        return patientFirstName;
+    }
 
-    public String getPatientFirstName() { return entity.getPatientFirstName(); }
-    public void setPatientFirstName(String name) { entity.setPatientFirstName(name); }
+    public void setPatientFirstName(String patientFirstName) {
+        this.patientFirstName = patientFirstName;
+    }
 
-    public String getPatientLastName() { return entity.getPatientLastName(); }
-    public void setPatientLastName(String name) { entity.setPatientLastName(name); }
+    public String getPatientLastName() {
+        return patientLastName;
+    }
 
-    public String getWing() { return entity.getWing(); }
-    public void setWing(String wing) { entity.setWing(wing); }
+    public void setPatientLastName(String patientLastName) {
+        this.patientLastName = patientLastName;
+    }
 
-    public String getRoomNumber() { return entity.getRoomNumber(); }
-    public void setRoomNumber(String room) { entity.setRoomNumber(room); }
+    public String getWing() {
+        return wing;
+    }
 
-    public String getDiet() { return entity.getDiet(); }
-    public void setDiet(String diet) { entity.setDiet(diet); }
+    public void setWing(String wing) {
+        this.wing = wing;
+    }
 
-    public String getDietType() { return entity.getDietType(); }
-    public void setDietType(String dietType) { entity.setDietType(dietType); }
+    public String getRoomNumber() {
+        return roomNumber;
+    }
 
-    public boolean isAdaDiet() { return entity.isAdaDiet(); }
-    public void setAdaDiet(boolean ada) { entity.setAdaDiet(ada); }
+    public void setRoomNumber(String roomNumber) {
+        this.roomNumber = roomNumber;
+    }
 
-    public String getFluidRestriction() { return entity.getFluidRestriction(); }
-    public void setFluidRestriction(String restriction) { entity.setFluidRestriction(restriction); }
+    public String getDietType() {
+        return dietType;
+    }
 
-    public String getTextureModifications() { return entity.getTextureModifications(); }
-    public void setTextureModifications(String mods) { entity.setTextureModifications(mods); }
+    public void setDietType(String dietType) {
+        this.dietType = dietType;
+    }
 
-    public boolean isMechanicalChopped() { return entity.isMechanicalChopped(); }
-    public void setMechanicalChopped(boolean val) { entity.setMechanicalChopped(val); }
+    public String getDiet() {
+        return diet;
+    }
 
-    public boolean isMechanicalGround() { return entity.isMechanicalGround(); }
-    public void setMechanicalGround(boolean val) { entity.setMechanicalGround(val); }
+    public void setDiet(String diet) {
+        this.diet = diet;
+    }
 
-    public boolean isBiteSize() { return entity.isBiteSize(); }
-    public void setBiteSize(boolean val) { entity.setBiteSize(val); }
+    public boolean isAdaDiet() {
+        return adaDiet;
+    }
 
-    public boolean isBreadOK() { return entity.isBreadOK(); }
-    public void setBreadOK(boolean val) { entity.setBreadOK(val); }
+    public void setAdaDiet(boolean adaDiet) {
+        this.adaDiet = adaDiet;
+    }
 
-    public boolean isBreakfastComplete() { return entity.isBreakfastComplete(); }
-    public void setBreakfastComplete(boolean val) { entity.setBreakfastComplete(val); }
+    public String getFluidRestriction() {
+        return fluidRestriction;
+    }
 
-    public boolean isLunchComplete() { return entity.isLunchComplete(); }
-    public void setLunchComplete(boolean val) { entity.setLunchComplete(val); }
+    public void setFluidRestriction(String fluidRestriction) {
+        this.fluidRestriction = fluidRestriction;
+    }
 
-    public boolean isDinnerComplete() { return entity.isDinnerComplete(); }
-    public void setDinnerComplete(boolean val) { entity.setDinnerComplete(val); }
+    public String getTextureModifications() {
+        return textureModifications;
+    }
 
-    public PatientEntity toEntity() { return entity; }
-    public static Patient fromEntity(PatientEntity entity) { return new Patient(entity); }
+    public void setTextureModifications(String textureModifications) {
+        this.textureModifications = textureModifications;
+    }
+
+    public boolean isMechanicalChopped() {
+        return mechanicalChopped;
+    }
+
+    public void setMechanicalChopped(boolean mechanicalChopped) {
+        this.mechanicalChopped = mechanicalChopped;
+    }
+
+    public boolean isMechanicalGround() {
+        return mechanicalGround;
+    }
+
+    public void setMechanicalGround(boolean mechanicalGround) {
+        this.mechanicalGround = mechanicalGround;
+    }
+
+    public boolean isBiteSize() {
+        return biteSize;
+    }
+
+    public void setBiteSize(boolean biteSize) {
+        this.biteSize = biteSize;
+    }
+
+    public boolean isBreadOK() {
+        return breadOK;
+    }
+
+    public void setBreadOK(boolean breadOK) {
+        this.breadOK = breadOK;
+    }
+
+    public boolean isNectarThick() {
+        return nectarThick;
+    }
+
+    public void setNectarThick(boolean nectarThick) {
+        this.nectarThick = nectarThick;
+    }
+
+    public boolean isPuddingThick() {
+        return puddingThick;
+    }
+
+    public void setPuddingThick(boolean puddingThick) {
+        this.puddingThick = puddingThick;
+    }
+
+    public boolean isHoneyThick() {
+        return honeyThick;
+    }
+
+    public void setHoneyThick(boolean honeyThick) {
+        this.honeyThick = honeyThick;
+    }
+
+    public boolean isExtraGravy() {
+        return extraGravy;
+    }
+
+    public void setExtraGravy(boolean extraGravy) {
+        this.extraGravy = extraGravy;
+    }
+
+    public boolean isMeatsOnly() {
+        return meatsOnly;
+    }
+
+    public void setMeatsOnly(boolean meatsOnly) {
+        this.meatsOnly = meatsOnly;
+    }
+
+    public boolean getIsPuree() {
+        return isPuree;
+    }
+
+    public boolean isPuree() {
+        return isPuree;
+    }
+
+    public void setIsPuree(boolean isPuree) {
+        this.isPuree = isPuree;
+    }
+
+    public String getAllergies() {
+        return allergies;
+    }
+
+    public void setAllergies(String allergies) {
+        this.allergies = allergies;
+    }
+
+    public String getLikes() {
+        return likes;
+    }
+
+    public void setLikes(String likes) {
+        this.likes = likes;
+    }
+
+    public String getDislikes() {
+        return dislikes;
+    }
+
+    public void setDislikes(String dislikes) {
+        this.dislikes = dislikes;
+    }
+
+    public String getComments() {
+        return comments;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
+    }
+
+    public String getPreferredDrink() {
+        return preferredDrink;
+    }
+
+    public void setPreferredDrink(String preferredDrink) {
+        this.preferredDrink = preferredDrink;
+    }
+
+    public String getDrinkVariety() {
+        return drinkVariety;
+    }
+
+    public void setDrinkVariety(String drinkVariety) {
+        this.drinkVariety = drinkVariety;
+    }
+
+    public boolean isBreakfastComplete() {
+        return breakfastComplete;
+    }
+
+    public void setBreakfastComplete(boolean breakfastComplete) {
+        this.breakfastComplete = breakfastComplete;
+    }
+
+    public boolean isLunchComplete() {
+        return lunchComplete;
+    }
+
+    public void setLunchComplete(boolean lunchComplete) {
+        this.lunchComplete = lunchComplete;
+    }
+
+    public boolean isDinnerComplete() {
+        return dinnerComplete;
+    }
+
+    public void setDinnerComplete(boolean dinnerComplete) {
+        this.dinnerComplete = dinnerComplete;
+    }
+
+    // Helper method to get full name
+    public String getFullName() {
+        return patientFirstName + " " + patientLastName;
+    }
 }

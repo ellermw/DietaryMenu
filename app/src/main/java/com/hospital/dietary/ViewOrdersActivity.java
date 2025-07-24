@@ -4,7 +4,6 @@
 
 package com.hospital.dietary;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -21,7 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
-import com.hospital.dietary.dao.OrderDAO;
+
 import com.hospital.dietary.models.Order;
 import java.io.File;
 import java.io.FileOutputStream;

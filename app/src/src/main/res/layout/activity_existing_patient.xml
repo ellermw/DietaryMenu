@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="#f8fafc">
+
+    <!-- Title -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="👥 Existing Patients"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="#2c3e50"
+        android:gravity="center"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Search and Filter Section -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#ffffff"
+        android:padding="12dp"
+        android:layout_marginBottom="16dp"
+        android:elevation="2dp">
+
+        <!-- Search Input -->
+        <EditText
+            android:id="@+id/searchInput"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="🔍 Search patients by name, location, or diet..."
+            android:background="@android:drawable/edit_text"
+            android:padding="12dp"
+            android:layout_marginBottom="8dp"
+            android:inputType="text"
+            android:imeOptions="actionSearch" />
+
+        <!-- Day Filter -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Filter by Day:"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#2c3e50"
+            android:layout_marginBottom="4dp" />
+
+        <Spinner
+            android:id="@+id/dayFilterSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@android:drawable/btn_dropdown" />
+
+    </LinearLayout>
+
+    <!-- Patient Count -->
+    <TextView
+        android:id="@+id/patientsCountText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Loading patients..."
+        android:textSize="14sp"
+        android:textColor="#7f8c8d"
+        android:gravity="center"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Selection Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="#ecf0f1"
+        android:padding="8dp"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="8dp">
+
+        <CheckBox
+            android:id="@+id/selectAllCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Select All / Tap patient to view details"
+            android:textSize="12sp"
+            android:textColor="#2c3e50"
+            android:textStyle="italic" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Long press to select"
+            android:textSize="10sp"
+            android:textColor="#7f8c8d" />
+
+    </LinearLayout>
+
+    <!-- Patients List -->
+    <ListView
+        android:id="@+id/patientsListView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:divider="#ecf0f1"
+        android:dividerHeight="1dp"
+        android:scrollbars="vertical"
+        android:choiceMode="multipleChoice"
+        android:background="#ffffff" />
+
+    <!-- Bulk Operations Container -->
+    <LinearLayout
+        android:id="@+id/bulkOperationsContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="#fff3cd"
+        android:padding="12dp"
+        android:layout_marginTop="8dp"
+        android:visibility="gone"
+        android:elevation="4dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Bulk Operations:"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#856404"
+            android:gravity="center_vertical" />
+
+        <Button
+            android:id="@+id/printMenusButton"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:text="🖨️ Print Menus"
+            android:textSize="12sp"
+            android:background="#3498db"
+            android:textColor="#ffffff"
+            android:layout_marginEnd="8dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp" />
+
+        <Button
+            android:id="@+id/deleteSelectedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:text="🗑️ Delete"
+            android:textSize="12sp"
+            android:background="#e74c3c"
+            android:textColor="#ffffff"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp" />
+
+    </LinearLayout>
+
+    <!-- Instructions -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="💡 Tap a patient to view details and edit their information or meal plans.\nLong press to select multiple patients for bulk operations."
+        android:textSize="12sp"
+        android:textColor="#7f8c8d"
+        android:background="#e8f4fd"
+        android:padding="8dp"
+        android:layout_marginTop="8dp"
+        android:textStyle="italic" />
+
+</LinearLayout>

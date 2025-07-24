@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f8fafc"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Patient Information Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#ffffff"
+            android:padding="16dp"
+            android:layout_marginBottom="16dp"
+            android:elevation="2dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="👤 Patient Information"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#2c3e50"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Patient Name -->
+            <TextView
+                android:id="@+id/patientNameText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Patient Name"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="#2c3e50"
+                android:layout_marginBottom="8dp" />
+
+            <!-- Location -->
+            <TextView
+                android:id="@+id/locationText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="📍 Wing - Room"
+                android:textSize="16sp"
+                android:textColor="#7f8c8d"
+                android:layout_marginBottom="8dp" />
+
+            <!-- Diet -->
+            <TextView
+                android:id="@+id/dietText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="🍽️ Diet Type"
+                android:textSize="16sp"
+                android:textColor="#27ae60"
+                android:layout_marginBottom="8dp" />
+
+            <!-- Fluid Restriction -->
+            <TextView
+                android:id="@+id/fluidRestrictionText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="💧 Fluid Restriction"
+                android:textSize="14sp"
+                android:textColor="#3498db"
+                android:layout_marginBottom="8dp"
+                android:visibility="gone" />
+
+            <!-- Texture Modifications -->
+            <TextView
+                android:id="@+id/textureModificationsText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="🔧 Texture Modifications"
+                android:textSize="14sp"
+                android:textColor="#e67e22"
+                android:layout_marginBottom="8dp"
+                android:visibility="gone" />
+
+            <!-- Created Date -->
+            <TextView
+                android:id="@+id/createdDateText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="📅 Created Date"
+                android:textSize="12sp"
+                android:textColor="#95a5a6"
+                android:layout_marginTop="8dp" />
+
+        </LinearLayout>
+
+        <!-- Meal Status Section -->
+        <LinearLayout
+            android:id="@+id/mealStatusSection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#ffffff"
+            android:padding="16dp"
+            android:layout_marginBottom="16dp"
+            android:elevation="2dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="📋 Meal Completion Status"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#2c3e50"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:id="@+id/orderDateText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Status for Today"
+                android:textSize="14sp"
+                android:textColor="#7f8c8d"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Breakfast Status -->
+            <CheckBox
+                android:id="@+id/breakfastCompleteCheckBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="🍳 Breakfast Complete"
+                android:textSize="16sp"
+                android:layout_marginBottom="8dp" />
+
+            <!-- Lunch Status -->
+            <CheckBox
+                android:id="@+id/lunchCompleteCheckBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="🥙 Lunch Complete"
+                android:textSize="16sp"
+                android:layout_marginBottom="8dp" />
+
+            <!-- Dinner Status -->
+            <CheckBox
+                android:id="@+id/dinnerCompleteCheckBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="🍽️ Dinner Complete"
+                android:textSize="16sp"
+                android:layout_marginBottom="8dp" />
+
+        </LinearLayout>
+
+        <!-- Meal Items Section -->
+        <LinearLayout
+            android:id="@+id/mealItemsSection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#ffffff"
+            android:padding="16dp"
+            android:layout_marginBottom="16dp"
+            android:elevation="2dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="🍱 Current Meal Plans"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#2c3e50"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Breakfast Section -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="🍳 Breakfast"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#e67e22"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:id="@+id/breakfastItemsText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="No items selected"
+                android:textSize="14sp"
+                android:textColor="#2c3e50"
+                android:background="#f8f9fa"
+                android:padding="8dp"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Drinks &amp; Juices:"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="#7f8c8d"
+                android:layout_marginBottom="4dp" />
+
+            <TextView
+                android:id="@+id/breakfastDrinksText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="No drinks selected"
+                android:textSize="12sp"
+                android:textColor="#7f8c8d"
+                android:background="#f8f9fa"
+                android:padding="8dp"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Lunch Section -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="🥙 Lunch"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#27ae60"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:id="@+id/lunchItemsText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="No items selected"
+                android:textSize="14sp"
+                android:textColor="#2c3e50"
+                android:background="#f8f9fa"
+                android:padding="8dp"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Drinks &amp; Juices:"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="#7f8c8d"
+                android:layout_marginBottom="4dp" />
+
+            <TextView
+                android:id="@+id/lunchDrinksText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="No drinks selected"
+                android:textSize="12sp"
+                android:textColor="#7f8c8d"
+                android:background="#f8f9fa"
+                android:padding="8dp"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Dinner Section -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="🍽️ Dinner"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#8e44ad"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:id="@+id/dinnerItemsText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="No items selected"
+                android:textSize="14sp"
+                android:textColor="#2c3e50"
+                android:background="#f8f9fa"
+                android:padding="8dp"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Drinks &amp; Juices:"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="#7f8c8d"
+                android:layout_marginBottom="4dp" />
+
+            <TextView
+                android:id="@+id/dinnerDrinksText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="No drinks selected"
+                android:textSize="12sp"
+                android:textColor="#7f8c8d"
+                android:background="#f8f9fa"
+                android:padding="8dp"
+                android:layout_marginBottom="8dp" />
+
+        </LinearLayout>
+
+        <!-- Action Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#ffffff"
+            android:padding="16dp"
+            android:layout_marginBottom="16dp"
+            android:elevation="2dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="⚙️ Actions"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#2c3e50"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Edit Patient Button -->
+            <Button
+                android:id="@+id/editPatientButton"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="✏️ Edit Patient Information"
+                android:textSize="14sp"
+                android:background="#3498db"
+                android:textColor="#ffffff"
+                android:layout_marginBottom="8dp" />
+
+            <!-- Edit Meal Plan Button -->
+            <Button
+                android:id="@+id/editMealPlanButton"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="🍽️ Edit Meal Plan"
+                android:textSize="14sp"
+                android:background="#27ae60"
+                android:textColor="#ffffff"
+                android:layout_marginBottom="8dp" />
+
+            <!-- Delete Patient Button -->
+            <Button
+                android:id="@+id/deletePatientButton"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="🗑️ Delete Patient"
+                android:textSize="14sp"
+                android:background="#e74c3c"
+                android:textColor="#ffffff"
+                android:layout_marginBottom="8dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>

@@ -13,116 +13,138 @@ import java.util.Date;
 @Entity(tableName = "patient_info",
         indices = {@Index(value = {"wing", "room_number"}, unique = true)})
 public class PatientEntity {
-    
+
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "patient_id")
     private long patientId;
-    
+
     @ColumnInfo(name = "patient_first_name")
     private String patientFirstName;
-    
+
     @ColumnInfo(name = "patient_last_name")
     private String patientLastName;
-    
+
     @ColumnInfo(name = "wing")
     private String wing;
-    
+
     @ColumnInfo(name = "room_number")
     private String roomNumber;
-    
+
     @ColumnInfo(name = "diet_type")
     private String dietType;
-    
+
     @ColumnInfo(name = "diet")
     private String diet;
-    
+
     @ColumnInfo(name = "ada_diet", defaultValue = "0")
     private boolean adaDiet;
-    
+
     @ColumnInfo(name = "fluid_restriction")
     private String fluidRestriction;
-    
+
     @ColumnInfo(name = "texture_modifications")
     private String textureModifications;
-    
+
     // Texture modification fields
     @ColumnInfo(name = "mechanical_chopped", defaultValue = "0")
     private boolean mechanicalChopped;
-    
+
     @ColumnInfo(name = "mechanical_ground", defaultValue = "0")
     private boolean mechanicalGround;
-    
+
     @ColumnInfo(name = "bite_size", defaultValue = "0")
     private boolean biteSize;
-    
+
     @ColumnInfo(name = "bread_ok", defaultValue = "0")
     private boolean breadOK;
-    
+
     @ColumnInfo(name = "nectar_thick", defaultValue = "0")
     private boolean nectarThick;
-    
+
     @ColumnInfo(name = "pudding_thick", defaultValue = "0")
     private boolean puddingThick;
-    
+
     @ColumnInfo(name = "honey_thick", defaultValue = "0")
     private boolean honeyThick;
-    
+
     @ColumnInfo(name = "extra_gravy", defaultValue = "0")
     private boolean extraGravy;
-    
+
     @ColumnInfo(name = "meats_only", defaultValue = "0")
     private boolean meatsOnly;
-    
+
+    @ColumnInfo(name = "is_puree", defaultValue = "0")
+    private boolean isPuree;
+
+    // Additional dietary fields
+    @ColumnInfo(name = "allergies")
+    private String allergies;
+
+    @ColumnInfo(name = "likes")
+    private String likes;
+
+    @ColumnInfo(name = "dislikes")
+    private String dislikes;
+
+    @ColumnInfo(name = "comments")
+    private String comments;
+
+    @ColumnInfo(name = "preferred_drink")
+    private String preferredDrink;
+
+    @ColumnInfo(name = "drink_variety")
+    private String drinkVariety;
+
     // Meal completion status
     @ColumnInfo(name = "breakfast_complete", defaultValue = "0")
     private boolean breakfastComplete;
-    
+
     @ColumnInfo(name = "lunch_complete", defaultValue = "0")
     private boolean lunchComplete;
-    
+
     @ColumnInfo(name = "dinner_complete", defaultValue = "0")
     private boolean dinnerComplete;
-    
+
     @ColumnInfo(name = "breakfast_npo", defaultValue = "0")
     private boolean breakfastNPO;
-    
+
     @ColumnInfo(name = "lunch_npo", defaultValue = "0")
     private boolean lunchNPO;
-    
+
     @ColumnInfo(name = "dinner_npo", defaultValue = "0")
     private boolean dinnerNPO;
-    
+
     // Meal items (stored as comma-separated strings for backward compatibility)
     @ColumnInfo(name = "breakfast_items")
     private String breakfastItems;
-    
+
     @ColumnInfo(name = "lunch_items")
     private String lunchItems;
-    
+
     @ColumnInfo(name = "dinner_items")
     private String dinnerItems;
-    
+
     @ColumnInfo(name = "breakfast_juices")
     private String breakfastJuices;
-    
+
     @ColumnInfo(name = "lunch_juices")
     private String lunchJuices;
-    
+
     @ColumnInfo(name = "dinner_juices")
     private String dinnerJuices;
-    
+
     @ColumnInfo(name = "breakfast_drinks")
     private String breakfastDrinks;
-    
+
     @ColumnInfo(name = "lunch_drinks")
     private String lunchDrinks;
-    
+
     @ColumnInfo(name = "dinner_drinks")
     private String dinnerDrinks;
-    
+
     @ColumnInfo(name = "created_date", defaultValue = "CURRENT_TIMESTAMP")
     private Date createdDate;
-    
+
     @ColumnInfo(name = "modified_date", defaultValue = "CURRENT_TIMESTAMP")
     private Date modifiedDate;
 
@@ -300,6 +322,66 @@ public class PatientEntity {
 
     public void setMeatsOnly(boolean meatsOnly) {
         this.meatsOnly = meatsOnly;
+    }
+
+    public boolean getIsPuree() {
+        return isPuree;
+    }
+
+    public boolean isPuree() {
+        return isPuree;
+    }
+
+    public void setIsPuree(boolean isPuree) {
+        this.isPuree = isPuree;
+    }
+
+    public String getAllergies() {
+        return allergies;
+    }
+
+    public void setAllergies(String allergies) {
+        this.allergies = allergies;
+    }
+
+    public String getLikes() {
+        return likes;
+    }
+
+    public void setLikes(String likes) {
+        this.likes = likes;
+    }
+
+    public String getDislikes() {
+        return dislikes;
+    }
+
+    public void setDislikes(String dislikes) {
+        this.dislikes = dislikes;
+    }
+
+    public String getComments() {
+        return comments;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
+    }
+
+    public String getPreferredDrink() {
+        return preferredDrink;
+    }
+
+    public void setPreferredDrink(String preferredDrink) {
+        this.preferredDrink = preferredDrink;
+    }
+
+    public String getDrinkVariety() {
+        return drinkVariety;
+    }
+
+    public void setDrinkVariety(String drinkVariety) {
+        this.drinkVariety = drinkVariety;
     }
 
     public boolean isBreakfastComplete() {

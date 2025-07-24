@@ -10,7 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
-import com.hospital.dietary.dao.CategoryDAO;
+
 import com.hospital.dietary.dao.ItemDAO;
 import com.hospital.dietary.models.Item;
 import java.util.ArrayList;

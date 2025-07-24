@@ -1,33 +1,77 @@
 package com.hospital.dietary.models;
 
-import com.hospital.dietary.data.entities.ItemEntity;
-
+/**
+ * Item model class for backward compatibility
+ */
 public class Item {
-    private ItemEntity entity;
+    private int itemId;
+    private String itemName;
+    private String category;
+    private String description;
+    private int isAdaFriendly;
 
-    public Item() {
-        this.entity = new ItemEntity();
+    // Constructors
+    public Item() {}
+
+    public Item(String itemName, String category, String description, int isAdaFriendly) {
+        this.itemName = itemName;
+        this.category = category;
+        this.description = description;
+        this.isAdaFriendly = isAdaFriendly;
     }
 
-    public Item(ItemEntity entity) {
-        this.entity = entity;
+    // Getters and Setters
+    public int getItemId() {
+        return itemId;
     }
 
-    public long getItemId() { return entity.getItemId(); }
-    public void setItemId(long id) { entity.setItemId(id); }
+    public void setItemId(int itemId) {
+        this.itemId = itemId;
+    }
 
-    public String getName() { return entity.getName(); }
-    public void setName(String name) { entity.setName(name); }
+    public String getItemName() {
+        return itemName;
+    }
 
-    public String getCategory() { return entity.getCategory(); }
-    public void setCategory(String category) { entity.setCategory(category); }
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
+    }
 
-    public String getDescription() { return entity.getDescription(); }
-    public void setDescription(String desc) { entity.setDescription(desc); }
+    public String getCategory() {
+        return category;
+    }
 
-    public boolean isAdaFriendly() { return entity.isAdaFriendly(); }
-    public void setAdaFriendly(boolean ada) { entity.setAdaFriendly(ada); }
+    public void setCategory(String category) {
+        this.category = category;
+    }
 
-    public ItemEntity toEntity() { return entity; }
-    public static Item fromEntity(ItemEntity entity) { return new Item(entity); }
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public int getIsAdaFriendly() {
+        return isAdaFriendly;
+    }
+
+    public void setIsAdaFriendly(int isAdaFriendly) {
+        this.isAdaFriendly = isAdaFriendly;
+    }
+
+    // Helper method for boolean conversion
+    public boolean isAdaFriendly() {
+        return isAdaFriendly == 1;
+    }
+
+    public void setAdaFriendly(boolean adaFriendly) {
+        this.isAdaFriendly = adaFriendly ? 1 : 0;
+    }
+
+    @Override
+    public String toString() {
+        return itemName;
+    }
 }

@@ -27,13 +27,60 @@ public class MealOrderEntity {
     @ColumnInfo(name = "timestamp")
     private Date timestamp;
 
-    // Add getters and setters
-    public long getOrderId() { return orderId; }
-    public void setOrderId(long orderId) { this.orderId = orderId; }
+    // Getters and Setters
+    public long getOrderId() {
+        return orderId;
+    }
 
-    public long getPatientId() { return patientId; }
-    public void setPatientId(long patientId) { this.patientId = patientId; }
+    public void setOrderId(long orderId) {
+        this.orderId = orderId;
+    }
 
-    public String getMeal() { return meal; }
-    public void setMeal(String meal) { this.meal = meal; }
+    public long getPatientId() {
+        return patientId;
+    }
+
+    public void setPatientId(long patientId) {
+        this.patientId = patientId;
+    }
+
+    public String getMeal() {
+        return meal;
+    }
+
+    public void setMeal(String meal) {
+        this.meal = meal;
+    }
+
+    public Date getOrderDate() {
+        return orderDate;
+    }
+
+    public void setOrderDate(Date orderDate) {
+        this.orderDate = orderDate;
+    }
+
+    public boolean isComplete() {
+        return isComplete;
+    }
+
+    public void setComplete(boolean complete) {
+        isComplete = complete;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
+    }
 }

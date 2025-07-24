@@ -1,39 +1,93 @@
 package com.hospital.dietary.models;
 
-import com.hospital.dietary.data.entities.UserEntity;
-
+/**
+ * User model class for backward compatibility
+ */
 public class User {
-    private UserEntity entity;
+    private int userId;
+    private String username;
+    private String password;
+    private String fullName;
+    private String role;
+    private boolean isActive;
+    private java.util.Date lastLogin;
 
-    public User() {
-        this.entity = new UserEntity();
+    // Constructors
+    public User() {}
+
+    public User(String username, String password, String fullName, String role) {
+        this.username = username;
+        this.password = password;
+        this.fullName = fullName;
+        this.role = role;
+        this.isActive = true;
     }
 
-    public User(UserEntity entity) {
-        this.entity = entity;
+    // Getters and Setters
+    public int getUserId() {
+        return userId;
     }
 
-    public long getUserId() { return entity.getUserId(); }
-    public void setUserId(long id) { entity.setUserId(id); }
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
 
-    public String getUsername() { return entity.getUsername(); }
-    public void setUsername(String username) { entity.setUsername(username); }
+    public String getUsername() {
+        return username;
+    }
 
-    public String getPassword() { return entity.getPassword(); }
-    public void setPassword(String password) { entity.setPassword(password); }
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-    public String getFullName() { return entity.getFullName(); }
-    public void setFullName(String name) { entity.setFullName(name); }
+    public String getPassword() {
+        return password;
+    }
 
-    public String getRole() { return entity.getRole(); }
-    public void setRole(String role) { entity.setRole(role); }
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-    public boolean isActive() { return entity.isActive(); }
-    public void setActive(boolean active) { entity.setActive(active); }
+    public String getFullName() {
+        return fullName;
+    }
 
-    public boolean isMustChangePassword() { return entity.isMustChangePassword(); }
-    public void setMustChangePassword(boolean must) { entity.setMustChangePassword(must); }
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
 
-    public UserEntity toEntity() { return entity; }
-    public static User fromEntity(UserEntity entity) { return new User(entity); }
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
+    public java.util.Date getLastLogin() {
+        return lastLogin;
+    }
+
+    public void setLastLogin(java.util.Date lastLogin) {
+        this.lastLogin = lastLogin;
+    }
+
+    public String getRoleDisplayName() {
+        if ("Admin".equals(role)) {
+            return "Administrator";
+        } else if ("User".equals(role)) {
+            return "Standard User";
+        } else if ("Staff".equals(role)) {
+            return "Staff Member";
+        }
+        return role;
+    }
 }

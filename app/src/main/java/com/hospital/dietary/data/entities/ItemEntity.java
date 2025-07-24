@@ -4,13 +4,13 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
-import java.util.Date;
 
+/**
+ * Room Entity for Item table
+ * Represents food items that can be ordered
+ */
 @Entity(tableName = "items",
-        indices = {
-                @Index(value = {"category"}),
-                @Index(value = {"is_ada_friendly"})
-        })
+        indices = {@Index("category"), @Index("is_ada_friendly")})
 public class ItemEntity {
 
     @PrimaryKey(autoGenerate = true)
@@ -27,14 +27,10 @@ public class ItemEntity {
     private String description;
 
     @ColumnInfo(name = "is_ada_friendly", defaultValue = "0")
-    private boolean isAdaFriendly;
+    private int isAdaFriendly;
 
-    @ColumnInfo(name = "created_date", defaultValue = "CURRENT_TIMESTAMP")
-    private Date createdDate;
-
-    public ItemEntity() {
-        this.createdDate = new Date();
-    }
+    // Constructor
+    public ItemEntity() {}
 
     // Getters and Setters
     public long getItemId() {
@@ -69,25 +65,20 @@ public class ItemEntity {
         this.description = description;
     }
 
-    public boolean isAdaFriendly() {
+    public int getIsAdaFriendly() {
         return isAdaFriendly;
     }
 
+    public void setIsAdaFriendly(int isAdaFriendly) {
+        this.isAdaFriendly = isAdaFriendly;
+    }
+
+    // Helper methods
+    public boolean isAdaFriendly() {
+        return isAdaFriendly == 1;
+    }
+
     public void setAdaFriendly(boolean adaFriendly) {
-        isAdaFriendly = adaFriendly;
-    }
-
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    // Helper method for display
-    @Override
-    public String toString() {
-        return name;
+        this.isAdaFriendly = adaFriendly ? 1 : 0;
     }
 }
