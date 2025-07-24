@@ -8,37 +8,39 @@
     <EditText
         android:id="@+id/itemNameEditText"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="wrap_content"
         android:hint="Item Name"
-        android:inputType="text"
+        android:inputType="textCapWords"
         android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Category:"
+        android:textSize="14sp"
+        android:layout_marginBottom="4dp" />
 
     <Spinner
-        android:id="@+id/itemCategorySpinner"
+        android:id="@+id/categorySpinner"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="8dp" />
 
     <EditText
-        android:id="@+id/itemDescriptionEditText"
+        android:id="@+id/descriptionEditText"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="wrap_content"
         android:hint="Description (optional)"
-        android:inputType="text"
-        android:layout_marginBottom="8dp" />
-
-    <EditText
-        android:id="@+id/itemSizeEditText"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:hint="Size in ml (optional)"
-        android:inputType="number"
+        android:inputType="textMultiLine"
+        android:minLines="2"
+        android:maxLines="3"
         android:layout_marginBottom="8dp" />
 
     <CheckBox
         android:id="@+id/adaFriendlyCheckBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="ADA Friendly" />
+        android:text="ADA Friendly"
+        android:layout_marginBottom="8dp" />
 
 </LinearLayout>

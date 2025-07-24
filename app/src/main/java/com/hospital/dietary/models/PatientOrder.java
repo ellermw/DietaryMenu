@@ -1,13 +1,13 @@
 package com.hospital.dietary.models;
 
 /**
- * PatientOrder model class for backward compatibility
+ * PatientOrder model class for patient meal orders display
  */
 public class PatientOrder {
     private int patientId;
     private String patientName;
-    private String wing;
     private String room;
+    private String wing;
     private String diet;
     private String timestamp;
     private String fluidRestriction;
@@ -15,9 +15,16 @@ public class PatientOrder {
     private String breakfastItems;
     private String lunchItems;
     private String dinnerItems;
+    private boolean breakfastComplete;
+    private boolean lunchComplete;
+    private boolean dinnerComplete;
 
     // Constructor
-    public PatientOrder() {}
+    public PatientOrder() {
+        this.breakfastComplete = false;
+        this.lunchComplete = false;
+        this.dinnerComplete = false;
+    }
 
     // Getters and Setters
     public int getPatientId() {
@@ -36,20 +43,20 @@ public class PatientOrder {
         this.patientName = patientName;
     }
 
-    public String getWing() {
-        return wing;
-    }
-
-    public void setWing(String wing) {
-        this.wing = wing;
-    }
-
     public String getRoom() {
         return room;
     }
 
     public void setRoom(String room) {
         this.room = room;
+    }
+
+    public String getWing() {
+        return wing;
+    }
+
+    public void setWing(String wing) {
+        this.wing = wing;
     }
 
     public String getDiet() {
@@ -106,5 +113,59 @@ public class PatientOrder {
 
     public void setDinnerItems(String dinnerItems) {
         this.dinnerItems = dinnerItems;
+    }
+
+    public boolean isBreakfastComplete() {
+        return breakfastComplete;
+    }
+
+    public void setBreakfastComplete(boolean breakfastComplete) {
+        this.breakfastComplete = breakfastComplete;
+    }
+
+    public boolean isLunchComplete() {
+        return lunchComplete;
+    }
+
+    public void setLunchComplete(boolean lunchComplete) {
+        this.lunchComplete = lunchComplete;
+    }
+
+    public boolean isDinnerComplete() {
+        return dinnerComplete;
+    }
+
+    public void setDinnerComplete(boolean dinnerComplete) {
+        this.dinnerComplete = dinnerComplete;
+    }
+
+    // Helper methods
+    public String getLocationInfo() {
+        return wing + "-" + room;
+    }
+
+    public boolean hasBreakfastItems() {
+        return breakfastItems != null && !breakfastItems.isEmpty();
+    }
+
+    public boolean hasLunchItems() {
+        return lunchItems != null && !lunchItems.isEmpty();
+    }
+
+    public boolean hasDinnerItems() {
+        return dinnerItems != null && !dinnerItems.isEmpty();
+    }
+
+    public boolean hasFluidRestriction() {
+        return fluidRestriction != null && !fluidRestriction.isEmpty() && !"None".equalsIgnoreCase(fluidRestriction);
+    }
+
+    public boolean hasTextureModifications() {
+        return textureModifications != null && !textureModifications.isEmpty() && !"None".equalsIgnoreCase(textureModifications);
+    }
+
+    @Override
+    public String toString() {
+        return patientName + " (" + getLocationInfo() + ")";
     }
 }

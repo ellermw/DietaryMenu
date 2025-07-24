@@ -2,10 +2,12 @@ package com.hospital.dietary;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
-
+import com.hospital.dietary.dao.CategoryDAO;
+import com.hospital.dietary.dao.ItemDAO;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,15 +15,15 @@ public class CategoryManagementActivity extends AppCompatActivity {
 
     private DatabaseHelper dbHelper;
     private CategoryDAO categoryDAO;
+    private ItemDAO itemDAO;
     private String currentUsername;
     private String currentUserRole;
     private String currentUserFullName;
 
     // UI Components
-    private TextView backArrow;
-    private Button addCategoryButton;
     private ListView categoriesListView;
-    private TextView categoriesCountText;
+    private TextView categoryCountText;
+    private Button addCategoryButton;
 
     // Data
     private List<CategoryDAO.CategoryInfo> categories = new ArrayList<>();
@@ -38,8 +40,12 @@ public class CategoryManagementActivity extends AppCompatActivity {
         currentUserFullName = getIntent().getStringExtra("user_full_name");
 
         // Check admin access
-        if (!"Admin".equalsIgnoreCase(currentUserRole)) {
-            Toast.makeText(this, "Access denied. Admin privileges required.", Toast.LENGTH_LONG).show();
+        boolean isAdmin = currentUserRole != null &&
+                ("Admin".equalsIgnoreCase(currentUserRole.trim()) ||
+                        "Administrator".equalsIgnoreCase(currentUserRole.trim()));
+
+        if (!isAdmin) {
+            Toast.makeText(this, "Access denied. Admin privileges required.", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
@@ -47,55 +53,26 @@ public class CategoryManagementActivity extends AppCompatActivity {
         // Initialize database
         dbHelper = new DatabaseHelper(this);
         categoryDAO = new CategoryDAO(dbHelper);
-
-        // Hide default action bar since we have custom header
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().hide();
-        }
+        itemDAO = new ItemDAO(dbHelper);
 
         // Initialize UI
-        initializeViews();
+        initializeUI();
         setupListeners();
+
+        // Load data
         loadCategories();
     }
 
-    private void initializeViews() {
-        backArrow = findViewById(R.id.backArrow);
-        addCategoryButton = findViewById(R.id.addCategoryButton);
+    private void initializeUI() {
         categoriesListView = findViewById(R.id.categoriesListView);
-        categoriesCountText = findViewById(R.id.categoriesCountText);
-    }
+        categoryCountText = findViewById(R.id.categoryCountText);
+        addCategoryButton = findViewById(R.id.addCategoryButton);
 
-    private void setupListeners() {
-        // Back arrow
-        backArrow.setOnClickListener(v -> finish());
-
-        // Add category button
-        addCategoryButton.setOnClickListener(v -> showAddCategoryDialog());
-
-        // Category list click
-        categoriesListView.setOnItemClickListener((parent, view, position, id) -> {
-            CategoryDAO.CategoryInfo selectedCategory = categories.get(position);
-            showCategoryOptionsDialog(selectedCategory);
-        });
-    }
-
-    private void loadCategories() {
-        try {
-            categories = categoryDAO.getCategoriesWithCounts();
-            updateCategoriesList();
-        } catch (Exception e) {
-            Toast.makeText(this, "Error loading categories: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void updateCategoriesList() {
-        // Create adapter for categories
+        // Setup list adapter
         categoriesAdapter = new ArrayAdapter<CategoryDAO.CategoryInfo>(this, android.R.layout.simple_list_item_2, android.R.id.text1, categories) {
             @Override
             public View getView(int position, View convertView, android.view.ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
-
                 TextView text1 = view.findViewById(android.R.id.text1);
                 TextView text2 = view.findViewById(android.R.id.text2);
 
@@ -106,33 +83,43 @@ public class CategoryManagementActivity extends AppCompatActivity {
                 return view;
             }
         };
-
         categoriesListView.setAdapter(categoriesAdapter);
+    }
 
-        // Update count
-        categoriesCountText.setText("Categories: " + categories.size());
+    private void setupListeners() {
+        // Add category button
+        addCategoryButton.setOnClickListener(v -> showAddCategoryDialog());
+
+        // Category click listener
+        categoriesListView.setOnItemClickListener((parent, view, position, id) -> {
+            CategoryDAO.CategoryInfo selectedCategory = categories.get(position);
+            showCategoryOptionsDialog(selectedCategory);
+        });
+    }
+
+    private void loadCategories() {
+        categories.clear();
+        categories.addAll(categoryDAO.getAllCategoriesWithCounts());
+        categoriesAdapter.notifyDataSetChanged();
+        updateCategoryCount();
+    }
+
+    private void updateCategoryCount() {
+        categoryCountText.setText("Categories: " + categories.size());
     }
 
     private void showAddCategoryDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Add New Category");
 
-        // Create input layout
-        LinearLayout layout = new LinearLayout(this);
-        layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setPadding(50, 50, 50, 50);
-
         final EditText input = new EditText(this);
-        input.setHint("Category Name");
-        layout.addView(input);
-
-        builder.setView(layout);
+        input.setHint("Category name");
+        builder.setView(input);
 
         builder.setPositiveButton("Add", (dialog, which) -> {
             String categoryName = input.getText().toString().trim();
-
             if (categoryName.isEmpty()) {
-                Toast.makeText(this, "Category name is required", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Category name cannot be empty", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -141,12 +128,12 @@ public class CategoryManagementActivity extends AppCompatActivity {
                 return;
             }
 
-            boolean success = categoryDAO.addCategory(categoryName);
-            if (success) {
-                Toast.makeText(this, "Category added successfully!", Toast.LENGTH_SHORT).show();
+            long result = categoryDAO.addCategory(categoryName);
+            if (result > 0) {
+                Toast.makeText(this, "Category added successfully", Toast.LENGTH_SHORT).show();
                 loadCategories();
             } else {
-                Toast.makeText(this, "Error adding category", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Failed to add category", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -155,63 +142,50 @@ public class CategoryManagementActivity extends AppCompatActivity {
     }
 
     private void showCategoryOptionsDialog(CategoryDAO.CategoryInfo category) {
-        String[] options = {"Edit Category", "Delete Category"};
+        String[] options = category.getItemCount() > 0 ?
+                new String[]{"Edit", "View Items"} :
+                new String[]{"Edit", "Delete"};
 
-        new AlertDialog.Builder(this)
-                .setTitle("Category: " + category.getName())
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(category.getName())
                 .setItems(options, (dialog, which) -> {
-                    switch (which) {
-                        case 0:
-                            showEditCategoryDialog(category);
-                            break;
-                        case 1:
-                            showDeleteCategoryConfirmation(category);
-                            break;
+                    if (which == 0) {
+                        showEditCategoryDialog(category);
+                    } else if (which == 1 && category.getItemCount() > 0) {
+                        showCategoryItems(category);
+                    } else {
+                        showDeleteCategoryConfirmation(category);
                     }
-                })
-                .show();
+                });
+        builder.show();
     }
 
     private void showEditCategoryDialog(CategoryDAO.CategoryInfo category) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Edit Category: " + category.getName());
-
-        // Create input layout
-        LinearLayout layout = new LinearLayout(this);
-        layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setPadding(50, 50, 50, 50);
+        builder.setTitle("Edit Category");
 
         final EditText input = new EditText(this);
-        input.setHint("Category Name");
         input.setText(category.getName());
-        layout.addView(input);
-
-        builder.setView(layout);
+        builder.setView(input);
 
         builder.setPositiveButton("Save", (dialog, which) -> {
-            String newCategoryName = input.getText().toString().trim();
-
-            if (newCategoryName.isEmpty()) {
-                Toast.makeText(this, "Category name is required", Toast.LENGTH_SHORT).show();
+            String newName = input.getText().toString().trim();
+            if (newName.isEmpty()) {
+                Toast.makeText(this, "Category name cannot be empty", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            if (newCategoryName.equals(category.getName())) {
-                Toast.makeText(this, "No changes made", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            if (categoryDAO.categoryExists(newCategoryName)) {
+            if (!newName.equals(category.getName()) && categoryDAO.categoryExists(newName)) {
                 Toast.makeText(this, "Category already exists", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            boolean success = categoryDAO.renameCategory(category.getName(), newCategoryName);
-            if (success) {
-                Toast.makeText(this, "Category updated successfully!", Toast.LENGTH_SHORT).show();
+            int result = categoryDAO.updateCategory(category.getName(), newName);
+            if (result > 0) {
+                Toast.makeText(this, "Category updated successfully", Toast.LENGTH_SHORT).show();
                 loadCategories();
             } else {
-                Toast.makeText(this, "Error updating category", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Failed to update category", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -219,27 +193,33 @@ public class CategoryManagementActivity extends AppCompatActivity {
         builder.show();
     }
 
-    private void showDeleteCategoryConfirmation(CategoryDAO.CategoryInfo category) {
-        if (category.getItemCount() > 0) {
-            new AlertDialog.Builder(this)
-                    .setTitle("Cannot Delete Category")
-                    .setMessage("Cannot delete '" + category.getName() + "' because it contains " +
-                            category.getItemCount() + " items.\n\nMove or delete the items first.")
-                    .setPositiveButton("OK", null)
-                    .show();
-            return;
+    private void showCategoryItems(CategoryDAO.CategoryInfo category) {
+        // Show items in this category
+        List<com.hospital.dietary.models.Item> items = itemDAO.getItemsByCategory(category.getName());
+
+        String[] itemNames = new String[items.size()];
+        for (int i = 0; i < items.size(); i++) {
+            itemNames[i] = items.get(i).getItemName();
         }
 
         new AlertDialog.Builder(this)
+                .setTitle(category.getName() + " Items")
+                .setItems(itemNames, null)
+                .setPositiveButton("OK", null)
+                .show();
+    }
+
+    private void showDeleteCategoryConfirmation(CategoryDAO.CategoryInfo category) {
+        new AlertDialog.Builder(this)
                 .setTitle("Delete Category")
-                .setMessage("Are you sure you want to delete the category '" + category.getName() + "'?\n\nThis cannot be undone!")
+                .setMessage("Are you sure you want to delete '" + category.getName() + "'?\n\nThis will delete all items in this category and cannot be undone.")
                 .setPositiveButton("Delete", (dialog, which) -> {
-                    boolean success = categoryDAO.deleteCategory(category.getName());
-                    if (success) {
-                        Toast.makeText(this, "Category deleted successfully!", Toast.LENGTH_SHORT).show();
+                    int result = categoryDAO.deleteCategory(category.getName());
+                    if (result > 0) {
+                        Toast.makeText(this, "Category and its items deleted successfully", Toast.LENGTH_SHORT).show();
                         loadCategories();
                     } else {
-                        Toast.makeText(this, "Error deleting category", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Failed to delete category", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .setNegativeButton("Cancel", null)
@@ -247,8 +227,11 @@ public class CategoryManagementActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        loadCategories();
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

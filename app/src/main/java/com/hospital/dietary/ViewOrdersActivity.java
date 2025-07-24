@@ -1,9 +1,6 @@
-// ================================================================================================
-// FILE: app/src/main/java/com/hospital/dietary/ViewOrdersActivity.java
-// ================================================================================================
-
 package com.hospital.dietary;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -20,7 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
-
+import com.hospital.dietary.dao.OrderDAO;
 import com.hospital.dietary.models.Order;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -33,342 +30,293 @@ import android.print.PageRange;
 import android.print.PrintDocumentInfo;
 
 public class ViewOrdersActivity extends AppCompatActivity {
-    
+
     private DatabaseHelper dbHelper;
     private OrderDAO orderDAO;
-    
+
     private Spinner dateSpinner;
     private ListView ordersListView;
     private TextView orderCountText;
     private Button printAllButton, printSelectedButton;
-    
+
     private List<Order> allOrders = new ArrayList<>();
     private ArrayAdapter<Order> ordersAdapter;
     private List<String> availableDates = new ArrayList<>();
-    
+
     private boolean isAdmin = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_orders);
-        
+
         // Get user info
         isAdmin = getIntent().getBooleanExtra("is_admin", false);
         String username = getIntent().getStringExtra("current_username");
-        
+
         setTitle("View Orders - " + username);
-        
+
         // Initialize database
         dbHelper = new DatabaseHelper(this);
         orderDAO = new OrderDAO(dbHelper);
-        
+
         // Initialize UI
         initializeUI();
         setupListeners();
         loadAvailableDates();
     }
-    
+
     private void initializeUI() {
         dateSpinner = findViewById(R.id.dateSpinner);
         ordersListView = findViewById(R.id.ordersListView);
         orderCountText = findViewById(R.id.orderCountText);
         printAllButton = findViewById(R.id.printAllButton);
         printSelectedButton = findViewById(R.id.printSelectedButton);
-        
+
         // Setup ListView for multiple selection
         ordersListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-        
-        // Setup orders adapter
-        ordersAdapter = new ArrayAdapter<Order>(this, R.layout.item_order_row, allOrders) {
+
+        // Create adapter for orders
+        ordersAdapter = new ArrayAdapter<Order>(this,
+                android.R.layout.simple_list_item_multiple_choice) {
             @Override
             public View getView(int position, View convertView, android.view.ViewGroup parent) {
-                if (convertView == null) {
-                    convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_order_row, parent, false);
-                }
-                
+                View view = super.getView(position, convertView, parent);
+                TextView text = (TextView) view.findViewById(android.R.id.text1);
+
                 Order order = getItem(position);
-                
-                TextView patientName = convertView.findViewById(R.id.patientNameText);
-                TextView patientDetails = convertView.findViewById(R.id.patientDetailsText);
-                TextView orderTime = convertView.findViewById(R.id.orderTimeText);
-                
-                patientName.setText(order.getPatientName());
-                
-                String details = order.getWingRoom() + " • " + order.getDiet();
-                if (order.getFluidRestriction() != null && !order.getFluidRestriction().isEmpty()) {
-                    details += " • " + order.getFluidRestriction();
+                if (order != null) {
+                    String display = String.format("%s - %s | %s | %s",
+                            order.getLocationInfo(),
+                            order.getPatientName(),
+                            order.getDiet(),
+                            order.getMealType());
+                    text.setText(display);
                 }
-                if (order.getTextureModifications() != null && !order.getTextureModifications().isEmpty()) {
-                    details += " • " + order.getTextureModifications();
-                }
-                
-                patientDetails.setText(details);
-                orderTime.setText("Ordered: " + order.getOrderTime());
-                
-                return convertView;
+
+                return view;
             }
         };
+
         ordersListView.setAdapter(ordersAdapter);
     }
-    
+
     private void setupListeners() {
         dateSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position > 0) { // Skip "Select Date" option
-                    String selectedDate = availableDates.get(position - 1);
-                    loadOrdersForDate(selectedDate);
-                }
+                loadOrdersForDate(availableDates.get(position));
             }
-            
+
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Do nothing
+            }
         });
-        
+
         printAllButton.setOnClickListener(v -> printAllOrders());
         printSelectedButton.setOnClickListener(v -> printSelectedOrders());
-        
-        // FIXED: Add back button functionality
-        Button backButton = findViewById(R.id.backButton);
-        backButton.setOnClickListener(v -> {
-            // Navigate back to the previous activity (MainActivity)
-            finish();
+
+        ordersListView.setOnItemClickListener((parent, view, position, id) -> {
+            updateSelectedCount();
         });
-        
-        // Update print button states when selection changes
-        ordersListView.setOnItemClickListener((parent, view, position, id) -> updatePrintButtonStates());
     }
-    
+
     private void loadAvailableDates() {
-        availableDates = orderDAO.getAvailableDates();
-        
-        List<String> spinnerItems = new ArrayList<>();
-        spinnerItems.add("Select Date");
-        spinnerItems.addAll(availableDates);
-        
-        ArrayAdapter<String> dateAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, spinnerItems);
-        dateAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Load last 30 days
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        Date today = new Date();
+
+        availableDates.clear();
+        for (int i = 0; i < 30; i++) {
+            Date date = new Date(today.getTime() - (i * 24 * 60 * 60 * 1000L));
+            availableDates.add(dateFormat.format(date));
+        }
+
+        ArrayAdapter<String> dateAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_dropdown_item, availableDates);
         dateSpinner.setAdapter(dateAdapter);
     }
-    
+
     private void loadOrdersForDate(String date) {
         allOrders.clear();
         allOrders.addAll(orderDAO.getOrdersByDate(date));
+
+        ordersAdapter.clear();
+        ordersAdapter.addAll(allOrders);
         ordersAdapter.notifyDataSetChanged();
-        
-        updateOrderCount();
-        updatePrintButtonStates();
+
+        orderCountText.setText("Total Orders: " + allOrders.size());
+        updateSelectedCount();
     }
-    
-    private void updateOrderCount() {
-        int count = allOrders.size();
-        if (count == 0) {
-            orderCountText.setText("No orders found");
-            findViewById(R.id.emptyStateContainer).setVisibility(View.VISIBLE);
-            ordersListView.setVisibility(View.GONE);
-        } else {
-            orderCountText.setText(count + " order" + (count == 1 ? "" : "s") + " found");
-            findViewById(R.id.emptyStateContainer).setVisibility(View.GONE);
-            ordersListView.setVisibility(View.VISIBLE);
-        }
-    }
-    
-    private void updatePrintButtonStates() {
-        boolean hasOrders = !allOrders.isEmpty();
-        printAllButton.setEnabled(hasOrders);
-        
-        // Check if any orders are selected
+
+    private void updateSelectedCount() {
         SparseBooleanArray checked = ordersListView.getCheckedItemPositions();
-        boolean hasSelected = false;
+        int count = 0;
         for (int i = 0; i < checked.size(); i++) {
             if (checked.valueAt(i)) {
-                hasSelected = true;
-                break;
+                count++;
             }
         }
-        printSelectedButton.setEnabled(hasSelected);
+
+        printSelectedButton.setText("Print Selected (" + count + ")");
+        printSelectedButton.setEnabled(count > 0);
     }
-    
+
     private void printAllOrders() {
         if (allOrders.isEmpty()) {
             Toast.makeText(this, "No orders to print", Toast.LENGTH_SHORT).show();
             return;
         }
-        generateAndPrintPDF(allOrders);
+
+        List<Order> ordersToPrint = new ArrayList<>(allOrders);
+        printOrders(ordersToPrint, "All Orders");
     }
-    
+
     private void printSelectedOrders() {
         SparseBooleanArray checked = ordersListView.getCheckedItemPositions();
         List<Order> selectedOrders = new ArrayList<>();
-        
-        for (int i = 0; i < allOrders.size(); i++) {
-            if (checked.get(i)) {
-                selectedOrders.add(allOrders.get(i));
+
+        for (int i = 0; i < checked.size(); i++) {
+            if (checked.valueAt(i)) {
+                int position = checked.keyAt(i);
+                selectedOrders.add(allOrders.get(position));
             }
         }
-        
+
         if (selectedOrders.isEmpty()) {
             Toast.makeText(this, "No orders selected", Toast.LENGTH_SHORT).show();
             return;
         }
-        
-        generateAndPrintPDF(selectedOrders);
+
+        printOrders(selectedOrders, "Selected Orders");
     }
-    
-    private void generateAndPrintPDF(List<Order> orders) {
-        try {
-            // Create PDF document
-            PdfDocument document = new PdfDocument();
-            PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(792, 612, 1).create(); // Letter landscape
-            PdfDocument.Page page = document.startPage(pageInfo);
-            
-            android.graphics.Canvas canvas = page.getCanvas();
-            Paint paint = new Paint();
-            
-            // Header
-            paint.setTextSize(18);
-            paint.setColor(Color.BLACK);
-            paint.setTypeface(android.graphics.Typeface.DEFAULT_BOLD);
-            canvas.drawText("Hospital Dietary Orders", 50, 50, paint);
-            
-            // Date
-            paint.setTextSize(12);
-            paint.setTypeface(android.graphics.Typeface.DEFAULT);
-            String currentDate = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(new Date());
-            canvas.drawText("Generated: " + currentDate, 50, 70, paint);
-            
-            // Orders
-            int y = 100;
-            int orderCount = orders.size();
-            
-            for (Order order : orders) {
-                paint.setTextSize(14);
-                paint.setTypeface(android.graphics.Typeface.DEFAULT_BOLD);
-                canvas.drawText(order.getPatientName(), 50, y, paint);
-                
-                paint.setTextSize(12);
-                paint.setTypeface(android.graphics.Typeface.DEFAULT);
-                canvas.drawText(order.getWingRoom() + " | " + order.getDiet(), 50, y + 15, paint);
-                
-                if (order.getFluidRestriction() != null && !order.getFluidRestriction().isEmpty()) {
-                    canvas.drawText("Fluid: " + order.getFluidRestriction(), 50, y + 30, paint);
-                }
-                
-                y += 50;
-                
-                if (y > 550) { // New page if needed
-                    document.finishPage(page);
-                    page = document.startPage(pageInfo);
-                    canvas = page.getCanvas();
-                    y = 50;
-                }
-            }
-            
-            document.finishPage(page);
-            
-            // Save PDF
-            File pdfFile = new File(getExternalFilesDir(null), "dietary_orders.pdf");
-            FileOutputStream fos = new FileOutputStream(pdfFile);
-            document.writeTo(fos);
-            fos.close();
-            document.close();
-            
-            // Print using Android Print Framework
-            PrintManager printManager = (PrintManager) getSystemService(Context.PRINT_SERVICE);
-            
-            PrintDocumentAdapter adapter = new MenuPrintDocumentAdapter(pdfFile.getAbsolutePath());
-            
-            PrintAttributes.Builder builder = new PrintAttributes.Builder();
-            builder.setMediaSize(PrintAttributes.MediaSize.NA_LETTER.asLandscape());
-            builder.setResolution(new PrintAttributes.Resolution("id", "label", 300, 300));
-            builder.setMinMargins(PrintAttributes.Margins.NO_MARGINS);
-            
-            String jobName = "Dietary Orders (" + orderCount + " orders)";
-            PrintJob printJob = printManager.print(jobName, adapter, builder.build());
-            
-            Toast.makeText(this, "Print job started: " + jobName, Toast.LENGTH_SHORT).show();
-            
-        } catch (Exception e) {
-            Toast.makeText(this, "Error printing: " + e.getMessage(), Toast.LENGTH_LONG).show();
-            e.printStackTrace();
-        }
+
+    private void printOrders(List<Order> orders, String title) {
+        // Create print job
+        PrintManager printManager = (PrintManager) getSystemService(Context.PRINT_SERVICE);
+        String jobName = getString(R.string.app_name) + " - " + title;
+
+        printManager.print(jobName, new OrderPrintDocumentAdapter(this, orders, title),
+                new PrintAttributes.Builder()
+                        .setMediaSize(PrintAttributes.MediaSize.NA_LETTER)
+                        .build());
     }
-    
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0, 1, 0, "Refresh")
-                .setIcon(android.R.drawable.ic_menu_rotate)
-                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        getMenuInflater().inflate(R.menu.menu_view_orders, menu);
         return true;
     }
-    
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case 1: // Refresh
-                loadAvailableDates();
-                return true;
-            case android.R.id.home:
-                finish();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-    
-    // Custom PrintDocumentAdapter for PDF printing
-    private class MenuPrintDocumentAdapter extends PrintDocumentAdapter {
-        private String filePath;
+        int itemId = item.getItemId();
 
-        public MenuPrintDocumentAdapter(String filePath) {
-            this.filePath = filePath;
+        if (itemId == android.R.id.home) {
+            finish();
+            return true;
+        } else if (itemId == R.id.action_refresh) {
+            if (dateSpinner.getSelectedItemPosition() >= 0) {
+                loadOrdersForDate(availableDates.get(dateSpinner.getSelectedItemPosition()));
+            }
+            return true;
+        } else if (itemId == R.id.action_export) {
+            exportOrdersToCSV();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void exportOrdersToCSV() {
+        // Implementation for CSV export
+        Toast.makeText(this, "Export feature coming soon", Toast.LENGTH_SHORT).show();
+    }
+
+    // Inner class for print document adapter
+    private static class OrderPrintDocumentAdapter extends PrintDocumentAdapter {
+        private Context context;
+        private List<Order> orders;
+        private String title;
+        private PdfDocument pdfDocument;
+
+        public OrderPrintDocumentAdapter(Context context, List<Order> orders, String title) {
+            this.context = context;
+            this.orders = orders;
+            this.title = title;
         }
 
         @Override
-        public void onLayout(PrintAttributes oldAttributes, PrintAttributes newAttributes, 
-                           android.os.CancellationSignal cancellationSignal, 
-                           LayoutResultCallback callback, Bundle extras) {
-            
+        public void onLayout(PrintAttributes oldAttributes, PrintAttributes newAttributes,
+                             android.os.CancellationSignal cancellationSignal,
+                             LayoutResultCallback callback, Bundle extras) {
+
+            pdfDocument = new PdfDocument();
+
             if (cancellationSignal.isCanceled()) {
                 callback.onLayoutCancelled();
                 return;
             }
 
-            PrintDocumentInfo.Builder builder = new PrintDocumentInfo.Builder("dietary_orders.pdf")
+            PrintDocumentInfo info = new PrintDocumentInfo.Builder(title + ".pdf")
                     .setContentType(PrintDocumentInfo.CONTENT_TYPE_DOCUMENT)
-                    .setPageCount(1);
+                    .setPageCount(1)
+                    .build();
 
-            PrintDocumentInfo info = builder.build();
             callback.onLayoutFinished(info, true);
         }
 
         @Override
-        public void onWrite(PageRange[] pages, android.os.ParcelFileDescriptor destination, 
-                          android.os.CancellationSignal cancellationSignal, WriteResultCallback callback) {
-            
+        public void onWrite(PageRange[] pages, android.os.ParcelFileDescriptor destination,
+                            android.os.CancellationSignal cancellationSignal,
+                            WriteResultCallback callback) {
+
+            // Create PDF content
+            PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(595, 842, 1).create();
+            PdfDocument.Page page = pdfDocument.startPage(pageInfo);
+
+            android.graphics.Canvas canvas = page.getCanvas();
+            Paint paint = new Paint();
+            paint.setColor(Color.BLACK);
+            paint.setTextSize(20);
+
+            int y = 50;
+            canvas.drawText(title, 50, y, paint);
+
+            y += 30;
+            paint.setTextSize(14);
+
+            for (Order order : orders) {
+                if (y > 750) {
+                    pdfDocument.finishPage(page);
+                    pageInfo = new PdfDocument.PageInfo.Builder(595, 842,
+                            pdfDocument.getPages().size() + 1).create();
+                    page = pdfDocument.startPage(pageInfo);
+                    canvas = page.getCanvas();
+                    y = 50;
+                }
+
+                String orderText = String.format("%s - %s | %s | %s",
+                        order.getLocationInfo(),
+                        order.getPatientName(),
+                        order.getDiet(),
+                        order.getMealType());
+
+                canvas.drawText(orderText, 50, y, paint);
+                y += 20;
+            }
+
+            pdfDocument.finishPage(page);
+
+            // Write to file
             try {
-                // Copy the PDF file to the destination
-                java.io.InputStream input = new java.io.FileInputStream(filePath);
-                java.io.OutputStream output = new java.io.FileOutputStream(destination.getFileDescriptor());
-                
-                byte[] buffer = new byte[1024];
-                int size;
-                while ((size = input.read(buffer)) >= 0 && !cancellationSignal.isCanceled()) {
-                    output.write(buffer, 0, size);
-                }
-                
-                if (cancellationSignal.isCanceled()) {
-                    callback.onWriteCancelled();
-                } else {
-                    callback.onWriteFinished(new PageRange[]{PageRange.ALL_PAGES});
-                }
-                
-                input.close();
-                output.close();
-                
+                pdfDocument.writeTo(new FileOutputStream(destination.getFileDescriptor()));
+                callback.onWriteFinished(new PageRange[]{PageRange.ALL_PAGES});
             } catch (Exception e) {
                 callback.onWriteFailed(e.toString());
+            } finally {
+                pdfDocument.close();
             }
         }
     }

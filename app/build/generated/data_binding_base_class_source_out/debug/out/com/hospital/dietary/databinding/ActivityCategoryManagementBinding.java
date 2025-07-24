@@ -25,22 +25,18 @@ public final class ActivityCategoryManagementBinding implements ViewBinding {
   public final Button addCategoryButton;
 
   @NonNull
-  public final TextView backArrow;
-
-  @NonNull
-  public final TextView categoriesCountText;
-
-  @NonNull
   public final ListView categoriesListView;
 
+  @NonNull
+  public final TextView categoryCountText;
+
   private ActivityCategoryManagementBinding(@NonNull LinearLayout rootView,
-      @NonNull Button addCategoryButton, @NonNull TextView backArrow,
-      @NonNull TextView categoriesCountText, @NonNull ListView categoriesListView) {
+      @NonNull Button addCategoryButton, @NonNull ListView categoriesListView,
+      @NonNull TextView categoryCountText) {
     this.rootView = rootView;
     this.addCategoryButton = addCategoryButton;
-    this.backArrow = backArrow;
-    this.categoriesCountText = categoriesCountText;
     this.categoriesListView = categoriesListView;
+    this.categoryCountText = categoryCountText;
   }
 
   @Override
@@ -76,26 +72,20 @@ public final class ActivityCategoryManagementBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.backArrow;
-      TextView backArrow = ViewBindings.findChildViewById(rootView, id);
-      if (backArrow == null) {
-        break missingId;
-      }
-
-      id = R.id.categoriesCountText;
-      TextView categoriesCountText = ViewBindings.findChildViewById(rootView, id);
-      if (categoriesCountText == null) {
-        break missingId;
-      }
-
       id = R.id.categoriesListView;
       ListView categoriesListView = ViewBindings.findChildViewById(rootView, id);
       if (categoriesListView == null) {
         break missingId;
       }
 
+      id = R.id.categoryCountText;
+      TextView categoryCountText = ViewBindings.findChildViewById(rootView, id);
+      if (categoryCountText == null) {
+        break missingId;
+      }
+
       return new ActivityCategoryManagementBinding((LinearLayout) rootView, addCategoryButton,
-          backArrow, categoriesCountText, categoriesListView);
+          categoriesListView, categoryCountText);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

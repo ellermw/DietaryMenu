@@ -30,9 +30,6 @@ public final class ActivityItemManagementEnhancedBinding implements ViewBinding 
   public final Spinner categoryFilterSpinner;
 
   @NonNull
-  public final EditText itemSearchEditText;
-
-  @NonNull
   public final TextView itemsCountText;
 
   @NonNull
@@ -41,17 +38,20 @@ public final class ActivityItemManagementEnhancedBinding implements ViewBinding 
   @NonNull
   public final Button manageCategoriesButton;
 
+  @NonNull
+  public final EditText searchEditText;
+
   private ActivityItemManagementEnhancedBinding(@NonNull LinearLayout rootView,
       @NonNull Button addItemButton, @NonNull Spinner categoryFilterSpinner,
-      @NonNull EditText itemSearchEditText, @NonNull TextView itemsCountText,
-      @NonNull ListView itemsListView, @NonNull Button manageCategoriesButton) {
+      @NonNull TextView itemsCountText, @NonNull ListView itemsListView,
+      @NonNull Button manageCategoriesButton, @NonNull EditText searchEditText) {
     this.rootView = rootView;
     this.addItemButton = addItemButton;
     this.categoryFilterSpinner = categoryFilterSpinner;
-    this.itemSearchEditText = itemSearchEditText;
     this.itemsCountText = itemsCountText;
     this.itemsListView = itemsListView;
     this.manageCategoriesButton = manageCategoriesButton;
+    this.searchEditText = searchEditText;
   }
 
   @Override
@@ -93,12 +93,6 @@ public final class ActivityItemManagementEnhancedBinding implements ViewBinding 
         break missingId;
       }
 
-      id = R.id.itemSearchEditText;
-      EditText itemSearchEditText = ViewBindings.findChildViewById(rootView, id);
-      if (itemSearchEditText == null) {
-        break missingId;
-      }
-
       id = R.id.itemsCountText;
       TextView itemsCountText = ViewBindings.findChildViewById(rootView, id);
       if (itemsCountText == null) {
@@ -117,9 +111,15 @@ public final class ActivityItemManagementEnhancedBinding implements ViewBinding 
         break missingId;
       }
 
+      id = R.id.searchEditText;
+      EditText searchEditText = ViewBindings.findChildViewById(rootView, id);
+      if (searchEditText == null) {
+        break missingId;
+      }
+
       return new ActivityItemManagementEnhancedBinding((LinearLayout) rootView, addItemButton,
-          categoryFilterSpinner, itemSearchEditText, itemsCountText, itemsListView,
-          manageCategoriesButton);
+          categoryFilterSpinner, itemsCountText, itemsListView, manageCategoriesButton,
+          searchEditText);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

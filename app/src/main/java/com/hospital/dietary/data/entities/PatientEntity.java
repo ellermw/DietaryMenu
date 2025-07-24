@@ -2,6 +2,7 @@ package com.hospital.dietary.data.entities;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 import java.util.Date;
@@ -145,33 +146,28 @@ public class PatientEntity {
     @ColumnInfo(name = "created_date", defaultValue = "CURRENT_TIMESTAMP")
     private Date createdDate;
 
-    @ColumnInfo(name = "modified_date", defaultValue = "CURRENT_TIMESTAMP")
-    private Date modifiedDate;
+    @ColumnInfo(name = "breakfast_diet")
+    private String breakfastDiet;
 
-    // Constructor
-    public PatientEntity() {
-        this.createdDate = new Date();
-        this.modifiedDate = new Date();
-    }
+    @ColumnInfo(name = "lunch_diet")
+    private String lunchDiet;
 
-    // Helper methods
-    public String getFullName() {
-        return patientFirstName + " " + patientLastName;
-    }
+    @ColumnInfo(name = "dinner_diet")
+    private String dinnerDiet;
 
-    public String getLocation() {
-        return wing + " - " + roomNumber;
-    }
+    @ColumnInfo(name = "breakfast_ada", defaultValue = "0")
+    private boolean breakfastAda;
 
-    public boolean isAllMealsComplete() {
-        return breakfastComplete && lunchComplete && dinnerComplete;
-    }
+    @ColumnInfo(name = "lunch_ada", defaultValue = "0")
+    private boolean lunchAda;
 
-    public boolean hasAnyMealComplete() {
-        return breakfastComplete || lunchComplete || dinnerComplete;
-    }
+    @ColumnInfo(name = "dinner_ada", defaultValue = "0")
+    private boolean dinnerAda;
 
-    // All getters and setters
+    // Constructors
+    public PatientEntity() {}
+
+    // Getters and Setters
     public long getPatientId() {
         return patientId;
     }
@@ -324,16 +320,13 @@ public class PatientEntity {
         this.meatsOnly = meatsOnly;
     }
 
-    public boolean getIsPuree() {
-        return isPuree;
-    }
-
+    // Fixed: Only one getter for isPuree field to avoid ambiguity
     public boolean isPuree() {
         return isPuree;
     }
 
-    public void setIsPuree(boolean isPuree) {
-        this.isPuree = isPuree;
+    public void setPuree(boolean puree) {
+        isPuree = puree;
     }
 
     public String getAllergies() {
@@ -512,11 +505,61 @@ public class PatientEntity {
         this.createdDate = createdDate;
     }
 
-    public Date getModifiedDate() {
-        return modifiedDate;
+    public String getBreakfastDiet() {
+        return breakfastDiet;
     }
 
-    public void setModifiedDate(Date modifiedDate) {
-        this.modifiedDate = modifiedDate;
+    public void setBreakfastDiet(String breakfastDiet) {
+        this.breakfastDiet = breakfastDiet;
+    }
+
+    public String getLunchDiet() {
+        return lunchDiet;
+    }
+
+    public void setLunchDiet(String lunchDiet) {
+        this.lunchDiet = lunchDiet;
+    }
+
+    public String getDinnerDiet() {
+        return dinnerDiet;
+    }
+
+    public void setDinnerDiet(String dinnerDiet) {
+        this.dinnerDiet = dinnerDiet;
+    }
+
+    public boolean isBreakfastAda() {
+        return breakfastAda;
+    }
+
+    public void setBreakfastAda(boolean breakfastAda) {
+        this.breakfastAda = breakfastAda;
+    }
+
+    public boolean isLunchAda() {
+        return lunchAda;
+    }
+
+    public void setLunchAda(boolean lunchAda) {
+        this.lunchAda = lunchAda;
+    }
+
+    public boolean isDinnerAda() {
+        return dinnerAda;
+    }
+
+    public void setDinnerAda(boolean dinnerAda) {
+        this.dinnerAda = dinnerAda;
+    }
+
+    // Helper methods
+    public String getFullName() {
+        return patientFirstName + " " + patientLastName;
+    }
+
+    @Ignore
+    public String getLocationInfo() {
+        return wing + "-" + roomNumber;
     }
 }

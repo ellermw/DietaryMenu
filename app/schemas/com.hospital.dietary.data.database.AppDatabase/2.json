@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "1d3bbc63612a2d4ebe4691c4b89f2ff9",
+    "identityHash": "15b7fdfe5846c46b88d6e8e8ea5186bd",
     "entities": [
       {
         "tableName": "users",
@@ -87,7 +87,7 @@
       },
       {
         "tableName": "patient_info",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`patient_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `patient_first_name` TEXT, `patient_last_name` TEXT, `wing` TEXT, `room_number` TEXT, `diet_type` TEXT, `diet` TEXT, `ada_diet` INTEGER NOT NULL DEFAULT 0, `fluid_restriction` TEXT, `texture_modifications` TEXT, `mechanical_chopped` INTEGER NOT NULL DEFAULT 0, `mechanical_ground` INTEGER NOT NULL DEFAULT 0, `bite_size` INTEGER NOT NULL DEFAULT 0, `bread_ok` INTEGER NOT NULL DEFAULT 0, `nectar_thick` INTEGER NOT NULL DEFAULT 0, `pudding_thick` INTEGER NOT NULL DEFAULT 0, `honey_thick` INTEGER NOT NULL DEFAULT 0, `extra_gravy` INTEGER NOT NULL DEFAULT 0, `meats_only` INTEGER NOT NULL DEFAULT 0, `breakfast_complete` INTEGER NOT NULL DEFAULT 0, `lunch_complete` INTEGER NOT NULL DEFAULT 0, `dinner_complete` INTEGER NOT NULL DEFAULT 0, `breakfast_npo` INTEGER NOT NULL DEFAULT 0, `lunch_npo` INTEGER NOT NULL DEFAULT 0, `dinner_npo` INTEGER NOT NULL DEFAULT 0, `breakfast_items` TEXT, `lunch_items` TEXT, `dinner_items` TEXT, `breakfast_juices` TEXT, `lunch_juices` TEXT, `dinner_juices` TEXT, `breakfast_drinks` TEXT, `lunch_drinks` TEXT, `dinner_drinks` TEXT, `created_date` INTEGER DEFAULT CURRENT_TIMESTAMP, `modified_date` INTEGER DEFAULT CURRENT_TIMESTAMP)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`patient_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `patient_first_name` TEXT, `patient_last_name` TEXT, `wing` TEXT, `room_number` TEXT, `diet_type` TEXT, `diet` TEXT, `ada_diet` INTEGER NOT NULL DEFAULT 0, `fluid_restriction` TEXT, `texture_modifications` TEXT, `mechanical_chopped` INTEGER NOT NULL DEFAULT 0, `mechanical_ground` INTEGER NOT NULL DEFAULT 0, `bite_size` INTEGER NOT NULL DEFAULT 0, `bread_ok` INTEGER NOT NULL DEFAULT 0, `nectar_thick` INTEGER NOT NULL DEFAULT 0, `pudding_thick` INTEGER NOT NULL DEFAULT 0, `honey_thick` INTEGER NOT NULL DEFAULT 0, `extra_gravy` INTEGER NOT NULL DEFAULT 0, `meats_only` INTEGER NOT NULL DEFAULT 0, `is_puree` INTEGER NOT NULL DEFAULT 0, `allergies` TEXT, `likes` TEXT, `dislikes` TEXT, `comments` TEXT, `preferred_drink` TEXT, `drink_variety` TEXT, `breakfast_complete` INTEGER NOT NULL DEFAULT 0, `lunch_complete` INTEGER NOT NULL DEFAULT 0, `dinner_complete` INTEGER NOT NULL DEFAULT 0, `breakfast_npo` INTEGER NOT NULL DEFAULT 0, `lunch_npo` INTEGER NOT NULL DEFAULT 0, `dinner_npo` INTEGER NOT NULL DEFAULT 0, `breakfast_items` TEXT, `lunch_items` TEXT, `dinner_items` TEXT, `breakfast_juices` TEXT, `lunch_juices` TEXT, `dinner_juices` TEXT, `breakfast_drinks` TEXT, `lunch_drinks` TEXT, `dinner_drinks` TEXT, `created_date` INTEGER DEFAULT CURRENT_TIMESTAMP, `breakfast_diet` TEXT, `lunch_diet` TEXT, `dinner_diet` TEXT, `breakfast_ada` INTEGER NOT NULL DEFAULT 0, `lunch_ada` INTEGER NOT NULL DEFAULT 0, `dinner_ada` INTEGER NOT NULL DEFAULT 0)",
         "fields": [
           {
             "fieldPath": "patientId",
@@ -214,6 +214,49 @@
             "defaultValue": "0"
           },
           {
+            "fieldPath": "isPuree",
+            "columnName": "is_puree",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "allergies",
+            "columnName": "allergies",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "likes",
+            "columnName": "likes",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "dislikes",
+            "columnName": "dislikes",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "comments",
+            "columnName": "comments",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "preferredDrink",
+            "columnName": "preferred_drink",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "drinkVariety",
+            "columnName": "drink_variety",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
             "fieldPath": "breakfastComplete",
             "columnName": "breakfast_complete",
             "affinity": "INTEGER",
@@ -317,11 +360,43 @@
             "defaultValue": "CURRENT_TIMESTAMP"
           },
           {
-            "fieldPath": "modifiedDate",
-            "columnName": "modified_date",
+            "fieldPath": "breakfastDiet",
+            "columnName": "breakfast_diet",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "lunchDiet",
+            "columnName": "lunch_diet",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "dinnerDiet",
+            "columnName": "dinner_diet",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "breakfastAda",
+            "columnName": "breakfast_ada",
             "affinity": "INTEGER",
-            "notNull": false,
-            "defaultValue": "CURRENT_TIMESTAMP"
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "lunchAda",
+            "columnName": "lunch_ada",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "dinnerAda",
+            "columnName": "dinner_ada",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
           }
         ],
         "primaryKey": {
@@ -346,7 +421,7 @@
       },
       {
         "tableName": "items",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`item_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT, `category` TEXT, `description` TEXT, `is_ada_friendly` INTEGER NOT NULL DEFAULT 0, `created_date` INTEGER DEFAULT CURRENT_TIMESTAMP)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`item_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT, `category` TEXT, `description` TEXT, `is_ada_friendly` INTEGER NOT NULL DEFAULT 0)",
         "fields": [
           {
             "fieldPath": "itemId",
@@ -378,13 +453,6 @@
             "affinity": "INTEGER",
             "notNull": true,
             "defaultValue": "0"
-          },
-          {
-            "fieldPath": "createdDate",
-            "columnName": "created_date",
-            "affinity": "INTEGER",
-            "notNull": false,
-            "defaultValue": "CURRENT_TIMESTAMP"
           }
         ],
         "primaryKey": {
@@ -619,7 +687,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1d3bbc63612a2d4ebe4691c4b89f2ff9')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '15b7fdfe5846c46b88d6e8e8ea5186bd')"
     ]
   }
 }

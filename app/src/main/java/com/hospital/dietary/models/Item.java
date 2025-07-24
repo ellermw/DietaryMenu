@@ -1,7 +1,7 @@
 package com.hospital.dietary.models;
 
 /**
- * Item model class for backward compatibility
+ * Item model class for dietary menu items
  */
 public class Item {
     private int itemId;
@@ -9,15 +9,20 @@ public class Item {
     private String category;
     private String description;
     private int isAdaFriendly;
+    private boolean isActive;
+    private int sortOrder;
 
-    // Constructors
-    public Item() {}
+    // Constructor
+    public Item() {
+        this.isActive = true;
+        this.isAdaFriendly = 0;
+        this.sortOrder = 0;
+    }
 
-    public Item(String itemName, String category, String description, int isAdaFriendly) {
+    public Item(String itemName, String category) {
+        this();
         this.itemName = itemName;
         this.category = category;
-        this.description = description;
-        this.isAdaFriendly = isAdaFriendly;
     }
 
     // Getters and Setters
@@ -35,6 +40,15 @@ public class Item {
 
     public void setItemName(String itemName) {
         this.itemName = itemName;
+    }
+
+    // Alias methods for compatibility
+    public String getName() {
+        return itemName;
+    }
+
+    public void setName(String name) {
+        this.itemName = name;
     }
 
     public String getCategory() {
@@ -61,7 +75,6 @@ public class Item {
         this.isAdaFriendly = isAdaFriendly;
     }
 
-    // Helper method for boolean conversion
     public boolean isAdaFriendly() {
         return isAdaFriendly == 1;
     }
@@ -70,8 +83,45 @@ public class Item {
         this.isAdaFriendly = adaFriendly ? 1 : 0;
     }
 
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
+    public int getSortOrder() {
+        return sortOrder;
+    }
+
+    public void setSortOrder(int sortOrder) {
+        this.sortOrder = sortOrder;
+    }
+
+    // Helper methods
     @Override
     public String toString() {
+        return itemName + " (" + category + ")";
+    }
+
+    public String getDisplayName() {
+        if (isAdaFriendly == 1) {
+            return itemName + " (ADA)";
+        }
         return itemName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Item item = (Item) o;
+        return itemId == item.itemId;
+    }
+
+    @Override
+    public int hashCode() {
+        return itemId;
     }
 }

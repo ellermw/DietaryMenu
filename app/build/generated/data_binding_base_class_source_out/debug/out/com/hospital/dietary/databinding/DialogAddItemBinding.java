@@ -25,27 +25,22 @@ public final class DialogAddItemBinding implements ViewBinding {
   public final CheckBox adaFriendlyCheckBox;
 
   @NonNull
-  public final Spinner itemCategorySpinner;
+  public final Spinner categorySpinner;
 
   @NonNull
-  public final EditText itemDescriptionEditText;
+  public final EditText descriptionEditText;
 
   @NonNull
   public final EditText itemNameEditText;
 
-  @NonNull
-  public final EditText itemSizeEditText;
-
   private DialogAddItemBinding(@NonNull LinearLayout rootView,
-      @NonNull CheckBox adaFriendlyCheckBox, @NonNull Spinner itemCategorySpinner,
-      @NonNull EditText itemDescriptionEditText, @NonNull EditText itemNameEditText,
-      @NonNull EditText itemSizeEditText) {
+      @NonNull CheckBox adaFriendlyCheckBox, @NonNull Spinner categorySpinner,
+      @NonNull EditText descriptionEditText, @NonNull EditText itemNameEditText) {
     this.rootView = rootView;
     this.adaFriendlyCheckBox = adaFriendlyCheckBox;
-    this.itemCategorySpinner = itemCategorySpinner;
-    this.itemDescriptionEditText = itemDescriptionEditText;
+    this.categorySpinner = categorySpinner;
+    this.descriptionEditText = descriptionEditText;
     this.itemNameEditText = itemNameEditText;
-    this.itemSizeEditText = itemSizeEditText;
   }
 
   @Override
@@ -81,15 +76,15 @@ public final class DialogAddItemBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.itemCategorySpinner;
-      Spinner itemCategorySpinner = ViewBindings.findChildViewById(rootView, id);
-      if (itemCategorySpinner == null) {
+      id = R.id.categorySpinner;
+      Spinner categorySpinner = ViewBindings.findChildViewById(rootView, id);
+      if (categorySpinner == null) {
         break missingId;
       }
 
-      id = R.id.itemDescriptionEditText;
-      EditText itemDescriptionEditText = ViewBindings.findChildViewById(rootView, id);
-      if (itemDescriptionEditText == null) {
+      id = R.id.descriptionEditText;
+      EditText descriptionEditText = ViewBindings.findChildViewById(rootView, id);
+      if (descriptionEditText == null) {
         break missingId;
       }
 
@@ -99,14 +94,8 @@ public final class DialogAddItemBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.itemSizeEditText;
-      EditText itemSizeEditText = ViewBindings.findChildViewById(rootView, id);
-      if (itemSizeEditText == null) {
-        break missingId;
-      }
-
-      return new DialogAddItemBinding((LinearLayout) rootView, adaFriendlyCheckBox,
-          itemCategorySpinner, itemDescriptionEditText, itemNameEditText, itemSizeEditText);
+      return new DialogAddItemBinding((LinearLayout) rootView, adaFriendlyCheckBox, categorySpinner,
+          descriptionEditText, itemNameEditText);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

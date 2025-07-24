@@ -1,224 +1,270 @@
 package com.hospital.dietary.dao;
 
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import com.hospital.dietary.DatabaseHelper;
-import com.hospital.dietary.data.database.AppDatabase;
-import com.hospital.dietary.data.entities.ItemEntity;
 import com.hospital.dietary.models.Item;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * ItemDAO compatibility class that wraps Room DAO operations
+ * ItemDAO class for managing dietary menu items
  */
 public class ItemDAO {
 
-    private final DatabaseHelper dbHelper;
-    private final AppDatabase roomDatabase;
-    private final com.hospital.dietary.data.dao.ItemDao roomItemDao;
+    private DatabaseHelper dbHelper;
 
     public ItemDAO(DatabaseHelper dbHelper) {
         this.dbHelper = dbHelper;
-        this.roomDatabase = dbHelper.getRoomDatabase();
-        this.roomItemDao = roomDatabase.itemDao();
     }
 
     /**
-     * Add new item
+     * Insert a new item
      */
-    public long addItem(Item item) {
-        CountDownLatch latch = new CountDownLatch(1);
-        AtomicReference<Long> result = new AtomicReference<>(-1L);
+    public long insertItem(Item item) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
 
-        AppDatabase.databaseWriteExecutor.execute(() -> {
-            ItemEntity entity = convertToEntity(item);
-            long id = roomItemDao.insertItem(entity);
-            result.set(id);
-            latch.countDown();
-        });
+        values.put("name", item.getItemName());
+        values.put("category", item.getCategory());
+        values.put("description", item.getDescription());
+        values.put("is_ada_friendly", item.getIsAdaFriendly());
 
-        try {
-            latch.await();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        return db.insert("items", null, values);
+    }
 
-        return result.get();
+    /**
+     * Update an existing item
+     */
+    public int updateItem(Item item) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put("name", item.getItemName());
+        values.put("category", item.getCategory());
+        values.put("description", item.getDescription());
+        values.put("is_ada_friendly", item.getIsAdaFriendly());
+
+        return db.update("items", values, "item_id = ?",
+                new String[]{String.valueOf(item.getItemId())});
+    }
+
+    /**
+     * Delete an item - returns boolean for success
+     */
+    public boolean deleteItem(int itemId) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        int rowsDeleted = db.delete("items", "item_id = ?",
+                new String[]{String.valueOf(itemId)});
+        return rowsDeleted > 0;
     }
 
     /**
      * Get item by ID
      */
-    public Item getItemById(long itemId) {
-        CountDownLatch latch = new CountDownLatch(1);
-        AtomicReference<Item> result = new AtomicReference<>();
+    public Item getItemById(int itemId) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.query("items", null, "item_id = ?",
+                new String[]{String.valueOf(itemId)}, null, null, null);
 
-        AppDatabase.databaseWriteExecutor.execute(() -> {
-            ItemEntity entity = roomItemDao.getItemById(itemId);
-            if (entity != null) {
-                result.set(convertFromEntity(entity));
-            }
-            latch.countDown();
-        });
-
-        try {
-            latch.await();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        Item item = null;
+        if (cursor != null && cursor.moveToFirst()) {
+            item = cursorToItem(cursor);
+            cursor.close();
         }
 
-        return result.get();
+        return item;
     }
 
     /**
      * Get all items
      */
     public List<Item> getAllItems() {
-        CountDownLatch latch = new CountDownLatch(1);
-        AtomicReference<List<Item>> result = new AtomicReference<>(new ArrayList<>());
+        List<Item> items = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        AppDatabase.databaseWriteExecutor.execute(() -> {
-            List<ItemEntity> entities = roomItemDao.getAllItems();
-            List<Item> items = new ArrayList<>();
+        String query = "SELECT * FROM items ORDER BY category, name";
+        Cursor cursor = db.rawQuery(query, null);
 
-            for (ItemEntity entity : entities) {
-                items.add(convertFromEntity(entity));
-            }
-
-            result.set(items);
-            latch.countDown();
-        });
-
-        try {
-            latch.await();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                items.add(cursorToItem(cursor));
+            } while (cursor.moveToNext());
+            cursor.close();
         }
 
-        return result.get();
+        return items;
     }
 
     /**
      * Get items by category
      */
     public List<Item> getItemsByCategory(String category) {
-        CountDownLatch latch = new CountDownLatch(1);
-        AtomicReference<List<Item>> result = new AtomicReference<>(new ArrayList<>());
+        List<Item> items = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        AppDatabase.databaseWriteExecutor.execute(() -> {
-            List<ItemEntity> entities = roomItemDao.getItemsByCategory(category);
-            List<Item> items = new ArrayList<>();
+        String query = "SELECT * FROM items WHERE category = ? ORDER BY name";
+        Cursor cursor = db.rawQuery(query, new String[]{category});
 
-            for (ItemEntity entity : entities) {
-                items.add(convertFromEntity(entity));
-            }
-
-            result.set(items);
-            latch.countDown();
-        });
-
-        try {
-            latch.await();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                items.add(cursorToItem(cursor));
+            } while (cursor.moveToNext());
+            cursor.close();
         }
 
-        return result.get();
+        return items;
     }
 
     /**
-     * Update item
+     * Get ADA-friendly items
      */
-    public void updateItem(Item item) {
-        AppDatabase.databaseWriteExecutor.execute(() -> {
-            ItemEntity entity = convertToEntity(item);
-            entity.setItemId(item.getItemId());
-            roomItemDao.updateItem(entity);
-        });
+    public List<Item> getAdaFriendlyItems() {
+        List<Item> items = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        String query = "SELECT * FROM items WHERE is_ada_friendly = 1 ORDER BY category, name";
+        Cursor cursor = db.rawQuery(query, null);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                items.add(cursorToItem(cursor));
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+
+        return items;
     }
 
     /**
-     * Delete item
+     * Get ADA-friendly items by category
      */
-    public void deleteItem(long itemId) {
-        AppDatabase.databaseWriteExecutor.execute(() -> {
-            roomItemDao.deleteItemById(itemId);
-        });
+    public List<Item> getAdaItemsByCategory(String category) {
+        List<Item> items = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        String query = "SELECT * FROM items WHERE category = ? AND is_ada_friendly = 1 ORDER BY name";
+        Cursor cursor = db.rawQuery(query, new String[]{category});
+
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                items.add(cursorToItem(cursor));
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+
+        return items;
     }
 
     /**
-     * Search items
+     * Search items by name or category
      */
     public List<Item> searchItems(String searchTerm) {
-        CountDownLatch latch = new CountDownLatch(1);
-        AtomicReference<List<Item>> result = new AtomicReference<>(new ArrayList<>());
+        List<Item> items = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        AppDatabase.databaseWriteExecutor.execute(() -> {
-            List<ItemEntity> entities = roomItemDao.searchItems(searchTerm);
-            List<Item> items = new ArrayList<>();
+        String query = "SELECT * FROM items WHERE " +
+                "LOWER(name) LIKE LOWER(?) OR " +
+                "LOWER(category) LIKE LOWER(?) " +
+                "ORDER BY category, name";
 
-            for (ItemEntity entity : entities) {
-                items.add(convertFromEntity(entity));
-            }
+        String searchPattern = "%" + searchTerm + "%";
+        Cursor cursor = db.rawQuery(query, new String[]{searchPattern, searchPattern});
 
-            result.set(items);
-            latch.countDown();
-        });
-
-        try {
-            latch.await();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                items.add(cursorToItem(cursor));
+            } while (cursor.moveToNext());
+            cursor.close();
         }
 
-        return result.get();
+        return items;
     }
 
     /**
-     * Get all categories
+     * Get all unique categories
      */
     public List<String> getAllCategories() {
-        CountDownLatch latch = new CountDownLatch(1);
-        AtomicReference<List<String>> result = new AtomicReference<>(new ArrayList<>());
+        List<String> categories = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        AppDatabase.databaseWriteExecutor.execute(() -> {
-            List<String> categories = roomItemDao.getAllCategories();
-            result.set(categories);
-            latch.countDown();
-        });
+        String query = "SELECT DISTINCT category FROM items ORDER BY category";
+        Cursor cursor = db.rawQuery(query, null);
 
-        try {
-            latch.await();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                categories.add(cursor.getString(0));
+            } while (cursor.moveToNext());
+            cursor.close();
         }
 
-        return result.get();
+        return categories;
     }
 
     /**
-     * Convert Item model to Entity
+     * Check if item exists by name and category
      */
-    private ItemEntity convertToEntity(Item item) {
-        ItemEntity entity = new ItemEntity();
-        entity.setName(item.getItemName()); // Changed from setItemName to setName
-        entity.setCategory(item.getCategory());
-        entity.setDescription(item.getDescription());
-        entity.setAdaFriendly(item.getIsAdaFriendly() == 1); // Changed from setIsAdaFriendly
-        return entity;
+    public boolean itemExists(String name, String category) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.query("items", new String[]{"item_id"},
+                "LOWER(name) = LOWER(?) AND LOWER(category) = LOWER(?)",
+                new String[]{name, category}, null, null, null);
+
+        boolean exists = false;
+        if (cursor != null) {
+            exists = cursor.getCount() > 0;
+            cursor.close();
+        }
+
+        return exists;
     }
 
     /**
-     * Convert Entity to Item model
+     * Get item count
      */
-    private Item convertFromEntity(ItemEntity entity) {
+    public int getItemCount() {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM items", null);
+
+        int count = 0;
+        if (cursor != null && cursor.moveToFirst()) {
+            count = cursor.getInt(0);
+            cursor.close();
+        }
+
+        return count;
+    }
+
+    /**
+     * Get item count by category
+     */
+    public int getItemCountByCategory(String category) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.query("items", new String[]{"COUNT(*)"},
+                "category = ?", new String[]{category}, null, null, null);
+
+        int count = 0;
+        if (cursor != null && cursor.moveToFirst()) {
+            count = cursor.getInt(0);
+            cursor.close();
+        }
+
+        return count;
+    }
+
+    /**
+     * Convert cursor to Item object
+     */
+    private Item cursorToItem(Cursor cursor) {
         Item item = new Item();
-        item.setItemId((int) entity.getItemId());
-        item.setItemName(entity.getName()); // Changed from getItemName to getName
-        item.setCategory(entity.getCategory());
-        item.setDescription(entity.getDescription());
-        item.setIsAdaFriendly(entity.isAdaFriendly() ? 1 : 0); // Changed from getIsAdaFriendly
+
+        item.setItemId(cursor.getInt(cursor.getColumnIndex("item_id")));
+        item.setItemName(cursor.getString(cursor.getColumnIndex("name")));
+        item.setCategory(cursor.getString(cursor.getColumnIndex("category")));
+        item.setDescription(cursor.getString(cursor.getColumnIndex("description")));
+        item.setIsAdaFriendly(cursor.getInt(cursor.getColumnIndex("is_ada_friendly")));
+
         return item;
     }
 }

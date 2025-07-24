@@ -236,6 +236,10 @@
         "source": "com.hospital.dietary.app-main-6:/layout/activity_retired_orders.xml"
     },
     {
+        "merged": "com.hospital.dietary.app-debug-4:/menu_menu_view_orders.xml.flat",
+        "source": "com.hospital.dietary.app-main-6:/menu/menu_view_orders.xml"
+    },
+    {
         "merged": "com.hospital.dietary.app-debug-4:/drawable_spinner_background.xml.flat",
         "source": "com.hospital.dietary.app-main-6:/drawable/spinner_background.xml"
     },

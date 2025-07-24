@@ -1,10 +1,12 @@
 package com.hospital.dietary.models;
 
+import java.util.Date;
+
 /**
- * Patient model class for backward compatibility
+ * Patient model class with all required fields and methods
  */
 public class Patient {
-    private long patientId; // Changed from int to long
+    private long patientId;
     private String patientFirstName;
     private String patientLastName;
     private String wing;
@@ -33,9 +35,50 @@ public class Patient {
     private boolean breakfastComplete;
     private boolean lunchComplete;
     private boolean dinnerComplete;
+    private boolean breakfastNPO;
+    private boolean lunchNPO;
+    private boolean dinnerNPO;
+    private String breakfastItems;
+    private String lunchItems;
+    private String dinnerItems;
+    private String breakfastJuices;
+    private String lunchJuices;
+    private String dinnerJuices;
+    private String breakfastDrinks;
+    private String lunchDrinks;
+    private String dinnerDrinks;
+    private String breakfastDiet;
+    private String lunchDiet;
+    private String dinnerDiet;
+    private boolean breakfastAda;
+    private boolean lunchAda;
+    private boolean dinnerAda;
+    private Date createdDate;
 
-    // Constructors
-    public Patient() {}
+    // Constructor
+    public Patient() {
+        this.createdDate = new Date();
+        // Set default values
+        this.fluidRestriction = "No Restriction";
+        this.textureModifications = "Regular";
+        this.breakfastComplete = false;
+        this.lunchComplete = false;
+        this.dinnerComplete = false;
+        this.breakfastNPO = false;
+        this.lunchNPO = false;
+        this.dinnerNPO = false;
+        this.adaDiet = false;
+        this.mechanicalChopped = false;
+        this.mechanicalGround = false;
+        this.biteSize = false;
+        this.breadOK = true;
+        this.nectarThick = false;
+        this.puddingThick = false;
+        this.honeyThick = false;
+        this.extraGravy = false;
+        this.meatsOnly = false;
+        this.isPuree = false;
+    }
 
     // Getters and Setters
     public long getPatientId() {
@@ -190,16 +233,12 @@ public class Patient {
         this.meatsOnly = meatsOnly;
     }
 
-    public boolean getIsPuree() {
-        return isPuree;
-    }
-
     public boolean isPuree() {
         return isPuree;
     }
 
-    public void setIsPuree(boolean isPuree) {
-        this.isPuree = isPuree;
+    public void setPuree(boolean puree) {
+        isPuree = puree;
     }
 
     public String getAllergies() {
@@ -274,8 +313,164 @@ public class Patient {
         this.dinnerComplete = dinnerComplete;
     }
 
-    // Helper method to get full name
+    public boolean isBreakfastNPO() {
+        return breakfastNPO;
+    }
+
+    public void setBreakfastNPO(boolean breakfastNPO) {
+        this.breakfastNPO = breakfastNPO;
+    }
+
+    public boolean isLunchNPO() {
+        return lunchNPO;
+    }
+
+    public void setLunchNPO(boolean lunchNPO) {
+        this.lunchNPO = lunchNPO;
+    }
+
+    public boolean isDinnerNPO() {
+        return dinnerNPO;
+    }
+
+    public void setDinnerNPO(boolean dinnerNPO) {
+        this.dinnerNPO = dinnerNPO;
+    }
+
+    public String getBreakfastItems() {
+        return breakfastItems;
+    }
+
+    public void setBreakfastItems(String breakfastItems) {
+        this.breakfastItems = breakfastItems;
+    }
+
+    public String getLunchItems() {
+        return lunchItems;
+    }
+
+    public void setLunchItems(String lunchItems) {
+        this.lunchItems = lunchItems;
+    }
+
+    public String getDinnerItems() {
+        return dinnerItems;
+    }
+
+    public void setDinnerItems(String dinnerItems) {
+        this.dinnerItems = dinnerItems;
+    }
+
+    public String getBreakfastJuices() {
+        return breakfastJuices;
+    }
+
+    public void setBreakfastJuices(String breakfastJuices) {
+        this.breakfastJuices = breakfastJuices;
+    }
+
+    public String getLunchJuices() {
+        return lunchJuices;
+    }
+
+    public void setLunchJuices(String lunchJuices) {
+        this.lunchJuices = lunchJuices;
+    }
+
+    public String getDinnerJuices() {
+        return dinnerJuices;
+    }
+
+    public void setDinnerJuices(String dinnerJuices) {
+        this.dinnerJuices = dinnerJuices;
+    }
+
+    public String getBreakfastDrinks() {
+        return breakfastDrinks;
+    }
+
+    public void setBreakfastDrinks(String breakfastDrinks) {
+        this.breakfastDrinks = breakfastDrinks;
+    }
+
+    public String getLunchDrinks() {
+        return lunchDrinks;
+    }
+
+    public void setLunchDrinks(String lunchDrinks) {
+        this.lunchDrinks = lunchDrinks;
+    }
+
+    public String getDinnerDrinks() {
+        return dinnerDrinks;
+    }
+
+    public void setDinnerDrinks(String dinnerDrinks) {
+        this.dinnerDrinks = dinnerDrinks;
+    }
+
+    public String getBreakfastDiet() {
+        return breakfastDiet;
+    }
+
+    public void setBreakfastDiet(String breakfastDiet) {
+        this.breakfastDiet = breakfastDiet;
+    }
+
+    public String getLunchDiet() {
+        return lunchDiet;
+    }
+
+    public void setLunchDiet(String lunchDiet) {
+        this.lunchDiet = lunchDiet;
+    }
+
+    public String getDinnerDiet() {
+        return dinnerDiet;
+    }
+
+    public void setDinnerDiet(String dinnerDiet) {
+        this.dinnerDiet = dinnerDiet;
+    }
+
+    public boolean isBreakfastAda() {
+        return breakfastAda;
+    }
+
+    public void setBreakfastAda(boolean breakfastAda) {
+        this.breakfastAda = breakfastAda;
+    }
+
+    public boolean isLunchAda() {
+        return lunchAda;
+    }
+
+    public void setLunchAda(boolean lunchAda) {
+        this.lunchAda = lunchAda;
+    }
+
+    public boolean isDinnerAda() {
+        return dinnerAda;
+    }
+
+    public void setDinnerAda(boolean dinnerAda) {
+        this.dinnerAda = dinnerAda;
+    }
+
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    // Helper methods
     public String getFullName() {
         return patientFirstName + " " + patientLastName;
+    }
+
+    public String getLocationInfo() {
+        return wing + "-" + roomNumber;
     }
 }
