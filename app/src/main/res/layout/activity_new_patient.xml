@@ -1,112 +1,364 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-    <!-- App Name -->
-    <string name="app_name">Hospital Dietary Management</string>
+    android:fillViewport="true"
+    android:background="#f8f9fa">
 
-    <!-- Login strings -->
-    <string name="login_title">Hospital Dietary Management</string>
-    <string name="login_subtitle">Dietary Management Application</string>
-    <string name="username">Username</string>
-    <string name="password">Password</string>
-    <string name="sign_in">SIGN IN</string>
-    <string name="login">Login</string>
-    <string name="welcome_message">Welcome, %1$s!</string>
-    <string name="login_failed">Invalid username or password</string>
-    <string name="invalid_credentials">Invalid username or password</string>
-    <string name="account_inactive">Account is inactive. Please contact administrator.</string>
-    <string name="login_error">Login error occurred</string>
-    <string name="app_version">Version 0.0.45</string>
-    <string name="copyright_message">© 2025 Hospital Dietary Management</string>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-    <!-- Password management strings -->
-    <string name="password_required">Password is required</string>
-    <string name="password_change_required">Password Change Required</string>
-    <string name="change_password">Change Password</string>
-    <string name="password_too_short">Password must be at least 6 characters</string>
-    <string name="passwords_do_not_match">Passwords do not match</string>
-    <string name="password_changed_success">Password changed successfully!</string>
-    <string name="password_change_failed">Password change failed</string>
-    <string name="new_password">New Password</string>
-    <string name="confirm_password">Confirm Password</string>
-    <string name="current_password">Current Password</string>
+        <!-- Toolbar -->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
-    <!-- Main menu strings -->
-    <string name="patient_information">Patient Information</string>
-    <string name="patient_info">Patient Info</string>
-    <string name="pending_orders">Pending Orders</string>
-    <string name="retired_orders">Retired Orders</string>
-    <string name="user_management">User Management</string>
-    <string name="item_management">Item Management</string>
-    <string name="default_menu_management">Default Menu Management</string>
-    <string name="documents">Documents</string>
-    <string name="logout">Logout</string>
-    <string name="operations">Operations</string>
-    <string name="admin_tools">Admin Tools</string>
+        <!-- Content -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
 
-    <!-- Documents strings -->
-    <string name="production_sheets">Production Sheets</string>
-    <string name="stock_sheets">Stock Sheets</string>
-    <string name="galley_stock">Galley Stock</string>
-    <string name="misc">Misc</string>
-    <string name="production_documents">Production Documents</string>
-    <string name="stock_documents">Stock Documents</string>
+            <!-- Basic Information Card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="2dp">
 
-    <!-- Patient Information strings -->
-    <string name="new_patient">New Patient</string>
-    <string name="existing_patients">Existing Patients</string>
-    <string name="patient_details">Patient Details</string>
-    <string name="add_patient">Add Patient</string>
-    <string name="edit_patient">Edit Patient</string>
-    <string name="patient_name">Patient Name</string>
-    <string name="patient_location">Patient Location</string>
-    <string name="diet_type">Diet Type</string>
-    <string name="basic_information">Basic Information</string>
-    <string name="dietary_requirements">Dietary Requirements</string>
-    <string name="texture_modifications">Texture Modifications</string>
-    <string name="physical_modifications">Physical Modifications</string>
-    <string name="mechanical_chopped">Mechanical Chopped</string>
-    <string name="mechanical_ground">Mechanical Ground</string>
-    <string name="bite_size">Bite Size</string>
-    <string name="bread_ok">Bread OK</string>
-    <string name="liquid_thickness">Liquid Thickness</string>
-    <string name="nectar_thick">Nectar Thick</string>
-    <string name="pudding_thick">Pudding Thick</string>
-    <string name="honey_thick">Honey Thick</string>
-    <string name="special_modifications">Special Modifications</string>
-    <string name="extra_gravy">Extra Gravy</string>
-    <string name="meats_only">Meats Only</string>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
-    <!-- General UI strings -->
-    <string name="save">Save</string>
-    <string name="cancel">Cancel</string>
-    <string name="delete">Delete</string>
-    <string name="edit">Edit</string>
-    <string name="add">Add</string>
-    <string name="search">Search</string>
-    <string name="filter">Filter</string>
-    <string name="all">All</string>
-    <string name="none">None</string>
-    <string name="loading">Loading...</string>
-    <string name="error">Error</string>
-    <string name="success">Success</string>
-    <string name="confirm">Confirm</string>
-    <string name="yes">Yes</string>
-    <string name="no">No</string>
-    <string name="ok">OK</string>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Basic Information"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#2c3e50"
+                        android:layout_marginBottom="16dp" />
 
-    <!-- Error messages -->
-    <string name="error_loading_data">Error loading data</string>
-    <string name="error_saving_data">Error saving data</string>
-    <string name="error_deleting_data">Error deleting data</string>
-    <string name="error_network">Network error</string>
-    <string name="error_unknown">Unknown error occurred</string>
+                    <!-- First Name -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp">
 
-    <!-- Success messages -->
-    <string name="data_saved_successfully">Data saved successfully</string>
-    <string name="data_deleted_successfully">Data deleted successfully</string>
-    <string name="operation_completed">Operation completed successfully</string>
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/firstNameInput"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="First Name"
+                            android:inputType="textPersonName" />
 
-</LinearLayout>
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Last Name -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/lastNameInput"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Last Name"
+                            android:inputType="textPersonName" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Wing and Room -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:layout_marginEnd="8dp">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Wing"
+                                android:textSize="14sp"
+                                android:textColor="#7f8c8d"
+                                android:layout_marginBottom="4dp" />
+
+                            <Spinner
+                                android:id="@+id/wingSpinner"
+                                android:layout_width="match_parent"
+                                android:layout_height="48dp"
+                                android:background="@android:drawable/btn_dropdown" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:layout_marginStart="8dp">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Room"
+                                android:textSize="14sp"
+                                android:textColor="#7f8c8d"
+                                android:layout_marginBottom="4dp" />
+
+                            <Spinner
+                                android:id="@+id/roomSpinner"
+                                android:layout_width="match_parent"
+                                android:layout_height="48dp"
+                                android:background="@android:drawable/btn_dropdown" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Dietary Requirements Card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Dietary Requirements"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#2c3e50"
+                        android:layout_marginBottom="16dp" />
+
+                    <!-- Diet Type -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Diet Type"
+                        android:textSize="14sp"
+                        android:textColor="#7f8c8d"
+                        android:layout_marginBottom="4dp" />
+
+                    <Spinner
+                        android:id="@+id/dietSpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:background="@android:drawable/btn_dropdown"
+                        android:layout_marginBottom="12dp" />
+
+                    <!-- ADA Diet Checkbox -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="12dp">
+
+                        <CheckBox
+                            android:id="@+id/adaDietCheckBox"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:visibility="gone" />
+
+                        <TextView
+                            android:id="@+id/adaDietLabel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="ADA Diet (Diabetic modifications)"
+                            android:textSize="16sp"
+                            android:textColor="#2c3e50"
+                            android:layout_marginStart="8dp"
+                            android:visibility="gone" />
+
+                    </LinearLayout>
+
+                    <!-- Fluid Restriction -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Fluid Restriction"
+                        android:textSize="14sp"
+                        android:textColor="#7f8c8d"
+                        android:layout_marginBottom="4dp" />
+
+                    <Spinner
+                        android:id="@+id/fluidRestrictionSpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:background="@android:drawable/btn_dropdown" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Texture Modifications Card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Texture Modifications"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#2c3e50"
+                        android:layout_marginBottom="16dp" />
+
+                    <!-- Physical Modifications -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Physical Modifications"
+                        android:textSize="16sp"
+                        android:textColor="#34495e"
+                        android:layout_marginBottom="8dp" />
+
+                    <CheckBox
+                        android:id="@+id/mechanicalGroundCheckBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Mechanical Ground"
+                        android:layout_marginBottom="4dp" />
+
+                    <CheckBox
+                        android:id="@+id/mechanicalChoppedCheckBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Mechanical Chopped"
+                        android:layout_marginBottom="4dp" />
+
+                    <CheckBox
+                        android:id="@+id/biteSizeCheckBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Bite Size"
+                        android:layout_marginBottom="4dp" />
+
+                    <CheckBox
+                        android:id="@+id/breadOkCheckBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Bread OK"
+                        android:layout_marginBottom="4dp" />
+
+                    <CheckBox
+                        android:id="@+id/extraGravyCheckBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Extra Gravy"
+                        android:layout_marginBottom="4dp" />
+
+                    <CheckBox
+                        android:id="@+id/meatsOnlyCheckBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Meats Only"
+                        android:layout_marginBottom="16dp" />
+
+                    <!-- Thicken Liquids -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Liquid Thickness"
+                        android:textSize="16sp"
+                        android:textColor="#34495e"
+                        android:layout_marginBottom="8dp" />
+
+                    <CheckBox
+                        android:id="@+id/nectarThickCheckBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Nectar Thick"
+                        android:layout_marginBottom="4dp" />
+
+                    <CheckBox
+                        android:id="@+id/honeyThickCheckBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Honey Thick"
+                        android:layout_marginBottom="4dp" />
+
+                    <CheckBox
+                        android:id="@+id/puddingThickCheckBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Pudding Thick" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Action Buttons -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp">
+
+                <Button
+                    android:id="@+id/cancelButton"
+                    android:layout_width="0dp"
+                    android:layout_height="56dp"
+                    android:layout_weight="1"
+                    android:text="Cancel"
+                    android:textColor="@android:color/white"
+                    android:background="#95a5a6"
+                    android:layout_marginEnd="8dp" />
+
+                <Button
+                    android:id="@+id/savePatientButton"
+                    android:layout_width="0dp"
+                    android:layout_height="56dp"
+                    android:layout_weight="1"
+                    android:text="Save Patient"
+                    android:textColor="@android:color/white"
+                    android:background="#27ae60"
+                    android:layout_marginStart="8dp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>

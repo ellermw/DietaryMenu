@@ -4,10 +4,8 @@ package com.hospital.dietary.databinding;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.Button;
+import android.widget.ScrollView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.viewbinding.ViewBinding;
@@ -19,29 +17,24 @@ import java.lang.String;
 
 public final class ActivityPatientInfoBinding implements ViewBinding {
   @NonNull
-  private final LinearLayout rootView;
+  private final ScrollView rootView;
 
   @NonNull
-  public final TextView patientsCountText;
+  public final Button existingPatientsButton;
 
   @NonNull
-  public final ListView patientsListView;
+  public final Button newPatientButton;
 
-  @NonNull
-  public final EditText searchInput;
-
-  private ActivityPatientInfoBinding(@NonNull LinearLayout rootView,
-      @NonNull TextView patientsCountText, @NonNull ListView patientsListView,
-      @NonNull EditText searchInput) {
+  private ActivityPatientInfoBinding(@NonNull ScrollView rootView,
+      @NonNull Button existingPatientsButton, @NonNull Button newPatientButton) {
     this.rootView = rootView;
-    this.patientsCountText = patientsCountText;
-    this.patientsListView = patientsListView;
-    this.searchInput = searchInput;
+    this.existingPatientsButton = existingPatientsButton;
+    this.newPatientButton = newPatientButton;
   }
 
   @Override
   @NonNull
-  public LinearLayout getRoot() {
+  public ScrollView getRoot() {
     return rootView;
   }
 
@@ -66,26 +59,20 @@ public final class ActivityPatientInfoBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
-      id = R.id.patientsCountText;
-      TextView patientsCountText = ViewBindings.findChildViewById(rootView, id);
-      if (patientsCountText == null) {
+      id = R.id.existingPatientsButton;
+      Button existingPatientsButton = ViewBindings.findChildViewById(rootView, id);
+      if (existingPatientsButton == null) {
         break missingId;
       }
 
-      id = R.id.patientsListView;
-      ListView patientsListView = ViewBindings.findChildViewById(rootView, id);
-      if (patientsListView == null) {
+      id = R.id.newPatientButton;
+      Button newPatientButton = ViewBindings.findChildViewById(rootView, id);
+      if (newPatientButton == null) {
         break missingId;
       }
 
-      id = R.id.searchInput;
-      EditText searchInput = ViewBindings.findChildViewById(rootView, id);
-      if (searchInput == null) {
-        break missingId;
-      }
-
-      return new ActivityPatientInfoBinding((LinearLayout) rootView, patientsCountText,
-          patientsListView, searchInput);
+      return new ActivityPatientInfoBinding((ScrollView) rootView, existingPatientsButton,
+          newPatientButton);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

@@ -1,83 +1,91 @@
 package com.hospital.dietary.models;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
-/**
- * Patient model class with all required fields and methods
- */
 public class Patient {
+    // Basic patient information
     private long patientId;
     private String patientFirstName;
     private String patientLastName;
     private String wing;
     private String roomNumber;
+
+    // Diet information
     private String dietType;
     private String diet;
     private boolean adaDiet;
     private String fluidRestriction;
     private String textureModifications;
-    private boolean mechanicalChopped;
+
+    // Texture modification flags
     private boolean mechanicalGround;
+    private boolean mechanicalChopped;
     private boolean biteSize;
     private boolean breadOK;
-    private boolean nectarThick;
-    private boolean puddingThick;
-    private boolean honeyThick;
     private boolean extraGravy;
     private boolean meatsOnly;
-    private boolean isPuree;
-    private String allergies;
-    private String likes;
-    private String dislikes;
-    private String comments;
-    private String preferredDrink;
-    private String drinkVariety;
+
+    // Liquid thickness flags
+    private boolean nectarThick;
+    private boolean honeyThick;
+    private boolean puddingThick;
+
+    // Meal completion status
     private boolean breakfastComplete;
     private boolean lunchComplete;
     private boolean dinnerComplete;
     private boolean breakfastNPO;
     private boolean lunchNPO;
     private boolean dinnerNPO;
+
+    // Meal items
     private String breakfastItems;
     private String lunchItems;
     private String dinnerItems;
+
+    // Meal juices
     private String breakfastJuices;
     private String lunchJuices;
     private String dinnerJuices;
+
+    // Meal drinks
     private String breakfastDrinks;
     private String lunchDrinks;
     private String dinnerDrinks;
+
+    // Individual meal diet types
     private String breakfastDiet;
     private String lunchDiet;
     private String dinnerDiet;
     private boolean breakfastAda;
     private boolean lunchAda;
     private boolean dinnerAda;
+
+    // Other fields
+    private List<String> mealSelections;
     private Date createdDate;
+    private Date orderDate;
 
     // Constructor
     public Patient() {
-        this.createdDate = new Date();
-        // Set default values
-        this.fluidRestriction = "No Restriction";
-        this.textureModifications = "Regular";
         this.breakfastComplete = false;
         this.lunchComplete = false;
         this.dinnerComplete = false;
         this.breakfastNPO = false;
         this.lunchNPO = false;
         this.dinnerNPO = false;
-        this.adaDiet = false;
-        this.mechanicalChopped = false;
-        this.mechanicalGround = false;
-        this.biteSize = false;
-        this.breadOK = true;
-        this.nectarThick = false;
-        this.puddingThick = false;
-        this.honeyThick = false;
-        this.extraGravy = false;
-        this.meatsOnly = false;
-        this.isPuree = false;
+        this.createdDate = new Date();
+        this.mealSelections = new ArrayList<>();
+
+        // Initialize individual meal diets to null (will use main diet as fallback)
+        this.breakfastDiet = null;
+        this.lunchDiet = null;
+        this.dinnerDiet = null;
+        this.breakfastAda = false;
+        this.lunchAda = false;
+        this.dinnerAda = false;
     }
 
     // Getters and Setters
@@ -86,6 +94,10 @@ public class Patient {
     }
 
     public void setPatientId(long patientId) {
+        this.patientId = patientId;
+    }
+
+    public void setPatientId(int patientId) {
         this.patientId = patientId;
     }
 
@@ -127,14 +139,16 @@ public class Patient {
 
     public void setDietType(String dietType) {
         this.dietType = dietType;
+        this.diet = dietType; // Keep both in sync
     }
 
     public String getDiet() {
-        return diet;
+        return diet != null ? diet : dietType;
     }
 
     public void setDiet(String diet) {
         this.diet = diet;
+        this.dietType = diet; // Keep both in sync
     }
 
     public boolean isAdaDiet() {
@@ -153,6 +167,7 @@ public class Patient {
         this.fluidRestriction = fluidRestriction;
     }
 
+    // Texture modifications
     public String getTextureModifications() {
         return textureModifications;
     }
@@ -161,20 +176,20 @@ public class Patient {
         this.textureModifications = textureModifications;
     }
 
-    public boolean isMechanicalChopped() {
-        return mechanicalChopped;
-    }
-
-    public void setMechanicalChopped(boolean mechanicalChopped) {
-        this.mechanicalChopped = mechanicalChopped;
-    }
-
     public boolean isMechanicalGround() {
         return mechanicalGround;
     }
 
     public void setMechanicalGround(boolean mechanicalGround) {
         this.mechanicalGround = mechanicalGround;
+    }
+
+    public boolean isMechanicalChopped() {
+        return mechanicalChopped;
+    }
+
+    public void setMechanicalChopped(boolean mechanicalChopped) {
+        this.mechanicalChopped = mechanicalChopped;
     }
 
     public boolean isBiteSize() {
@@ -193,30 +208,6 @@ public class Patient {
         this.breadOK = breadOK;
     }
 
-    public boolean isNectarThick() {
-        return nectarThick;
-    }
-
-    public void setNectarThick(boolean nectarThick) {
-        this.nectarThick = nectarThick;
-    }
-
-    public boolean isPuddingThick() {
-        return puddingThick;
-    }
-
-    public void setPuddingThick(boolean puddingThick) {
-        this.puddingThick = puddingThick;
-    }
-
-    public boolean isHoneyThick() {
-        return honeyThick;
-    }
-
-    public void setHoneyThick(boolean honeyThick) {
-        this.honeyThick = honeyThick;
-    }
-
     public boolean isExtraGravy() {
         return extraGravy;
     }
@@ -233,62 +224,31 @@ public class Patient {
         this.meatsOnly = meatsOnly;
     }
 
-    public boolean isPuree() {
-        return isPuree;
+    public boolean isNectarThick() {
+        return nectarThick;
     }
 
-    public void setPuree(boolean puree) {
-        isPuree = puree;
+    public void setNectarThick(boolean nectarThick) {
+        this.nectarThick = nectarThick;
     }
 
-    public String getAllergies() {
-        return allergies;
+    public boolean isHoneyThick() {
+        return honeyThick;
     }
 
-    public void setAllergies(String allergies) {
-        this.allergies = allergies;
+    public void setHoneyThick(boolean honeyThick) {
+        this.honeyThick = honeyThick;
     }
 
-    public String getLikes() {
-        return likes;
+    public boolean isPuddingThick() {
+        return puddingThick;
     }
 
-    public void setLikes(String likes) {
-        this.likes = likes;
+    public void setPuddingThick(boolean puddingThick) {
+        this.puddingThick = puddingThick;
     }
 
-    public String getDislikes() {
-        return dislikes;
-    }
-
-    public void setDislikes(String dislikes) {
-        this.dislikes = dislikes;
-    }
-
-    public String getComments() {
-        return comments;
-    }
-
-    public void setComments(String comments) {
-        this.comments = comments;
-    }
-
-    public String getPreferredDrink() {
-        return preferredDrink;
-    }
-
-    public void setPreferredDrink(String preferredDrink) {
-        this.preferredDrink = preferredDrink;
-    }
-
-    public String getDrinkVariety() {
-        return drinkVariety;
-    }
-
-    public void setDrinkVariety(String drinkVariety) {
-        this.drinkVariety = drinkVariety;
-    }
-
+    // Meal completion status
     public boolean isBreakfastComplete() {
         return breakfastComplete;
     }
@@ -337,8 +297,9 @@ public class Patient {
         this.dinnerNPO = dinnerNPO;
     }
 
+    // Meal items
     public String getBreakfastItems() {
-        return breakfastItems;
+        return breakfastItems != null ? breakfastItems : "";
     }
 
     public void setBreakfastItems(String breakfastItems) {
@@ -346,7 +307,7 @@ public class Patient {
     }
 
     public String getLunchItems() {
-        return lunchItems;
+        return lunchItems != null ? lunchItems : "";
     }
 
     public void setLunchItems(String lunchItems) {
@@ -354,15 +315,16 @@ public class Patient {
     }
 
     public String getDinnerItems() {
-        return dinnerItems;
+        return dinnerItems != null ? dinnerItems : "";
     }
 
     public void setDinnerItems(String dinnerItems) {
         this.dinnerItems = dinnerItems;
     }
 
+    // Juices
     public String getBreakfastJuices() {
-        return breakfastJuices;
+        return breakfastJuices != null ? breakfastJuices : "";
     }
 
     public void setBreakfastJuices(String breakfastJuices) {
@@ -370,7 +332,7 @@ public class Patient {
     }
 
     public String getLunchJuices() {
-        return lunchJuices;
+        return lunchJuices != null ? lunchJuices : "";
     }
 
     public void setLunchJuices(String lunchJuices) {
@@ -378,15 +340,16 @@ public class Patient {
     }
 
     public String getDinnerJuices() {
-        return dinnerJuices;
+        return dinnerJuices != null ? dinnerJuices : "";
     }
 
     public void setDinnerJuices(String dinnerJuices) {
         this.dinnerJuices = dinnerJuices;
     }
 
+    // Drinks
     public String getBreakfastDrinks() {
-        return breakfastDrinks;
+        return breakfastDrinks != null ? breakfastDrinks : "";
     }
 
     public void setBreakfastDrinks(String breakfastDrinks) {
@@ -394,7 +357,7 @@ public class Patient {
     }
 
     public String getLunchDrinks() {
-        return lunchDrinks;
+        return lunchDrinks != null ? lunchDrinks : "";
     }
 
     public void setLunchDrinks(String lunchDrinks) {
@@ -402,15 +365,16 @@ public class Patient {
     }
 
     public String getDinnerDrinks() {
-        return dinnerDrinks;
+        return dinnerDrinks != null ? dinnerDrinks : "";
     }
 
     public void setDinnerDrinks(String dinnerDrinks) {
         this.dinnerDrinks = dinnerDrinks;
     }
 
+    // Individual meal diets
     public String getBreakfastDiet() {
-        return breakfastDiet;
+        return breakfastDiet != null ? breakfastDiet : getDiet();
     }
 
     public void setBreakfastDiet(String breakfastDiet) {
@@ -418,7 +382,7 @@ public class Patient {
     }
 
     public String getLunchDiet() {
-        return lunchDiet;
+        return lunchDiet != null ? lunchDiet : getDiet();
     }
 
     public void setLunchDiet(String lunchDiet) {
@@ -426,7 +390,7 @@ public class Patient {
     }
 
     public String getDinnerDiet() {
-        return dinnerDiet;
+        return dinnerDiet != null ? dinnerDiet : getDiet();
     }
 
     public void setDinnerDiet(String dinnerDiet) {
@@ -457,6 +421,15 @@ public class Patient {
         this.dinnerAda = dinnerAda;
     }
 
+    // Other getters and setters
+    public List<String> getMealSelections() {
+        return mealSelections != null ? mealSelections : new ArrayList<>();
+    }
+
+    public void setMealSelections(List<String> mealSelections) {
+        this.mealSelections = mealSelections != null ? mealSelections : new ArrayList<>();
+    }
+
     public Date getCreatedDate() {
         return createdDate;
     }
@@ -465,12 +438,38 @@ public class Patient {
         this.createdDate = createdDate;
     }
 
+    public Date getOrderDate() {
+        return orderDate;
+    }
+
+    public void setOrderDate(Date orderDate) {
+        this.orderDate = orderDate;
+    }
+
     // Helper methods
     public String getFullName() {
-        return patientFirstName + " " + patientLastName;
+        return (patientFirstName != null ? patientFirstName : "") + " " +
+                (patientLastName != null ? patientLastName : "");
     }
 
     public String getLocationInfo() {
-        return wing + "-" + roomNumber;
+        return (wing != null ? wing : "") + " - Room " + (roomNumber != null ? roomNumber : "");
+    }
+
+    public boolean hasAnyMealComplete() {
+        return breakfastComplete || lunchComplete || dinnerComplete;
+    }
+
+    public boolean hasAllMealsComplete() {
+        return breakfastComplete && lunchComplete && dinnerComplete;
+    }
+
+    public boolean isPendingAnyMeal() {
+        return !breakfastComplete || !lunchComplete || !dinnerComplete;
+    }
+
+    @Override
+    public String toString() {
+        return getFullName() + " - " + getLocationInfo() + " (" + getDiet() + ")";
     }
 }

@@ -6,11 +6,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
 import androidx.viewbinding.ViewBinding;
 import androidx.viewbinding.ViewBindings;
 import com.hospital.dietary.R;
@@ -71,10 +72,10 @@ public final class ActivityPatientDetailBinding implements ViewBinding {
   public final TextView lunchItemsText;
 
   @NonNull
-  public final LinearLayout mealItemsSection;
+  public final CardView mealItemsSection;
 
   @NonNull
-  public final LinearLayout mealStatusSection;
+  public final CardView mealStatusSection;
 
   @NonNull
   public final TextView orderDateText;
@@ -85,6 +86,9 @@ public final class ActivityPatientDetailBinding implements ViewBinding {
   @NonNull
   public final TextView textureModificationsText;
 
+  @NonNull
+  public final Toolbar toolbar;
+
   private ActivityPatientDetailBinding(@NonNull ScrollView rootView,
       @NonNull CheckBox breakfastCompleteCheckBox, @NonNull TextView breakfastDrinksText,
       @NonNull TextView breakfastItemsText, @NonNull TextView createdDateText,
@@ -94,9 +98,9 @@ public final class ActivityPatientDetailBinding implements ViewBinding {
       @NonNull Button editPatientButton, @NonNull TextView fluidRestrictionText,
       @NonNull TextView locationText, @NonNull CheckBox lunchCompleteCheckBox,
       @NonNull TextView lunchDrinksText, @NonNull TextView lunchItemsText,
-      @NonNull LinearLayout mealItemsSection, @NonNull LinearLayout mealStatusSection,
+      @NonNull CardView mealItemsSection, @NonNull CardView mealStatusSection,
       @NonNull TextView orderDateText, @NonNull TextView patientNameText,
-      @NonNull TextView textureModificationsText) {
+      @NonNull TextView textureModificationsText, @NonNull Toolbar toolbar) {
     this.rootView = rootView;
     this.breakfastCompleteCheckBox = breakfastCompleteCheckBox;
     this.breakfastDrinksText = breakfastDrinksText;
@@ -119,6 +123,7 @@ public final class ActivityPatientDetailBinding implements ViewBinding {
     this.orderDateText = orderDateText;
     this.patientNameText = patientNameText;
     this.textureModificationsText = textureModificationsText;
+    this.toolbar = toolbar;
   }
 
   @Override
@@ -245,13 +250,13 @@ public final class ActivityPatientDetailBinding implements ViewBinding {
       }
 
       id = R.id.mealItemsSection;
-      LinearLayout mealItemsSection = ViewBindings.findChildViewById(rootView, id);
+      CardView mealItemsSection = ViewBindings.findChildViewById(rootView, id);
       if (mealItemsSection == null) {
         break missingId;
       }
 
       id = R.id.mealStatusSection;
-      LinearLayout mealStatusSection = ViewBindings.findChildViewById(rootView, id);
+      CardView mealStatusSection = ViewBindings.findChildViewById(rootView, id);
       if (mealStatusSection == null) {
         break missingId;
       }
@@ -274,12 +279,18 @@ public final class ActivityPatientDetailBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.toolbar;
+      Toolbar toolbar = ViewBindings.findChildViewById(rootView, id);
+      if (toolbar == null) {
+        break missingId;
+      }
+
       return new ActivityPatientDetailBinding((ScrollView) rootView, breakfastCompleteCheckBox,
           breakfastDrinksText, breakfastItemsText, createdDateText, deletePatientButton, dietText,
           dinnerCompleteCheckBox, dinnerDrinksText, dinnerItemsText, editMealPlanButton,
           editPatientButton, fluidRestrictionText, locationText, lunchCompleteCheckBox,
           lunchDrinksText, lunchItemsText, mealItemsSection, mealStatusSection, orderDateText,
-          patientNameText, textureModificationsText);
+          patientNameText, textureModificationsText, toolbar);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

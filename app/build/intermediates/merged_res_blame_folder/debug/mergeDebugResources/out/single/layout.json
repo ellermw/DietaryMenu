@@ -100,6 +100,10 @@
         "source": "com.hospital.dietary.app-main-6:/layout/item_order_row.xml"
     },
     {
+        "merged": "com.hospital.dietary.app-mergeDebugResources-3:/layout/activity_edit_patient.xml",
+        "source": "com.hospital.dietary.app-main-6:/layout/activity_edit_patient.xml"
+    },
+    {
         "merged": "com.hospital.dietary.app-mergeDebugResources-3:/layout/dialog_login.xml",
         "source": "com.hospital.dietary.app-main-6:/layout/dialog_login.xml"
     },
@@ -142,6 +146,10 @@
     {
         "merged": "com.hospital.dietary.app-mergeDebugResources-3:/layout/activity_retired_orders.xml",
         "source": "com.hospital.dietary.app-main-6:/layout/activity_retired_orders.xml"
+    },
+    {
+        "merged": "com.hospital.dietary.app-mergeDebugResources-3:/layout/item_patient.xml",
+        "source": "com.hospital.dietary.app-main-6:/layout/item_patient.xml"
     },
     {
         "merged": "com.hospital.dietary.app-mergeDebugResources-3:/layout/dialog_user_form.xml",
@@ -196,16 +204,20 @@
         "source": "com.hospital.dietary.app-main-6:/layout/activity_pending_orders.xml"
     },
     {
+        "merged": "com.hospital.dietary.app-mergeDebugResources-3:/layout/activity_existing_patients.xml",
+        "source": "com.hospital.dietary.app-main-6:/layout/activity_existing_patients.xml"
+    },
+    {
         "merged": "com.hospital.dietary.app-mergeDebugResources-3:/layout/activity_admin_menu.xml",
         "source": "com.hospital.dietary.app-main-6:/layout/activity_admin_menu.xml"
     },
     {
-        "merged": "com.hospital.dietary.app-mergeDebugResources-3:/layout/item_saved_menu.xml",
-        "source": "com.hospital.dietary.app-main-6:/layout/item_saved_menu.xml"
-    },
-    {
         "merged": "com.hospital.dietary.app-mergeDebugResources-3:/layout/dialog_admin_access.xml",
         "source": "com.hospital.dietary.app-main-6:/layout/dialog_admin_access.xml"
+    },
+    {
+        "merged": "com.hospital.dietary.app-mergeDebugResources-3:/layout/item_saved_menu.xml",
+        "source": "com.hospital.dietary.app-main-6:/layout/item_saved_menu.xml"
     },
     {
         "merged": "com.hospital.dietary.app-mergeDebugResources-3:/layout/activity_admin_new.xml",

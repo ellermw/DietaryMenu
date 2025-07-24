@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.hospital.dietary">
 
     <application
         android:allowBackup="true"
@@ -25,116 +26,62 @@
             </intent-filter>
         </activity>
 
-        <!-- Main Menu Activity - Primary navigation hub -->
+        <!-- Main Activities -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme" />
+
         <activity
             android:name=".MainMenuActivity"
             android:exported="false"
             android:theme="@style/AppTheme" />
 
-        <!-- Documents Activity - Document management -->
-        <activity
-            android:name=".DocumentsActivity"
-            android:exported="false"
-            android:parentActivityName=".MainMenuActivity"
-            android:theme="@style/AppTheme" />
-
-        <!-- Meal Planning Activity - Core meal planning functionality -->
-        <activity
-            android:name=".MealPlanningActivity"
-            android:exported="false"
-            android:parentActivityName=".MainMenuActivity"
-            android:theme="@style/AppTheme"
-            android:windowSoftInputMode="adjustResize" />
-
-        <!-- Pending Orders Activity - Manage pending orders -->
-        <activity
-            android:name=".PendingOrdersActivity"
-            android:exported="false"
-            android:parentActivityName=".MainMenuActivity"
-            android:theme="@style/AppTheme"
-            android:windowSoftInputMode="adjustResize" />
-
-        <!-- Retired Orders Activity - View retired orders -->
-        <activity
-            android:name=".RetiredOrdersActivity"
-            android:exported="false"
-            android:parentActivityName=".MainMenuActivity"
-            android:theme="@style/AppTheme" />
-
-        <!-- Patient Info Menu Activity - Patient information hub -->
+        <!-- Patient Management Activities -->
         <activity
             android:name=".PatientInfoMenuActivity"
             android:exported="false"
             android:parentActivityName=".MainMenuActivity"
             android:theme="@style/AppTheme" />
 
-        <!-- FIXED: Added missing ExistingPatientActivity -->
         <activity
-            android:name=".ExistingPatientActivity"
+            android:name=".PatientInfoActivity"
             android:exported="false"
-            android:parentActivityName=".PatientInfoMenuActivity"
-            android:theme="@style/AppTheme"
-            android:windowSoftInputMode="adjustResize" />
+            android:parentActivityName=".MainMenuActivity"
+            android:theme="@style/AppTheme" />
 
-        <!-- Add Patient Activity - Add new patients -->
-        <activity
-            android:name=".AddPatientActivity"
-            android:exported="false"
-            android:parentActivityName=".PatientInfoMenuActivity"
-            android:theme="@style/AppTheme"
-            android:windowSoftInputMode="adjustResize" />
-
-        <!-- New Patient Activity - Add new patients -->
         <activity
             android:name=".NewPatientActivity"
             android:exported="false"
             android:parentActivityName=".PatientInfoMenuActivity"
-            android:theme="@style/AppTheme"
-            android:windowSoftInputMode="adjustResize" />
-
-        <!-- Patient Detail Activity - Individual patient details -->
-        <activity
-            android:name=".PatientDetailActivity"
-            android:exported="false"
-            android:parentActivityName=".ExistingPatientActivity"
             android:theme="@style/AppTheme" />
 
-        <!-- Patient Info Activity - Patient information management -->
         <activity
-            android:name=".PatientInfoActivity"
+            android:name=".ExistingPatientsActivity"
             android:exported="false"
             android:parentActivityName=".PatientInfoMenuActivity"
             android:theme="@style/AppTheme" />
 
-        <!-- User Management Activity - Manage users (Admin only) -->
         <activity
-            android:name=".UserManagementActivity"
+            android:name=".PatientDetailActivity"
+            android:exported="false"
+            android:parentActivityName=".ExistingPatientsActivity"
+            android:theme="@style/AppTheme" />
+
+        <activity
+            android:name=".EditPatientActivity"
+            android:exported="false"
+            android:parentActivityName=".PatientDetailActivity"
+            android:theme="@style/AppTheme" />
+
+        <!-- Meal Planning Activities -->
+        <activity
+            android:name=".MealPlanningActivity"
             android:exported="false"
             android:parentActivityName=".MainMenuActivity"
             android:theme="@style/AppTheme" />
 
-        <!-- Item Management Activity - Manage food items (Admin only) -->
-        <activity
-            android:name=".ItemManagementActivity"
-            android:exported="false"
-            android:parentActivityName=".MainMenuActivity"
-            android:theme="@style/AppTheme" />
-
-        <!-- Category Management Activity - Manage item categories -->
-        <activity
-            android:name=".CategoryManagementActivity"
-            android:exported="false"
-            android:parentActivityName=".ItemManagementActivity"
-            android:theme="@style/AppTheme" />
-
-        <!-- Default Menu Management Activity - Manage default menus -->
-        <activity
-            android:name=".DefaultMenuManagementActivity"
-            android:exported="false"
-            android:parentActivityName=".MainMenuActivity"
-            android:theme="@style/AppTheme" />
-
-        <!-- Order Management Activity - Manage orders -->
+        <!-- Order Management Activities -->
         <activity
             android:name=".OrderManagementActivity"
             android:exported="false"
@@ -142,14 +89,66 @@
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize" />
 
-        <!-- Account Management Activity - User account settings -->
+        <activity
+            android:name=".PendingOrdersActivity"
+            android:exported="false"
+            android:parentActivityName=".MainMenuActivity"
+            android:theme="@style/AppTheme" />
+
+        <activity
+            android:name=".FinishedOrdersActivity"
+            android:exported="false"
+            android:parentActivityName=".MainMenuActivity"
+            android:theme="@style/AppTheme" />
+
+        <activity
+            android:name=".RetiredOrdersActivity"
+            android:exported="false"
+            android:parentActivityName=".MainMenuActivity"
+            android:theme="@style/AppTheme" />
+
+        <!-- Documents Activity -->
+        <activity
+            android:name=".DocumentsActivity"
+            android:exported="false"
+            android:parentActivityName=".MainMenuActivity"
+            android:theme="@style/AppTheme" />
+
+        <!-- Item Management Activities -->
+        <activity
+            android:name=".ItemManagementActivity"
+            android:exported="false"
+            android:parentActivityName=".MainMenuActivity"
+            android:theme="@style/AppTheme" />
+
+        <activity
+            android:name=".CategoryManagementActivity"
+            android:exported="false"
+            android:parentActivityName=".ItemManagementActivity"
+            android:theme="@style/AppTheme" />
+
+        <!-- Default Menu Management Activity -->
+        <activity
+            android:name=".DefaultMenuManagementActivity"
+            android:exported="false"
+            android:parentActivityName=".MainMenuActivity"
+            android:theme="@style/AppTheme" />
+
+        <!-- Account Management Activity -->
         <activity
             android:name=".AccountManagementActivity"
             android:exported="false"
             android:parentActivityName=".MainMenuActivity"
             android:theme="@style/AppTheme" />
 
-        <!-- Admin Activity - Administrative functions -->
+        <!-- User Management Activity -->
+        <activity
+            android:name=".UserManagementActivity"
+            android:exported="false"
+            android:parentActivityName=".MainMenuActivity"
+            android:theme="@style/AppTheme" />
+
+        <!-- Admin Activity -->
         <activity
             android:name=".AdminActivity"
             android:exported="false"

@@ -58,7 +58,7 @@ public class PatientInfoMenuActivity extends AppCompatActivity {
     }
 
     private void openExistingPatients() {
-        Intent intent = new Intent(this, ExistingPatientActivity.class);
+        Intent intent = new Intent(this, ExistingPatientsActivity.class);
         intent.putExtra("current_user", currentUsername);
         intent.putExtra("user_role", currentUserRole);
         intent.putExtra("user_full_name", currentUserFullName);
