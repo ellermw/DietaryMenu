@@ -10,8 +10,8 @@ android {
         applicationId "com.hospital.dietary"
         minSdk = 21
         targetSdk = 34
-        versionCode 47  // Incremented from 46
-        versionName "0.1.1"  // Updated from 0.1.0
+        versionCode 48  // Incremented from 47
+        versionName "0.1.20"  // Updated from 0.1.1
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -36,7 +36,7 @@ android {
     }
 
     buildFeatures {
-        buildConfig = true
+        buildConfig true
         viewBinding = true  // Enable view binding for cleaner UI code
     }
 }

@@ -1,605 +1,644 @@
 1<?xml version="1.0" encoding="utf-8"?>
 2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
 3    package="com.hospital.dietary"
-4    android:versionCode="47"
-5    android:versionName="0.1.1" >
+4    android:versionCode="48"
+5    android:versionName="0.1.20" >
 6
 7    <uses-sdk
 8        android:minSdkVersion="21"
 9        android:targetSdkVersion="34" />
 10
-11    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-11-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:5:5-81
-11-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:5:22-78
-12    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-12-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:6:5-80
-12-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:6:22-77
-13    <uses-permission android:name="android.permission.WAKE_LOCK" />
-13-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:23:5-68
-13-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:23:22-65
-14    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-14-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:24:5-79
-14-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:24:22-76
-15    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-15-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:25:5-81
-15-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:25:22-78
-16    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-16-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:26:5-77
-16-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:26:22-74
-17
-18    <permission
-18-->[androidx.core:core:1.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\c78b3d8c1a940b2bc777d584e2f71ec9\transformed\core-1.9.0\AndroidManifest.xml:22:5-24:47
-19        android:name="com.hospital.dietary.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
-19-->[androidx.core:core:1.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\c78b3d8c1a940b2bc777d584e2f71ec9\transformed\core-1.9.0\AndroidManifest.xml:23:9-81
-20        android:protectionLevel="signature" />
-20-->[androidx.core:core:1.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\c78b3d8c1a940b2bc777d584e2f71ec9\transformed\core-1.9.0\AndroidManifest.xml:24:9-44
-21
-22    <uses-permission android:name="com.hospital.dietary.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
-22-->[androidx.core:core:1.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\c78b3d8c1a940b2bc777d584e2f71ec9\transformed\core-1.9.0\AndroidManifest.xml:26:5-97
-22-->[androidx.core:core:1.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\c78b3d8c1a940b2bc777d584e2f71ec9\transformed\core-1.9.0\AndroidManifest.xml:26:22-94
-23
-24    <application
-24-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:8:5-174:19
-25        android:allowBackup="true"
-25-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:9:9-35
-26        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
-26-->[androidx.core:core:1.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\c78b3d8c1a940b2bc777d584e2f71ec9\transformed\core-1.9.0\AndroidManifest.xml:28:18-86
-27        android:dataExtractionRules="@xml/data_extraction_rules"
-27-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:10:9-65
+11    <!-- Permissions -->
+12    <uses-permission android:name="android.permission.WAKE_LOCK" />
+12-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:5:5-68
+12-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:5:22-65
+13    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+13-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:6:5-81
+13-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:6:22-78
+14    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+14-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:7:5-77
+14-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:7:22-74
+15    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+15-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:8:5-79
+15-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:8:22-76
+16    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+16-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:24:5-79
+16-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:24:22-76
+17    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+17-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:26:5-77
+17-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:26:22-74
+18
+19    <permission
+19-->[androidx.core:core:1.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\c78b3d8c1a940b2bc777d584e2f71ec9\transformed\core-1.9.0\AndroidManifest.xml:22:5-24:47
+20        android:name="com.hospital.dietary.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+20-->[androidx.core:core:1.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\c78b3d8c1a940b2bc777d584e2f71ec9\transformed\core-1.9.0\AndroidManifest.xml:23:9-81
+21        android:protectionLevel="signature" />
+21-->[androidx.core:core:1.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\c78b3d8c1a940b2bc777d584e2f71ec9\transformed\core-1.9.0\AndroidManifest.xml:24:9-44
+22
+23    <uses-permission android:name="com.hospital.dietary.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+23-->[androidx.core:core:1.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\c78b3d8c1a940b2bc777d584e2f71ec9\transformed\core-1.9.0\AndroidManifest.xml:26:5-97
+23-->[androidx.core:core:1.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\c78b3d8c1a940b2bc777d584e2f71ec9\transformed\core-1.9.0\AndroidManifest.xml:26:22-94
+24
+25    <application
+25-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:10:5-196:19
+26        android:allowBackup="true"
+26-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:11:9-35
+27        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+27-->[androidx.core:core:1.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\c78b3d8c1a940b2bc777d584e2f71ec9\transformed\core-1.9.0\AndroidManifest.xml:28:18-86
 28        android:debuggable="true"
 29        android:extractNativeLibs="true"
-30        android:fullBackupContent="@xml/backup_rules"
-30-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:11:9-54
-31        android:icon="@mipmap/ic_launcher"
-31-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:12:9-43
-32        android:label="@string/app_name"
-32-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:13:9-41
-33        android:requestLegacyExternalStorage="true"
-33-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:14:9-52
-34        android:roundIcon="@mipmap/ic_launcher_round"
-34-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:15:9-54
-35        android:supportsRtl="true"
-35-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:16:9-35
-36        android:testOnly="true"
-37        android:theme="@style/AppTheme" >
-37-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:17:9-40
-38
-39        <!-- Login Activity - Entry point -->
-40        <activity
-40-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:21:9-30:20
-41            android:name="com.hospital.dietary.LoginActivity"
-41-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:22:13-42
-42            android:exported="true"
-42-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:23:13-36
-43            android:theme="@style/AppTheme.NoActionBar"
-43-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:24:13-56
-44            android:windowSoftInputMode="adjustResize" >
-44-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:25:13-55
-45            <intent-filter>
-45-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:26:13-29:29
-46                <action android:name="android.intent.action.MAIN" />
-46-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:27:17-69
-46-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:27:25-66
-47
-48                <category android:name="android.intent.category.LAUNCHER" />
-48-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:28:17-77
-48-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:28:27-74
-49            </intent-filter>
-50        </activity>
-51
-52        <!-- Main Activities -->
-53        <activity
-53-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:33:9-36:47
-54            android:name="com.hospital.dietary.MainActivity"
-54-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:34:13-41
-55            android:exported="false"
-55-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:35:13-37
-56            android:theme="@style/AppTheme" />
-56-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:36:13-44
+30        android:icon="@mipmap/ic_launcher"
+30-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:12:9-43
+31        android:label="@string/app_name"
+31-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:13:9-41
+32        android:roundIcon="@mipmap/ic_launcher_round"
+32-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:14:9-54
+33        android:supportsRtl="true"
+33-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:15:9-35
+34        android:testOnly="true"
+35        android:theme="@style/AppTheme" >
+35-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:16:9-40
+36
+37        <!-- MainActivity - Entry point (redirects to LoginActivity) -->
+38        <activity
+38-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:19:9-27:20
+39            android:name="com.hospital.dietary.MainActivity"
+39-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:20:13-41
+40            android:exported="true"
+40-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:21:13-36
+41            android:theme="@style/AppTheme" >
+41-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:22:13-44
+42            <intent-filter>
+42-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:23:13-26:29
+43                <action android:name="android.intent.action.MAIN" />
+43-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:24:17-69
+43-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:24:25-66
+44
+45                <category android:name="android.intent.category.LAUNCHER" />
+45-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:25:17-77
+45-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:25:27-74
+46            </intent-filter>
+47        </activity>
+48
+49        <!-- LoginActivity - Login Screen -->
+50        <activity
+50-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:30:9-34:58
+51            android:name="com.hospital.dietary.LoginActivity"
+51-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:31:13-42
+52            android:exported="false"
+52-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:32:13-37
+53            android:theme="@style/AppTheme"
+53-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:33:13-44
+54            android:windowSoftInputMode="adjustResize" />
+54-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:34:13-55
+55
+56        <!-- Main Menu Activity -->
 57        <activity
-57-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:38:9-41:59
+57-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:37:9-40:47
 58            android:name="com.hospital.dietary.MainMenuActivity"
-58-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:39:13-45
+58-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:38:13-45
 59            android:exported="false"
-59-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:40:13-37
-60            android:theme="@style/AppTheme.NoActionBar" />
-60-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:41:13-56
+59-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:39:13-37
+60            android:theme="@style/AppTheme" />
+60-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:40:13-44
 61
-62        <!-- Patient Management Activities -->
+62        <!-- Patient Info Menu Activity -->
 63        <activity
-63-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:44:9-48:47
+63-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:43:9-47:47
 64            android:name="com.hospital.dietary.PatientInfoMenuActivity"
-64-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:45:13-52
+64-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:44:13-52
 65            android:exported="false"
-65-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:46:13-37
+65-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:45:13-37
 66            android:parentActivityName="com.hospital.dietary.MainMenuActivity"
-66-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:47:13-59
+66-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:46:13-59
 67            android:theme="@style/AppTheme" />
-67-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:48:13-44
-68        <activity
-68-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:50:9-54:47
-69            android:name="com.hospital.dietary.PatientInfoActivity"
-69-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:51:13-48
-70            android:exported="false"
-70-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:52:13-37
-71            android:parentActivityName="com.hospital.dietary.MainMenuActivity"
-71-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:53:13-59
-72            android:theme="@style/AppTheme" />
-72-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:54:13-44
-73        <activity
-73-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:56:9-60:47
-74            android:name="com.hospital.dietary.PatientActivity"
-74-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:57:13-44
-75            android:exported="false"
-75-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:58:13-37
-76            android:parentActivityName="com.hospital.dietary.MainMenuActivity"
-76-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:59:13-59
-77            android:theme="@style/AppTheme" />
-77-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:60:13-44
+67-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:47:13-44
+68
+69        <!-- Existing Patient Activity - List of patients -->
+70        <activity
+70-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:50:9-55:58
+71            android:name="com.hospital.dietary.ExistingPatientActivity"
+71-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:51:13-52
+72            android:exported="false"
+72-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:52:13-37
+73            android:parentActivityName="com.hospital.dietary.PatientInfoMenuActivity"
+73-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:53:13-66
+74            android:theme="@style/AppTheme"
+74-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:54:13-44
+75            android:windowSoftInputMode="adjustResize" />
+75-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:55:13-55
+76
+77        <!-- New Patient Activity - Add new patients -->
 78        <activity
-78-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:62:9-67:58
-79            android:name="com.hospital.dietary.ExistingPatientActivity"
-79-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:63:13-52
+78-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:58:9-63:58
+79            android:name="com.hospital.dietary.NewPatientActivity"
+79-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:59:13-47
 80            android:exported="false"
-80-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:64:13-37
+80-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:60:13-37
 81            android:parentActivityName="com.hospital.dietary.PatientInfoMenuActivity"
-81-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:65:13-66
+81-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:61:13-66
 82            android:theme="@style/AppTheme"
-82-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:66:13-44
+82-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:62:13-44
 83            android:windowSoftInputMode="adjustResize" />
-83-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:67:13-55
+83-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:63:13-55
 84
-85        <!-- New Patient Activity - Uses its own Toolbar -->
+85        <!-- Patient Detail Activity - Individual patient details -->
 86        <activity
-86-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:70:9-75:58
-87            android:name="com.hospital.dietary.NewPatientActivity"
-87-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:71:13-47
+86-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:66:9-70:47
+87            android:name="com.hospital.dietary.PatientDetailActivity"
+87-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:67:13-50
 88            android:exported="false"
-88-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:72:13-37
-89            android:parentActivityName="com.hospital.dietary.PatientInfoMenuActivity"
-89-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:73:13-66
-90            android:theme="@style/AppTheme.NoActionBar"
-90-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:74:13-56
-91            android:windowSoftInputMode="adjustResize" />
-91-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:75:13-55
-92
-93        <!-- Existing Patients Activity - Uses its own Toolbar -->
-94        <activity
-94-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:78:9-82:59
-95            android:name="com.hospital.dietary.ExistingPatientsActivity"
-95-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:79:13-53
-96            android:exported="false"
-96-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:80:13-37
-97            android:parentActivityName="com.hospital.dietary.PatientInfoMenuActivity"
-97-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:81:13-66
-98            android:theme="@style/AppTheme.NoActionBar" />
-98-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:82:13-56
-99        <activity
-99-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:84:9-88:47
-100            android:name="com.hospital.dietary.PatientDetailActivity"
-100-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:85:13-50
-101            android:exported="false"
-101-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:86:13-37
-102            android:parentActivityName="com.hospital.dietary.ExistingPatientsActivity"
-102-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:87:13-67
-103            android:theme="@style/AppTheme" />
-103-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:88:13-44
-104
-105        <!-- Edit Patient Activity - Uses its own Toolbar -->
-106        <activity
-106-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:91:9-95:59
-107            android:name="com.hospital.dietary.EditPatientActivity"
-107-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:92:13-48
-108            android:exported="false"
-108-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:93:13-37
-109            android:parentActivityName="com.hospital.dietary.PatientDetailActivity"
-109-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:94:13-64
-110            android:theme="@style/AppTheme.NoActionBar" />
-110-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:95:13-56
-111
-112        <!-- Meal Planning Activity - Uses its own Toolbar -->
-113        <activity
-113-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:98:9-102:59
-114            android:name="com.hospital.dietary.MealPlanningActivity"
-114-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:99:13-49
-115            android:exported="false"
-115-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:100:13-37
-116            android:parentActivityName="com.hospital.dietary.MainMenuActivity"
-116-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:101:13-59
-117            android:theme="@style/AppTheme.NoActionBar" />
-117-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:102:13-56
-118
-119        <!-- Order Management Activities -->
-120        <activity
-120-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:105:9-110:58
-121            android:name="com.hospital.dietary.OrderManagementActivity"
-121-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:106:13-52
-122            android:exported="false"
-122-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:107:13-37
-123            android:parentActivityName="com.hospital.dietary.PatientDetailActivity"
-123-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:108:13-64
-124            android:theme="@style/AppTheme"
-124-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:109:13-44
-125            android:windowSoftInputMode="adjustResize" />
-125-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:110:13-55
-126        <activity
-126-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:112:9-116:47
-127            android:name="com.hospital.dietary.PendingOrdersActivity"
-127-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:113:13-50
-128            android:exported="false"
-128-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:114:13-37
-129            android:parentActivityName="com.hospital.dietary.MainMenuActivity"
-129-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:115:13-59
-130            android:theme="@style/AppTheme" />
-130-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:116:13-44
-131
-132        <!-- Finished Orders Activity - Uses its own Toolbar -->
-133        <activity
-133-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:119:9-123:59
-134            android:name="com.hospital.dietary.FinishedOrdersActivity"
-134-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:120:13-51
-135            android:exported="false"
-135-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:121:13-37
-136            android:parentActivityName="com.hospital.dietary.MainMenuActivity"
-136-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:122:13-59
-137            android:theme="@style/AppTheme.NoActionBar" />
-137-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:123:13-56
-138        <activity
-138-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:125:9-129:47
-139            android:name="com.hospital.dietary.RetiredOrdersActivity"
-139-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:126:13-50
-140            android:exported="false"
-140-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:127:13-37
-141            android:parentActivityName="com.hospital.dietary.MainMenuActivity"
-141-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:128:13-59
-142            android:theme="@style/AppTheme" />
-142-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:129:13-44
-143
-144        <!-- Management Activities -->
-145        <activity
-145-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:132:9-136:47
-146            android:name="com.hospital.dietary.CategoryManagementActivity"
-146-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:133:13-55
-147            android:exported="false"
-147-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:134:13-37
-148            android:parentActivityName="com.hospital.dietary.ItemManagementActivity"
-148-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:135:13-65
-149            android:theme="@style/AppTheme" />
-149-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:136:13-44
-150        <activity
-150-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:138:9-142:47
-151            android:name="com.hospital.dietary.DefaultMenuManagementActivity"
-151-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:139:13-58
-152            android:exported="false"
-152-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:140:13-37
-153            android:parentActivityName="com.hospital.dietary.MainMenuActivity"
-153-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:141:13-59
-154            android:theme="@style/AppTheme" />
-154-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:142:13-44
-155        <activity
-155-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:144:9-148:47
-156            android:name="com.hospital.dietary.DocumentsActivity"
-156-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:145:13-46
-157            android:exported="false"
-157-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:146:13-37
-158            android:parentActivityName="com.hospital.dietary.MainMenuActivity"
-158-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:147:13-59
-159            android:theme="@style/AppTheme" />
-159-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:148:13-44
-160        <activity
-160-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:150:9-154:47
-161            android:name="com.hospital.dietary.ItemManagementActivity"
-161-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:151:13-51
-162            android:exported="false"
-162-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:152:13-37
-163            android:parentActivityName="com.hospital.dietary.MainMenuActivity"
-163-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:153:13-59
-164            android:theme="@style/AppTheme" />
-164-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:154:13-44
+88-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:68:13-37
+89            android:parentActivityName="com.hospital.dietary.ExistingPatientActivity"
+89-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:69:13-66
+90            android:theme="@style/AppTheme" />
+90-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:70:13-44
+91
+92        <!-- Patient Info Activity - Patient information management -->
+93        <activity
+93-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:73:9-77:47
+94            android:name="com.hospital.dietary.PatientInfoActivity"
+94-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:74:13-48
+95            android:exported="false"
+95-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:75:13-37
+96            android:parentActivityName="com.hospital.dietary.PatientInfoMenuActivity"
+96-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:76:13-66
+97            android:theme="@style/AppTheme" />
+97-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:77:13-44
+98
+99        <!-- Meal Planning Activity -->
+100        <activity
+100-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:80:9-85:58
+101            android:name="com.hospital.dietary.MealPlanningActivity"
+101-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:81:13-49
+102            android:exported="false"
+102-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:82:13-37
+103            android:parentActivityName="com.hospital.dietary.PatientInfoMenuActivity"
+103-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:83:13-66
+104            android:theme="@style/AppTheme"
+104-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:84:13-44
+105            android:windowSoftInputMode="adjustResize" />
+105-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:85:13-55
+106
+107        <!-- Pending Orders Activity -->
+108        <activity
+108-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:88:9-92:47
+109            android:name="com.hospital.dietary.PendingOrdersActivity"
+109-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:89:13-50
+110            android:exported="false"
+110-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:90:13-37
+111            android:parentActivityName="com.hospital.dietary.MainMenuActivity"
+111-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:91:13-59
+112            android:theme="@style/AppTheme" />
+112-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:92:13-44
+113
+114        <!-- User Management Activity - Manage users (Admin only) -->
+115        <activity
+115-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:95:9-99:47
+116            android:name="com.hospital.dietary.UserManagementActivity"
+116-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:96:13-51
+117            android:exported="false"
+117-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:97:13-37
+118            android:parentActivityName="com.hospital.dietary.MainMenuActivity"
+118-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:98:13-59
+119            android:theme="@style/AppTheme" />
+119-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:99:13-44
+120
+121        <!-- Item Management Activity - Manage food items (Admin only) -->
+122        <activity
+122-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:102:9-106:47
+123            android:name="com.hospital.dietary.ItemManagementActivity"
+123-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:103:13-51
+124            android:exported="false"
+124-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:104:13-37
+125            android:parentActivityName="com.hospital.dietary.MainMenuActivity"
+125-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:105:13-59
+126            android:theme="@style/AppTheme" />
+126-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:106:13-44
+127
+128        <!-- Default Menu Management Activity -->
+129        <activity
+129-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:109:9-113:47
+130            android:name="com.hospital.dietary.DefaultMenuManagementActivity"
+130-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:110:13-58
+131            android:exported="false"
+131-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:111:13-37
+132            android:parentActivityName="com.hospital.dietary.MainMenuActivity"
+132-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:112:13-59
+133            android:theme="@style/AppTheme" />
+133-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:113:13-44
+134
+135        <!-- Documents Activity -->
+136        <activity
+136-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:116:9-120:47
+137            android:name="com.hospital.dietary.DocumentsActivity"
+137-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:117:13-46
+138            android:exported="false"
+138-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:118:13-37
+139            android:parentActivityName="com.hospital.dietary.MainMenuActivity"
+139-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:119:13-59
+140            android:theme="@style/AppTheme" />
+140-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:120:13-44
+141
+142        <!-- Edit Patient Activity -->
+143        <activity
+143-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:123:9-128:58
+144            android:name="com.hospital.dietary.EditPatientActivity"
+144-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:124:13-48
+145            android:exported="false"
+145-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:125:13-37
+146            android:parentActivityName="com.hospital.dietary.PatientInfoMenuActivity"
+146-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:126:13-66
+147            android:theme="@style/AppTheme"
+147-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:127:13-44
+148            android:windowSoftInputMode="adjustResize" />
+148-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:128:13-55
+149
+150        <!-- Production Sheets Activity -->
+151        <activity
+151-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:131:9-135:47
+152            android:name="com.hospital.dietary.ProductionSheetsActivity"
+152-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:132:13-53
+153            android:exported="false"
+153-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:133:13-37
+154            android:parentActivityName="com.hospital.dietary.DocumentsActivity"
+154-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:134:13-60
+155            android:theme="@style/AppTheme" />
+155-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:135:13-44
+156
+157        <!-- Stock Sheets Activity -->
+158        <activity
+158-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:138:9-142:47
+159            android:name="com.hospital.dietary.StockSheetsActivity"
+159-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:139:13-48
+160            android:exported="false"
+160-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:140:13-37
+161            android:parentActivityName="com.hospital.dietary.DocumentsActivity"
+161-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:141:13-60
+162            android:theme="@style/AppTheme" />
+162-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:142:13-44
+163
+164        <!-- Retired Orders Activity -->
 165        <activity
-165-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:156:9-160:47
-166            android:name="com.hospital.dietary.UserManagementActivity"
-166-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:157:13-51
+165-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:145:9-149:47
+166            android:name="com.hospital.dietary.RetiredOrdersActivity"
+166-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:146:13-50
 167            android:exported="false"
-167-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:158:13-37
+167-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:147:13-37
 168            android:parentActivityName="com.hospital.dietary.MainMenuActivity"
-168-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:159:13-59
+168-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:148:13-59
 169            android:theme="@style/AppTheme" />
-169-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:160:13-44
-170        <activity
-170-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:162:9-166:47
-171            android:name="com.hospital.dietary.AccountManagementActivity"
-171-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:163:13-54
-172            android:exported="false"
-172-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:164:13-37
-173            android:parentActivityName="com.hospital.dietary.MainMenuActivity"
-173-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:165:13-59
-174            android:theme="@style/AppTheme" />
-174-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:166:13-44
-175        <activity
-175-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:168:9-172:47
-176            android:name="com.hospital.dietary.AdminActivity"
-176-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:169:13-42
-177            android:exported="false"
-177-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:170:13-37
-178            android:parentActivityName="com.hospital.dietary.MainMenuActivity"
-178-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:171:13-59
-179            android:theme="@style/AppTheme" />
-179-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:172:13-44
-180
-181        <provider
-181-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:29:9-37:20
-182            android:name="androidx.startup.InitializationProvider"
-182-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:30:13-67
-183            android:authorities="com.hospital.dietary.androidx-startup"
-183-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:31:13-68
-184            android:exported="false" >
-184-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:32:13-37
-185            <meta-data
-185-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:34:13-36:52
-186                android:name="androidx.work.WorkManagerInitializer"
-186-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:35:17-68
-187                android:value="androidx.startup" />
-187-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:36:17-49
-188            <meta-data
-188-->[androidx.emoji2:emoji2:1.2.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\6b93cfe62f82596a55d02366b3b3e581\transformed\jetified-emoji2-1.2.0\AndroidManifest.xml:29:13-31:52
-189                android:name="androidx.emoji2.text.EmojiCompatInitializer"
-189-->[androidx.emoji2:emoji2:1.2.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\6b93cfe62f82596a55d02366b3b3e581\transformed\jetified-emoji2-1.2.0\AndroidManifest.xml:30:17-75
-190                android:value="androidx.startup" />
-190-->[androidx.emoji2:emoji2:1.2.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\6b93cfe62f82596a55d02366b3b3e581\transformed\jetified-emoji2-1.2.0\AndroidManifest.xml:31:17-49
-191            <meta-data
-191-->[androidx.lifecycle:lifecycle-process:2.7.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\67f1ab90c7b24fc489a7708e30aab410\transformed\jetified-lifecycle-process-2.7.0\AndroidManifest.xml:29:13-31:52
-192                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
-192-->[androidx.lifecycle:lifecycle-process:2.7.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\67f1ab90c7b24fc489a7708e30aab410\transformed\jetified-lifecycle-process-2.7.0\AndroidManifest.xml:30:17-78
-193                android:value="androidx.startup" />
-193-->[androidx.lifecycle:lifecycle-process:2.7.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\67f1ab90c7b24fc489a7708e30aab410\transformed\jetified-lifecycle-process-2.7.0\AndroidManifest.xml:31:17-49
-194            <meta-data
-194-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\6e3e55971d600bebc298ddd5a9ef359a\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:29:13-31:52
-195                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
-195-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\6e3e55971d600bebc298ddd5a9ef359a\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:30:17-85
-196                android:value="androidx.startup" />
-196-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\6e3e55971d600bebc298ddd5a9ef359a\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:31:17-49
-197        </provider>
-198
-199        <service
-199-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:39:9-45:35
-200            android:name="androidx.work.impl.background.systemalarm.SystemAlarmService"
-200-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:40:13-88
-201            android:directBootAware="false"
-201-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:41:13-44
-202            android:enabled="@bool/enable_system_alarm_service_default"
-202-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:42:13-72
-203            android:exported="false" />
-203-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:43:13-37
-204        <service
-204-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:46:9-52:35
-205            android:name="androidx.work.impl.background.systemjob.SystemJobService"
-205-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:47:13-84
-206            android:directBootAware="false"
-206-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:48:13-44
-207            android:enabled="@bool/enable_system_job_service_default"
-207-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:49:13-70
-208            android:exported="true"
-208-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:50:13-36
-209            android:permission="android.permission.BIND_JOB_SERVICE" />
-209-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:51:13-69
-210        <service
-210-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:53:9-59:35
-211            android:name="androidx.work.impl.foreground.SystemForegroundService"
-211-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:54:13-81
-212            android:directBootAware="false"
-212-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:55:13-44
-213            android:enabled="@bool/enable_system_foreground_service_default"
-213-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:56:13-77
-214            android:exported="false" />
-214-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:57:13-37
+169-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:149:13-44
+170
+171        <!-- Account Management Activity -->
+172        <activity
+172-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:152:9-156:47
+173            android:name="com.hospital.dietary.AccountManagementActivity"
+173-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:153:13-54
+174            android:exported="false"
+174-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:154:13-37
+175            android:parentActivityName="com.hospital.dietary.MainMenuActivity"
+175-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:155:13-59
+176            android:theme="@style/AppTheme" />
+176-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:156:13-44
+177
+178        <!-- Category Management Activity -->
+179        <activity
+179-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:159:9-163:47
+180            android:name="com.hospital.dietary.CategoryManagementActivity"
+180-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:160:13-55
+181            android:exported="false"
+181-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:161:13-37
+182            android:parentActivityName="com.hospital.dietary.ItemManagementActivity"
+182-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:162:13-65
+183            android:theme="@style/AppTheme" />
+183-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:163:13-44
+184
+185        <!-- View Orders Activity -->
+186        <activity
+186-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:166:9-170:47
+187            android:name="com.hospital.dietary.ViewOrdersActivity"
+187-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:167:13-47
+188            android:exported="false"
+188-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:168:13-37
+189            android:parentActivityName="com.hospital.dietary.RetiredOrdersActivity"
+189-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:169:13-64
+190            android:theme="@style/AppTheme" />
+190-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:170:13-44
+191
+192        <!-- Auto Order Creation Service -->
+193        <service
+193-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:173:9-175:40
+194            android:name="com.hospital.dietary.AutoOrderCreationService"
+194-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:174:13-53
+195            android:exported="false" />
+195-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:175:13-37
+196
+197        <!-- Auto Order Creation Receiver -->
+198        <receiver
+198-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:178:9-184:20
+199            android:name="com.hospital.dietary.AutoOrderCreationReceiver"
+199-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:179:13-54
+200            android:exported="false" >
+200-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:180:13-37
+201            <intent-filter>
+201-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:181:13-183:29
+202                <action android:name="com.hospital.dietary.CREATE_AUTO_ORDERS" />
+202-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:182:17-82
+202-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:182:25-79
+203            </intent-filter>
+204        </receiver>
+205
+206        <!-- Boot Completed Receiver to reschedule alarms after device restart -->
+207        <receiver
+207-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:187:9-194:20
+208            android:name="com.hospital.dietary.BootCompletedReceiver"
+208-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:188:13-50
+209            android:exported="false"
+209-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:189:13-37
+210            android:permission="android.permission.RECEIVE_BOOT_COMPLETED" >
+210-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:190:13-75
+211            <intent-filter>
+211-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:191:13-193:29
+212                <action android:name="android.intent.action.BOOT_COMPLETED" />
+212-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:192:17-79
+212-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:192:25-76
+213            </intent-filter>
+214        </receiver>
 215
-216        <receiver
-216-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:61:9-66:35
-217            android:name="androidx.work.impl.utils.ForceStopRunnable$BroadcastReceiver"
-217-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:62:13-88
-218            android:directBootAware="false"
-218-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:63:13-44
-219            android:enabled="true"
-219-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:64:13-35
-220            android:exported="false" />
-220-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:65:13-37
-221        <receiver
-221-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:67:9-77:20
-222            android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$BatteryChargingProxy"
-222-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:68:13-106
-223            android:directBootAware="false"
-223-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:69:13-44
-224            android:enabled="false"
-224-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:70:13-36
-225            android:exported="false" >
-225-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:71:13-37
-226            <intent-filter>
-226-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:73:13-76:29
-227                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
-227-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:74:17-87
-227-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:74:25-84
-228                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
-228-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:75:17-90
-228-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:75:25-87
-229            </intent-filter>
-230        </receiver>
-231        <receiver
-231-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:78:9-88:20
-232            android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$BatteryNotLowProxy"
-232-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:79:13-104
-233            android:directBootAware="false"
-233-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:80:13-44
-234            android:enabled="false"
-234-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:81:13-36
-235            android:exported="false" >
-235-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:82:13-37
-236            <intent-filter>
-236-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:84:13-87:29
-237                <action android:name="android.intent.action.BATTERY_OKAY" />
-237-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:85:17-77
-237-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:85:25-74
-238                <action android:name="android.intent.action.BATTERY_LOW" />
-238-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:86:17-76
-238-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:86:25-73
-239            </intent-filter>
-240        </receiver>
-241        <receiver
-241-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:89:9-99:20
-242            android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$StorageNotLowProxy"
-242-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:90:13-104
-243            android:directBootAware="false"
-243-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:91:13-44
-244            android:enabled="false"
-244-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:92:13-36
-245            android:exported="false" >
-245-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:93:13-37
-246            <intent-filter>
-246-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:95:13-98:29
-247                <action android:name="android.intent.action.DEVICE_STORAGE_LOW" />
-247-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:96:17-83
-247-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:96:25-80
-248                <action android:name="android.intent.action.DEVICE_STORAGE_OK" />
-248-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:97:17-82
-248-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:97:25-79
-249            </intent-filter>
-250        </receiver>
+216        <provider
+216-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:29:9-37:20
+217            android:name="androidx.startup.InitializationProvider"
+217-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:30:13-67
+218            android:authorities="com.hospital.dietary.androidx-startup"
+218-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:31:13-68
+219            android:exported="false" >
+219-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:32:13-37
+220            <meta-data
+220-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:34:13-36:52
+221                android:name="androidx.work.WorkManagerInitializer"
+221-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:35:17-68
+222                android:value="androidx.startup" />
+222-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:36:17-49
+223            <meta-data
+223-->[androidx.emoji2:emoji2:1.2.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\6b93cfe62f82596a55d02366b3b3e581\transformed\jetified-emoji2-1.2.0\AndroidManifest.xml:29:13-31:52
+224                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+224-->[androidx.emoji2:emoji2:1.2.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\6b93cfe62f82596a55d02366b3b3e581\transformed\jetified-emoji2-1.2.0\AndroidManifest.xml:30:17-75
+225                android:value="androidx.startup" />
+225-->[androidx.emoji2:emoji2:1.2.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\6b93cfe62f82596a55d02366b3b3e581\transformed\jetified-emoji2-1.2.0\AndroidManifest.xml:31:17-49
+226            <meta-data
+226-->[androidx.lifecycle:lifecycle-process:2.7.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\67f1ab90c7b24fc489a7708e30aab410\transformed\jetified-lifecycle-process-2.7.0\AndroidManifest.xml:29:13-31:52
+227                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+227-->[androidx.lifecycle:lifecycle-process:2.7.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\67f1ab90c7b24fc489a7708e30aab410\transformed\jetified-lifecycle-process-2.7.0\AndroidManifest.xml:30:17-78
+228                android:value="androidx.startup" />
+228-->[androidx.lifecycle:lifecycle-process:2.7.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\67f1ab90c7b24fc489a7708e30aab410\transformed\jetified-lifecycle-process-2.7.0\AndroidManifest.xml:31:17-49
+229            <meta-data
+229-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\6e3e55971d600bebc298ddd5a9ef359a\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:29:13-31:52
+230                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+230-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\6e3e55971d600bebc298ddd5a9ef359a\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:30:17-85
+231                android:value="androidx.startup" />
+231-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\6e3e55971d600bebc298ddd5a9ef359a\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:31:17-49
+232        </provider>
+233
+234        <service
+234-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:39:9-45:35
+235            android:name="androidx.work.impl.background.systemalarm.SystemAlarmService"
+235-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:40:13-88
+236            android:directBootAware="false"
+236-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:41:13-44
+237            android:enabled="@bool/enable_system_alarm_service_default"
+237-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:42:13-72
+238            android:exported="false" />
+238-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:43:13-37
+239        <service
+239-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:46:9-52:35
+240            android:name="androidx.work.impl.background.systemjob.SystemJobService"
+240-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:47:13-84
+241            android:directBootAware="false"
+241-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:48:13-44
+242            android:enabled="@bool/enable_system_job_service_default"
+242-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:49:13-70
+243            android:exported="true"
+243-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:50:13-36
+244            android:permission="android.permission.BIND_JOB_SERVICE" />
+244-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:51:13-69
+245        <service
+245-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:53:9-59:35
+246            android:name="androidx.work.impl.foreground.SystemForegroundService"
+246-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:54:13-81
+247            android:directBootAware="false"
+247-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:55:13-44
+248            android:enabled="@bool/enable_system_foreground_service_default"
+248-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:56:13-77
+249            android:exported="false" />
+249-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:57:13-37
+250
 251        <receiver
-251-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:100:9-109:20
-252            android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$NetworkStateProxy"
-252-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:101:13-103
+251-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:61:9-66:35
+252            android:name="androidx.work.impl.utils.ForceStopRunnable$BroadcastReceiver"
+252-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:62:13-88
 253            android:directBootAware="false"
-253-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:102:13-44
-254            android:enabled="false"
-254-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:103:13-36
-255            android:exported="false" >
-255-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:104:13-37
-256            <intent-filter>
-256-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:106:13-108:29
-257                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-257-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:107:17-79
-257-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:107:25-76
-258            </intent-filter>
-259        </receiver>
-260        <receiver
-260-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:110:9-121:20
-261            android:name="androidx.work.impl.background.systemalarm.RescheduleReceiver"
-261-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:111:13-88
-262            android:directBootAware="false"
-262-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:112:13-44
-263            android:enabled="false"
-263-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:113:13-36
-264            android:exported="false" >
-264-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:114:13-37
-265            <intent-filter>
-265-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:116:13-120:29
-266                <action android:name="android.intent.action.BOOT_COMPLETED" />
-266-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:117:17-79
-266-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:117:25-76
-267                <action android:name="android.intent.action.TIME_SET" />
-267-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:118:17-73
-267-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:118:25-70
-268                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
-268-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:119:17-81
-268-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:119:25-78
-269            </intent-filter>
-270        </receiver>
-271        <receiver
-271-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:122:9-131:20
-272            android:name="androidx.work.impl.background.systemalarm.ConstraintProxyUpdateReceiver"
-272-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:123:13-99
-273            android:directBootAware="false"
-273-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:124:13-44
-274            android:enabled="@bool/enable_system_alarm_service_default"
-274-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:125:13-72
-275            android:exported="false" >
-275-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:126:13-37
-276            <intent-filter>
-276-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:128:13-130:29
-277                <action android:name="androidx.work.impl.background.systemalarm.UpdateProxies" />
-277-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:129:17-98
-277-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:129:25-95
-278            </intent-filter>
-279        </receiver>
-280        <receiver
-280-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:132:9-142:20
-281            android:name="androidx.work.impl.diagnostics.DiagnosticsReceiver"
-281-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:133:13-78
-282            android:directBootAware="false"
-282-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:134:13-44
-283            android:enabled="true"
-283-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:135:13-35
-284            android:exported="true"
-284-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:136:13-36
-285            android:permission="android.permission.DUMP" >
-285-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:137:13-57
-286            <intent-filter>
-286-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:139:13-141:29
-287                <action android:name="androidx.work.diagnostics.REQUEST_DIAGNOSTICS" />
-287-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:140:17-88
-287-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:140:25-85
-288            </intent-filter>
-289        </receiver>
-290
-291        <uses-library
-291-->[androidx.window:window:1.0.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\69e57ea3c1039d676eaebabbaee48e6c\transformed\jetified-window-1.0.0\AndroidManifest.xml:25:9-27:40
-292            android:name="androidx.window.extensions"
-292-->[androidx.window:window:1.0.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\69e57ea3c1039d676eaebabbaee48e6c\transformed\jetified-window-1.0.0\AndroidManifest.xml:26:13-54
-293            android:required="false" />
-293-->[androidx.window:window:1.0.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\69e57ea3c1039d676eaebabbaee48e6c\transformed\jetified-window-1.0.0\AndroidManifest.xml:27:13-37
-294        <uses-library
-294-->[androidx.window:window:1.0.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\69e57ea3c1039d676eaebabbaee48e6c\transformed\jetified-window-1.0.0\AndroidManifest.xml:28:9-30:40
-295            android:name="androidx.window.sidecar"
-295-->[androidx.window:window:1.0.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\69e57ea3c1039d676eaebabbaee48e6c\transformed\jetified-window-1.0.0\AndroidManifest.xml:29:13-51
-296            android:required="false" />
-296-->[androidx.window:window:1.0.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\69e57ea3c1039d676eaebabbaee48e6c\transformed\jetified-window-1.0.0\AndroidManifest.xml:30:13-37
-297
-298        <service
-298-->[androidx.room:room-runtime:2.6.1] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\a13067a53daf843bcfb813f92026444f\transformed\room-runtime-2.6.1\AndroidManifest.xml:24:9-28:63
-299            android:name="androidx.room.MultiInstanceInvalidationService"
-299-->[androidx.room:room-runtime:2.6.1] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\a13067a53daf843bcfb813f92026444f\transformed\room-runtime-2.6.1\AndroidManifest.xml:25:13-74
-300            android:directBootAware="true"
-300-->[androidx.room:room-runtime:2.6.1] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\a13067a53daf843bcfb813f92026444f\transformed\room-runtime-2.6.1\AndroidManifest.xml:26:13-43
-301            android:exported="false" />
-301-->[androidx.room:room-runtime:2.6.1] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\a13067a53daf843bcfb813f92026444f\transformed\room-runtime-2.6.1\AndroidManifest.xml:27:13-37
-302
-303        <receiver
-303-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\6e3e55971d600bebc298ddd5a9ef359a\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:34:9-52:20
-304            android:name="androidx.profileinstaller.ProfileInstallReceiver"
-304-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\6e3e55971d600bebc298ddd5a9ef359a\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:35:13-76
-305            android:directBootAware="false"
-305-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\6e3e55971d600bebc298ddd5a9ef359a\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:36:13-44
-306            android:enabled="true"
-306-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\6e3e55971d600bebc298ddd5a9ef359a\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:37:13-35
-307            android:exported="true"
-307-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\6e3e55971d600bebc298ddd5a9ef359a\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:38:13-36
-308            android:permission="android.permission.DUMP" >
-308-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\6e3e55971d600bebc298ddd5a9ef359a\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:39:13-57
-309            <intent-filter>
-309-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\6e3e55971d600bebc298ddd5a9ef359a\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:40:13-42:29
-310                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
-310-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\6e3e55971d600bebc298ddd5a9ef359a\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:41:17-91
-310-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\6e3e55971d600bebc298ddd5a9ef359a\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:41:25-88
-311            </intent-filter>
-312            <intent-filter>
-312-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\6e3e55971d600bebc298ddd5a9ef359a\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:43:13-45:29
-313                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
-313-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\6e3e55971d600bebc298ddd5a9ef359a\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:44:17-85
-313-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\6e3e55971d600bebc298ddd5a9ef359a\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:44:25-82
-314            </intent-filter>
-315            <intent-filter>
-315-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\6e3e55971d600bebc298ddd5a9ef359a\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:46:13-48:29
-316                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
-316-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\6e3e55971d600bebc298ddd5a9ef359a\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:47:17-88
-316-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\6e3e55971d600bebc298ddd5a9ef359a\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:47:25-85
-317            </intent-filter>
-318            <intent-filter>
-318-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\6e3e55971d600bebc298ddd5a9ef359a\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:49:13-51:29
-319                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
-319-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\6e3e55971d600bebc298ddd5a9ef359a\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:50:17-95
-319-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\6e3e55971d600bebc298ddd5a9ef359a\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:50:25-92
-320            </intent-filter>
-321        </receiver>
-322    </application>
-323
-324</manifest>
+253-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:63:13-44
+254            android:enabled="true"
+254-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:64:13-35
+255            android:exported="false" />
+255-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:65:13-37
+256        <receiver
+256-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:67:9-77:20
+257            android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$BatteryChargingProxy"
+257-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:68:13-106
+258            android:directBootAware="false"
+258-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:69:13-44
+259            android:enabled="false"
+259-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:70:13-36
+260            android:exported="false" >
+260-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:71:13-37
+261            <intent-filter>
+261-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:73:13-76:29
+262                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+262-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:74:17-87
+262-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:74:25-84
+263                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
+263-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:75:17-90
+263-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:75:25-87
+264            </intent-filter>
+265        </receiver>
+266        <receiver
+266-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:78:9-88:20
+267            android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$BatteryNotLowProxy"
+267-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:79:13-104
+268            android:directBootAware="false"
+268-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:80:13-44
+269            android:enabled="false"
+269-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:81:13-36
+270            android:exported="false" >
+270-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:82:13-37
+271            <intent-filter>
+271-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:84:13-87:29
+272                <action android:name="android.intent.action.BATTERY_OKAY" />
+272-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:85:17-77
+272-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:85:25-74
+273                <action android:name="android.intent.action.BATTERY_LOW" />
+273-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:86:17-76
+273-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:86:25-73
+274            </intent-filter>
+275        </receiver>
+276        <receiver
+276-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:89:9-99:20
+277            android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$StorageNotLowProxy"
+277-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:90:13-104
+278            android:directBootAware="false"
+278-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:91:13-44
+279            android:enabled="false"
+279-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:92:13-36
+280            android:exported="false" >
+280-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:93:13-37
+281            <intent-filter>
+281-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:95:13-98:29
+282                <action android:name="android.intent.action.DEVICE_STORAGE_LOW" />
+282-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:96:17-83
+282-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:96:25-80
+283                <action android:name="android.intent.action.DEVICE_STORAGE_OK" />
+283-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:97:17-82
+283-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:97:25-79
+284            </intent-filter>
+285        </receiver>
+286        <receiver
+286-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:100:9-109:20
+287            android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$NetworkStateProxy"
+287-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:101:13-103
+288            android:directBootAware="false"
+288-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:102:13-44
+289            android:enabled="false"
+289-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:103:13-36
+290            android:exported="false" >
+290-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:104:13-37
+291            <intent-filter>
+291-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:106:13-108:29
+292                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+292-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:107:17-79
+292-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:107:25-76
+293            </intent-filter>
+294        </receiver>
+295        <receiver
+295-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:110:9-121:20
+296            android:name="androidx.work.impl.background.systemalarm.RescheduleReceiver"
+296-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:111:13-88
+297            android:directBootAware="false"
+297-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:112:13-44
+298            android:enabled="false"
+298-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:113:13-36
+299            android:exported="false" >
+299-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:114:13-37
+300            <intent-filter>
+300-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:116:13-120:29
+301                <action android:name="android.intent.action.BOOT_COMPLETED" />
+301-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:192:17-79
+301-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:192:25-76
+302                <action android:name="android.intent.action.TIME_SET" />
+302-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:118:17-73
+302-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:118:25-70
+303                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+303-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:119:17-81
+303-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:119:25-78
+304            </intent-filter>
+305        </receiver>
+306        <receiver
+306-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:122:9-131:20
+307            android:name="androidx.work.impl.background.systemalarm.ConstraintProxyUpdateReceiver"
+307-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:123:13-99
+308            android:directBootAware="false"
+308-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:124:13-44
+309            android:enabled="@bool/enable_system_alarm_service_default"
+309-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:125:13-72
+310            android:exported="false" >
+310-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:126:13-37
+311            <intent-filter>
+311-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:128:13-130:29
+312                <action android:name="androidx.work.impl.background.systemalarm.UpdateProxies" />
+312-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:129:17-98
+312-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:129:25-95
+313            </intent-filter>
+314        </receiver>
+315        <receiver
+315-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:132:9-142:20
+316            android:name="androidx.work.impl.diagnostics.DiagnosticsReceiver"
+316-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:133:13-78
+317            android:directBootAware="false"
+317-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:134:13-44
+318            android:enabled="true"
+318-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:135:13-35
+319            android:exported="true"
+319-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:136:13-36
+320            android:permission="android.permission.DUMP" >
+320-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:137:13-57
+321            <intent-filter>
+321-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:139:13-141:29
+322                <action android:name="androidx.work.diagnostics.REQUEST_DIAGNOSTICS" />
+322-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:140:17-88
+322-->[androidx.work:work-runtime:2.9.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\b461f134146c02009465757e33da3e49\transformed\work-runtime-2.9.0\AndroidManifest.xml:140:25-85
+323            </intent-filter>
+324        </receiver>
+325
+326        <uses-library
+326-->[androidx.window:window:1.0.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\69e57ea3c1039d676eaebabbaee48e6c\transformed\jetified-window-1.0.0\AndroidManifest.xml:25:9-27:40
+327            android:name="androidx.window.extensions"
+327-->[androidx.window:window:1.0.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\69e57ea3c1039d676eaebabbaee48e6c\transformed\jetified-window-1.0.0\AndroidManifest.xml:26:13-54
+328            android:required="false" />
+328-->[androidx.window:window:1.0.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\69e57ea3c1039d676eaebabbaee48e6c\transformed\jetified-window-1.0.0\AndroidManifest.xml:27:13-37
+329        <uses-library
+329-->[androidx.window:window:1.0.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\69e57ea3c1039d676eaebabbaee48e6c\transformed\jetified-window-1.0.0\AndroidManifest.xml:28:9-30:40
+330            android:name="androidx.window.sidecar"
+330-->[androidx.window:window:1.0.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\69e57ea3c1039d676eaebabbaee48e6c\transformed\jetified-window-1.0.0\AndroidManifest.xml:29:13-51
+331            android:required="false" />
+331-->[androidx.window:window:1.0.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\69e57ea3c1039d676eaebabbaee48e6c\transformed\jetified-window-1.0.0\AndroidManifest.xml:30:13-37
+332
+333        <service
+333-->[androidx.room:room-runtime:2.6.1] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\a13067a53daf843bcfb813f92026444f\transformed\room-runtime-2.6.1\AndroidManifest.xml:24:9-28:63
+334            android:name="androidx.room.MultiInstanceInvalidationService"
+334-->[androidx.room:room-runtime:2.6.1] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\a13067a53daf843bcfb813f92026444f\transformed\room-runtime-2.6.1\AndroidManifest.xml:25:13-74
+335            android:directBootAware="true"
+335-->[androidx.room:room-runtime:2.6.1] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\a13067a53daf843bcfb813f92026444f\transformed\room-runtime-2.6.1\AndroidManifest.xml:26:13-43
+336            android:exported="false" />
+336-->[androidx.room:room-runtime:2.6.1] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\a13067a53daf843bcfb813f92026444f\transformed\room-runtime-2.6.1\AndroidManifest.xml:27:13-37
+337
+338        <receiver
+338-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\6e3e55971d600bebc298ddd5a9ef359a\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:34:9-52:20
+339            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+339-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\6e3e55971d600bebc298ddd5a9ef359a\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:35:13-76
+340            android:directBootAware="false"
+340-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\6e3e55971d600bebc298ddd5a9ef359a\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:36:13-44
+341            android:enabled="true"
+341-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\6e3e55971d600bebc298ddd5a9ef359a\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:37:13-35
+342            android:exported="true"
+342-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\6e3e55971d600bebc298ddd5a9ef359a\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:38:13-36
+343            android:permission="android.permission.DUMP" >
+343-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\6e3e55971d600bebc298ddd5a9ef359a\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:39:13-57
+344            <intent-filter>
+344-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\6e3e55971d600bebc298ddd5a9ef359a\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:40:13-42:29
+345                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+345-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\6e3e55971d600bebc298ddd5a9ef359a\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:41:17-91
+345-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\6e3e55971d600bebc298ddd5a9ef359a\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:41:25-88
+346            </intent-filter>
+347            <intent-filter>
+347-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\6e3e55971d600bebc298ddd5a9ef359a\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:43:13-45:29
+348                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+348-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\6e3e55971d600bebc298ddd5a9ef359a\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:44:17-85
+348-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\6e3e55971d600bebc298ddd5a9ef359a\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:44:25-82
+349            </intent-filter>
+350            <intent-filter>
+350-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\6e3e55971d600bebc298ddd5a9ef359a\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:46:13-48:29
+351                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+351-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\6e3e55971d600bebc298ddd5a9ef359a\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:47:17-88
+351-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\6e3e55971d600bebc298ddd5a9ef359a\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:47:25-85
+352            </intent-filter>
+353            <intent-filter>
+353-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\6e3e55971d600bebc298ddd5a9ef359a\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:49:13-51:29
+354                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+354-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\6e3e55971d600bebc298ddd5a9ef359a\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:50:17-95
+354-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\mieks\.jdks\corretto-19.0.2\caches\8.13\transforms\6e3e55971d600bebc298ddd5a9ef359a\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:50:25-92
+355            </intent-filter>
+356        </receiver>
+357    </application>
+358
+359</manifest>

@@ -3247,9 +3247,7 @@ id action_clear_form
 id action_container
 id action_context_bar
 id action_default_menus
-id action_delete
 id action_divider
-id action_edit
 id action_export
 id action_home
 id action_image
@@ -3259,6 +3257,7 @@ id action_menu_presenter
 id action_mode_bar
 id action_mode_bar_stub
 id action_mode_close_button
+id action_print
 id action_refresh
 id action_save
 id action_text
@@ -3286,7 +3285,6 @@ id aligned
 id all
 id allStates
 id allergiesInput
-id allergiesText
 id always
 id androidx_window_activity_scope
 id animateToEnd
@@ -3320,8 +3318,8 @@ id breadOkCheckBox
 id breakfastBread
 id breakfastColdCereal
 id breakfastCompleteCheckBox
+id breakfastDietText
 id breakfastDrinksContainer
-id breakfastDrinksText
 id breakfastFluidDisplay
 id breakfastFruit
 id breakfastHotCereal
@@ -3329,7 +3327,9 @@ id breakfastItemsContainer
 id breakfastItemsText
 id breakfastJuicesContainer
 id breakfastMain
+id breakfastMenuText
 id breakfastMuffin
+id breakfastNPOCheckBox
 id breakfastNPOCheckbox
 id breakfastSection
 id bulkOperationsContainer
@@ -3365,7 +3365,6 @@ id clockwise
 id closest
 id collapseActionView
 id commentsInput
-id commentsText
 id completedDateText
 id completedOrdersCountText
 id compress
@@ -3420,11 +3419,13 @@ id dietTypeText
 id dimensions
 id dinnerCompleteCheckBox
 id dinnerDessert
+id dinnerDietText
 id dinnerDrinksContainer
-id dinnerDrinksText
 id dinnerFluidDisplay
 id dinnerItemsContainer
 id dinnerItemsText
+id dinnerMenuText
+id dinnerNPOCheckBox
 id dinnerNPOCheckbox
 id dinnerProtein
 id dinnerSection
@@ -3439,7 +3440,6 @@ id dischargePatientButton
 id dischargedCheckBox
 id disjoint
 id dislikesInput
-id dislikesText
 id dragAnticlockwise
 id dragClockwise
 id dragDown
@@ -3565,10 +3565,10 @@ id left
 id leftToRight
 id legacy
 id likesInput
-id likesText
 id line1
 id line3
 id linear
+id liquidThicknessText
 id listMode
 id list_item
 id locale
@@ -3577,11 +3577,13 @@ id logoutButton
 id ltr
 id lunchCompleteCheckBox
 id lunchDessert
+id lunchDietText
 id lunchDrinksContainer
-id lunchDrinksText
 id lunchFluidDisplay
 id lunchItemsContainer
 id lunchItemsText
+id lunchMenuText
+id lunchNPOCheckBox
 id lunchNPOCheckbox
 id lunchProtein
 id lunchSection
@@ -3591,6 +3593,8 @@ id m3_side_sheet
 id mainMenuContainer
 id manageCategoriesButton
 id manageUsersButton
+id markAllCompleteButton
+id markAllNPOButton
 id marquee
 id masked
 id match_constraint
@@ -3619,7 +3623,6 @@ id matrix
 id mealAdaSwitch
 id mealAdaToggleLayout
 id mealDietSpinner
-id mealItemsSection
 id mealStatusSection
 id mealSummaryText
 id mealTypeSpinner
@@ -3921,7 +3924,7 @@ id top
 id topPanel
 id totalPatientsCount
 id touch_outside
-id transferRoomButton
+id transferPatientButton
 id transitionToEnd
 id transitionToStart
 id transition_current_scene
@@ -4146,6 +4149,7 @@ layout dialog_meal_edit_diet
 layout dialog_password_policy
 layout dialog_patient_details
 layout dialog_reset_password
+layout dialog_transfer_patient
 layout dialog_transfer_room
 layout dialog_user_form
 layout drink_item

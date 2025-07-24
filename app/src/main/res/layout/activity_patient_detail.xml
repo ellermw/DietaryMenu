@@ -29,7 +29,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Patient Information"
+                    android:text="👤 Patient Information"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:textColor="#2c3e50"
@@ -49,228 +49,58 @@
                     android:id="@+id/locationText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="2 North - Room 205"
+                    android:text="📍 2 North - Room 205"
                     android:textSize="16sp"
                     android:textColor="#555555"
-                    android:drawableStart="@android:drawable/ic_menu_mylocation"
-                    android:drawablePadding="8dp"
-                    android:gravity="center_vertical"
+                    android:layout_marginBottom="8dp" />
+
+                <TextView
+                    android:id="@+id/dietText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="🍽️ Regular Diet"
+                    android:textSize="16sp"
+                    android:textColor="#27ae60"
+                    android:layout_marginBottom="8dp" />
+
+                <TextView
+                    android:id="@+id/fluidRestrictionText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="💧 Fluid Restriction: None"
+                    android:textSize="14sp"
+                    android:textColor="#666666"
+                    android:layout_marginBottom="4dp" />
+
+                <TextView
+                    android:id="@+id/textureModificationsText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="🥄 Texture: None"
+                    android:textSize="14sp"
+                    android:textColor="#666666"
+                    android:layout_marginBottom="4dp" />
+
+                <TextView
+                    android:id="@+id/liquidThicknessText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="🥤 Liquid Thickness: Regular"
+                    android:textSize="14sp"
+                    android:textColor="#666666"
                     android:layout_marginBottom="8dp" />
 
                 <TextView
                     android:id="@+id/createdDateText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Admitted: Jan 15, 2024"
-                    android:textSize="14sp"
-                    android:textColor="#7f8c8d"
-                    android:layout_marginBottom="8dp" />
-
+                    android:text="📅 Created: 01/01/2024"
+                    android:textSize="12sp"
+                    android:textColor="#999999" />
             </LinearLayout>
-
         </androidx.cardview.widget.CardView>
 
-        <!-- Dietary Requirements Card -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="2dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Dietary Requirements"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:textColor="#2c3e50"
-                    android:layout_marginBottom="16dp" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="8dp">
-
-                    <TextView
-                        android:layout_width="120dp"
-                        android:layout_height="wrap_content"
-                        android:text="Diet:"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/dietText"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Regular" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="8dp">
-
-                    <TextView
-                        android:layout_width="120dp"
-                        android:layout_height="wrap_content"
-                        android:text="Fluid Restriction:"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/fluidRestrictionText"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="No Restriction" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="8dp">
-
-                    <TextView
-                        android:layout_width="120dp"
-                        android:layout_height="wrap_content"
-                        android:text="Texture Mods:"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/textureModificationsText"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="None" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-        </androidx.cardview.widget.CardView>
-
-        <!-- Preferences Card -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="2dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Preferences &amp; Notes"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:textColor="#2c3e50"
-                    android:layout_marginBottom="16dp" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="8dp">
-
-                    <TextView
-                        android:layout_width="80dp"
-                        android:layout_height="wrap_content"
-                        android:text="Allergies:"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/allergiesText"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="None" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="8dp">
-
-                    <TextView
-                        android:layout_width="80dp"
-                        android:layout_height="wrap_content"
-                        android:text="Likes:"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/likesText"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="None" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="8dp">
-
-                    <TextView
-                        android:layout_width="80dp"
-                        android:layout_height="wrap_content"
-                        android:text="Dislikes:"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/dislikesText"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="None" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="80dp"
-                        android:layout_height="wrap_content"
-                        android:text="Comments:"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/commentsText"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="None" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-        </androidx.cardview.widget.CardView>
-
-        <!-- Meal Status Card -->
+        <!-- Daily Meal Status Card -->
         <androidx.cardview.widget.CardView
             android:id="@+id/mealStatusSection"
             android:layout_width="match_parent"
@@ -286,220 +116,282 @@
                 android:padding="16dp">
 
                 <TextView
-                    android:id="@+id/orderDateText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Today's Orders"
+                    android:text="🍽️ Today's Meals"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:textColor="#2c3e50"
                     android:layout_marginBottom="16dp" />
 
+                <!-- Breakfast Section -->
                 <LinearLayout
+                    android:id="@+id/breakfastSection"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="vertical"
+                    android:background="#fff3cd"
+                    android:padding="12dp"
+                    android:layout_marginBottom="8dp">
 
-                    <CheckBox
-                        android:id="@+id/breakfastCompleteCheckBox"
-                        android:layout_width="0dp"
+                    <TextView
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Breakfast"
-                        android:enabled="false" />
+                        android:text="🌅 BREAKFAST"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="#856404"
+                        android:layout_marginBottom="8dp" />
 
-                    <CheckBox
-                        android:id="@+id/lunchCompleteCheckBox"
-                        android:layout_width="0dp"
+                    <TextView
+                        android:id="@+id/breakfastDietText"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Lunch"
-                        android:enabled="false" />
+                        android:text="Diet: Regular"
+                        android:textSize="14sp"
+                        android:textColor="#333333"
+                        android:layout_marginBottom="4dp" />
 
-                    <CheckBox
-                        android:id="@+id/dinnerCompleteCheckBox"
-                        android:layout_width="0dp"
+                    <TextView
+                        android:id="@+id/breakfastMenuText"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Dinner"
-                        android:enabled="false" />
+                        android:text="No meal items selected"
+                        android:textSize="13sp"
+                        android:textColor="#666666"
+                        android:layout_marginBottom="8dp" />
 
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <CheckBox
+                            android:id="@+id/breakfastCompleteCheckBox"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Complete" />
+
+                        <CheckBox
+                            android:id="@+id/breakfastNPOCheckBox"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="NPO" />
+                    </LinearLayout>
                 </LinearLayout>
 
+                <!-- Lunch Section -->
+                <LinearLayout
+                    android:id="@+id/lunchSection"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="#cfe2ff"
+                    android:padding="12dp"
+                    android:layout_marginBottom="8dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="☀️ LUNCH"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="#084298"
+                        android:layout_marginBottom="8dp" />
+
+                    <TextView
+                        android:id="@+id/lunchDietText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Diet: Regular"
+                        android:textSize="14sp"
+                        android:textColor="#333333"
+                        android:layout_marginBottom="4dp" />
+
+                    <TextView
+                        android:id="@+id/lunchMenuText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="No meal items selected"
+                        android:textSize="13sp"
+                        android:textColor="#666666"
+                        android:layout_marginBottom="8dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <CheckBox
+                            android:id="@+id/lunchCompleteCheckBox"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Complete" />
+
+                        <CheckBox
+                            android:id="@+id/lunchNPOCheckBox"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="NPO" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Dinner Section -->
+                <LinearLayout
+                    android:id="@+id/dinnerSection"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="#f8d7da"
+                    android:padding="12dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="🌙 DINNER"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="#842029"
+                        android:layout_marginBottom="8dp" />
+
+                    <TextView
+                        android:id="@+id/dinnerDietText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Diet: Regular"
+                        android:textSize="14sp"
+                        android:textColor="#333333"
+                        android:layout_marginBottom="4dp" />
+
+                    <TextView
+                        android:id="@+id/dinnerMenuText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="No meal items selected"
+                        android:textSize="13sp"
+                        android:textColor="#666666"
+                        android:layout_marginBottom="8dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <CheckBox
+                            android:id="@+id/dinnerCompleteCheckBox"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Complete" />
+
+                        <CheckBox
+                            android:id="@+id/dinnerNPOCheckBox"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="NPO" />
+                    </LinearLayout>
+                </LinearLayout>
             </LinearLayout>
-
-        </androidx.cardview.widget.CardView>
-
-        <!-- Meal Items Card -->
-        <androidx.cardview.widget.CardView
-            android:id="@+id/mealItemsSection"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="2dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Meal Orders"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:textColor="#2c3e50"
-                    android:layout_marginBottom="16dp" />
-
-                <!-- Breakfast -->
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="🍳 Breakfast"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="8dp" />
-
-                <TextView
-                    android:id="@+id/breakfastItemsText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="No items ordered"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginBottom="4dp" />
-
-                <TextView
-                    android:id="@+id/breakfastDrinksText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Drink: None"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginBottom="16dp" />
-
-                <!-- Lunch -->
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="🥙 Lunch"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="8dp" />
-
-                <TextView
-                    android:id="@+id/lunchItemsText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="No items ordered"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginBottom="4dp" />
-
-                <TextView
-                    android:id="@+id/lunchDrinksText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Drink: None"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginBottom="16dp" />
-
-                <!-- Dinner -->
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="🍽️ Dinner"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="8dp" />
-
-                <TextView
-                    android:id="@+id/dinnerItemsText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="No items ordered"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginBottom="4dp" />
-
-                <TextView
-                    android:id="@+id/dinnerDrinksText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Drink: None"
-                    android:layout_marginStart="16dp" />
-
-            </LinearLayout>
-
         </androidx.cardview.widget.CardView>
 
         <!-- Action Buttons -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="⚙️ Actions"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#2c3e50"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Patient Management Buttons -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
+
+            <Button
+                android:id="@+id/editPatientButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Edit Patient"
+                android:textColor="@android:color/white"
+                android:backgroundTint="#3498db"
+                android:layout_marginEnd="4dp" />
+
+            <Button
+                android:id="@+id/editMealPlanButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Edit Meals"
+                android:textColor="@android:color/white"
+                android:backgroundTint="#2ecc71"
+                android:layout_marginStart="4dp" />
+        </LinearLayout>
+
+        <!-- Transfer and Discharge Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
+
+            <Button
+                android:id="@+id/transferPatientButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Transfer"
+                android:textColor="@android:color/white"
+                android:backgroundTint="#f39c12"
+                android:layout_marginEnd="4dp" />
+
+            <Button
+                android:id="@+id/dischargePatientButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Discharge"
+                android:textColor="@android:color/white"
+                android:backgroundTint="#e74c3c"
+                android:layout_marginStart="4dp" />
+        </LinearLayout>
+
+        <!-- Meal Status Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
             android:layout_marginBottom="16dp">
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <Button
+                android:id="@+id/markAllCompleteButton"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="8dp">
+                android:layout_weight="1"
+                android:text="All Complete"
+                android:textColor="@android:color/white"
+                android:backgroundTint="#27ae60"
+                android:layout_marginEnd="4dp" />
 
-                <Button
-                    android:id="@+id/editPatientButton"
-                    android:layout_width="0dp"
-                    android:layout_height="56dp"
-                    android:layout_weight="1"
-                    android:text="✏️ Edit Info"
-                    android:textSize="14sp"
-                    android:background="#2196F3"
-                    android:textColor="@android:color/white"
-                    android:layout_marginEnd="4dp" />
-
-                <Button
-                    android:id="@+id/editMealPlanButton"
-                    android:layout_width="0dp"
-                    android:layout_height="56dp"
-                    android:layout_weight="1"
-                    android:text="🍽️ Edit Meals"
-                    android:textSize="14sp"
-                    android:background="#4CAF50"
-                    android:textColor="@android:color/white"
-                    android:layout_marginStart="4dp" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
+            <Button
+                android:id="@+id/markAllNPOButton"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/transferRoomButton"
-                    android:layout_width="0dp"
-                    android:layout_height="56dp"
-                    android:layout_weight="1"
-                    android:text="🔄 Transfer Room"
-                    android:textSize="14sp"
-                    android:background="#FF9800"
-                    android:textColor="@android:color/white"
-                    android:layout_marginEnd="4dp" />
-
-                <Button
-                    android:id="@+id/dischargePatientButton"
-                    android:layout_width="0dp"
-                    android:layout_height="56dp"
-                    android:layout_weight="1"
-                    android:text="🏥 Discharge"
-                    android:textSize="14sp"
-                    android:background="#f44336"
-                    android:textColor="@android:color/white"
-                    android:layout_marginStart="4dp" />
-
-            </LinearLayout>
-
+                android:layout_weight="1"
+                android:text="All NPO"
+                android:textColor="@android:color/white"
+                android:backgroundTint="#9b59b6"
+                android:layout_marginStart="4dp" />
         </LinearLayout>
 
     </LinearLayout>
-
 </ScrollView>

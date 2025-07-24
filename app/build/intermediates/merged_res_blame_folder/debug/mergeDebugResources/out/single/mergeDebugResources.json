@@ -356,6 +356,10 @@
         "source": "com.hospital.dietary.app-main-6:/menu/menu_patient_info.xml"
     },
     {
+        "merged": "com.hospital.dietary.app-debug-4:/layout_dialog_transfer_patient.xml.flat",
+        "source": "com.hospital.dietary.app-main-6:/layout/dialog_transfer_patient.xml"
+    },
+    {
         "merged": "com.hospital.dietary.app-debug-4:/menu_menu_patient_detail.xml.flat",
         "source": "com.hospital.dietary.app-main-6:/menu/menu_patient_detail.xml"
     },

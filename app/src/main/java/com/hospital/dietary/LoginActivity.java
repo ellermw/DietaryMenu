@@ -2,6 +2,7 @@ package com.hospital.dietary;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -32,6 +33,9 @@ public class LoginActivity extends AppCompatActivity {
         dbHelper = new DatabaseHelper(this);
         userDAO = new UserDAO(dbHelper);
 
+        // Schedule automatic order creation at 4:00 AM if not already scheduled
+        scheduleAutoOrderCreationIfNeeded();
+
         // Initialize UI components
         initializeViews();
 
@@ -40,6 +44,21 @@ public class LoginActivity extends AppCompatActivity {
 
         // Create default admin if needed
         createDefaultAdminIfNeeded();
+    }
+
+    private void scheduleAutoOrderCreationIfNeeded() {
+        SharedPreferences sharedPreferences = getSharedPreferences("DietaryAppPrefs", MODE_PRIVATE);
+        boolean isScheduled = sharedPreferences.getBoolean("auto_order_scheduled", false);
+
+        if (!isScheduled) {
+            // Schedule the automatic order creation service
+            AutoOrderCreationService.scheduleAutoOrderCreation(this);
+
+            // Mark as scheduled
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putBoolean("auto_order_scheduled", true);
+            editor.apply();
+        }
     }
 
     private void initializeViews() {
@@ -51,7 +70,7 @@ public class LoginActivity extends AppCompatActivity {
 
         // Set version text
         if (versionText != null) {
-            versionText.setText(getString(R.string.app_version));
+            versionText.setText("Version 0.1.20");
         }
     }
 
@@ -59,9 +78,11 @@ public class LoginActivity extends AppCompatActivity {
         // Show/hide password toggle
         showPasswordCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
-                passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT |
+                        InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
             } else {
-                passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT |
+                        InputType.TYPE_TEXT_VARIATION_PASSWORD);
             }
             passwordEditText.setSelection(passwordEditText.getText().length());
         });
@@ -72,135 +93,76 @@ public class LoginActivity extends AppCompatActivity {
 
     private void createDefaultAdminIfNeeded() {
         try {
-            // Check if admin user exists
-            User adminUser = userDAO.getUserByUsername("admin");
-
-            if (adminUser == null) {
-                // Create default admin user
-                User newAdmin = new User();
-                newAdmin.setUsername("admin");
-                newAdmin.setPassword("password123");
-                newAdmin.setRole("Admin");
-                newAdmin.setFullName("Administrator");
-                newAdmin.setActive(true);
-
-                long result = userDAO.addUser(newAdmin);
-                if (result > 0) {
-                    android.util.Log.d("LoginActivity", "Default admin user created");
-                }
-            }
+            userDAO.createDefaultAdminIfNeeded();
         } catch (Exception e) {
-            android.util.Log.e("LoginActivity", "Error creating default admin", e);
+            e.printStackTrace();
         }
     }
 
     private void attemptLogin() {
-        // Reset errors
-        usernameEditText.setError(null);
-        passwordEditText.setError(null);
-
-        // Get values
         String username = usernameEditText.getText().toString().trim();
-        String password = passwordEditText.getText().toString();
+        String password = passwordEditText.getText().toString().trim();
 
-        boolean cancel = false;
-        View focusView = null;
-
-        // Check for valid password
-        if (TextUtils.isEmpty(password)) {
-            passwordEditText.setError("Password is required");
-            focusView = passwordEditText;
-            cancel = true;
-        }
-
-        // Check for valid username
         if (TextUtils.isEmpty(username)) {
             usernameEditText.setError("Username is required");
-            focusView = usernameEditText;
-            cancel = true;
+            usernameEditText.requestFocus();
+            return;
         }
 
-        if (cancel) {
-            focusView.requestFocus();
-        } else {
-            // Attempt authentication
-            performLogin(username, password);
+        if (TextUtils.isEmpty(password)) {
+            passwordEditText.setError("Password is required");
+            passwordEditText.requestFocus();
+            return;
         }
-    }
 
-    private void performLogin(String username, String password) {
-        try {
-            User user = userDAO.getUserByUsername(username);
+        // Validate login
+        User user = userDAO.validateLogin(username, password);
 
-            if (user != null && user.getPassword().equals(password)) {
-                if (!user.isActive()) {
-                    Toast.makeText(this, "Account is inactive. Please contact administrator.",
-                            Toast.LENGTH_LONG).show();
-                    return;
-                }
+        if (user != null) {
+            // Update last login
+            userDAO.updateLastLogin(user.getUserId());
 
-                // Check if this is first login (default password)
-                if ("password123".equals(password) && "admin".equals(username)) {
-                    showPasswordChangeDialog(user);
-                } else {
-                    // Proceed to main menu
-                    navigateToMainMenu(user);
-                }
+            // Check if password change is required
+            if (user.isMustChangePassword()) {
+                showChangePasswordDialog(user);
             } else {
-                Toast.makeText(this, "Invalid username or password", Toast.LENGTH_SHORT).show();
-                passwordEditText.setText("");
-                passwordEditText.requestFocus();
+                navigateToMainMenu(user);
             }
-        } catch (Exception e) {
-            Toast.makeText(this, "Login error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this, "Invalid username or password", Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void showPasswordChangeDialog(User user) {
-        View dialogView = getLayoutInflater().inflate(R.layout.dialog_change_password, null);
+    private void showChangePasswordDialog(User user) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Password Change Required");
+        builder.setMessage("You must change your password before continuing.");
 
-        EditText newPasswordEdit = dialogView.findViewById(R.id.newPasswordEditText);
-        EditText confirmPasswordEdit = dialogView.findViewById(R.id.confirmPasswordEditText);
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        input.setHint("Enter new password");
+        builder.setView(input);
 
-        new AlertDialog.Builder(this)
-                .setTitle("Password Change Required")
-                .setMessage("You must change your password from the default.")
-                .setView(dialogView)
-                .setPositiveButton("Change Password", (dialog, which) -> {
-                    String newPassword = newPasswordEdit.getText().toString();
-                    String confirmPassword = confirmPasswordEdit.getText().toString();
+        builder.setPositiveButton("Change", (dialog, which) -> {
+            String newPassword = input.getText().toString().trim();
+            if (newPassword.length() < 6) {
+                Toast.makeText(this, "Password must be at least 6 characters",
+                        Toast.LENGTH_SHORT).show();
+                showChangePasswordDialog(user);
+            } else {
+                changePassword(user, newPassword);
+            }
+        });
 
-                    if (validatePasswordChange(newPassword, confirmPassword)) {
-                        changePassword(user, newPassword);
-                    }
-                })
-                .setNegativeButton("Cancel", null)
-                .setCancelable(false)
-                .show();
-    }
-
-    private boolean validatePasswordChange(String newPassword, String confirmPassword) {
-        if (newPassword.length() < 6) {
-            Toast.makeText(this, "Password must be at least 6 characters", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-
-        if (!newPassword.equals(confirmPassword)) {
-            Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-
-        return true;
+        builder.setCancelable(false);
+        builder.show();
     }
 
     private void changePassword(User user, String newPassword) {
         try {
-            user.setPassword(newPassword);
-
-            boolean result = userDAO.updateUser(user);
-
-            if (result) {
-                Toast.makeText(this, "Password changed successfully!", Toast.LENGTH_SHORT).show();
+            boolean success = userDAO.changePassword(user.getUserId(), newPassword);
+            if (success) {
+                Toast.makeText(this, "Password changed successfully", Toast.LENGTH_SHORT).show();
                 navigateToMainMenu(user);
             } else {
                 Toast.makeText(this, "Password change failed", Toast.LENGTH_SHORT).show();

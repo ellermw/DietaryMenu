@@ -188,6 +188,10 @@
         "source": "com.hospital.dietary.app-main-6:/layout/activity_meal_planning.xml"
     },
     {
+        "merged": "com.hospital.dietary.app-mergeDebugResources-3:/layout/dialog_transfer_patient.xml",
+        "source": "com.hospital.dietary.app-main-6:/layout/dialog_transfer_patient.xml"
+    },
+    {
         "merged": "com.hospital.dietary.app-mergeDebugResources-3:/layout/activity_patient_detail.xml",
         "source": "com.hospital.dietary.app-main-6:/layout/activity_patient_detail.xml"
     },
