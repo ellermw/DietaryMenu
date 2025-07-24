@@ -5,8 +5,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,7 +20,7 @@ import java.lang.String;
 
 public final class ActivityUserManagementBinding implements ViewBinding {
   @NonNull
-  private final LinearLayout rootView;
+  private final ScrollView rootView;
 
   @NonNull
   public final Button addUserButton;
@@ -28,7 +29,16 @@ public final class ActivityUserManagementBinding implements ViewBinding {
   public final Button backButton;
 
   @NonNull
-  public final Button refreshButton;
+  public final Button exportUsersButton;
+
+  @NonNull
+  public final Button importUsersButton;
+
+  @NonNull
+  public final Button passwordPolicyButton;
+
+  @NonNull
+  public final EditText searchInput;
 
   @NonNull
   public final TextView usersCountText;
@@ -36,20 +46,25 @@ public final class ActivityUserManagementBinding implements ViewBinding {
   @NonNull
   public final ListView usersListView;
 
-  private ActivityUserManagementBinding(@NonNull LinearLayout rootView,
-      @NonNull Button addUserButton, @NonNull Button backButton, @NonNull Button refreshButton,
-      @NonNull TextView usersCountText, @NonNull ListView usersListView) {
+  private ActivityUserManagementBinding(@NonNull ScrollView rootView, @NonNull Button addUserButton,
+      @NonNull Button backButton, @NonNull Button exportUsersButton,
+      @NonNull Button importUsersButton, @NonNull Button passwordPolicyButton,
+      @NonNull EditText searchInput, @NonNull TextView usersCountText,
+      @NonNull ListView usersListView) {
     this.rootView = rootView;
     this.addUserButton = addUserButton;
     this.backButton = backButton;
-    this.refreshButton = refreshButton;
+    this.exportUsersButton = exportUsersButton;
+    this.importUsersButton = importUsersButton;
+    this.passwordPolicyButton = passwordPolicyButton;
+    this.searchInput = searchInput;
     this.usersCountText = usersCountText;
     this.usersListView = usersListView;
   }
 
   @Override
   @NonNull
-  public LinearLayout getRoot() {
+  public ScrollView getRoot() {
     return rootView;
   }
 
@@ -86,9 +101,27 @@ public final class ActivityUserManagementBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.refreshButton;
-      Button refreshButton = ViewBindings.findChildViewById(rootView, id);
-      if (refreshButton == null) {
+      id = R.id.exportUsersButton;
+      Button exportUsersButton = ViewBindings.findChildViewById(rootView, id);
+      if (exportUsersButton == null) {
+        break missingId;
+      }
+
+      id = R.id.importUsersButton;
+      Button importUsersButton = ViewBindings.findChildViewById(rootView, id);
+      if (importUsersButton == null) {
+        break missingId;
+      }
+
+      id = R.id.passwordPolicyButton;
+      Button passwordPolicyButton = ViewBindings.findChildViewById(rootView, id);
+      if (passwordPolicyButton == null) {
+        break missingId;
+      }
+
+      id = R.id.searchInput;
+      EditText searchInput = ViewBindings.findChildViewById(rootView, id);
+      if (searchInput == null) {
         break missingId;
       }
 
@@ -104,8 +137,9 @@ public final class ActivityUserManagementBinding implements ViewBinding {
         break missingId;
       }
 
-      return new ActivityUserManagementBinding((LinearLayout) rootView, addUserButton, backButton,
-          refreshButton, usersCountText, usersListView);
+      return new ActivityUserManagementBinding((ScrollView) rootView, addUserButton, backButton,
+          exportUsersButton, importUsersButton, passwordPolicyButton, searchInput, usersCountText,
+          usersListView);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

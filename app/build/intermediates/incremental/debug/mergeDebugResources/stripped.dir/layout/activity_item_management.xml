@@ -1,83 +1,172 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp"
-    android:background="#f8fafc">
+    android:background="#f8f9fa">
 
-    <!-- Header -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="📋 Item Management"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:textColor="#2c3e50"
-        android:gravity="center"
-        android:layout_marginBottom="16dp" />
-
-    <!-- Controls -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="16dp">
+        android:orientation="vertical"
+        android:padding="16dp">
 
-        <Button
-            android:id="@+id/addItemButton"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_weight="1"
-            android:text="Add Item"
-            android:textColor="@android:color/white"
-            android:background="#27ae60"
-            android:layout_marginEnd="8dp" />
+        <!-- Header Card -->
+        <LinearLayout
+            style="@style/HeaderCard">
 
-        <Button
-            android:id="@+id/refreshButton"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_weight="1"
-            android:text="Refresh"
-            android:textColor="@android:color/white"
-            android:background="#3498db"
-            android:layout_marginStart="8dp" />
+            <TextView
+                style="@style/AppTitle"
+                android:text="🍽️ Item Management" />
+
+            <TextView
+                style="@style/WelcomeText"
+                android:text="Manage food items and categories" />
+
+        </LinearLayout>
+
+        <!-- Category Filter Section -->
+        <LinearLayout
+            style="@style/CardSection">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="16dp">
+
+                <Spinner
+                    android:id="@+id/categorySpinner"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/input_field_background"
+                    android:padding="12dp"
+                    android:layout_marginEnd="8dp" />
+
+                <Button
+                    android:id="@+id/manageCategoriesButton"
+                    style="@style/MainMenuButton.Purple"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:text="⚙️ Categories"
+                    android:textSize="14sp"
+                    android:paddingHorizontal="16dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
+
+                <EditText
+                    android:id="@+id/searchInput"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:hint="Search items..."
+                    android:background="@drawable/input_field_background"
+                    android:padding="12dp"
+                    android:drawableStart="@android:drawable/ic_menu_search"
+                    android:drawablePadding="8dp"
+                    android:layout_marginEnd="8dp" />
+
+                <Button
+                    android:id="@+id/addItemButton"
+                    style="@style/MainMenuButton.Green"
+                    android:layout_width="120dp"
+                    android:layout_height="48dp"
+                    android:text="➕ Add"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/itemsCountText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Total Items: 0"
+                android:textSize="14sp"
+                android:textColor="#7f8c8d" />
+
+        </LinearLayout>
+
+        <!-- Items List Section -->
+        <LinearLayout
+            style="@style/CardSection">
+
+            <TextView
+                style="@style/SectionTitle"
+                android:text="Food Items" />
+
+            <ListView
+                android:id="@+id/itemsListView"
+                android:layout_width="match_parent"
+                android:layout_height="400dp"
+                android:divider="#E3E4E8"
+                android:dividerHeight="1dp"
+                android:background="@android:color/white" />
+
+        </LinearLayout>
+
+        <!-- Quick Actions Section -->
+        <LinearLayout
+            style="@style/CardSection">
+
+            <TextView
+                style="@style/SectionTitle"
+                android:text="Quick Actions" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+
+                <Button
+                    android:id="@+id/defaultMenuButton"
+                    style="@style/MainMenuButton.Orange"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="56dp"
+                    android:text="📋 Default Menu"
+                    android:textSize="14sp"
+                    android:layout_marginEnd="6dp" />
+
+                <Button
+                    android:id="@+id/importItemsButton"
+                    style="@style/MainMenuButton.Primary"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="56dp"
+                    android:text="📥 Import Items"
+                    android:textSize="14sp"
+                    android:layout_marginStart="6dp" />
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/nutritionInfoButton"
+                style="@style/MainMenuButton.Pink"
+                android:text="📊 Nutrition Information"
+                android:layout_marginBottom="0dp" />
+
+        </LinearLayout>
+
+        <!-- Navigation Section -->
+        <LinearLayout
+            style="@style/CardSection"
+            android:layout_marginBottom="0dp">
+
+            <Button
+                android:id="@+id/backButton"
+                style="@style/MainMenuButton.Gray"
+                android:text="⬅️  Back to Main Menu"
+                android:layout_marginBottom="0dp" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
-    <!-- Item Count -->
-    <TextView
-        android:id="@+id/itemsCountText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Total Items: 0"
-        android:textSize="14sp"
-        android:textColor="#7f8c8d"
-        android:gravity="center"
-        android:layout_marginBottom="8dp" />
-
-    <!-- Items List -->
-    <ListView
-        android:id="@+id/itemsListView"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="@android:color/white"
-        android:divider="#ecf0f1"
-        android:dividerHeight="1dp"
-        android:scrollbars="vertical"
-        android:layout_marginBottom="16dp" />
-
-    <!-- Back Button -->
-    <Button
-        android:id="@+id/backButton"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:text="⬅️ Back to Main Menu"
-        android:textSize="16sp"
-        android:textColor="#ffffff"
-        android:background="#34495e"
-        android:elevation="4dp" />
-
-</LinearLayout>
+</ScrollView>

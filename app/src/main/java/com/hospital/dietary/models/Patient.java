@@ -101,6 +101,10 @@ public class Patient {
         this.patientId = patientId;
     }
 
+    public void setPatientId(int patientId) {
+        this.patientId = patientId;
+    }
+
     public String getPatientFirstName() {
         return patientFirstName;
     }
@@ -139,6 +143,7 @@ public class Patient {
 
     public void setDietType(String dietType) {
         this.dietType = dietType;
+        this.diet = dietType; // Keep both in sync
     }
 
     public String getDiet() {
@@ -147,6 +152,7 @@ public class Patient {
 
     public void setDiet(String diet) {
         this.diet = diet;
+        this.dietType = diet; // Keep both in sync
     }
 
     public boolean isAdaDiet() {
@@ -165,6 +171,7 @@ public class Patient {
         this.fluidRestriction = fluidRestriction;
     }
 
+    // Texture modifications
     public String getTextureModifications() {
         return textureModifications;
     }
@@ -173,21 +180,20 @@ public class Patient {
         this.textureModifications = textureModifications;
     }
 
-    // Texture modification getters and setters
-    public boolean isMechanicalGround() {
-        return mechanicalGround;
-    }
-
-    public void setMechanicalGround(boolean mechanicalGround) {
-        this.mechanicalGround = mechanicalGround;
-    }
-
     public boolean isMechanicalChopped() {
         return mechanicalChopped;
     }
 
     public void setMechanicalChopped(boolean mechanicalChopped) {
         this.mechanicalChopped = mechanicalChopped;
+    }
+
+    public boolean isMechanicalGround() {
+        return mechanicalGround;
+    }
+
+    public void setMechanicalGround(boolean mechanicalGround) {
+        this.mechanicalGround = mechanicalGround;
     }
 
     public boolean isBiteSize() {
@@ -206,6 +212,30 @@ public class Patient {
         this.breadOK = breadOK;
     }
 
+    public boolean isNectarThick() {
+        return nectarThick;
+    }
+
+    public void setNectarThick(boolean nectarThick) {
+        this.nectarThick = nectarThick;
+    }
+
+    public boolean isPuddingThick() {
+        return puddingThick;
+    }
+
+    public void setPuddingThick(boolean puddingThick) {
+        this.puddingThick = puddingThick;
+    }
+
+    public boolean isHoneyThick() {
+        return honeyThick;
+    }
+
+    public void setHoneyThick(boolean honeyThick) {
+        this.honeyThick = honeyThick;
+    }
+
     public boolean isExtraGravy() {
         return extraGravy;
     }
@@ -220,31 +250,6 @@ public class Patient {
 
     public void setMeatsOnly(boolean meatsOnly) {
         this.meatsOnly = meatsOnly;
-    }
-
-    // Liquid thickness getters and setters
-    public boolean isNectarThick() {
-        return nectarThick;
-    }
-
-    public void setNectarThick(boolean nectarThick) {
-        this.nectarThick = nectarThick;
-    }
-
-    public boolean isHoneyThick() {
-        return honeyThick;
-    }
-
-    public void setHoneyThick(boolean honeyThick) {
-        this.honeyThick = honeyThick;
-    }
-
-    public boolean isPuddingThick() {
-        return puddingThick;
-    }
-
-    public void setPuddingThick(boolean puddingThick) {
-        this.puddingThick = puddingThick;
     }
 
     // Meal completion getters and setters
@@ -298,7 +303,7 @@ public class Patient {
 
     // Meal items getters and setters
     public String getBreakfastItems() {
-        return breakfastItems;
+        return breakfastItems != null ? breakfastItems : "";
     }
 
     public void setBreakfastItems(String breakfastItems) {
@@ -306,7 +311,7 @@ public class Patient {
     }
 
     public String getLunchItems() {
-        return lunchItems;
+        return lunchItems != null ? lunchItems : "";
     }
 
     public void setLunchItems(String lunchItems) {
@@ -314,16 +319,16 @@ public class Patient {
     }
 
     public String getDinnerItems() {
-        return dinnerItems;
+        return dinnerItems != null ? dinnerItems : "";
     }
 
     public void setDinnerItems(String dinnerItems) {
         this.dinnerItems = dinnerItems;
     }
 
-    // Meal juices getters and setters
+    // Juice getters and setters
     public String getBreakfastJuices() {
-        return breakfastJuices;
+        return breakfastJuices != null ? breakfastJuices : "";
     }
 
     public void setBreakfastJuices(String breakfastJuices) {
@@ -331,7 +336,7 @@ public class Patient {
     }
 
     public String getLunchJuices() {
-        return lunchJuices;
+        return lunchJuices != null ? lunchJuices : "";
     }
 
     public void setLunchJuices(String lunchJuices) {
@@ -339,16 +344,16 @@ public class Patient {
     }
 
     public String getDinnerJuices() {
-        return dinnerJuices;
+        return dinnerJuices != null ? dinnerJuices : "";
     }
 
     public void setDinnerJuices(String dinnerJuices) {
         this.dinnerJuices = dinnerJuices;
     }
 
-    // Meal drinks getters and setters
+    // Drink getters and setters
     public String getBreakfastDrinks() {
-        return breakfastDrinks;
+        return breakfastDrinks != null ? breakfastDrinks : "";
     }
 
     public void setBreakfastDrinks(String breakfastDrinks) {
@@ -356,7 +361,7 @@ public class Patient {
     }
 
     public String getLunchDrinks() {
-        return lunchDrinks;
+        return lunchDrinks != null ? lunchDrinks : "";
     }
 
     public void setLunchDrinks(String lunchDrinks) {
@@ -364,7 +369,7 @@ public class Patient {
     }
 
     public String getDinnerDrinks() {
-        return dinnerDrinks;
+        return dinnerDrinks != null ? dinnerDrinks : "";
     }
 
     public void setDinnerDrinks(String dinnerDrinks) {
@@ -422,11 +427,11 @@ public class Patient {
 
     // Other getters and setters
     public List<String> getMealSelections() {
-        return mealSelections != null ? mealSelections : new ArrayList<>();
+        return mealSelections;
     }
 
     public void setMealSelections(List<String> mealSelections) {
-        this.mealSelections = mealSelections != null ? mealSelections : new ArrayList<>();
+        this.mealSelections = mealSelections;
     }
 
     public Date getCreatedDate() {
@@ -445,7 +450,6 @@ public class Patient {
         this.orderDate = orderDate;
     }
 
-    // Discharged getter and setter
     public boolean isDischarged() {
         return discharged;
     }
@@ -456,43 +460,22 @@ public class Patient {
 
     // Helper methods
     public String getFullName() {
-        return (patientFirstName != null ? patientFirstName : "") + " " +
-                (patientLastName != null ? patientLastName : "");
+        String firstName = patientFirstName != null ? patientFirstName : "";
+        String lastName = patientLastName != null ? patientLastName : "";
+        return (firstName + " " + lastName).trim();
     }
 
     public String getLocationInfo() {
-        return (wing != null ? wing : "") + " - Room " + (roomNumber != null ? roomNumber : "");
+        return wing + "-" + roomNumber;
     }
 
-    public boolean hasAnyMealComplete() {
-        return breakfastComplete || lunchComplete || dinnerComplete;
+    public String getLocation() {
+        return getLocationInfo();
     }
 
-    public boolean hasAllMealsComplete() {
-        return breakfastComplete && lunchComplete && dinnerComplete;
-    }
-
-    public boolean isPendingAnyMeal() {
-        return !breakfastComplete || !lunchComplete || !dinnerComplete;
-    }
-
-    public boolean isRetired() {
-        // Patient is retired if discharged or created more than 6 days ago
-        if (discharged) {
-            return true;
-        }
-
-        if (createdDate != null) {
-            long daysSinceCreation = (new Date().getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24);
-            return daysSinceCreation > 6;
-        }
-
-        return false;
-    }
-
+    // For display in lists
     @Override
     public String toString() {
-        return getFullName() + " - " + getLocationInfo() + " (" + getDiet() + ")" +
-                (discharged ? " [DISCHARGED]" : "");
+        return getLocationInfo() + " - " + getFullName();
     }
 }

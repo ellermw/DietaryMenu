@@ -4,17 +4,15 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:padding="16dp"
-    android:background="?android:attr/selectableItemBackground"
-    android:clickable="true"
-    android:focusable="true">
+    android:gravity="center_vertical"
+    android:background="?android:attr/selectableItemBackground">
 
     <CheckBox
-        android:id="@+id/selectionCheckBox"
+        android:id="@+id/patientCheckBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
-        android:focusable="false"
-        android:clickable="true" />
+        android:visibility="gone" />
 
     <LinearLayout
         android:layout_width="0dp"
@@ -31,33 +29,37 @@
             android:textStyle="bold"
             android:textColor="#2c3e50" />
 
-        <TextView
-            android:id="@+id/patientLocationText"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Wing - Room"
-            android:textSize="14sp"
-            android:textColor="#7f8c8d"
-            android:layout_marginTop="2dp" />
+            android:orientation="horizontal"
+            android:layout_marginTop="4dp">
 
-        <TextView
-            android:id="@+id/patientDietText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Diet: Regular"
-            android:textSize="14sp"
-            android:textColor="#34495e"
-            android:layout_marginTop="2dp" />
+            <TextView
+                android:id="@+id/patientLocationText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Wing - Room"
+                android:textSize="14sp"
+                android:textColor="#7f8c8d"
+                android:layout_marginEnd="16dp" />
 
-        <TextView
-            android:id="@+id/patientMealStatusText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="B○ L○ D○"
-            android:textSize="14sp"
-            android:textColor="#3498db"
-            android:layout_marginTop="4dp" />
+            <TextView
+                android:id="@+id/patientDietText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Diet Type"
+                android:textSize="14sp"
+                android:textColor="#7f8c8d" />
+
+        </LinearLayout>
 
     </LinearLayout>
+
+    <ImageView
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@android:drawable/ic_menu_more"
+        android:alpha="0.3" />
 
 </LinearLayout>

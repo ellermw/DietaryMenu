@@ -5,8 +5,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ScrollView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,7 +21,7 @@ import java.lang.String;
 
 public final class ActivityItemManagementBinding implements ViewBinding {
   @NonNull
-  private final LinearLayout rootView;
+  private final ScrollView rootView;
 
   @NonNull
   public final Button addItemButton;
@@ -28,28 +30,51 @@ public final class ActivityItemManagementBinding implements ViewBinding {
   public final Button backButton;
 
   @NonNull
+  public final Spinner categorySpinner;
+
+  @NonNull
+  public final Button defaultMenuButton;
+
+  @NonNull
+  public final Button importItemsButton;
+
+  @NonNull
   public final TextView itemsCountText;
 
   @NonNull
   public final ListView itemsListView;
 
   @NonNull
-  public final Button refreshButton;
+  public final Button manageCategoriesButton;
 
-  private ActivityItemManagementBinding(@NonNull LinearLayout rootView,
-      @NonNull Button addItemButton, @NonNull Button backButton, @NonNull TextView itemsCountText,
-      @NonNull ListView itemsListView, @NonNull Button refreshButton) {
+  @NonNull
+  public final Button nutritionInfoButton;
+
+  @NonNull
+  public final EditText searchInput;
+
+  private ActivityItemManagementBinding(@NonNull ScrollView rootView, @NonNull Button addItemButton,
+      @NonNull Button backButton, @NonNull Spinner categorySpinner,
+      @NonNull Button defaultMenuButton, @NonNull Button importItemsButton,
+      @NonNull TextView itemsCountText, @NonNull ListView itemsListView,
+      @NonNull Button manageCategoriesButton, @NonNull Button nutritionInfoButton,
+      @NonNull EditText searchInput) {
     this.rootView = rootView;
     this.addItemButton = addItemButton;
     this.backButton = backButton;
+    this.categorySpinner = categorySpinner;
+    this.defaultMenuButton = defaultMenuButton;
+    this.importItemsButton = importItemsButton;
     this.itemsCountText = itemsCountText;
     this.itemsListView = itemsListView;
-    this.refreshButton = refreshButton;
+    this.manageCategoriesButton = manageCategoriesButton;
+    this.nutritionInfoButton = nutritionInfoButton;
+    this.searchInput = searchInput;
   }
 
   @Override
   @NonNull
-  public LinearLayout getRoot() {
+  public ScrollView getRoot() {
     return rootView;
   }
 
@@ -86,6 +111,24 @@ public final class ActivityItemManagementBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.categorySpinner;
+      Spinner categorySpinner = ViewBindings.findChildViewById(rootView, id);
+      if (categorySpinner == null) {
+        break missingId;
+      }
+
+      id = R.id.defaultMenuButton;
+      Button defaultMenuButton = ViewBindings.findChildViewById(rootView, id);
+      if (defaultMenuButton == null) {
+        break missingId;
+      }
+
+      id = R.id.importItemsButton;
+      Button importItemsButton = ViewBindings.findChildViewById(rootView, id);
+      if (importItemsButton == null) {
+        break missingId;
+      }
+
       id = R.id.itemsCountText;
       TextView itemsCountText = ViewBindings.findChildViewById(rootView, id);
       if (itemsCountText == null) {
@@ -98,14 +141,27 @@ public final class ActivityItemManagementBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.refreshButton;
-      Button refreshButton = ViewBindings.findChildViewById(rootView, id);
-      if (refreshButton == null) {
+      id = R.id.manageCategoriesButton;
+      Button manageCategoriesButton = ViewBindings.findChildViewById(rootView, id);
+      if (manageCategoriesButton == null) {
         break missingId;
       }
 
-      return new ActivityItemManagementBinding((LinearLayout) rootView, addItemButton, backButton,
-          itemsCountText, itemsListView, refreshButton);
+      id = R.id.nutritionInfoButton;
+      Button nutritionInfoButton = ViewBindings.findChildViewById(rootView, id);
+      if (nutritionInfoButton == null) {
+        break missingId;
+      }
+
+      id = R.id.searchInput;
+      EditText searchInput = ViewBindings.findChildViewById(rootView, id);
+      if (searchInput == null) {
+        break missingId;
+      }
+
+      return new ActivityItemManagementBinding((ScrollView) rootView, addItemButton, backButton,
+          categorySpinner, defaultMenuButton, importItemsButton, itemsCountText, itemsListView,
+          manageCategoriesButton, nutritionInfoButton, searchInput);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

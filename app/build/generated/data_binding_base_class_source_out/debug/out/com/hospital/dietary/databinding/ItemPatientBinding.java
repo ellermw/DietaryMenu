@@ -21,29 +21,25 @@ public final class ItemPatientBinding implements ViewBinding {
   private final LinearLayout rootView;
 
   @NonNull
+  public final CheckBox patientCheckBox;
+
+  @NonNull
   public final TextView patientDietText;
 
   @NonNull
   public final TextView patientLocationText;
 
   @NonNull
-  public final TextView patientMealStatusText;
-
-  @NonNull
   public final TextView patientNameText;
 
-  @NonNull
-  public final CheckBox selectionCheckBox;
-
-  private ItemPatientBinding(@NonNull LinearLayout rootView, @NonNull TextView patientDietText,
-      @NonNull TextView patientLocationText, @NonNull TextView patientMealStatusText,
-      @NonNull TextView patientNameText, @NonNull CheckBox selectionCheckBox) {
+  private ItemPatientBinding(@NonNull LinearLayout rootView, @NonNull CheckBox patientCheckBox,
+      @NonNull TextView patientDietText, @NonNull TextView patientLocationText,
+      @NonNull TextView patientNameText) {
     this.rootView = rootView;
+    this.patientCheckBox = patientCheckBox;
     this.patientDietText = patientDietText;
     this.patientLocationText = patientLocationText;
-    this.patientMealStatusText = patientMealStatusText;
     this.patientNameText = patientNameText;
-    this.selectionCheckBox = selectionCheckBox;
   }
 
   @Override
@@ -73,6 +69,12 @@ public final class ItemPatientBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
+      id = R.id.patientCheckBox;
+      CheckBox patientCheckBox = ViewBindings.findChildViewById(rootView, id);
+      if (patientCheckBox == null) {
+        break missingId;
+      }
+
       id = R.id.patientDietText;
       TextView patientDietText = ViewBindings.findChildViewById(rootView, id);
       if (patientDietText == null) {
@@ -85,26 +87,14 @@ public final class ItemPatientBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.patientMealStatusText;
-      TextView patientMealStatusText = ViewBindings.findChildViewById(rootView, id);
-      if (patientMealStatusText == null) {
-        break missingId;
-      }
-
       id = R.id.patientNameText;
       TextView patientNameText = ViewBindings.findChildViewById(rootView, id);
       if (patientNameText == null) {
         break missingId;
       }
 
-      id = R.id.selectionCheckBox;
-      CheckBox selectionCheckBox = ViewBindings.findChildViewById(rootView, id);
-      if (selectionCheckBox == null) {
-        break missingId;
-      }
-
-      return new ItemPatientBinding((LinearLayout) rootView, patientDietText, patientLocationText,
-          patientMealStatusText, patientNameText, selectionCheckBox);
+      return new ItemPatientBinding((LinearLayout) rootView, patientCheckBox, patientDietText,
+          patientLocationText, patientNameText);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

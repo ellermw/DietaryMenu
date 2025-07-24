@@ -10,11 +10,15 @@ import java.util.Date;
 import java.util.List;
 
 public class PatientDAO {
-
     private DatabaseHelper dbHelper;
 
     public PatientDAO(DatabaseHelper dbHelper) {
         this.dbHelper = dbHelper;
+    }
+
+    // Add new patient (same as insertPatient)
+    public long addPatient(Patient patient) {
+        return insertPatient(patient);
     }
 
     // Insert new patient
@@ -22,6 +26,7 @@ public class PatientDAO {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
 
+        // Basic info
         values.put("patient_first_name", patient.getPatientFirstName());
         values.put("patient_last_name", patient.getPatientLastName());
         values.put("wing", patient.getWing());
@@ -29,6 +34,9 @@ public class PatientDAO {
         values.put("diet_type", patient.getDietType());
         values.put("diet", patient.getDiet());
         values.put("ada_diet", patient.isAdaDiet() ? 1 : 0);
+        values.put("created_date", System.currentTimeMillis());
+
+        // Dietary information
         values.put("fluid_restriction", patient.getFluidRestriction());
         values.put("texture_modifications", patient.getTextureModifications());
 
@@ -45,7 +53,7 @@ public class PatientDAO {
         values.put("honey_thick", patient.isHoneyThick() ? 1 : 0);
         values.put("pudding_thick", patient.isPuddingThick() ? 1 : 0);
 
-        // Meal status
+        // Meal completion status
         values.put("breakfast_complete", patient.isBreakfastComplete() ? 1 : 0);
         values.put("lunch_complete", patient.isLunchComplete() ? 1 : 0);
         values.put("dinner_complete", patient.isDinnerComplete() ? 1 : 0);
@@ -57,9 +65,13 @@ public class PatientDAO {
         values.put("breakfast_items", patient.getBreakfastItems());
         values.put("lunch_items", patient.getLunchItems());
         values.put("dinner_items", patient.getDinnerItems());
+
+        // Meal juices
         values.put("breakfast_juices", patient.getBreakfastJuices());
         values.put("lunch_juices", patient.getLunchJuices());
         values.put("dinner_juices", patient.getDinnerJuices());
+
+        // Meal drinks
         values.put("breakfast_drinks", patient.getBreakfastDrinks());
         values.put("lunch_drinks", patient.getLunchDrinks());
         values.put("dinner_drinks", patient.getDinnerDrinks());
@@ -72,16 +84,11 @@ public class PatientDAO {
         values.put("lunch_ada", patient.isLunchAda() ? 1 : 0);
         values.put("dinner_ada", patient.isDinnerAda() ? 1 : 0);
 
-        // Dates
-        values.put("created_date", patient.getCreatedDate() != null ?
-                patient.getCreatedDate().getTime() : System.currentTimeMillis());
-        values.put("order_date", patient.getOrderDate() != null ?
-                patient.getOrderDate().getTime() : System.currentTimeMillis());
-
         // Discharge status
         values.put("discharged", patient.isDischarged() ? 1 : 0);
 
-        return db.insert("patient_info", null, values);
+        long id = db.insert("patient_info", null, values);
+        return id;
     }
 
     // Update patient
@@ -89,6 +96,7 @@ public class PatientDAO {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
 
+        // Basic info
         values.put("patient_first_name", patient.getPatientFirstName());
         values.put("patient_last_name", patient.getPatientLastName());
         values.put("wing", patient.getWing());
@@ -96,6 +104,8 @@ public class PatientDAO {
         values.put("diet_type", patient.getDietType());
         values.put("diet", patient.getDiet());
         values.put("ada_diet", patient.isAdaDiet() ? 1 : 0);
+
+        // Dietary information
         values.put("fluid_restriction", patient.getFluidRestriction());
         values.put("texture_modifications", patient.getTextureModifications());
 
@@ -112,7 +122,7 @@ public class PatientDAO {
         values.put("honey_thick", patient.isHoneyThick() ? 1 : 0);
         values.put("pudding_thick", patient.isPuddingThick() ? 1 : 0);
 
-        // Meal status
+        // Meal completion status
         values.put("breakfast_complete", patient.isBreakfastComplete() ? 1 : 0);
         values.put("lunch_complete", patient.isLunchComplete() ? 1 : 0);
         values.put("dinner_complete", patient.isDinnerComplete() ? 1 : 0);
@@ -124,9 +134,13 @@ public class PatientDAO {
         values.put("breakfast_items", patient.getBreakfastItems());
         values.put("lunch_items", patient.getLunchItems());
         values.put("dinner_items", patient.getDinnerItems());
+
+        // Meal juices
         values.put("breakfast_juices", patient.getBreakfastJuices());
         values.put("lunch_juices", patient.getLunchJuices());
         values.put("dinner_juices", patient.getDinnerJuices());
+
+        // Meal drinks
         values.put("breakfast_drinks", patient.getBreakfastDrinks());
         values.put("lunch_drinks", patient.getLunchDrinks());
         values.put("dinner_drinks", patient.getDinnerDrinks());
@@ -232,6 +246,50 @@ public class PatientDAO {
         return patients;
     }
 
+    // Get pending patients (meals not complete)
+    public List<Patient> getPendingPatients() {
+        List<Patient> patients = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        String query = "SELECT * FROM patient_info WHERE " +
+                "(discharged = 0 OR discharged IS NULL) AND " +
+                "(breakfast_complete = 0 OR lunch_complete = 0 OR dinner_complete = 0) " +
+                "ORDER BY wing, CAST(room_number AS INTEGER)";
+
+        Cursor cursor = db.rawQuery(query, null);
+
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                patients.add(cursorToPatient(cursor));
+            }
+            cursor.close();
+        }
+
+        return patients;
+    }
+
+    // Get completed patients (all meals complete)
+    public List<Patient> getCompletedPatients() {
+        List<Patient> patients = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        String query = "SELECT * FROM patient_info WHERE " +
+                "(discharged = 0 OR discharged IS NULL) AND " +
+                "breakfast_complete = 1 AND lunch_complete = 1 AND dinner_complete = 1 " +
+                "ORDER BY wing, CAST(room_number AS INTEGER)";
+
+        Cursor cursor = db.rawQuery(query, null);
+
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                patients.add(cursorToPatient(cursor));
+            }
+            cursor.close();
+        }
+
+        return patients;
+    }
+
     // Get retired patients (discharged or > 6 days old)
     public List<Patient> getRetiredPatients() {
         List<Patient> patients = new ArrayList<>();
@@ -255,11 +313,87 @@ public class PatientDAO {
         return patients;
     }
 
+    // Get patients by wing
+    public List<Patient> getPatientsByWing(String wing) {
+        List<Patient> patients = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        Cursor cursor = db.query("patient_info", null, "wing = ?",
+                new String[]{wing}, null, null, "CAST(room_number AS INTEGER)");
+
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                patients.add(cursorToPatient(cursor));
+            }
+            cursor.close();
+        }
+
+        return patients;
+    }
+
+    // Search patients
+    public List<Patient> searchPatients(String query) {
+        List<Patient> patients = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        String searchQuery = "SELECT * FROM patient_info WHERE " +
+                "patient_first_name LIKE ? OR patient_last_name LIKE ? OR room_number LIKE ? OR wing LIKE ? " +
+                "ORDER BY wing, CAST(room_number AS INTEGER)";
+
+        String searchTerm = "%" + query + "%";
+        Cursor cursor = db.rawQuery(searchQuery, new String[]{searchTerm, searchTerm, searchTerm, searchTerm});
+
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                patients.add(cursorToPatient(cursor));
+            }
+            cursor.close();
+        }
+
+        return patients;
+    }
+
+    // Update meal completion status
+    public void updateMealCompletion(int patientId, String mealType, boolean isComplete) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        switch (mealType.toLowerCase()) {
+            case "breakfast":
+                values.put("breakfast_complete", isComplete ? 1 : 0);
+                break;
+            case "lunch":
+                values.put("lunch_complete", isComplete ? 1 : 0);
+                break;
+            case "dinner":
+                values.put("dinner_complete", isComplete ? 1 : 0);
+                break;
+        }
+
+        db.update("patient_info", values, "patient_id = ?",
+                new String[]{String.valueOf(patientId)});
+    }
+
+    // Check if room is occupied
+    public boolean isRoomOccupied(String wing, String roomNumber) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.query("patient_info", new String[]{"patient_id"},
+                "wing = ? AND room_number = ? AND (discharged = 0 OR discharged IS NULL)",
+                new String[]{wing, roomNumber}, null, null, null);
+
+        boolean occupied = cursor != null && cursor.getCount() > 0;
+        if (cursor != null) {
+            cursor.close();
+        }
+
+        return occupied;
+    }
+
     // Helper method to convert cursor to Patient object
     private Patient cursorToPatient(Cursor cursor) {
         Patient patient = new Patient();
 
-        patient.setPatientId(cursor.getLong(cursor.getColumnIndex("patient_id")));
+        patient.setPatientId(cursor.getInt(cursor.getColumnIndex("patient_id")));
         patient.setPatientFirstName(cursor.getString(cursor.getColumnIndex("patient_first_name")));
         patient.setPatientLastName(cursor.getString(cursor.getColumnIndex("patient_last_name")));
         patient.setWing(cursor.getString(cursor.getColumnIndex("wing")));
@@ -267,6 +401,12 @@ public class PatientDAO {
         patient.setDietType(cursor.getString(cursor.getColumnIndex("diet_type")));
         patient.setDiet(cursor.getString(cursor.getColumnIndex("diet")));
         patient.setAdaDiet(cursor.getInt(cursor.getColumnIndex("ada_diet")) == 1);
+
+        // Created date
+        long createdDateMillis = cursor.getLong(cursor.getColumnIndex("created_date"));
+        patient.setCreatedDate(new Date(createdDateMillis));
+
+        // Dietary information
         patient.setFluidRestriction(cursor.getString(cursor.getColumnIndex("fluid_restriction")));
         patient.setTextureModifications(cursor.getString(cursor.getColumnIndex("texture_modifications")));
 
@@ -283,7 +423,7 @@ public class PatientDAO {
         patient.setHoneyThick(cursor.getInt(cursor.getColumnIndex("honey_thick")) == 1);
         patient.setPuddingThick(cursor.getInt(cursor.getColumnIndex("pudding_thick")) == 1);
 
-        // Meal status
+        // Meal completion status
         patient.setBreakfastComplete(cursor.getInt(cursor.getColumnIndex("breakfast_complete")) == 1);
         patient.setLunchComplete(cursor.getInt(cursor.getColumnIndex("lunch_complete")) == 1);
         patient.setDinnerComplete(cursor.getInt(cursor.getColumnIndex("dinner_complete")) == 1);
@@ -295,9 +435,13 @@ public class PatientDAO {
         patient.setBreakfastItems(cursor.getString(cursor.getColumnIndex("breakfast_items")));
         patient.setLunchItems(cursor.getString(cursor.getColumnIndex("lunch_items")));
         patient.setDinnerItems(cursor.getString(cursor.getColumnIndex("dinner_items")));
+
+        // Meal juices
         patient.setBreakfastJuices(cursor.getString(cursor.getColumnIndex("breakfast_juices")));
         patient.setLunchJuices(cursor.getString(cursor.getColumnIndex("lunch_juices")));
         patient.setDinnerJuices(cursor.getString(cursor.getColumnIndex("dinner_juices")));
+
+        // Meal drinks
         patient.setBreakfastDrinks(cursor.getString(cursor.getColumnIndex("breakfast_drinks")));
         patient.setLunchDrinks(cursor.getString(cursor.getColumnIndex("lunch_drinks")));
         patient.setDinnerDrinks(cursor.getString(cursor.getColumnIndex("dinner_drinks")));
@@ -310,25 +454,14 @@ public class PatientDAO {
         patient.setLunchAda(cursor.getInt(cursor.getColumnIndex("lunch_ada")) == 1);
         patient.setDinnerAda(cursor.getInt(cursor.getColumnIndex("dinner_ada")) == 1);
 
-        // Dates
-        long createdTime = cursor.getLong(cursor.getColumnIndex("created_date"));
-        if (createdTime > 0) {
-            patient.setCreatedDate(new Date(createdTime));
-        }
-
-        long orderTime = cursor.getLong(cursor.getColumnIndex("order_date"));
-        if (orderTime > 0) {
-            patient.setOrderDate(new Date(orderTime));
-        }
-
-        // Discharge status - handle column that might not exist
-        int dischargedIndex = cursor.getColumnIndex("discharged");
-        if (dischargedIndex >= 0) {
-            patient.setDischarged(cursor.getInt(dischargedIndex) == 1);
-        } else {
-            patient.setDischarged(false);
-        }
+        // Discharge status
+        patient.setDischarged(cursor.getInt(cursor.getColumnIndex("discharged")) == 1);
 
         return patient;
+    }
+
+    // Close database helper
+    public void close() {
+        dbHelper.close();
     }
 }

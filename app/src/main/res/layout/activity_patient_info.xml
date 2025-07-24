@@ -20,7 +20,7 @@
 
             <TextView
                 style="@style/WelcomeText"
-                android:text="Choose how you'd like to manage patient information" />
+                android:text="Manage patient records and information" />
 
         </LinearLayout>
 
@@ -35,14 +35,103 @@
             <!-- New Patient Button -->
             <Button
                 android:id="@+id/newPatientButton"
-                style="@style/MainMenuButton.Green"
-                android:text="👤  New Patient" />
+                style="@style/MainMenuButton.Primary"
+                android:text="➕  New Patient" />
 
             <!-- Existing Patients Button -->
             <Button
                 android:id="@+id/existingPatientsButton"
                 style="@style/MainMenuButton.Primary"
                 android:text="👥  Existing Patients"
+                android:layout_marginBottom="0dp" />
+
+        </LinearLayout>
+
+        <!-- Quick Stats Section -->
+        <LinearLayout
+            style="@style/CardSection">
+
+            <TextView
+                style="@style/SectionTitle"
+                android:text="Quick Statistics" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:background="@drawable/stat_card_background"
+                    android:padding="16dp"
+                    android:layout_marginEnd="8dp">
+
+                    <TextView
+                        android:id="@+id/totalPatientsCount"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textSize="32sp"
+                        android:textStyle="bold"
+                        android:textColor="#2196F3"
+                        android:gravity="center" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Total Patients"
+                        android:textSize="14sp"
+                        android:textColor="#7f8c8d"
+                        android:gravity="center" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:background="@drawable/stat_card_background"
+                    android:padding="16dp"
+                    android:layout_marginStart="8dp">
+
+                    <TextView
+                        android:id="@+id/pendingMealsCount"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textSize="32sp"
+                        android:textStyle="bold"
+                        android:textColor="#FF9800"
+                        android:gravity="center" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Pending Meals"
+                        android:textSize="14sp"
+                        android:textColor="#7f8c8d"
+                        android:gravity="center" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Navigation Section -->
+        <LinearLayout
+            style="@style/CardSection"
+            android:layout_marginBottom="0dp">
+
+            <Button
+                android:id="@+id/backButton"
+                style="@style/MainMenuButton.Gray"
+                android:text="⬅️  Back to Main Menu"
                 android:layout_marginBottom="0dp" />
 
         </LinearLayout>
