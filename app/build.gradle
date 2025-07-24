@@ -10,10 +10,17 @@ android {
         applicationId "com.hospital.dietary"
         minSdk = 21
         targetSdk = 34
-        versionCode 45  // Updated to version 0.0.45
-        versionName "0.0.45"  // Updated version name
+        versionCode 46  // Incremented for migration
+        versionName "0.1.0"  // Updated to 0.1.0 for major architecture change
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        // Room schema export for migrations
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
     }
 
     buildTypes {
@@ -30,6 +37,7 @@ android {
 
     buildFeatures {
         buildConfig = true
+        viewBinding = true  // Enable view binding for cleaner UI code
     }
 }
 
@@ -40,16 +48,30 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.3.2'
     implementation 'androidx.cardview:cardview:1.0.0'
 
+    // Architecture Components
+    implementation 'androidx.lifecycle:lifecycle-viewmodel:2.7.0'
+    implementation 'androidx.lifecycle:lifecycle-livedata:2.7.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime:2.7.0'
+    implementation 'androidx.lifecycle:lifecycle-common-java8:2.7.0'
+
+    // Room Database
+    implementation 'androidx.room:room-runtime:2.6.1'
+    annotationProcessor 'androidx.room:room-compiler:2.6.1'
+    implementation 'androidx.room:room-ktx:2.6.1'
+
+    // Optional - RxJava support for Room
+    implementation 'androidx.room:room-rxjava2:2.6.1'
+
+    // Navigation Component (optional but recommended)
+    implementation 'androidx.navigation:navigation-fragment:2.7.7'
+    implementation 'androidx.navigation:navigation-ui:2.7.7'
+
     // Testing dependencies
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    androidTestImplementation 'androidx.room:room-testing:2.6.1'
 
-    // Material Components for Android (for Material Design theming)
-    implementation 'com.google.android.material:material:1.9.0'
-
-    // Other existing dependencies...
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    // ... rest of your dependencies
+    // WorkManager for background tasks (optional)
+    implementation 'androidx.work:work-runtime:2.9.0'
 }

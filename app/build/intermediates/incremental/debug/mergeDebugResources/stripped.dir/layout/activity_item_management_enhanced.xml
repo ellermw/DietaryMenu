@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#f8fafc">
+
+    <!-- Header Section -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#2196F3"
+        android:padding="16dp"
+        android:elevation="4dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="📋 Item Management"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:gravity="center" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Manage food items and categories"
+            android:textSize="14sp"
+            android:textColor="#E3F2FD"
+            android:gravity="center"
+            android:layout_marginTop="4dp" />
+
+    </LinearLayout>
+
+    <!-- Controls Section -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@android:color/white"
+        android:padding="16dp"
+        android:layout_margin="16dp"
+        android:elevation="2dp">
+
+        <!-- Action Buttons Row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
+
+            <Button
+                android:id="@+id/addItemButton"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:text="+ Add Item"
+                android:textColor="@android:color/white"
+                android:background="#2196F3"
+                android:layout_marginEnd="8dp"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/manageCategoriesButton"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:text="📂 Categories"
+                android:textColor="@android:color/white"
+                android:background="#FF9800"
+                android:layout_marginStart="8dp"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <!-- Search Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Search Items"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#2c3e50"
+                android:layout_marginBottom="8dp" />
+
+            <EditText
+                android:id="@+id/itemSearchEditText"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:hint="🔍 Search by name or category..."
+                android:background="@android:drawable/edit_text"
+                android:padding="12dp"
+                android:layout_marginBottom="12dp"
+                android:inputType="text"
+                android:imeOptions="actionSearch" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Filter by Category"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#2c3e50"
+                android:layout_marginBottom="8dp" />
+
+            <Spinner
+                android:id="@+id/categoryFilterSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@android:drawable/btn_dropdown"
+                android:padding="12dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Items Section -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:background="@android:color/white"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:elevation="2dp">
+
+        <!-- Items Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="#f8f9fa"
+            android:padding="16dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Items List"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#2c3e50" />
+
+            <TextView
+                android:id="@+id/itemsCountText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Items: 0"
+                android:textSize="14sp"
+                android:textColor="#7f8c8d"
+                android:background="#e9ecef"
+                android:padding="8dp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <!-- Items List -->
+        <ListView
+            android:id="@+id/itemsListView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="#e0e0e0"
+            android:dividerHeight="1dp"
+            android:background="@android:color/white"
+            android:padding="8dp"
+            android:scrollbars="vertical"
+            android:fastScrollEnabled="true" />
+
+    </LinearLayout>
+
+</LinearLayout>

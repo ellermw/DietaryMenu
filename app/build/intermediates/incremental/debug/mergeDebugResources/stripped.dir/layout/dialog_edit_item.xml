@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/editItemNameEditText"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="Item Name"
+        android:inputType="text"
+        android:layout_marginBottom="8dp" />
+
+    <Spinner
+        android:id="@+id/editItemCategorySpinner"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginBottom="8dp" />
+
+    <EditText
+        android:id="@+id/editItemDescriptionEditText"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="Description (optional)"
+        android:inputType="text"
+        android:layout_marginBottom="8dp" />
+
+    <EditText
+        android:id="@+id/editItemSizeEditText"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="Size in ml (optional)"
+        android:inputType="number"
+        android:layout_marginBottom="8dp" />
+
+    <CheckBox
+        android:id="@+id/editAdaFriendlyCheckBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="ADA Friendly" />
+
+</LinearLayout>

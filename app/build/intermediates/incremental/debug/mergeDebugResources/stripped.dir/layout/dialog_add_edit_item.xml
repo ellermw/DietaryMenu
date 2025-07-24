@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Item Name -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Item Name *"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#2c3e50"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/itemNameInput"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="Enter item name"
+            android:padding="12dp"
+            android:background="@android:drawable/edit_text"
+            android:layout_marginBottom="16dp"
+            android:inputType="textCapWords" />
+
+        <!-- Category -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Category *"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#2c3e50"
+            android:layout_marginBottom="8dp" />
+
+        <Spinner
+            android:id="@+id/itemCategorySpinner"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@android:drawable/edit_text"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Size (Optional) -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Size in ml (Optional)"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#2c3e50"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/itemSizeInput"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="e.g., 240, 355, 500"
+            android:padding="12dp"
+            android:background="@android:drawable/edit_text"
+            android:layout_marginBottom="16dp"
+            android:inputType="number" />
+
+        <!-- Properties Section -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Item Properties"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#2c3e50"
+            android:layout_marginBottom="12dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#f8f9fa"
+            android:padding="12dp"
+            android:layout_marginBottom="16dp">
+
+            <CheckBox
+                android:id="@+id/itemAdaCheckBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="ADA Friendly (Suitable for diabetic patients)"
+                android:textSize="13sp"
+                android:textColor="#2c3e50"
+                android:layout_marginBottom="8dp"
+                android:checked="true" />
+
+            <CheckBox
+                android:id="@+id/itemSodaCheckBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Is a Soda/Carbonated Drink"
+                android:textSize="13sp"
+                android:textColor="#2c3e50" />
+
+        </LinearLayout>
+
+        <!-- Help Text -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="* Required fields\n\nADA Friendly: Check if suitable for diabetic patients\nSoda: Check if this is a carbonated beverage\nSize: Only required for drinks/liquids"
+            android:textSize="11sp"
+            android:textColor="#7f8c8d"
+            android:background="#e8f4fd"
+            android:padding="8dp"
+            android:layout_marginTop="8dp" />
+
+    </LinearLayout>
+
+</ScrollView>
