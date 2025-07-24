@@ -1,15 +1,17 @@
 package com.hospital.dietary;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 /**
- * DatabaseHelper class - simplified for Room migration
- * This class now only serves as a compatibility layer
+ * DatabaseHelper class - manages SQLite database creation and migrations
  */
 public class DatabaseHelper extends SQLiteOpenHelper {
 
+    private static final String TAG = "DatabaseHelper";
     private static final String DATABASE_NAME = "HospitalDietaryDB";
     private static final int DATABASE_VERSION = 11;
 
@@ -19,7 +21,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        // Create the users table for backward compatibility
+        Log.d(TAG, "Creating database tables...");
+
+        // Create all tables
+        createAllTables(db);
+
+        // Insert initial data
+        insertInitialData(db);
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        Log.d(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion);
+
+        // For version 11, ensure all tables exist
+        if (oldVersion < 11) {
+            // Create all tables if they don't exist
+            createAllTables(db);
+        }
+    }
+
+    /**
+     * Create all database tables
+     */
+    private void createAllTables(SQLiteDatabase db) {
+        // Create the users table
         String CREATE_USERS_TABLE = "CREATE TABLE IF NOT EXISTS users (" +
                 "user_id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "username TEXT NOT NULL UNIQUE," +
@@ -31,12 +57,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "last_login INTEGER," +
                 "created_date INTEGER" +
                 ")";
-
         db.execSQL(CREATE_USERS_TABLE);
-
-        // Insert default admin user
-        db.execSQL("INSERT OR IGNORE INTO users (username, password, full_name, role, is_active, must_change_password) " +
-                "VALUES ('admin', 'admin123', 'System Administrator', 'Admin', 1, 0)");
 
         // Create patient table
         String CREATE_PATIENT_TABLE = "CREATE TABLE IF NOT EXISTS patient_info (" +
@@ -89,10 +110,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "dinner_ada INTEGER DEFAULT 0," +
                 "created_date INTEGER" +
                 ")";
-
         db.execSQL(CREATE_PATIENT_TABLE);
 
-        // Create items table
+        // Create items table - THIS IS THE CRITICAL TABLE THAT WAS MISSING
         String CREATE_ITEMS_TABLE = "CREATE TABLE IF NOT EXISTS items (" +
                 "item_id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "name TEXT NOT NULL," +
@@ -100,7 +120,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "description TEXT," +
                 "is_ada_friendly INTEGER DEFAULT 0" +
                 ")";
-
         db.execSQL(CREATE_ITEMS_TABLE);
 
         // Create categories table
@@ -110,7 +129,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "description TEXT," +
                 "sort_order INTEGER DEFAULT 0" +
                 ")";
-
         db.execSQL(CREATE_CATEGORIES_TABLE);
 
         // Create meal_orders table
@@ -124,7 +142,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "timestamp INTEGER," +
                 "FOREIGN KEY(patient_id) REFERENCES patient_info(patient_id)" +
                 ")";
-
         db.execSQL(CREATE_MEAL_ORDERS_TABLE);
 
         // Create order_items table
@@ -136,7 +153,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "FOREIGN KEY(order_id) REFERENCES meal_orders(order_id)," +
                 "FOREIGN KEY(item_id) REFERENCES items(item_id)" +
                 ")";
-
         db.execSQL(CREATE_ORDER_ITEMS_TABLE);
 
         // Create default_menu table
@@ -149,107 +165,191 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "item_category TEXT," +
                 "is_active INTEGER DEFAULT 1" +
                 ")";
-
         db.execSQL(CREATE_DEFAULT_MENU_TABLE);
 
         // Create finalized_orders table
-        String CREATE_FINALIZED_ORDERS_TABLE = "CREATE TABLE IF NOT EXISTS finalized_orders (" +
-                "finalized_id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "patient_id INTEGER," +
-                "meal_type TEXT," +
-                "order_details TEXT," +
-                "finalized_date INTEGER," +
-                "finalized_by TEXT," +
-                "FOREIGN KEY(patient_id) REFERENCES patient_info(patient_id)" +
+        String CREATE_FINALIZED_ORDERS_TABLE = "CREATE TABLE IF NOT EXISTS finalized_order (" +
+                "order_id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "patient_name TEXT," +
+                "wing TEXT," +
+                "room TEXT," +
+                "order_date TEXT," +
+                "diet_type TEXT" +
                 ")";
-
         db.execSQL(CREATE_FINALIZED_ORDERS_TABLE);
 
-        // Insert default categories
+        // Create finalized_order_items table
+        String CREATE_FINALIZED_ORDER_ITEMS_TABLE = "CREATE TABLE IF NOT EXISTS finalized_order_items (" +
+                "item_id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "order_id INTEGER," +
+                "meal_type TEXT," +
+                "item_name TEXT," +
+                "quantity INTEGER," +
+                "category TEXT," +
+                "FOREIGN KEY(order_id) REFERENCES finalized_order(order_id)" +
+                ")";
+        db.execSQL(CREATE_FINALIZED_ORDER_ITEMS_TABLE);
+
+        Log.d(TAG, "All tables created successfully");
+    }
+
+    /**
+     * Insert initial data into the database
+     */
+    private void insertInitialData(SQLiteDatabase db) {
+        // Insert default admin user
+        db.execSQL("INSERT OR IGNORE INTO users (username, password, full_name, role, is_active, must_change_password) " +
+                "VALUES ('admin', 'admin123', 'System Administrator', 'Admin', 1, 0)");
+
+        // Insert default categories if they don't exist
         insertDefaultCategories(db);
 
-        // Insert default items
-        insertDefaultItems(db);
+        // Insert default food items if the table is empty
+        insertDefaultFoodItems(db);
     }
 
+    /**
+     * Insert default categories
+     */
     private void insertDefaultCategories(SQLiteDatabase db) {
-        String[][] categories = {
-                {"Breakfast Main", "Main breakfast items", "1"},
-                {"Breakfast Cereal", "Hot and cold cereals", "2"},
-                {"Breakfast Bread", "Toast and bread items", "3"},
-                {"Breakfast Juice", "Fruit juices", "4"},
-                {"Breakfast Beverage", "Coffee, tea, milk", "5"},
-                {"Breakfast Dairy", "Yogurt and dairy items", "6"},
-                {"Lunch Main", "Main lunch entrees", "7"},
-                {"Lunch Soup", "Soups", "8"},
-                {"Lunch Salad", "Salads", "9"},
-                {"Lunch Side", "Side dishes", "10"},
-                {"Lunch Vegetable", "Vegetables", "11"},
-                {"Lunch Beverage", "Lunch beverages", "12"},
-                {"Dinner Main", "Main dinner entrees", "13"},
-                {"Dinner Side", "Side dishes", "14"},
-                {"Dinner Vegetable", "Vegetables", "15"},
-                {"Dinner Bread", "Bread and rolls", "16"},
-                {"Dinner Dessert", "Desserts", "17"},
-                {"Dinner Beverage", "Dinner beverages", "18"},
-                {"Snack", "Snack items", "19"},
-                {"Supplement", "Nutritional supplements", "20"}
+        String[] categories = {
+                "Breakfast Entrees",
+                "Lunch Entrees",
+                "Dinner Entrees",
+                "Beverages",
+                "Breads",
+                "Condiments",
+                "Desserts",
+                "Fruits",
+                "Juices",
+                "Sides",
+                "Snacks",
+                "Soups",
+                "Vegetables"
         };
 
-        for (String[] cat : categories) {
-            db.execSQL("INSERT OR IGNORE INTO categories (category_name, description, sort_order) VALUES (?, ?, ?)",
-                    new Object[]{cat[0], cat[1], Integer.parseInt(cat[2])});
+        for (int i = 0; i < categories.length; i++) {
+            ContentValues values = new ContentValues();
+            values.put("category_name", categories[i]);
+            values.put("sort_order", i);
+            db.insertWithOnConflict("categories", null, values, SQLiteDatabase.CONFLICT_IGNORE);
         }
     }
 
-    private void insertDefaultItems(SQLiteDatabase db) {
-        // Insert some default items
-        String[][] items = {
-                // Breakfast items
-                {"Scrambled Eggs", "Breakfast Main", "Fresh scrambled eggs", "1"},
-                {"Pancakes", "Breakfast Main", "Fluffy pancakes with syrup", "0"},
-                {"Oatmeal", "Breakfast Cereal", "Heart-healthy oatmeal", "1"},
-                {"Cornflakes", "Breakfast Cereal", "Classic corn flakes", "1"},
-                {"White Toast", "Breakfast Bread", "White bread toasted", "1"},
-                {"Wheat Toast", "Breakfast Bread", "Whole wheat bread toasted", "1"},
-                {"Orange Juice", "Breakfast Juice", "100% orange juice", "1"},
-                {"Apple Juice", "Breakfast Juice", "100% apple juice", "1"},
-                {"Coffee", "Breakfast Beverage", "Regular coffee", "1"},
-                {"Decaf Coffee", "Breakfast Beverage", "Decaffeinated coffee", "1"},
-                {"Milk", "Breakfast Beverage", "2% milk", "1"},
-                {"Yogurt", "Breakfast Dairy", "Low-fat yogurt", "1"},
+    /**
+     * Insert default food items
+     */
+    private void insertDefaultFoodItems(SQLiteDatabase db) {
+        // Check if items already exist
+        String countQuery = "SELECT COUNT(*) FROM items";
+        android.database.Cursor cursor = db.rawQuery(countQuery, null);
+        cursor.moveToFirst();
+        int count = cursor.getInt(0);
+        cursor.close();
 
-                // Lunch items
-                {"Grilled Chicken", "Lunch Main", "Herb grilled chicken breast", "1"},
-                {"Baked Fish", "Lunch Main", "Lemon pepper baked fish", "1"},
-                {"Beef Stew", "Lunch Main", "Hearty beef stew", "0"},
-                {"Vegetable Soup", "Lunch Soup", "Fresh vegetable soup", "1"},
-                {"Chicken Noodle Soup", "Lunch Soup", "Classic chicken noodle", "0"},
-                {"Garden Salad", "Lunch Salad", "Fresh mixed greens", "1"},
-                {"Caesar Salad", "Lunch Salad", "Romaine with caesar dressing", "0"},
-                {"Rice Pilaf", "Lunch Side", "Seasoned rice", "1"},
-                {"Mashed Potatoes", "Lunch Side", "Creamy mashed potatoes", "1"},
-                {"Green Beans", "Lunch Vegetable", "Steamed green beans", "1"},
-                {"Carrots", "Lunch Vegetable", "Glazed carrots", "1"},
-                {"Iced Tea", "Lunch Beverage", "Sweetened iced tea", "1"},
-                {"Lemonade", "Lunch Beverage", "Fresh lemonade", "1"}
-        };
-
-        for (String[] item : items) {
-            db.execSQL("INSERT OR IGNORE INTO items (name, category, description, is_ada_friendly) VALUES (?, ?, ?, ?)",
-                    new Object[]{item[0], item[1], item[2], Integer.parseInt(item[3])});
+        if (count > 0) {
+            Log.d(TAG, "Items table already populated with " + count + " items");
+            return;
         }
+
+        Log.d(TAG, "Inserting default food items...");
+
+        // Breakfast items
+        insertItem(db, "Scrambled Eggs", "Breakfast Entrees", "Fluffy scrambled eggs", true);
+        insertItem(db, "Pancakes", "Breakfast Entrees", "Stack of 3 pancakes", false);
+        insertItem(db, "French Toast", "Breakfast Entrees", "Two slices of French toast", false);
+        insertItem(db, "Oatmeal", "Breakfast Entrees", "Hot oatmeal with brown sugar", true);
+        insertItem(db, "Yogurt", "Breakfast Entrees", "Low-fat vanilla yogurt", true);
+        insertItem(db, "Bacon", "Breakfast Entrees", "Crispy bacon strips", false);
+        insertItem(db, "Sausage", "Breakfast Entrees", "Pork sausage links", false);
+
+        // Lunch entrees
+        insertItem(db, "Grilled Chicken", "Lunch Entrees", "Seasoned grilled chicken breast", true);
+        insertItem(db, "Turkey Sandwich", "Lunch Entrees", "Turkey on whole wheat", false);
+        insertItem(db, "Hamburger", "Lunch Entrees", "Beef patty on bun", false);
+        insertItem(db, "Tuna Salad", "Lunch Entrees", "Tuna salad sandwich", true);
+        insertItem(db, "Caesar Salad", "Lunch Entrees", "Romaine lettuce with Caesar dressing", false);
+
+        // Dinner entrees
+        insertItem(db, "Baked Fish", "Dinner Entrees", "Herb-crusted baked fish", true);
+        insertItem(db, "Roast Beef", "Dinner Entrees", "Sliced roast beef with gravy", false);
+        insertItem(db, "Chicken Parmesan", "Dinner Entrees", "Breaded chicken with marinara", false);
+        insertItem(db, "Meatloaf", "Dinner Entrees", "Traditional meatloaf", false);
+        insertItem(db, "Pork Chops", "Dinner Entrees", "Grilled pork chops", true);
+
+        // Beverages
+        insertItem(db, "Coffee", "Beverages", "Hot coffee", true);
+        insertItem(db, "Tea", "Beverages", "Hot tea", true);
+        insertItem(db, "Milk", "Beverages", "2% milk", true);
+        insertItem(db, "Water", "Beverages", "Bottled water", true);
+        insertItem(db, "Soda", "Beverages", "Assorted soft drinks", false);
+
+        // Breads
+        insertItem(db, "White Bread", "Breads", "Sliced white bread", false);
+        insertItem(db, "Wheat Bread", "Breads", "Whole wheat bread", true);
+        insertItem(db, "Dinner Roll", "Breads", "Soft dinner roll", false);
+        insertItem(db, "Crackers", "Breads", "Saltine crackers", true);
+
+        // Condiments
+        insertItem(db, "Butter", "Condiments", "Butter pat", true);
+        insertItem(db, "Jelly", "Condiments", "Grape or strawberry jelly", true);
+        insertItem(db, "Sugar", "Condiments", "Sugar packets", true);
+        insertItem(db, "Salt", "Condiments", "Salt packets", true);
+        insertItem(db, "Pepper", "Condiments", "Pepper packets", true);
+        insertItem(db, "Ketchup", "Condiments", "Ketchup packets", true);
+        insertItem(db, "Mustard", "Condiments", "Mustard packets", true);
+
+        // Desserts
+        insertItem(db, "Ice Cream", "Desserts", "Vanilla ice cream", false);
+        insertItem(db, "Pudding", "Desserts", "Chocolate or vanilla pudding", true);
+        insertItem(db, "Jello", "Desserts", "Sugar-free jello", true);
+        insertItem(db, "Cookies", "Desserts", "Chocolate chip cookies", false);
+        insertItem(db, "Cake", "Desserts", "Slice of cake", false);
+
+        // Fruits
+        insertItem(db, "Apple", "Fruits", "Fresh apple", true);
+        insertItem(db, "Banana", "Fruits", "Fresh banana", true);
+        insertItem(db, "Orange", "Fruits", "Fresh orange", true);
+        insertItem(db, "Fruit Cup", "Fruits", "Mixed fruit cup", true);
+        insertItem(db, "Applesauce", "Fruits", "Unsweetened applesauce", true);
+
+        // Juices
+        insertItem(db, "Orange Juice", "Juices", "Fresh orange juice", true);
+        insertItem(db, "Apple Juice", "Juices", "100% apple juice", true);
+        insertItem(db, "Cranberry Juice", "Juices", "Cranberry juice cocktail", false);
+        insertItem(db, "Grape Juice", "Juices", "100% grape juice", false);
+
+        // Sides
+        insertItem(db, "Mashed Potatoes", "Sides", "Creamy mashed potatoes", false);
+        insertItem(db, "Rice", "Sides", "Steamed white rice", true);
+        insertItem(db, "French Fries", "Sides", "Crispy french fries", false);
+        insertItem(db, "Baked Potato", "Sides", "Baked potato with toppings", true);
+
+        // Vegetables
+        insertItem(db, "Green Beans", "Vegetables", "Steamed green beans", true);
+        insertItem(db, "Carrots", "Vegetables", "Cooked carrots", true);
+        insertItem(db, "Broccoli", "Vegetables", "Steamed broccoli", true);
+        insertItem(db, "Corn", "Vegetables", "Sweet corn", false);
+        insertItem(db, "Peas", "Vegetables", "Green peas", true);
+
+        // Soups
+        insertItem(db, "Chicken Noodle Soup", "Soups", "Classic chicken noodle", false);
+        insertItem(db, "Tomato Soup", "Soups", "Creamy tomato soup", false);
+        insertItem(db, "Vegetable Soup", "Soups", "Mixed vegetable soup", true);
+        insertItem(db, "Broth", "Soups", "Chicken or beef broth", true);
+
+        Log.d(TAG, "Default food items inserted successfully");
     }
 
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // For simplicity, just recreate tables
-        onCreate(db);
-    }
-
-    @Override
-    public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Allow downgrade by recreating tables
-        onCreate(db);
+    /**
+     * Helper method to insert an item
+     */
+    private void insertItem(SQLiteDatabase db, String name, String category, String description, boolean isAdaFriendly) {
+        ContentValues values = new ContentValues();
+        values.put("name", name);
+        values.put("category", category);
+        values.put("description", description);
+        values.put("is_ada_friendly", isAdaFriendly ? 1 : 0);
+        db.insertWithOnConflict("items", null, values, SQLiteDatabase.CONFLICT_IGNORE);
     }
 }
