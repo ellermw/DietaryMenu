@@ -1,6 +1,7 @@
 package com.hospital.dietary;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -48,7 +49,7 @@ public class UserManagementActivity extends AppCompatActivity {
         currentUserRole = getIntent().getStringExtra("user_role");
         currentUserFullName = getIntent().getStringExtra("user_full_name");
 
-        // Check admin access for both "Admin" and "Administrator" roles (case-insensitive)
+        // Check admin access
         boolean isAdmin = currentUserRole != null &&
                 ("Admin".equalsIgnoreCase(currentUserRole.trim()) ||
                         "Administrator".equalsIgnoreCase(currentUserRole.trim()));
@@ -81,9 +82,6 @@ public class UserManagementActivity extends AppCompatActivity {
         addUserButton = findViewById(R.id.addUserButton);
         refreshButton = findViewById(R.id.refreshButton);
         backButton = findViewById(R.id.backButton);
-
-        Log.d(TAG, "usersListView: " + (usersListView != null ? "Found" : "NULL"));
-        Log.d(TAG, "usersCountText: " + (usersCountText != null ? "Found" : "NULL"));
     }
 
     private void setupListeners() {
@@ -99,18 +97,21 @@ public class UserManagementActivity extends AppCompatActivity {
             backButton.setOnClickListener(v -> finish());
         }
 
-        // User list item click - FIXED with proper bounds checking
+        // Fixed ListView click listener for Samsung devices
         if (usersListView != null) {
+            // Set ListView properties for better click handling
+            usersListView.setItemsCanFocus(false);
+            usersListView.setFocusable(true);
+            usersListView.setFocusableInTouchMode(true);
+            usersListView.setClickable(true);
+
             usersListView.setOnItemClickListener((parent, view, position, id) -> {
-                Log.d(TAG, "ListView item clicked at position: " + position + ", total users: " + allUsers.size());
+                Log.d(TAG, "ListView item clicked at position: " + position);
 
                 if (position >= 0 && position < allUsers.size()) {
                     User selectedUser = allUsers.get(position);
                     Log.d(TAG, "Selected user: " + selectedUser.getUsername());
-                    showUserOptionsDialog(selectedUser);
-                } else {
-                    Log.w(TAG, "Invalid position clicked: " + position);
-                    Toast.makeText(this, "Invalid selection", Toast.LENGTH_SHORT).show();
+                    showUserManagementDialog(selectedUser);
                 }
             });
         }
@@ -118,11 +119,10 @@ public class UserManagementActivity extends AppCompatActivity {
 
     private void loadUsers() {
         try {
-            Log.d(TAG, "Loading users...");
             allUsers = userDAO.getAllUsers();
             Log.d(TAG, "Loaded " + allUsers.size() + " users from database");
 
-            // Create custom adapter for Samsung compatibility
+            // Create custom adapter
             usersAdapter = new UserAdapter();
             if (usersListView != null) {
                 usersListView.setAdapter(usersAdapter);
@@ -133,196 +133,368 @@ public class UserManagementActivity extends AppCompatActivity {
                 usersCountText.setText("Total Users: " + allUsers.size());
             }
 
-            // Log users for debugging
-            for (int i = 0; i < allUsers.size(); i++) {
-                User user = allUsers.get(i);
-                Log.d(TAG, "User " + i + ": " + user.getUsername() + " - " + user.getFullName());
-            }
-
         } catch (Exception e) {
             Log.e(TAG, "Error loading users: " + e.getMessage());
-            e.printStackTrace();
-            Toast.makeText(this, "Error loading users: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Error loading users", Toast.LENGTH_LONG).show();
         }
     }
 
-    // Custom UserAdapter for Samsung One UI compatibility
-    private class UserAdapter extends BaseAdapter {
+    private void showUserManagementDialog(final User user) {
+        // Create the layout programmatically
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setPadding(40, 40, 40, 40);
 
-        @Override
-        public int getCount() {
-            return allUsers.size();
-        }
+        // Username (read-only)
+        TextView usernameLabel = new TextView(this);
+        usernameLabel.setText("Username:");
+        usernameLabel.setTextSize(14);
+        usernameLabel.setTextColor(0xFF7f8c8d);
+        layout.addView(usernameLabel);
 
-        @Override
-        public Object getItem(int position) {
-            if (position >= 0 && position < allUsers.size()) {
-                return allUsers.get(position);
+        TextView usernameText = new TextView(this);
+        usernameText.setText(user.getUsername());
+        usernameText.setTextSize(18);
+        usernameText.setTextColor(0xFF2c3e50);
+        usernameText.setPadding(0, 5, 0, 20);
+        usernameText.setTypeface(null, android.graphics.Typeface.BOLD);
+        layout.addView(usernameText);
+
+        // Full Name (read-only)
+        TextView fullNameLabel = new TextView(this);
+        fullNameLabel.setText("Full Name:");
+        fullNameLabel.setTextSize(14);
+        fullNameLabel.setTextColor(0xFF7f8c8d);
+        layout.addView(fullNameLabel);
+
+        TextView fullNameText = new TextView(this);
+        fullNameText.setText(user.getFullName());
+        fullNameText.setTextSize(18);
+        fullNameText.setTextColor(0xFF2c3e50);
+        fullNameText.setPadding(0, 5, 0, 30);
+        layout.addView(fullNameText);
+
+        // Role selection
+        TextView roleLabel = new TextView(this);
+        roleLabel.setText("Role:");
+        roleLabel.setTextSize(14);
+        roleLabel.setTextColor(0xFF7f8c8d);
+        layout.addView(roleLabel);
+
+        final Spinner roleSpinner = new Spinner(this);
+        String[] roles = {"Admin", "User", "Viewer"};
+        ArrayAdapter<String> roleAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_dropdown_item, roles);
+        roleSpinner.setAdapter(roleAdapter);
+
+        // Set current role
+        for (int i = 0; i < roles.length; i++) {
+            if (roles[i].equals(user.getRole())) {
+                roleSpinner.setSelection(i);
+                break;
             }
-            return null;
         }
+        roleSpinner.setPadding(0, 10, 0, 30);
+        layout.addView(roleSpinner);
 
-        @Override
-        public long getItemId(int position) {
-            if (position >= 0 && position < allUsers.size()) {
-                return allUsers.get(position).getUserId();
-            }
-            return -1;
-        }
+        // Active status
+        final CheckBox activeCheckBox = new CheckBox(this);
+        activeCheckBox.setText("Account is active");
+        activeCheckBox.setTextColor(0xFF2c3e50);
+        activeCheckBox.setTextSize(16);
+        activeCheckBox.setChecked(user.isActive());
+        activeCheckBox.setPadding(0, 0, 0, 30);
+        layout.addView(activeCheckBox);
 
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View view = convertView;
-            ViewHolder holder;
+        // Create the dialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Manage User: " + user.getUsername());
+        builder.setView(layout);
 
-            if (view == null) {
-                view = LayoutInflater.from(UserManagementActivity.this)
-                        .inflate(R.layout.item_user_management, parent, false);
-                holder = new ViewHolder();
-                holder.fullNameText = view.findViewById(R.id.fullNameText);
-                holder.usernameText = view.findViewById(R.id.usernameText);
-                holder.roleText = view.findViewById(R.id.roleText);
-                holder.statusText = view.findViewById(R.id.statusText);
-                holder.createdDateText = view.findViewById(R.id.createdDateText);
-                view.setTag(holder);
-            } else {
-                holder = (ViewHolder) view.getTag();
-            }
+        // Add buttons
+        builder.setPositiveButton("Save Changes", null);
+        builder.setNeutralButton("Change Password", null);
+        builder.setNegativeButton("Cancel", null);
 
-            if (position >= 0 && position < allUsers.size()) {
-                User user = allUsers.get(position);
+        final AlertDialog dialog = builder.create();
 
-                // Set explicit colors for Samsung compatibility
-                if (holder.fullNameText != null) {
-                    holder.fullNameText.setText(user.getFullName());
-                    holder.fullNameText.setTextColor(0xFF2c3e50); // Dark gray
-                }
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+                Button saveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                Button passwordButton = dialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+                Button cancelButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
 
-                if (holder.usernameText != null) {
-                    holder.usernameText.setText("@" + user.getUsername());
-                    holder.usernameText.setTextColor(0xFF7f8c8d); // Medium gray
-                }
+                // Style the buttons
+                saveButton.setTextColor(0xFF27ae60);
+                passwordButton.setTextColor(0xFF3498db);
+                cancelButton.setTextColor(0xFF7f8c8d);
 
-                if (holder.roleText != null) {
-                    // Role with icon
-                    String roleIcon = "Admin".equalsIgnoreCase(user.getRole()) ? "👑" : "👤";
-                    holder.roleText.setText(roleIcon + " " + user.getRole());
-                    holder.roleText.setTextColor(0xFF374151); // Dark gray
-                }
+                // Save button action
+                saveButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String newRole = roleSpinner.getSelectedItem().toString();
+                        boolean newActive = activeCheckBox.isChecked();
 
-                if (holder.statusText != null) {
-                    // Status with color coding
-                    if (user.isActive()) {
-                        holder.statusText.setText("✅ Active");
-                        holder.statusText.setTextColor(0xFF27ae60); // Green
-                    } else {
-                        holder.statusText.setText("❌ Inactive");
-                        holder.statusText.setTextColor(0xFFe74c3c); // Red
+                        // Update user
+                        user.setRole(newRole);
+                        user.setActive(newActive);
+
+                        if (userDAO.updateUser(user)) {
+                            Toast.makeText(UserManagementActivity.this,
+                                    "User updated successfully", Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                            loadUsers(); // Refresh list
+                        } else {
+                            Toast.makeText(UserManagementActivity.this,
+                                    "Failed to update user", Toast.LENGTH_SHORT).show();
+                        }
                     }
-                }
+                });
 
-                if (holder.createdDateText != null) {
-                    // Created date
-                    holder.createdDateText.setText("📅 Created: " + user.getCreatedDate());
-                    holder.createdDateText.setTextColor(0xFF9ca3af); // Light gray
-                }
-
-                // Set background for better visibility
-                view.setBackgroundColor(0xFFFFFFFF); // White background
+                // Change password button action
+                passwordButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                        showChangePasswordDialog(user);
+                    }
+                });
             }
+        });
 
-            return view;
-        }
+        dialog.show();
 
-        private class ViewHolder {
-            TextView fullNameText;
-            TextView usernameText;
-            TextView roleText;
-            TextView statusText;
-            TextView createdDateText;
+        // Add delete button after showing dialog
+        LinearLayout buttonPanel = (LinearLayout) dialog.findViewById(android.R.id.button1).getParent();
+        if (buttonPanel != null) {
+            Button deleteButton = new Button(this);
+            deleteButton.setText("Delete User");
+            deleteButton.setTextColor(0xFFFFFFFF);
+            deleteButton.setBackgroundColor(0xFFe74c3c);
+            deleteButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Prevent deleting yourself
+                    if (user.getUsername().equals(currentUsername)) {
+                        Toast.makeText(UserManagementActivity.this,
+                                "Cannot delete your own account", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    new AlertDialog.Builder(UserManagementActivity.this)
+                            .setTitle("Delete User")
+                            .setMessage("Are you sure you want to delete " + user.getUsername() + "?")
+                            .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface d, int w) {
+                                    if (userDAO.deleteUser(user.getUserId())) {
+                                        Toast.makeText(UserManagementActivity.this,
+                                                "User deleted successfully", Toast.LENGTH_SHORT).show();
+                                        dialog.dismiss();
+                                        loadUsers();
+                                    } else {
+                                        Toast.makeText(UserManagementActivity.this,
+                                                "Failed to delete user", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            })
+                            .setNegativeButton("Cancel", null)
+                            .show();
+                }
+            });
+
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+            params.setMargins(20, 0, 0, 0);
+            deleteButton.setLayoutParams(params);
+            buttonPanel.addView(deleteButton, 0);
         }
+    }
+
+    private void showChangePasswordDialog(final User user) {
+        // Create layout
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setPadding(40, 40, 40, 40);
+
+        // New password field
+        TextView newPasswordLabel = new TextView(this);
+        newPasswordLabel.setText("New Password:");
+        newPasswordLabel.setTextSize(14);
+        newPasswordLabel.setTextColor(0xFF7f8c8d);
+        layout.addView(newPasswordLabel);
+
+        final EditText newPasswordEdit = new EditText(this);
+        newPasswordEdit.setHint("Enter new password (min 6 characters)");
+        newPasswordEdit.setInputType(android.text.InputType.TYPE_CLASS_TEXT |
+                android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        newPasswordEdit.setPadding(0, 10, 0, 20);
+        layout.addView(newPasswordEdit);
+
+        // Confirm password field
+        TextView confirmPasswordLabel = new TextView(this);
+        confirmPasswordLabel.setText("Confirm Password:");
+        confirmPasswordLabel.setTextSize(14);
+        confirmPasswordLabel.setTextColor(0xFF7f8c8d);
+        layout.addView(confirmPasswordLabel);
+
+        final EditText confirmPasswordEdit = new EditText(this);
+        confirmPasswordEdit.setHint("Re-enter new password");
+        confirmPasswordEdit.setInputType(android.text.InputType.TYPE_CLASS_TEXT |
+                android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        confirmPasswordEdit.setPadding(0, 10, 0, 20);
+        layout.addView(confirmPasswordEdit);
+
+        // Show password checkbox
+        final CheckBox showPasswordCheckBox = new CheckBox(this);
+        showPasswordCheckBox.setText("Show passwords");
+        showPasswordCheckBox.setTextColor(0xFF2c3e50);
+        showPasswordCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                int inputType = isChecked ?
+                        android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD :
+                        android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD;
+                newPasswordEdit.setInputType(inputType);
+                confirmPasswordEdit.setInputType(inputType);
+                // Maintain cursor position
+                newPasswordEdit.setSelection(newPasswordEdit.getText().length());
+                confirmPasswordEdit.setSelection(confirmPasswordEdit.getText().length());
+            }
+        });
+        layout.addView(showPasswordCheckBox);
+
+        // Create dialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Change Password for " + user.getUsername());
+        builder.setView(layout);
+        builder.setPositiveButton("Change Password", null);
+        builder.setNegativeButton("Cancel", null);
+
+        final AlertDialog dialog = builder.create();
+
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface d) {
+                Button changeButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                changeButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String newPassword = newPasswordEdit.getText().toString();
+                        String confirmPassword = confirmPasswordEdit.getText().toString();
+
+                        if (newPassword.isEmpty()) {
+                            newPasswordEdit.setError("Password is required");
+                            return;
+                        }
+
+                        if (newPassword.length() < 6) {
+                            newPasswordEdit.setError("Password must be at least 6 characters");
+                            return;
+                        }
+
+                        if (!newPassword.equals(confirmPassword)) {
+                            confirmPasswordEdit.setError("Passwords do not match");
+                            return;
+                        }
+
+                        if (userDAO.changePassword(user.getUserId(), newPassword)) {
+                            Toast.makeText(UserManagementActivity.this,
+                                    "Password changed successfully", Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                        } else {
+                            Toast.makeText(UserManagementActivity.this,
+                                    "Failed to change password", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+        });
+
+        dialog.show();
     }
 
     private void showAddUserDialog() {
-        // Create EditTexts programmatically to avoid layout issues
+        // Create a custom layout for the dialog
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setPadding(50, 40, 50, 10);
+        layout.setPadding(40, 40, 40, 40);
 
-        // Username
+        // Username input
         TextView usernameLabel = new TextView(this);
-        usernameLabel.setText("Username *");
-        usernameLabel.setTextColor(0xFF2c3e50);
+        usernameLabel.setText("Username:");
         usernameLabel.setTextSize(14);
+        usernameLabel.setTextColor(0xFF7f8c8d);
         layout.addView(usernameLabel);
 
-        EditText usernameEdit = new EditText(this);
+        final EditText usernameEdit = new EditText(this);
         usernameEdit.setHint("Enter username");
-        usernameEdit.setTextColor(0xFF2c3e50);
+        usernameEdit.setPadding(0, 10, 0, 20);
         layout.addView(usernameEdit);
 
-        // Password
+        // Password input
         TextView passwordLabel = new TextView(this);
-        passwordLabel.setText("Password *");
-        passwordLabel.setTextColor(0xFF2c3e50);
+        passwordLabel.setText("Password:");
         passwordLabel.setTextSize(14);
+        passwordLabel.setTextColor(0xFF7f8c8d);
         layout.addView(passwordLabel);
 
-        EditText passwordEdit = new EditText(this);
+        final EditText passwordEdit = new EditText(this);
         passwordEdit.setHint("Enter password (min 6 characters)");
-        passwordEdit.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        passwordEdit.setTextColor(0xFF2c3e50);
+        passwordEdit.setInputType(android.text.InputType.TYPE_CLASS_TEXT |
+                android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        passwordEdit.setPadding(0, 10, 0, 20);
         layout.addView(passwordEdit);
 
-        // Full Name
+        // Full name input
         TextView fullNameLabel = new TextView(this);
-        fullNameLabel.setText("Full Name *");
-        fullNameLabel.setTextColor(0xFF2c3e50);
+        fullNameLabel.setText("Full Name:");
         fullNameLabel.setTextSize(14);
+        fullNameLabel.setTextColor(0xFF7f8c8d);
         layout.addView(fullNameLabel);
 
-        EditText fullNameEdit = new EditText(this);
+        final EditText fullNameEdit = new EditText(this);
         fullNameEdit.setHint("Enter full name");
-        fullNameEdit.setTextColor(0xFF2c3e50);
+        fullNameEdit.setPadding(0, 10, 0, 20);
         layout.addView(fullNameEdit);
 
-        // Role Spinner
+        // Role selection
         TextView roleLabel = new TextView(this);
-        roleLabel.setText("Role *");
-        roleLabel.setTextColor(0xFF2c3e50);
+        roleLabel.setText("Role:");
         roleLabel.setTextSize(14);
+        roleLabel.setTextColor(0xFF7f8c8d);
         layout.addView(roleLabel);
 
-        Spinner roleSpinner = new Spinner(this);
-        ArrayAdapter<String> roleAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, new String[]{"User", "Admin"});
-        roleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        roleSpinner.setAdapter(roleAdapter);
+        final Spinner roleSpinner = new Spinner(this);
+        String[] roles = {"Admin", "User", "Viewer"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_dropdown_item, roles);
+        roleSpinner.setAdapter(adapter);
+        roleSpinner.setSelection(1); // Default to "User"
+        roleSpinner.setPadding(0, 10, 0, 20);
         layout.addView(roleSpinner);
 
-        // Active Checkbox
-        CheckBox activeCheckBox = new CheckBox(this);
+        // Active checkbox
+        final CheckBox activeCheckBox = new CheckBox(this);
         activeCheckBox.setText("Account is active");
         activeCheckBox.setTextColor(0xFF2c3e50);
         activeCheckBox.setChecked(true);
         layout.addView(activeCheckBox);
 
-        // Create dialog with enhanced Samsung compatibility
-        AlertDialog dialog = new AlertDialog.Builder(this, R.style.CustomAlertDialog)
+        // Create dialog
+        AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle("Add New User")
                 .setView(layout)
-                .setPositiveButton("Add", null) // Set to null to override later
+                .setPositiveButton("Add", null)
                 .setNegativeButton("Cancel", null)
                 .create();
 
         dialog.setOnShowListener(dialogInterface -> {
             Button addButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            Button cancelButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-
-            // Ensure button colors are explicit
-            addButton.setTextColor(0xFF2196F3);
-            cancelButton.setTextColor(0xFF7f8c8d);
-
             addButton.setOnClickListener(v -> {
                 String username = usernameEdit.getText().toString().trim();
                 String password = passwordEdit.getText().toString().trim();
@@ -383,125 +555,58 @@ public class UserManagementActivity extends AppCompatActivity {
         return true;
     }
 
-    private void showUserOptionsDialog(User user) {
-        Log.d(TAG, "Showing options dialog for user: " + user.getUsername());
+    // Custom UserAdapter
+    private class UserAdapter extends BaseAdapter {
 
-        String[] options = {"Edit User", "Reset Password", "Delete User"};
+        @Override
+        public int getCount() {
+            return allUsers.size();
+        }
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomAlertDialog);
-        builder.setTitle(user.getFullName() + " (" + user.getUsername() + ")")
-                .setItems(options, (dialog, which) -> {
-                    Log.d(TAG, "Option selected: " + which);
-                    switch (which) {
-                        case 0: // Edit User
-                            showEditUserDialog(user);
-                            break;
-                        case 1: // Reset Password
-                            showResetPasswordDialog(user);
-                            break;
-                        case 2: // Delete User
-                            showDeleteUserConfirmation(user);
-                            break;
-                    }
-                })
-                .show();
-    }
+        @Override
+        public Object getItem(int position) {
+            return allUsers.get(position);
+        }
 
-    private void showEditUserDialog(User user) {
-        Toast.makeText(this, "Edit user functionality - to be implemented", Toast.LENGTH_SHORT).show();
-    }
+        @Override
+        public long getItemId(int position) {
+            return allUsers.get(position).getUserId();
+        }
 
-    private void showResetPasswordDialog(User user) {
-        // Create simple programmatic layout
-        LinearLayout layout = new LinearLayout(this);
-        layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setPadding(50, 40, 50, 10);
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View view = convertView;
+            if (view == null) {
+                view = getLayoutInflater().inflate(android.R.layout.simple_list_item_2, parent, false);
+            }
 
-        // New Password
-        TextView newPasswordLabel = new TextView(this);
-        newPasswordLabel.setText("New Password *");
-        newPasswordLabel.setTextColor(0xFF2c3e50);
-        layout.addView(newPasswordLabel);
+            User user = allUsers.get(position);
 
-        EditText newPasswordEdit = new EditText(this);
-        newPasswordEdit.setHint("Enter new password (min 6 characters)");
-        newPasswordEdit.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        newPasswordEdit.setTextColor(0xFF2c3e50);
-        layout.addView(newPasswordEdit);
+            TextView text1 = view.findViewById(android.R.id.text1);
+            TextView text2 = view.findViewById(android.R.id.text2);
 
-        // Confirm Password
-        TextView confirmPasswordLabel = new TextView(this);
-        confirmPasswordLabel.setText("Confirm Password *");
-        confirmPasswordLabel.setTextColor(0xFF2c3e50);
-        layout.addView(confirmPasswordLabel);
+            if (text1 != null) {
+                text1.setText(user.getFullName());
+                text1.setTextColor(0xFF2c3e50);
+                text1.setTextSize(16);
+            }
 
-        EditText confirmPasswordEdit = new EditText(this);
-        confirmPasswordEdit.setHint("Confirm new password");
-        confirmPasswordEdit.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        confirmPasswordEdit.setTextColor(0xFF2c3e50);
-        layout.addView(confirmPasswordEdit);
-
-        // Force Change Checkbox
-        CheckBox forceChangeCheckBox = new CheckBox(this);
-        forceChangeCheckBox.setText("Force password change on next login");
-        forceChangeCheckBox.setTextColor(0xFF2c3e50);
-        layout.addView(forceChangeCheckBox);
-
-        AlertDialog dialog = new AlertDialog.Builder(this, R.style.CustomAlertDialog)
-                .setTitle("Reset Password for " + user.getUsername())
-                .setView(layout)
-                .setPositiveButton("Reset Password", null)
-                .setNegativeButton("Cancel", null)
-                .create();
-
-        dialog.setOnShowListener(dialogInterface -> {
-            Button resetButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            resetButton.setTextColor(0xFF2196F3);
-
-            resetButton.setOnClickListener(v -> {
-                String newPassword = newPasswordEdit.getText().toString();
-                String confirmPassword = confirmPasswordEdit.getText().toString();
-
-                if (newPassword.length() < 6) {
-                    Toast.makeText(this, "Password must be at least 6 characters", Toast.LENGTH_SHORT).show();
-                    return;
+            if (text2 != null) {
+                String details = user.getUsername() + " • " + user.getRole();
+                if (!user.isActive()) {
+                    details += " • INACTIVE";
                 }
+                text2.setText(details);
+                text2.setTextColor(user.isActive() ? 0xFF7f8c8d : 0xFFe74c3c);
+                text2.setTextSize(14);
+            }
 
-                if (!newPassword.equals(confirmPassword)) {
-                    Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show();
-                    return;
-                }
+            // IMPORTANT: Don't make individual items clickable
+            view.setClickable(false);
+            view.setFocusable(false);
 
-                if (userDAO.changePassword(user.getUserId(), newPassword)) {
-                    if (forceChangeCheckBox.isChecked()) {
-                        user.setMustChangePassword(true);
-                        userDAO.updateUser(user);
-                    }
-                    Toast.makeText(this, "Password reset successfully!", Toast.LENGTH_SHORT).show();
-                    dialog.dismiss();
-                } else {
-                    Toast.makeText(this, "Error resetting password", Toast.LENGTH_LONG).show();
-                }
-            });
-        });
-
-        dialog.show();
-    }
-
-    private void showDeleteUserConfirmation(User user) {
-        new AlertDialog.Builder(this, R.style.CustomAlertDialog)
-                .setTitle("Delete User")
-                .setMessage("Are you sure you want to delete user '" + user.getUsername() + "'?\n\nThis action cannot be undone.")
-                .setPositiveButton("Delete", (dialog, which) -> {
-                    if (userDAO.deleteUser(user.getUserId())) {
-                        Toast.makeText(this, "User deleted successfully!", Toast.LENGTH_SHORT).show();
-                        loadUsers();
-                    } else {
-                        Toast.makeText(this, "Error deleting user", Toast.LENGTH_LONG).show();
-                    }
-                })
-                .setNegativeButton("Cancel", null)
-                .show();
+            return view;
+        }
     }
 
     @Override
@@ -511,11 +616,5 @@ public class UserManagementActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        finish();
     }
 }

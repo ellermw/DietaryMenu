@@ -19,7 +19,7 @@ public class PatientRepository {
     private PatientDao patientDao;
 
     public PatientRepository(Application application) {
-        AppDatabase db = AppDatabase.getInstance(application);
+        AppDatabase db = AppDatabase.getDatabase(application);
         patientDao = db.patientDao();
     }
 
@@ -89,6 +89,7 @@ public class PatientRepository {
         });
     }
 
+    // Get patient by ID
     public void getPatientById(long patientId, RepositoryCallback<PatientEntity> callback) {
         AppDatabase.databaseWriteExecutor.execute(() -> {
             try {
@@ -104,47 +105,26 @@ public class PatientRepository {
         });
     }
 
-    // Meal completion updates
-    public void updateBreakfastComplete(long patientId, boolean complete, RepositoryCallback<Boolean> callback) {
+    // Mark meal as complete or incomplete
+    public void markMealComplete(long patientId, String mealType, boolean complete,
+                                 RepositoryCallback<Boolean> callback) {
         AppDatabase.databaseWriteExecutor.execute(() -> {
             try {
-                int result = patientDao.updateBreakfastComplete(patientId, complete);
-                callback.onSuccess(result > 0);
-            } catch (Exception e) {
-                callback.onError(e.getMessage());
-            }
-        });
-    }
-
-    public void updateLunchComplete(long patientId, boolean complete, RepositoryCallback<Boolean> callback) {
-        AppDatabase.databaseWriteExecutor.execute(() -> {
-            try {
-                int result = patientDao.updateLunchComplete(patientId, complete);
-                callback.onSuccess(result > 0);
-            } catch (Exception e) {
-                callback.onError(e.getMessage());
-            }
-        });
-    }
-
-    public void updateDinnerComplete(long patientId, boolean complete, RepositoryCallback<Boolean> callback) {
-        AppDatabase.databaseWriteExecutor.execute(() -> {
-            try {
-                int result = patientDao.updateDinnerComplete(patientId, complete);
-                callback.onSuccess(result > 0);
-            } catch (Exception e) {
-                callback.onError(e.getMessage());
-            }
-        });
-    }
-
-    public void updateMealCompletion(long patientId, boolean breakfastComplete,
-                                     boolean lunchComplete, boolean dinnerComplete,
-                                     RepositoryCallback<Boolean> callback) {
-        AppDatabase.databaseWriteExecutor.execute(() -> {
-            try {
-                int rowsUpdated = patientDao.updateMealCompletion(patientId,
-                        breakfastComplete, lunchComplete, dinnerComplete);
+                int rowsUpdated = 0;
+                switch (mealType.toLowerCase()) {
+                    case "breakfast":
+                        rowsUpdated = patientDao.updateBreakfastComplete(patientId, complete);
+                        break;
+                    case "lunch":
+                        rowsUpdated = patientDao.updateLunchComplete(patientId, complete);
+                        break;
+                    case "dinner":
+                        rowsUpdated = patientDao.updateDinnerComplete(patientId, complete);
+                        break;
+                    default:
+                        callback.onError("Invalid meal type: " + mealType);
+                        return;
+                }
                 callback.onSuccess(rowsUpdated > 0);
             } catch (Exception e) {
                 callback.onError(e.getMessage());
@@ -152,9 +132,24 @@ public class PatientRepository {
         });
     }
 
-    // Meal items updates
-    public void updateBreakfastItems(long patientId, String items, String juices, String drinks,
+    // Update meal completion status
+    public void updateMealCompletion(long patientId, boolean breakfastComplete,
+                                     boolean lunchComplete, boolean dinnerComplete,
                                      RepositoryCallback<Boolean> callback) {
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            try {
+                int result = patientDao.updateMealCompletion(patientId,
+                        breakfastComplete, lunchComplete, dinnerComplete);
+                callback.onSuccess(result > 0);
+            } catch (Exception e) {
+                callback.onError(e.getMessage());
+            }
+        });
+    }
+
+    // Update breakfast items
+    public void updateBreakfastItems(long patientId, String items, String juices,
+                                     String drinks, RepositoryCallback<Boolean> callback) {
         AppDatabase.databaseWriteExecutor.execute(() -> {
             try {
                 int result = patientDao.updateBreakfastItems(patientId, items, juices, drinks);
@@ -165,8 +160,9 @@ public class PatientRepository {
         });
     }
 
-    public void updateLunchItems(long patientId, String items, String juices, String drinks,
-                                 RepositoryCallback<Boolean> callback) {
+    // Update lunch items
+    public void updateLunchItems(long patientId, String items, String juices,
+                                 String drinks, RepositoryCallback<Boolean> callback) {
         AppDatabase.databaseWriteExecutor.execute(() -> {
             try {
                 int result = patientDao.updateLunchItems(patientId, items, juices, drinks);
@@ -177,8 +173,9 @@ public class PatientRepository {
         });
     }
 
-    public void updateDinnerItems(long patientId, String items, String juices, String drinks,
-                                  RepositoryCallback<Boolean> callback) {
+    // Update dinner items
+    public void updateDinnerItems(long patientId, String items, String juices,
+                                  String drinks, RepositoryCallback<Boolean> callback) {
         AppDatabase.databaseWriteExecutor.execute(() -> {
             try {
                 int result = patientDao.updateDinnerItems(patientId, items, juices, drinks);
@@ -236,36 +233,18 @@ public class PatientRepository {
         entity.setNectarThick(patient.isNectarThick());
         entity.setPuddingThick(patient.isPuddingThick());
         entity.setHoneyThick(patient.isHoneyThick());
-        entity.setExtraGravy(patient.isExtraGravy());
-        entity.setMeatsOnly(patient.isMeatsOnly());
-        entity.setPuree(patient.isPuree());
-        entity.setAllergies(patient.getAllergies());
-        entity.setLikes(patient.getLikes());
-        entity.setDislikes(patient.getDislikes());
-        entity.setComments(patient.getComments());
-        entity.setPreferredDrink(patient.getPreferredDrink());
-        entity.setDrinkVariety(patient.getDrinkVariety());
+        entity.setBreakfastItems(patient.getBreakfastItems());
+        entity.setBreakfastJuices(patient.getBreakfastJuices());
+        entity.setBreakfastDrinks(patient.getBreakfastDrinks());
+        entity.setLunchItems(patient.getLunchItems());
+        entity.setLunchJuices(patient.getLunchJuices());
+        entity.setLunchDrinks(patient.getLunchDrinks());
+        entity.setDinnerItems(patient.getDinnerItems());
+        entity.setDinnerJuices(patient.getDinnerJuices());
+        entity.setDinnerDrinks(patient.getDinnerDrinks());
         entity.setBreakfastComplete(patient.isBreakfastComplete());
         entity.setLunchComplete(patient.isLunchComplete());
         entity.setDinnerComplete(patient.isDinnerComplete());
-        entity.setBreakfastNPO(patient.isBreakfastNPO());
-        entity.setLunchNPO(patient.isLunchNPO());
-        entity.setDinnerNPO(patient.isDinnerNPO());
-        entity.setBreakfastItems(patient.getBreakfastItems());
-        entity.setLunchItems(patient.getLunchItems());
-        entity.setDinnerItems(patient.getDinnerItems());
-        entity.setBreakfastJuices(patient.getBreakfastJuices());
-        entity.setLunchJuices(patient.getLunchJuices());
-        entity.setDinnerJuices(patient.getDinnerJuices());
-        entity.setBreakfastDrinks(patient.getBreakfastDrinks());
-        entity.setLunchDrinks(patient.getLunchDrinks());
-        entity.setDinnerDrinks(patient.getDinnerDrinks());
-        entity.setBreakfastDiet(patient.getBreakfastDiet());
-        entity.setLunchDiet(patient.getLunchDiet());
-        entity.setDinnerDiet(patient.getDinnerDiet());
-        entity.setBreakfastAda(patient.isBreakfastAda());
-        entity.setLunchAda(patient.isLunchAda());
-        entity.setDinnerAda(patient.isDinnerAda());
         entity.setCreatedDate(patient.getCreatedDate());
         return entity;
     }
@@ -289,36 +268,18 @@ public class PatientRepository {
         patient.setNectarThick(entity.isNectarThick());
         patient.setPuddingThick(entity.isPuddingThick());
         patient.setHoneyThick(entity.isHoneyThick());
-        patient.setExtraGravy(entity.isExtraGravy());
-        patient.setMeatsOnly(entity.isMeatsOnly());
-        patient.setPuree(entity.isPuree());
-        patient.setAllergies(entity.getAllergies());
-        patient.setLikes(entity.getLikes());
-        patient.setDislikes(entity.getDislikes());
-        patient.setComments(entity.getComments());
-        patient.setPreferredDrink(entity.getPreferredDrink());
-        patient.setDrinkVariety(entity.getDrinkVariety());
+        patient.setBreakfastItems(entity.getBreakfastItems());
+        patient.setBreakfastJuices(entity.getBreakfastJuices());
+        patient.setBreakfastDrinks(entity.getBreakfastDrinks());
+        patient.setLunchItems(entity.getLunchItems());
+        patient.setLunchJuices(entity.getLunchJuices());
+        patient.setLunchDrinks(entity.getLunchDrinks());
+        patient.setDinnerItems(entity.getDinnerItems());
+        patient.setDinnerJuices(entity.getDinnerJuices());
+        patient.setDinnerDrinks(entity.getDinnerDrinks());
         patient.setBreakfastComplete(entity.isBreakfastComplete());
         patient.setLunchComplete(entity.isLunchComplete());
         patient.setDinnerComplete(entity.isDinnerComplete());
-        patient.setBreakfastNPO(entity.isBreakfastNPO());
-        patient.setLunchNPO(entity.isLunchNPO());
-        patient.setDinnerNPO(entity.isDinnerNPO());
-        patient.setBreakfastItems(entity.getBreakfastItems());
-        patient.setLunchItems(entity.getLunchItems());
-        patient.setDinnerItems(entity.getDinnerItems());
-        patient.setBreakfastJuices(entity.getBreakfastJuices());
-        patient.setLunchJuices(entity.getLunchJuices());
-        patient.setDinnerJuices(entity.getDinnerJuices());
-        patient.setBreakfastDrinks(entity.getBreakfastDrinks());
-        patient.setLunchDrinks(entity.getLunchDrinks());
-        patient.setDinnerDrinks(entity.getDinnerDrinks());
-        patient.setBreakfastDiet(entity.getBreakfastDiet());
-        patient.setLunchDiet(entity.getLunchDiet());
-        patient.setDinnerDiet(entity.getDinnerDiet());
-        patient.setBreakfastAda(entity.isBreakfastAda());
-        patient.setLunchAda(entity.isLunchAda());
-        patient.setDinnerAda(entity.isDinnerAda());
         patient.setCreatedDate(entity.getCreatedDate());
         return patient;
     }

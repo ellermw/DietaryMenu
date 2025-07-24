@@ -5,9 +5,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.viewbinding.ViewBinding;
@@ -19,10 +20,7 @@ import java.lang.String;
 
 public final class ActivityLoginBinding implements ViewBinding {
   @NonNull
-  private final RelativeLayout rootView;
-
-  @NonNull
-  public final Button loginButton;
+  private final LinearLayout rootView;
 
   @NonNull
   public final EditText passwordEditText;
@@ -31,21 +29,28 @@ public final class ActivityLoginBinding implements ViewBinding {
   public final ProgressBar progressBar;
 
   @NonNull
+  public final CheckBox showPasswordCheckBox;
+
+  @NonNull
+  public final Button signInButton;
+
+  @NonNull
   public final EditText usernameEditText;
 
-  private ActivityLoginBinding(@NonNull RelativeLayout rootView, @NonNull Button loginButton,
-      @NonNull EditText passwordEditText, @NonNull ProgressBar progressBar,
-      @NonNull EditText usernameEditText) {
+  private ActivityLoginBinding(@NonNull LinearLayout rootView, @NonNull EditText passwordEditText,
+      @NonNull ProgressBar progressBar, @NonNull CheckBox showPasswordCheckBox,
+      @NonNull Button signInButton, @NonNull EditText usernameEditText) {
     this.rootView = rootView;
-    this.loginButton = loginButton;
     this.passwordEditText = passwordEditText;
     this.progressBar = progressBar;
+    this.showPasswordCheckBox = showPasswordCheckBox;
+    this.signInButton = signInButton;
     this.usernameEditText = usernameEditText;
   }
 
   @Override
   @NonNull
-  public RelativeLayout getRoot() {
+  public LinearLayout getRoot() {
     return rootView;
   }
 
@@ -70,12 +75,6 @@ public final class ActivityLoginBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
-      id = R.id.loginButton;
-      Button loginButton = ViewBindings.findChildViewById(rootView, id);
-      if (loginButton == null) {
-        break missingId;
-      }
-
       id = R.id.passwordEditText;
       EditText passwordEditText = ViewBindings.findChildViewById(rootView, id);
       if (passwordEditText == null) {
@@ -88,14 +87,26 @@ public final class ActivityLoginBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.showPasswordCheckBox;
+      CheckBox showPasswordCheckBox = ViewBindings.findChildViewById(rootView, id);
+      if (showPasswordCheckBox == null) {
+        break missingId;
+      }
+
+      id = R.id.signInButton;
+      Button signInButton = ViewBindings.findChildViewById(rootView, id);
+      if (signInButton == null) {
+        break missingId;
+      }
+
       id = R.id.usernameEditText;
       EditText usernameEditText = ViewBindings.findChildViewById(rootView, id);
       if (usernameEditText == null) {
         break missingId;
       }
 
-      return new ActivityLoginBinding((RelativeLayout) rootView, loginButton, passwordEditText,
-          progressBar, usernameEditText);
+      return new ActivityLoginBinding((LinearLayout) rootView, passwordEditText, progressBar,
+          showPasswordCheckBox, signInButton, usernameEditText);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

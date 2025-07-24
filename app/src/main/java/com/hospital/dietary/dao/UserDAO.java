@@ -27,11 +27,11 @@ public class UserDAO {
      */
     public User validateLogin(String username, String password) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String hashedPassword = hashPassword(password);
 
+        // For now, use plain text password comparison
         Cursor cursor = db.query("users", null,
                 "username = ? AND password = ? AND is_active = 1",
-                new String[]{username, hashedPassword}, null, null, null);
+                new String[]{username, password}, null, null, null);
 
         User user = null;
         if (cursor != null && cursor.moveToFirst()) {
@@ -60,7 +60,7 @@ public class UserDAO {
     public boolean changePassword(int userId, String newPassword) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put("password", hashPassword(newPassword));
+        values.put("password", newPassword); // Store plain text for now
         values.put("must_change_password", 0);
 
         int rowsAffected = db.update("users", values, "user_id = ?",
@@ -105,7 +105,7 @@ public class UserDAO {
         ContentValues values = new ContentValues();
 
         values.put("username", user.getUsername());
-        values.put("password", hashPassword(user.getPassword()));
+        values.put("password", user.getPassword()); // Store plain text for now
         values.put("full_name", user.getFullName());
         values.put("role", user.getRole());
         values.put("is_active", user.isActive() ? 1 : 0);
@@ -130,7 +130,7 @@ public class UserDAO {
 
         // Only update password if provided
         if (user.getPassword() != null && !user.getPassword().isEmpty()) {
-            values.put("password", hashPassword(user.getPassword()));
+            values.put("password", user.getPassword()); // Store plain text for now
         }
 
         int rowsUpdated = db.update("users", values, "user_id = ?",
@@ -194,7 +194,7 @@ public class UserDAO {
         List<User> users = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        Cursor cursor = db.query("users", null, null, null, null, null, "username");
+        Cursor cursor = db.query("users", null, null, null, null, null, "username ASC");
 
         if (cursor != null && cursor.moveToFirst()) {
             do {
@@ -207,14 +207,14 @@ public class UserDAO {
     }
 
     /**
-     * Get active users
+     * Get all active users
      */
     public List<User> getActiveUsers() {
         List<User> users = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
         Cursor cursor = db.query("users", null, "is_active = 1",
-                null, null, null, "username");
+                null, null, null, "username ASC");
 
         if (cursor != null && cursor.moveToFirst()) {
             do {
@@ -227,20 +227,34 @@ public class UserDAO {
     }
 
     /**
-     * Check if username exists
+     * Check if a username exists
      */
-    public boolean usernameExists(String username) {
+    public boolean isUsernameExists(String username) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor cursor = db.query("users", new String[]{"user_id"},
                 "username = ?", new String[]{username}, null, null, null);
 
-        boolean exists = false;
-        if (cursor != null) {
-            exists = cursor.getCount() > 0;
-            cursor.close();
-        }
+        boolean exists = cursor != null && cursor.moveToFirst();
+        if (cursor != null) cursor.close();
 
         return exists;
+    }
+
+    /**
+     * Create default admin user if none exists
+     */
+    public void createDefaultAdminIfNeeded() {
+        if (getActiveAdmins().isEmpty()) {
+            User admin = new User();
+            admin.setUsername("admin");
+            admin.setPassword("admin123");
+            admin.setFullName("System Administrator");
+            admin.setRole("Admin");
+            admin.setActive(true);
+            admin.setMustChangePassword(false);
+
+            insertUser(admin);
+        }
     }
 
     /**
@@ -248,7 +262,6 @@ public class UserDAO {
      */
     private User cursorToUser(Cursor cursor) {
         User user = new User();
-
         user.setUserId(cursor.getInt(cursor.getColumnIndex("user_id")));
         user.setUsername(cursor.getString(cursor.getColumnIndex("username")));
         user.setPassword(cursor.getString(cursor.getColumnIndex("password")));
@@ -257,21 +270,21 @@ public class UserDAO {
         user.setActive(cursor.getInt(cursor.getColumnIndex("is_active")) == 1);
         user.setMustChangePassword(cursor.getInt(cursor.getColumnIndex("must_change_password")) == 1);
 
-        long lastLoginMillis = cursor.getLong(cursor.getColumnIndex("last_login"));
-        if (lastLoginMillis > 0) {
-            user.setLastLogin(new Date(lastLoginMillis));
+        long lastLogin = cursor.getLong(cursor.getColumnIndex("last_login"));
+        if (lastLogin > 0) {
+            user.setLastLogin(new Date(lastLogin));
         }
 
-        long createdDateMillis = cursor.getLong(cursor.getColumnIndex("created_date"));
-        if (createdDateMillis > 0) {
-            user.setCreatedDate(new Date(createdDateMillis));
+        long createdDate = cursor.getLong(cursor.getColumnIndex("created_date"));
+        if (createdDate > 0) {
+            user.setCreatedDate(new Date(createdDate));
         }
 
         return user;
     }
 
     /**
-     * Hash password using SHA-256
+     * Hash password using SHA-256 (kept for future use)
      */
     private String hashPassword(String password) {
         try {
@@ -287,8 +300,8 @@ public class UserDAO {
 
             return hexString.toString();
         } catch (NoSuchAlgorithmException e) {
-            // Fallback to plain password if hashing fails
-            return password;
+            e.printStackTrace();
+            return password; // Return plain password if hashing fails
         }
     }
 }

@@ -3546,7 +3546,6 @@ id listMode
 id list_item
 id locale
 id locationText
-id loginButton
 id logoutButton
 id ltr
 id lunchCompleteCheckBox
@@ -3786,8 +3785,10 @@ id shortcut
 id showCustom
 id showHome
 id showNewPasswordCheckBox
+id showPasswordCheckBox
 id showPasswordsCheckBox
 id showTitle
+id signInButton
 id sin
 id skipCollapsed
 id skipped

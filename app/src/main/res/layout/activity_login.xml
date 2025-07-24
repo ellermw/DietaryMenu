@@ -1,55 +1,151 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:orientation="vertical"
+    android:background="@drawable/login_gradient_background"
+    android:gravity="center"
+    android:padding="24dp">
 
+    <!-- Login Card Container -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
         android:orientation="vertical"
-        android:padding="24dp">
+        android:background="@drawable/login_card_background"
+        android:padding="32dp"
+        android:elevation="8dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="40dp">
 
+        <!-- Hospital Logo -->
+        <ImageView
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:src="@drawable/hospital_logo"
+            android:layout_gravity="center"
+            android:layout_marginBottom="16dp"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true" />
+
+        <!-- Title -->
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Hospital Dietary System"
+            android:text="Dietary Menu System"
             android:textSize="24sp"
             android:textStyle="bold"
-            android:gravity="center"
-            android:layout_marginBottom="32dp" />
+            android:textColor="#2c3e50"
+            android:layout_gravity="center"
+            android:layout_marginBottom="8dp" />
 
-        <EditText
-            android:id="@+id/usernameEditText"
-            android:layout_width="match_parent"
+        <!-- Subtitle -->
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="Username"
-            android:inputType="text"
-            android:layout_marginBottom="16dp" />
-
-        <EditText
-            android:id="@+id/passwordEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Password"
-            android:inputType="textPassword"
+            android:text="Please sign in to continue"
+            android:textSize="16sp"
+            android:textColor="#7f8c8d"
+            android:layout_gravity="center"
             android:layout_marginBottom="24dp" />
 
-        <Button
-            android:id="@+id/loginButton"
+        <!-- Username Field -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Login"
-            android:textSize="16sp" />
+            android:orientation="horizontal"
+            android:background="@drawable/input_field_background"
+            android:padding="16dp"
+            android:layout_marginBottom="16dp"
+            android:gravity="center_vertical">
+
+            <!-- User Icon -->
+            <TextView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:text="👤"
+                android:textSize="18sp"
+                android:gravity="center"
+                android:layout_marginEnd="12dp" />
+
+            <EditText
+                android:id="@+id/usernameEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Enter your username"
+                android:textSize="16sp"
+                android:textColor="#2c3e50"
+                android:textColorHint="#95a5a6"
+                android:background="@android:color/transparent"
+                android:inputType="text"
+                android:maxLines="1" />
+
+        </LinearLayout>
+
+        <!-- Password Field -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@drawable/input_field_background"
+            android:padding="16dp"
+            android:layout_marginBottom="16dp"
+            android:gravity="center_vertical">
+
+            <!-- Lock Icon -->
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_lock"
+                android:layout_marginEnd="12dp"
+                android:alpha="0.6" />
+
+            <EditText
+                android:id="@+id/passwordEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Enter your password"
+                android:textSize="16sp"
+                android:textColor="#2c3e50"
+                android:textColorHint="#95a5a6"
+                android:background="@android:color/transparent"
+                android:inputType="textPassword"
+                android:maxLines="1" />
+
+        </LinearLayout>
+
+        <!-- Show Password Checkbox -->
+        <CheckBox
+            android:id="@+id/showPasswordCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Show password"
+            android:textSize="14sp"
+            android:textColor="#7f8c8d"
+            android:layout_marginBottom="20dp" />
+
+        <!-- Sign In Button -->
+        <Button
+            android:id="@+id/signInButton"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="SIGN IN"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#ffffff"
+            android:background="@drawable/signin_button_background"
+            android:elevation="4dp" />
 
     </LinearLayout>
 
+    <!-- Progress Bar (hidden by default) -->
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_marginTop="16dp"
         android:visibility="gone" />
 
-</RelativeLayout>
+</LinearLayout>
