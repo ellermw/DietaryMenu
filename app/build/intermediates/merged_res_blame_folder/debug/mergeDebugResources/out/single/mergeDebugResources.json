@@ -512,6 +512,10 @@
         "source": "com.hospital.dietary.app-main-6:/mipmap-xxxhdpi/hospital_logo_round.webp"
     },
     {
+        "merged": "com.hospital.dietary.app-debug-4:/drawable_edit_text_background_samsung.xml.flat",
+        "source": "com.hospital.dietary.app-main-6:/drawable/edit_text_background_samsung.xml"
+    },
+    {
         "merged": "com.hospital.dietary.app-debug-4:/drawable_ic_launcher_background.xml.flat",
         "source": "com.hospital.dietary.app-main-6:/drawable/ic_launcher_background.xml"
     },

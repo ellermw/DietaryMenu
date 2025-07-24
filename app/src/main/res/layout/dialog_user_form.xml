@@ -3,119 +3,82 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="20dp">
+    android:padding="24dp"
+    android:background="#FFFFFF">
 
-    <!-- Username -->
+    <!-- Current Password Field -->
     <TextView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Username:"
+        android:text="Current Password *"
         android:textSize="14sp"
         android:textStyle="bold"
-        android:layout_marginBottom="4dp" />
+        android:textColor="#2c3e50"
+        android:layout_marginBottom="8dp" />
 
     <EditText
-        android:id="@+id/usernameInput"
+        android:id="@+id/currentPasswordEditText"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:hint="Enter username"
-        android:padding="12dp"
-        android:background="@android:drawable/edit_text"
-        android:inputType="text"
-        android:layout_marginBottom="16dp" />
-
-    <!-- Password -->
-    <TextView
-        android:id="@+id/passwordLabel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Password:"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="4dp" />
-
-    <EditText
-        android:id="@+id/passwordInput"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:hint="Enter password"
-        android:padding="12dp"
-        android:background="@android:drawable/edit_text"
+        android:background="@drawable/edit_text_background"
+        android:hint="Enter current password"
         android:inputType="textPassword"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginBottom="16dp"
+        android:textColor="#2c3e50"
+        android:textColorHint="#7f8c8d"
+        android:padding="12dp" />
 
-    <!-- Full Name -->
+    <!-- New Password Field -->
     <TextView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Full Name:"
+        android:text="New Password *"
         android:textSize="14sp"
         android:textStyle="bold"
-        android:layout_marginBottom="4dp" />
+        android:textColor="#2c3e50"
+        android:layout_marginBottom="8dp" />
 
     <EditText
-        android:id="@+id/fullNameInput"
+        android:id="@+id/newPasswordEditText"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:hint="Enter full name"
-        android:padding="12dp"
-        android:background="@android:drawable/edit_text"
-        android:inputType="textPersonName"
-        android:layout_marginBottom="16dp" />
+        android:background="@drawable/edit_text_background"
+        android:hint="Enter new password (min 6 characters)"
+        android:inputType="textPassword"
+        android:layout_marginBottom="16dp"
+        android:textColor="#2c3e50"
+        android:textColorHint="#7f8c8d"
+        android:padding="12dp" />
 
-    <!-- Email -->
+    <!-- Confirm Password Field -->
     <TextView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Email (optional):"
+        android:text="Confirm New Password *"
         android:textSize="14sp"
         android:textStyle="bold"
-        android:layout_marginBottom="4dp" />
+        android:textColor="#2c3e50"
+        android:layout_marginBottom="8dp" />
 
     <EditText
-        android:id="@+id/emailInput"
+        android:id="@+id/confirmPasswordEditText"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:hint="Enter email address"
-        android:padding="12dp"
-        android:background="@android:drawable/edit_text"
-        android:inputType="textEmailAddress"
-        android:layout_marginBottom="16dp" />
+        android:background="@drawable/edit_text_background"
+        android:hint="Confirm new password"
+        android:inputType="textPassword"
+        android:layout_marginBottom="16dp"
+        android:textColor="#2c3e50"
+        android:textColorHint="#7f8c8d"
+        android:padding="12dp" />
 
-    <!-- Role -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Role:"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="4dp" />
-
-    <Spinner
-        android:id="@+id/roleSpinner"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="@android:drawable/edit_text"
-        android:layout_marginBottom="16dp" />
-
-    <!-- Active Status -->
+    <!-- Show Passwords Checkbox -->
     <CheckBox
-        android:id="@+id/activeCheckBox"
+        android:id="@+id/showPasswordsCheckBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Active User"
+        android:text="Show passwords"
         android:textSize="14sp"
-        android:checked="true" />
-
-    <!-- Info Text -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="• Admin users can access the admin panel\n• User accounts can only access the main application\n• At least one admin user must remain active"
-        android:textSize="12sp"
-        android:textColor="#7f8c8d"
-        android:background="#f8f9fa"
-        android:padding="8dp"
-        android:layout_marginTop="8dp" />
+        android:textColor="#2c3e50" />
 
 </LinearLayout>

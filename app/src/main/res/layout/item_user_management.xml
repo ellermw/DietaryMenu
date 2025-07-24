@@ -4,13 +4,17 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="16dp"
-    android:background="?android:attr/selectableItemBackground">
+    android:background="#FFFFFF"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?android:attr/selectableItemBackground">
 
+    <!-- First Row: Name and Status -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginBottom="4dp">
+        android:layout_marginBottom="8dp">
 
         <TextView
             android:id="@+id/fullNameText"
@@ -20,27 +24,34 @@
             android:text="Full Name"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="#1f2937" />
+            android:textColor="#2c3e50"
+            android:ellipsize="end"
+            android:maxLines="1" />
 
         <TextView
             android:id="@+id/statusText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="✅ Active"
-            android:textSize="12sp"
-            android:textStyle="bold" />
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginStart="8dp" />
 
     </LinearLayout>
 
+    <!-- Second Row: Username -->
     <TextView
         android:id="@+id/usernameText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@username"
         android:textSize="14sp"
-        android:textColor="#6b7280"
-        android:layout_marginBottom="4dp" />
+        android:textColor="#7f8c8d"
+        android:layout_marginBottom="8dp"
+        android:ellipsize="end"
+        android:maxLines="1" />
 
+    <!-- Third Row: Role and Created Date -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -53,7 +64,9 @@
             android:layout_weight="1"
             android:text="👑 Role"
             android:textSize="14sp"
-            android:textColor="#374151" />
+            android:textColor="#374151"
+            android:ellipsize="end"
+            android:maxLines="1" />
 
         <TextView
             android:id="@+id/createdDateText"
@@ -61,8 +74,18 @@
             android:layout_height="wrap_content"
             android:text="📅 Created Date"
             android:textSize="12sp"
-            android:textColor="#9ca3af" />
+            android:textColor="#9ca3af"
+            android:layout_marginStart="8dp"
+            android:ellipsize="end"
+            android:maxLines="1" />
 
     </LinearLayout>
+
+    <!-- Divider for visual separation -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#ecf0f1"
+        android:layout_marginTop="12dp" />
 
 </LinearLayout>

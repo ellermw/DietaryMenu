@@ -3022,6 +3022,7 @@ drawable design_ic_visibility_off
 drawable design_password_eye
 drawable design_snackbar_background
 drawable edit_text_background
+drawable edit_text_background_samsung
 drawable header_card_background
 drawable hospital_logo
 drawable ic_arrow_back_black_24
@@ -3397,7 +3398,6 @@ id editPatientButton
 id editRoleSpinner
 id edit_query
 id elastic
-id emailInput
 id embed
 id emptyStateContainer
 id end
@@ -3424,12 +3424,10 @@ id flip
 id floating
 id fluidRestrictionSpinner
 id fluidRestrictionText
-id forceChangeCheckBox
 id forever
 id fragment_container_view_tag
 id frost
 id fullNameEditText
-id fullNameInput
 id fullNameText
 id fullscreen_header
 id galleyStockButton
@@ -3642,7 +3640,6 @@ id parentRelative
 id parent_matrix
 id passwordEditText
 id passwordInput
-id passwordLabel
 id password_toggle
 id path
 id pathRelative
@@ -4665,6 +4662,9 @@ style CardView_Dark
 style CardView_Light
 style CustomAlertDialog
 style CustomDialogButton
+style CustomEditText
+style DialogContent
+style DialogLabel
 style HeaderCard
 style LogoutButton
 style MainMenuButton
