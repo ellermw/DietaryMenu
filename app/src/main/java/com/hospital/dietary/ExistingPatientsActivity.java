@@ -251,8 +251,8 @@ public class ExistingPatientsActivity extends AppCompatActivity {
 
                 // Apply search filter
                 boolean matchesSearch = searchQuery.isEmpty() ||
-                        patient.getFirstName().toLowerCase().contains(searchQuery) ||
-                        patient.getLastName().toLowerCase().contains(searchQuery) ||
+                        patient.getPatientFirstName().toLowerCase().contains(searchQuery) ||
+                        patient.getPatientLastName().toLowerCase().contains(searchQuery) ||
                         patient.getWing().toLowerCase().contains(searchQuery) ||
                         patient.getRoomNumber().toLowerCase().contains(searchQuery) ||
                         patient.getDiet().toLowerCase().contains(searchQuery);
@@ -303,54 +303,94 @@ public class ExistingPatientsActivity extends AppCompatActivity {
                 printMenusButton.setText("Print " + selectedCount + " Menu" +
                         (selectedCount > 1 ? "s" : ""));
             }
+
             if (deleteSelectedButton != null) {
-                deleteSelectedButton.setText("Delete " + selectedCount + " Selected");
+                deleteSelectedButton.setText("Delete " + selectedCount + " Patient" +
+                        (selectedCount > 1 ? "s" : ""));
             }
         }
     }
 
     private void printSelectedMenus() {
         List<Patient> selectedPatients = patientsAdapter.getSelectedPatients();
-
         if (selectedPatients.isEmpty()) {
             Toast.makeText(this, "No patients selected", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // TODO: Implement print functionality
-        Toast.makeText(this, "Printing " + selectedPatients.size() + " menus...", Toast.LENGTH_SHORT).show();
+        // TODO: Implement print functionality when PrintMenuActivity is created
+        // For now, show a message
+        Toast.makeText(this, "Print functionality coming soon. Selected " +
+                selectedPatients.size() + " patient(s).", Toast.LENGTH_LONG).show();
+
+        /* // Uncomment when PrintMenuActivity is implemented
+        Intent printIntent = new Intent(this, PrintMenuActivity.class);
+        long[] patientIds = new long[selectedPatients.size()];
+        for (int i = 0; i < selectedPatients.size(); i++) {
+            patientIds[i] = selectedPatients.get(i).getPatientId();
+        }
+        printIntent.putExtra("patient_ids", patientIds);
+        printIntent.putExtra("current_user", currentUsername);
+        printIntent.putExtra("user_role", currentUserRole);
+        printIntent.putExtra("user_full_name", currentUserFullName);
+        startActivity(printIntent);
+        */
     }
 
     private void deleteSelectedPatients() {
-        List<Patient> patientsToDelete = patientsAdapter.getSelectedPatients();
-
-        if (patientsToDelete.isEmpty()) {
+        List<Patient> selectedPatients = patientsAdapter.getSelectedPatients();
+        if (selectedPatients.isEmpty()) {
             Toast.makeText(this, "No patients selected", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        new AlertDialog.Builder(this)
-                .setTitle("Delete Patients")
-                .setMessage("Are you sure you want to delete " + patientsToDelete.size() + " patient(s)?")
-                .setPositiveButton("Delete", (dialog, which) -> {
-                    // Delete patients
-                    int deletedCount = 0;
-                    for (Patient patient : patientsToDelete) {
-                        if (patientDAO.deletePatient(patient.getPatientId())) {
-                            deletedCount++;
-                        }
-                    }
-                    Toast.makeText(this, deletedCount + " patient(s) deleted successfully",
-                            Toast.LENGTH_SHORT).show();
+        // Show confirmation dialog
+        String message = selectedPatients.size() == 1 ?
+                "Are you sure you want to delete " + selectedPatients.get(0).getFullName() + "?" :
+                "Are you sure you want to delete " + selectedPatients.size() + " patients?";
 
-                    // Clear selections and reload
-                    if (selectAllCheckBox != null) {
-                        selectAllCheckBox.setChecked(false);
-                    }
-                    loadPatients();
+        new AlertDialog.Builder(this)
+                .setTitle("Confirm Delete")
+                .setMessage(message)
+                .setPositiveButton("Delete", (dialog, which) -> {
+                    performPatientDeletion(selectedPatients);
                 })
                 .setNegativeButton("Cancel", null)
                 .show();
+    }
+
+    private void performPatientDeletion(List<Patient> patients) {
+        int successCount = 0;
+        int failCount = 0;
+
+        for (Patient patient : patients) {
+            try {
+                boolean success = patientDAO.deletePatient(patient.getPatientId());
+                if (success) {
+                    successCount++;
+                } else {
+                    failCount++;
+                }
+            } catch (Exception e) {
+                failCount++;
+                e.printStackTrace();
+            }
+        }
+
+        // Show result
+        if (failCount == 0) {
+            Toast.makeText(this, successCount + " patient(s) deleted successfully",
+                    Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, successCount + " deleted, " + failCount + " failed",
+                    Toast.LENGTH_LONG).show();
+        }
+
+        // Clear selections and reload
+        if (selectAllCheckBox != null) {
+            selectAllCheckBox.setChecked(false);
+        }
+        loadPatients();
     }
 
     @Override
@@ -371,13 +411,6 @@ public class ExistingPatientsActivity extends AppCompatActivity {
 
         if (itemId == android.R.id.home) {
             finish();
-            return true;
-        } else if (itemId == R.id.action_add_patient) {
-            Intent intent = new Intent(this, NewPatientActivity.class);
-            intent.putExtra("current_user", currentUsername);
-            intent.putExtra("user_role", currentUserRole);
-            intent.putExtra("user_full_name", currentUserFullName);
-            startActivity(intent);
             return true;
         } else if (itemId == R.id.action_refresh) {
             loadPatients();
@@ -430,15 +463,16 @@ public class ExistingPatientsActivity extends AppCompatActivity {
 
             textView.setText(displayText);
             textView.setChecked(selectedItems.get(position, false));
-            textView.setTextSize(16);
-            textView.setPadding(16, 20, 16, 20);
 
             return convertView;
         }
 
         public void toggleSelection(int position) {
-            boolean currentState = selectedItems.get(position, false);
-            selectedItems.put(position, !currentState);
+            if (selectedItems.get(position, false)) {
+                selectedItems.delete(position);
+            } else {
+                selectedItems.put(position, true);
+            }
             notifyDataSetChanged();
         }
 
@@ -463,23 +497,14 @@ public class ExistingPatientsActivity extends AppCompatActivity {
         }
 
         public int getSelectedCount() {
-            int count = 0;
-            for (int i = 0; i < selectedItems.size(); i++) {
-                if (selectedItems.valueAt(i)) {
-                    count++;
-                }
-            }
-            return count;
+            return selectedItems.size();
         }
 
         public List<Patient> getSelectedPatients() {
             List<Patient> selected = new ArrayList<>();
-            for (int i = 0; i < selectedItems.size(); i++) {
-                if (selectedItems.valueAt(i)) {
-                    int position = selectedItems.keyAt(i);
-                    if (position < filteredPatients.size()) {
-                        selected.add(filteredPatients.get(position));
-                    }
+            for (int i = 0; i < getCount(); i++) {
+                if (selectedItems.get(i, false)) {
+                    selected.add(filteredPatients.get(i));
                 }
             }
             return selected;
@@ -524,7 +549,8 @@ public class ExistingPatientsActivity extends AppCompatActivity {
 
         @Override
         public View getDropDownView(int position, View convertView, ViewGroup parent) {
-            View view = super.getView(position, convertView, parent);
+            // FIX: Call getView instead of super.getView
+            View view = getView(position, convertView, parent);
             TextView textView = (TextView) view;
             textView.setPadding(24, 20, 24, 20);
 

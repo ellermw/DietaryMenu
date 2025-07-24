@@ -1,6 +1,5 @@
 package com.hospital.dietary;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -9,12 +8,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import com.hospital.dietary.dao.ItemDAO;
 import com.hospital.dietary.dao.PatientDAO;
-import com.hospital.dietary.models.Item;
 import com.hospital.dietary.models.Patient;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,26 +18,29 @@ public class MealPlanningActivity extends AppCompatActivity {
 
     private static final String TAG = "MealPlanningActivity";
 
+    // Database
     private DatabaseHelper dbHelper;
     private PatientDAO patientDAO;
-    private ItemDAO itemDAO;
+
+    // Patient information
+    private long patientId;
+    private Patient currentPatient;
+    private String diet;
+    private boolean isAdaDiet;
+
+    // User information
     private String currentUsername;
     private String currentUserRole;
     private String currentUserFullName;
 
-    // Patient info
-    private Patient currentPatient;
-    private long patientId;
-    private String diet;
-    private boolean isAdaDiet;
-
     // UI Components
     private TextView patientInfoText;
-    private Button homeButton;
     private Button backButton;
-    private Toolbar toolbar;
-    private LinearLayout breakfastSection, lunchSection, dinnerSection;
+    private Button homeButton;
     private Button saveMealPlanButton;
+    private LinearLayout breakfastSection;
+    private LinearLayout lunchSection;
+    private LinearLayout dinnerSection;
 
     // Clear Liquid menu items
     private ClearLiquidMenuItem breakfastJuice;
@@ -63,7 +61,7 @@ public class MealPlanningActivity extends AppCompatActivity {
     private ClearLiquidMenuItem dinnerIcedTea;
     private ClearLiquidMenuItem dinnerSprite;
 
-    // Meal completion status
+    // Track completion status
     private boolean breakfastComplete = false;
     private boolean lunchComplete = false;
     private boolean dinnerComplete = false;
@@ -74,93 +72,80 @@ public class MealPlanningActivity extends AppCompatActivity {
         setContentView(R.layout.activity_meal_planning);
 
         // Get data from intent
-        patientId = getIntent().getLongExtra("patient_id", -1);
+        patientId = getIntent().getLongExtra("patient_id", 0);
         diet = getIntent().getStringExtra("diet");
         isAdaDiet = getIntent().getBooleanExtra("is_ada_diet", false);
         currentUsername = getIntent().getStringExtra("current_user");
         currentUserRole = getIntent().getStringExtra("user_role");
         currentUserFullName = getIntent().getStringExtra("user_full_name");
 
-        if (patientId == -1 || diet == null) {
-            Toast.makeText(this, "Error: Missing patient information", Toast.LENGTH_LONG).show();
-            finish();
-            return;
-        }
-
         // Initialize database
         dbHelper = new DatabaseHelper(this);
         patientDAO = new PatientDAO(dbHelper);
-        itemDAO = new ItemDAO(dbHelper);
 
-        // Load patient data
+        // Load patient
         currentPatient = patientDAO.getPatientById((int) patientId);
-
         if (currentPatient == null) {
             Toast.makeText(this, "Patient not found", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
 
+        // Initialize UI
+        initializeUI();
+
+        // Load appropriate menu based on diet type
+        loadMenuForDiet();
+
+        // Setup listeners
+        setupListeners();
+    }
+
+    private void initializeUI() {
+        patientInfoText = findViewById(R.id.patientInfoText);
+        backButton = findViewById(R.id.backButton);
+        homeButton = findViewById(R.id.homeButton);
+        saveMealPlanButton = findViewById(R.id.saveOrderButton);  // FIXED: Use correct ID from layout
+        breakfastSection = findViewById(R.id.breakfastSection);
+        lunchSection = findViewById(R.id.lunchSection);
+        dinnerSection = findViewById(R.id.dinnerSection);
+
+        // Set patient info
+        String patientInfo = currentPatient.getFullName() + " - " +
+                currentPatient.getWing() + " " + currentPatient.getRoomNumber() +
+                "\nDiet: " + diet;
+        if (isAdaDiet) {
+            patientInfo += " (ADA)";
+        }
+        patientInfoText.setText(patientInfo);
+
         // Set title
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle("Meal Planning");
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-
-        initializeViews();
-        populatePatientInfo();
-        loadMealItems();
-        setupListeners();
     }
 
-    private void initializeViews() {
-        // Initialize UI components
-        patientInfoText = findViewById(R.id.patientInfoText);
-        homeButton = findViewById(R.id.homeButton);
-        backButton = findViewById(R.id.backButton);
-        toolbar = findViewById(R.id.toolbar);
+    private void loadMenuForDiet() {
+        // Clear existing content
+        breakfastSection.removeAllViews();
+        lunchSection.removeAllViews();
+        dinnerSection.removeAllViews();
 
-        // Meal sections
-        breakfastSection = findViewById(R.id.breakfastSection);
-        lunchSection = findViewById(R.id.lunchSection);
-        dinnerSection = findViewById(R.id.dinnerSection);
+        // Add section headers
+        addSectionHeader(breakfastSection, "Breakfast");
+        addSectionHeader(lunchSection, "Lunch");
+        addSectionHeader(dinnerSection, "Dinner");
 
-        // Save button - Use the correct ID from the layout
-        saveMealPlanButton = findViewById(R.id.saveOrderButton);
-    }
-
-    private void populatePatientInfo() {
-        if (currentPatient != null && patientInfoText != null) {
-            String patientInfo = String.format("Patient: %s | Location: %s - Room %s | Diet: %s%s",
-                    currentPatient.getFullName(),
-                    currentPatient.getWing(),
-                    currentPatient.getRoomNumber(),
-                    currentPatient.getDiet(),
-                    (currentPatient.isAdaDiet() || isAdaDiet) ? " (ADA)" : ""
-            );
-            patientInfoText.setText(patientInfo);
-        }
-    }
-
-    private void loadMealItems() {
         if ("Clear Liquid".equals(diet)) {
             loadClearLiquidItems();
         } else {
+            // For other diets, show standard message
             loadStandardDietItems();
         }
     }
 
     private void loadClearLiquidItems() {
-        // Clear existing views
-        if (breakfastSection != null) breakfastSection.removeAllViews();
-        if (lunchSection != null) lunchSection.removeAllViews();
-        if (dinnerSection != null) dinnerSection.removeAllViews();
-
-        // Add section headers
-        addSectionHeader(breakfastSection, "🌅 Breakfast");
-        addSectionHeader(lunchSection, "☀️ Lunch");
-        addSectionHeader(dinnerSection, "🌙 Dinner");
-
         // Breakfast items
         breakfastJuice = addClearLiquidItem(breakfastSection, "Juice", new String[]{"Apple", "Cranberry", "Grape"});
         breakfastBroth = addClearLiquidItem(breakfastSection, "Broth", new String[]{"Chicken", "Beef", "Vegetable"});
@@ -226,6 +211,18 @@ public class MealPlanningActivity extends AppCompatActivity {
             backButton.setOnClickListener(v -> finish());
         }
 
+        // Home button listener
+        if (homeButton != null) {
+            homeButton.setOnClickListener(v -> {
+                Intent intent = new Intent(this, MainMenuActivity.class);
+                intent.putExtra("current_user", currentUsername);
+                intent.putExtra("user_role", currentUserRole);
+                intent.putExtra("user_full_name", currentUserFullName);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
+            });
+        }
+
         // Save button listener
         if (saveMealPlanButton != null) {
             saveMealPlanButton.setOnClickListener(v -> saveMealPlan());
@@ -266,7 +263,11 @@ public class MealPlanningActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_meal_planning, menu);
+        try {
+            getMenuInflater().inflate(R.menu.menu_meal_planning, menu);
+        } catch (Exception e) {
+            Log.d(TAG, "Menu file not found, skipping menu inflation");
+        }
         return true;
     }
 
@@ -305,57 +306,84 @@ public class MealPlanningActivity extends AppCompatActivity {
                 saveClearLiquidSelections();
             }
 
-            int rowsUpdated = patientDAO.updatePatient(currentPatient);
+            // FIX: Changed from int to boolean
+            boolean success = patientDAO.updatePatient(currentPatient);
 
-            if (rowsUpdated > 0) {
+            if (success) {
                 Toast.makeText(this, "Meal plan saved successfully!", Toast.LENGTH_SHORT).show();
-                setResult(RESULT_OK);
+
+                // Return to previous activity
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra("meal_plan_saved", true);
+                setResult(RESULT_OK, resultIntent);
                 finish();
             } else {
-                Toast.makeText(this, "Error saving meal plan", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Failed to save meal plan", Toast.LENGTH_SHORT).show();
             }
+
         } catch (Exception e) {
+            Toast.makeText(this, "Error saving meal plan: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             Log.e(TAG, "Error saving meal plan", e);
-            Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
     private void saveClearLiquidSelections() {
-        // Save breakfast selections
-        if (breakfastJuice != null) {
-            String breakfastItems = breakfastJuice.getSelectedOption() + ", " +
-                    breakfastBroth.getSelectedOption() + ", " +
-                    breakfastJello.getSelectedOption();
-            currentPatient.setBreakfastItems(breakfastItems);
-
-            String breakfastDrinks = breakfastCoffee.getSelectedOption() + ", " +
-                    breakfastSprite.getSelectedOption();
-            currentPatient.setBreakfastDrinks(breakfastDrinks);
+        // Collect breakfast selections
+        List<String> breakfastItems = new ArrayList<>();
+        if (breakfastJuice != null && breakfastJuice.hasSelection()) {
+            breakfastItems.add(breakfastJuice.getSelectedItem());
         }
-
-        // Save lunch selections
-        if (lunchJuice != null) {
-            String lunchItems = lunchJuice.getSelectedOption() + ", " +
-                    lunchBroth.getSelectedOption() + ", " +
-                    lunchJello.getSelectedOption();
-            currentPatient.setLunchItems(lunchItems);
-
-            String lunchDrinks = lunchIcedTea.getSelectedOption() + ", " +
-                    lunchSprite.getSelectedOption();
-            currentPatient.setLunchDrinks(lunchDrinks);
+        if (breakfastBroth != null && breakfastBroth.hasSelection()) {
+            breakfastItems.add(breakfastBroth.getSelectedItem());
         }
-
-        // Save dinner selections
-        if (dinnerJuice != null) {
-            String dinnerItems = dinnerJuice.getSelectedOption() + ", " +
-                    dinnerBroth.getSelectedOption() + ", " +
-                    dinnerJello.getSelectedOption();
-            currentPatient.setDinnerItems(dinnerItems);
-
-            String dinnerDrinks = dinnerIcedTea.getSelectedOption() + ", " +
-                    dinnerSprite.getSelectedOption();
-            currentPatient.setDinnerDrinks(dinnerDrinks);
+        if (breakfastJello != null && breakfastJello.hasSelection()) {
+            breakfastItems.add(breakfastJello.getSelectedItem());
         }
+        if (breakfastCoffee != null && breakfastCoffee.hasSelection()) {
+            breakfastItems.add(breakfastCoffee.getSelectedItem());
+        }
+        if (breakfastSprite != null && breakfastSprite.hasSelection()) {
+            breakfastItems.add(breakfastSprite.getSelectedItem());
+        }
+        currentPatient.setBreakfastItems(String.join(", ", breakfastItems));
+
+        // Collect lunch selections
+        List<String> lunchItems = new ArrayList<>();
+        if (lunchJuice != null && lunchJuice.hasSelection()) {
+            lunchItems.add(lunchJuice.getSelectedItem());
+        }
+        if (lunchBroth != null && lunchBroth.hasSelection()) {
+            lunchItems.add(lunchBroth.getSelectedItem());
+        }
+        if (lunchJello != null && lunchJello.hasSelection()) {
+            lunchItems.add(lunchJello.getSelectedItem());
+        }
+        if (lunchIcedTea != null && lunchIcedTea.hasSelection()) {
+            lunchItems.add(lunchIcedTea.getSelectedItem());
+        }
+        if (lunchSprite != null && lunchSprite.hasSelection()) {
+            lunchItems.add(lunchSprite.getSelectedItem());
+        }
+        currentPatient.setLunchItems(String.join(", ", lunchItems));
+
+        // Collect dinner selections
+        List<String> dinnerItems = new ArrayList<>();
+        if (dinnerJuice != null && dinnerJuice.hasSelection()) {
+            dinnerItems.add(dinnerJuice.getSelectedItem());
+        }
+        if (dinnerBroth != null && dinnerBroth.hasSelection()) {
+            dinnerItems.add(dinnerBroth.getSelectedItem());
+        }
+        if (dinnerJello != null && dinnerJello.hasSelection()) {
+            dinnerItems.add(dinnerJello.getSelectedItem());
+        }
+        if (dinnerIcedTea != null && dinnerIcedTea.hasSelection()) {
+            dinnerItems.add(dinnerIcedTea.getSelectedItem());
+        }
+        if (dinnerSprite != null && dinnerSprite.hasSelection()) {
+            dinnerItems.add(dinnerSprite.getSelectedItem());
+        }
+        currentPatient.setDinnerItems(String.join(", ", dinnerItems));
     }
 
     @Override
@@ -400,7 +428,16 @@ public class MealPlanningActivity extends AppCompatActivity {
         }
 
         public String getSelectedOption() {
-            return optionSpinner.getSelectedItem().toString();
+            return optionSpinner.getSelectedItem() != null ?
+                    optionSpinner.getSelectedItem().toString() : "";
+        }
+
+        public String getSelectedItem() {
+            return getSelectedOption();
+        }
+
+        public boolean hasSelection() {
+            return optionSpinner.getSelectedItem() != null;
         }
     }
 }
