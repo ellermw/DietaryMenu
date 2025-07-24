@@ -22,7 +22,10 @@ public final class ActivityRetiredOrdersBinding implements ViewBinding {
   private final LinearLayout rootView;
 
   @NonNull
-  public final Button datePickerButton;
+  public final Button backButton;
+
+  @NonNull
+  public final Button homeButton;
 
   @NonNull
   public final TextView noRetiredOrdersText;
@@ -37,18 +40,28 @@ public final class ActivityRetiredOrdersBinding implements ViewBinding {
   public final ListView retiredOrdersListView;
 
   @NonNull
+  public final TextView retiredOrdersTitle;
+
+  @NonNull
+  public final Button selectDateButton;
+
+  @NonNull
   public final TextView selectedDateText;
 
-  private ActivityRetiredOrdersBinding(@NonNull LinearLayout rootView,
-      @NonNull Button datePickerButton, @NonNull TextView noRetiredOrdersText,
+  private ActivityRetiredOrdersBinding(@NonNull LinearLayout rootView, @NonNull Button backButton,
+      @NonNull Button homeButton, @NonNull TextView noRetiredOrdersText,
       @NonNull Button printAllButton, @NonNull Button printSelectedButton,
-      @NonNull ListView retiredOrdersListView, @NonNull TextView selectedDateText) {
+      @NonNull ListView retiredOrdersListView, @NonNull TextView retiredOrdersTitle,
+      @NonNull Button selectDateButton, @NonNull TextView selectedDateText) {
     this.rootView = rootView;
-    this.datePickerButton = datePickerButton;
+    this.backButton = backButton;
+    this.homeButton = homeButton;
     this.noRetiredOrdersText = noRetiredOrdersText;
     this.printAllButton = printAllButton;
     this.printSelectedButton = printSelectedButton;
     this.retiredOrdersListView = retiredOrdersListView;
+    this.retiredOrdersTitle = retiredOrdersTitle;
+    this.selectDateButton = selectDateButton;
     this.selectedDateText = selectedDateText;
   }
 
@@ -79,9 +92,15 @@ public final class ActivityRetiredOrdersBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
-      id = R.id.datePickerButton;
-      Button datePickerButton = ViewBindings.findChildViewById(rootView, id);
-      if (datePickerButton == null) {
+      id = R.id.backButton;
+      Button backButton = ViewBindings.findChildViewById(rootView, id);
+      if (backButton == null) {
+        break missingId;
+      }
+
+      id = R.id.homeButton;
+      Button homeButton = ViewBindings.findChildViewById(rootView, id);
+      if (homeButton == null) {
         break missingId;
       }
 
@@ -109,15 +128,27 @@ public final class ActivityRetiredOrdersBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.retiredOrdersTitle;
+      TextView retiredOrdersTitle = ViewBindings.findChildViewById(rootView, id);
+      if (retiredOrdersTitle == null) {
+        break missingId;
+      }
+
+      id = R.id.selectDateButton;
+      Button selectDateButton = ViewBindings.findChildViewById(rootView, id);
+      if (selectDateButton == null) {
+        break missingId;
+      }
+
       id = R.id.selectedDateText;
       TextView selectedDateText = ViewBindings.findChildViewById(rootView, id);
       if (selectedDateText == null) {
         break missingId;
       }
 
-      return new ActivityRetiredOrdersBinding((LinearLayout) rootView, datePickerButton,
+      return new ActivityRetiredOrdersBinding((LinearLayout) rootView, backButton, homeButton,
           noRetiredOrdersText, printAllButton, printSelectedButton, retiredOrdersListView,
-          selectedDateText);
+          retiredOrdersTitle, selectDateButton, selectedDateText);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

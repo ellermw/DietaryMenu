@@ -556,6 +556,10 @@
         "source": "com.hospital.dietary.app-main-6:/layout/dialog_reset_password.xml"
     },
     {
+        "merged": "com.hospital.dietary.app-debug-4:/layout_patient_list_item.xml.flat",
+        "source": "com.hospital.dietary.app-main-6:/layout/patient_list_item.xml"
+    },
+    {
         "merged": "com.hospital.dietary.app-debug-4:/xml_backup_rules.xml.flat",
         "source": "com.hospital.dietary.app-main-6:/xml/backup_rules.xml"
     },

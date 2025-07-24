@@ -3,20 +3,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp"
-    android:background="#f8fafc">
+    android:background="#f8f9fa">
 
-    <!-- Header -->
+    <!-- Header Section -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:background="@android:color/white"
-        android:padding="20dp"
-        android:layout_marginBottom="16dp"
+        android:padding="16dp"
         android:elevation="2dp">
 
         <TextView
+            android:id="@+id/retiredOrdersTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="📋 Retired Orders"
@@ -29,153 +28,144 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="View completed meal orders by date"
-            android:textSize="16sp"
+            android:text="Orders from discharged patients or patients older than 6 days"
+            android:textSize="14sp"
             android:textColor="#7f8c8d"
-            android:gravity="center" />
+            android:gravity="center"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Date Selection -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/selectedDateText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Showing: All retired orders"
+                android:textSize="16sp"
+                android:textColor="#34495e" />
+
+            <Button
+                android:id="@+id/selectDateButton"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:text="Select Date"
+                android:textSize="14sp"
+                android:background="#3498db"
+                android:textColor="@android:color/white"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
-    <!-- Date Selection -->
+    <!-- Orders List -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="16dp">
+
+        <ListView
+            android:id="@+id/retiredOrdersListView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/white"
+            android:divider="#e5e5e5"
+            android:dividerHeight="1dp"
+            android:padding="8dp"
+            android:visibility="visible" />
+
+        <TextView
+            android:id="@+id/noRetiredOrdersText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="No retired orders found"
+            android:textSize="18sp"
+            android:textColor="#7f8c8d"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:visibility="gone" />
+
+    </FrameLayout>
+
+    <!-- Action Buttons -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:background="@android:color/white"
         android:padding="16dp"
-        android:layout_marginBottom="16dp"
-        android:elevation="2dp">
+        android:elevation="4dp">
 
-        <TextView
+        <!-- Print Buttons Row -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="📅 Select Date:"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="#2c3e50"
-            android:layout_marginBottom="8dp" />
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
 
-        <TextView
-            android:id="@+id/selectedDateText"
+            <Button
+                android:id="@+id/printAllButton"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:text="Print All"
+                android:textSize="16sp"
+                android:background="#27ae60"
+                android:textColor="@android:color/white"
+                android:layout_marginEnd="8dp" />
+
+            <Button
+                android:id="@+id/printSelectedButton"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:text="Print Selected"
+                android:textSize="16sp"
+                android:background="#3498db"
+                android:textColor="@android:color/white"
+                android:layout_marginStart="8dp" />
+
+        </LinearLayout>
+
+        <!-- Navigation Buttons Row -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Selected Date: Loading..."
-            android:textSize="14sp"
-            android:textColor="#34495e"
-            android:background="#ecf0f1"
-            android:padding="12dp"
-            android:layout_marginBottom="8dp" />
+            android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/datePickerButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="📅 Choose Different Date"
-            android:textSize="14sp"
-            android:background="#3498db"
-            android:textColor="@android:color/white"
-            android:padding="12dp" />
+            <Button
+                android:id="@+id/backButton"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:text="Back"
+                android:textSize="16sp"
+                android:background="#95a5a6"
+                android:textColor="@android:color/white"
+                android:layout_marginEnd="8dp" />
 
-    </LinearLayout>
+            <Button
+                android:id="@+id/homeButton"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:text="Home"
+                android:textSize="16sp"
+                android:background="#34495e"
+                android:textColor="@android:color/white"
+                android:layout_marginStart="8dp" />
 
-    <!-- Action Buttons -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="16dp">
-
-        <Button
-            android:id="@+id/printAllButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="🖨️ Print All"
-            android:textSize="14sp"
-            android:background="#27ae60"
-            android:textColor="@android:color/white"
-            android:layout_marginEnd="8dp"
-            android:padding="12dp" />
-
-        <Button
-            android:id="@+id/printSelectedButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="🖨️ Print Selected"
-            android:textSize="14sp"
-            android:background="#f39c12"
-            android:textColor="@android:color/white"
-            android:layout_marginStart="8dp"
-            android:padding="12dp" />
+        </LinearLayout>
 
     </LinearLayout>
-
-    <!-- Orders List Header -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="8dp"
-        android:paddingBottom="8dp"
-        android:background="#f1f5f9">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:text="Patient"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:textColor="#2c3e50"
-            android:padding="8dp" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Location"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:textColor="#2c3e50"
-            android:gravity="center"
-            android:padding="8dp" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Status"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:textColor="#2c3e50"
-            android:gravity="end"
-            android:padding="8dp" />
-
-    </LinearLayout>
-
-    <!-- Orders ListView -->
-    <ListView
-        android:id="@+id/retiredOrdersListView"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:divider="#ecf0f1"
-        android:dividerHeight="1dp"
-        android:scrollbars="vertical"
-        android:choiceMode="multipleChoice" />
-
-    <!-- No Orders Message -->
-    <TextView
-        android:id="@+id/noRetiredOrdersText"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:text="📋 No orders found for selected date.\n\nTry choosing a different date from the calendar."
-        android:textSize="18sp"
-        android:textColor="#7f8c8d"
-        android:gravity="center"
-        android:visibility="gone"
-        android:padding="32dp" />
 
 </LinearLayout>

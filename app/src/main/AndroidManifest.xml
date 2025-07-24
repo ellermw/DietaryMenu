@@ -51,16 +51,32 @@
             android:theme="@style/AppTheme" />
 
         <activity
+            android:name=".PatientActivity"
+            android:exported="false"
+            android:parentActivityName=".MainMenuActivity"
+            android:theme="@style/AppTheme" />
+
+        <activity
+            android:name=".ExistingPatientActivity"
+            android:exported="false"
+            android:parentActivityName=".PatientInfoMenuActivity"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- New Patient Activity - Uses its own Toolbar -->
+        <activity
             android:name=".NewPatientActivity"
             android:exported="false"
             android:parentActivityName=".PatientInfoMenuActivity"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize" />
 
+        <!-- Existing Patients Activity - Uses its own Toolbar -->
         <activity
             android:name=".ExistingPatientsActivity"
             android:exported="false"
             android:parentActivityName=".PatientInfoMenuActivity"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
             android:name=".PatientDetailActivity"
@@ -68,18 +84,19 @@
             android:parentActivityName=".ExistingPatientsActivity"
             android:theme="@style/AppTheme" />
 
+        <!-- Edit Patient Activity - Uses its own Toolbar -->
         <activity
             android:name=".EditPatientActivity"
             android:exported="false"
             android:parentActivityName=".PatientDetailActivity"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme.NoActionBar" />
 
-        <!-- Meal Planning Activities -->
+        <!-- Meal Planning Activity - Uses its own Toolbar -->
         <activity
             android:name=".MealPlanningActivity"
             android:exported="false"
             android:parentActivityName=".MainMenuActivity"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <!-- Order Management Activities -->
         <activity
@@ -95,11 +112,12 @@
             android:parentActivityName=".MainMenuActivity"
             android:theme="@style/AppTheme" />
 
+        <!-- Finished Orders Activity - Uses its own Toolbar -->
         <activity
             android:name=".FinishedOrdersActivity"
             android:exported="false"
             android:parentActivityName=".MainMenuActivity"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
             android:name=".RetiredOrdersActivity"
@@ -107,14 +125,25 @@
             android:parentActivityName=".MainMenuActivity"
             android:theme="@style/AppTheme" />
 
-        <!-- Documents Activity -->
+        <!-- Management Activities -->
+        <activity
+            android:name=".CategoryManagementActivity"
+            android:exported="false"
+            android:parentActivityName=".ItemManagementActivity"
+            android:theme="@style/AppTheme" />
+
+        <activity
+            android:name=".DefaultMenuManagementActivity"
+            android:exported="false"
+            android:parentActivityName=".MainMenuActivity"
+            android:theme="@style/AppTheme" />
+
         <activity
             android:name=".DocumentsActivity"
             android:exported="false"
             android:parentActivityName=".MainMenuActivity"
             android:theme="@style/AppTheme" />
 
-        <!-- Item Management Activities -->
         <activity
             android:name=".ItemManagementActivity"
             android:exported="false"
@@ -122,33 +151,17 @@
             android:theme="@style/AppTheme" />
 
         <activity
-            android:name=".CategoryManagementActivity"
-            android:exported="false"
-            android:parentActivityName=".ItemManagementActivity"
-            android:theme="@style/AppTheme" />
-
-        <!-- Default Menu Management Activity -->
-        <activity
-            android:name=".DefaultMenuManagementActivity"
+            android:name=".UserManagementActivity"
             android:exported="false"
             android:parentActivityName=".MainMenuActivity"
             android:theme="@style/AppTheme" />
 
-        <!-- Account Management Activity -->
         <activity
             android:name=".AccountManagementActivity"
             android:exported="false"
             android:parentActivityName=".MainMenuActivity"
             android:theme="@style/AppTheme" />
 
-        <!-- User Management Activity -->
-        <activity
-            android:name=".UserManagementActivity"
-            android:exported="false"
-            android:parentActivityName=".MainMenuActivity"
-            android:theme="@style/AppTheme" />
-
-        <!-- Admin Activity -->
         <activity
             android:name=".AdminActivity"
             android:exported="false"

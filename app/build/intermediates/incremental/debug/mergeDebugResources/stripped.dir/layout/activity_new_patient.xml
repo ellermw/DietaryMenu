@@ -54,13 +54,14 @@
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="12dp">
+                        android:layout_marginBottom="12dp"
+                        app:boxBackgroundMode="outline">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/firstNameInput"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="First Name"
+                            android:hint="First Name *"
                             android:inputType="textPersonName" />
 
                     </com.google.android.material.textfield.TextInputLayout>
@@ -69,13 +70,14 @@
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="12dp">
+                        android:layout_marginBottom="12dp"
+                        app:boxBackgroundMode="outline">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/lastNameInput"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Last Name"
+                            android:hint="Last Name *"
                             android:inputType="textPersonName" />
 
                     </com.google.android.material.textfield.TextInputLayout>
@@ -84,8 +86,10 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="8dp">
 
+                        <!-- Wing Spinner -->
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -94,10 +98,10 @@
                             android:layout_marginEnd="8dp">
 
                             <TextView
-                                android:layout_width="match_parent"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Wing"
-                                android:textSize="14sp"
+                                android:text="Wing *"
+                                android:textSize="12sp"
                                 android:textColor="#7f8c8d"
                                 android:layout_marginBottom="4dp" />
 
@@ -109,6 +113,7 @@
 
                         </LinearLayout>
 
+                        <!-- Room Spinner -->
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -117,10 +122,10 @@
                             android:layout_marginStart="8dp">
 
                             <TextView
-                                android:layout_width="match_parent"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Room"
-                                android:textSize="14sp"
+                                android:text="Room *"
+                                android:textSize="12sp"
                                 android:textColor="#7f8c8d"
                                 android:layout_marginBottom="4dp" />
 
@@ -163,10 +168,10 @@
 
                     <!-- Diet Type -->
                     <TextView
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Diet Type"
-                        android:textSize="14sp"
+                        android:text="Diet Type *"
+                        android:textSize="12sp"
                         android:textColor="#7f8c8d"
                         android:layout_marginBottom="4dp" />
 
@@ -178,36 +183,31 @@
                         android:layout_marginBottom="12dp" />
 
                     <!-- ADA Diet Checkbox -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
+                    <CheckBox
+                        android:id="@+id/adaDietCheckBox"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginBottom="12dp">
+                        android:text="ADA Diet"
+                        android:textSize="16sp"
+                        android:layout_marginBottom="12dp"
+                        android:visibility="gone" />
 
-                        <CheckBox
-                            android:id="@+id/adaDietCheckBox"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:visibility="gone" />
-
-                        <TextView
-                            android:id="@+id/adaDietLabel"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="ADA Diet (Diabetic modifications)"
-                            android:textSize="16sp"
-                            android:textColor="#2c3e50"
-                            android:layout_marginStart="8dp"
-                            android:visibility="gone" />
-
-                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/adaDietLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="(Diabetic option for liquid/pureed diets)"
+                        android:textSize="12sp"
+                        android:textColor="#7f8c8d"
+                        android:layout_marginBottom="12dp"
+                        android:visibility="gone" />
 
                     <!-- Fluid Restriction -->
                     <TextView
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Fluid Restriction"
-                        android:textSize="14sp"
+                        android:textSize="12sp"
                         android:textColor="#7f8c8d"
                         android:layout_marginBottom="4dp" />
 
@@ -221,112 +221,141 @@
 
             </androidx.cardview.widget.CardView>
 
-            <!-- Texture Modifications Card -->
-            <androidx.cardview.widget.CardView
+            <!-- Physical Modifications and Liquid Thickness Side by Side -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="2dp">
+                android:orientation="horizontal"
+                android:layout_marginBottom="16dp">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <!-- Physical Modifications Card -->
+                <androidx.cardview.widget.CardView
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="2dp">
 
-                    <TextView
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Texture Modifications"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textColor="#2c3e50"
-                        android:layout_marginBottom="16dp" />
+                        android:orientation="vertical"
+                        android:padding="16dp">
 
-                    <!-- Physical Modifications -->
-                    <TextView
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Physical Modifications"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textColor="#2c3e50"
+                            android:layout_marginBottom="12dp" />
+
+                        <CheckBox
+                            android:id="@+id/mechanicalGroundCheckBox"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Mechanical Ground"
+                            android:textSize="14sp"
+                            android:layout_marginBottom="8dp" />
+
+                        <CheckBox
+                            android:id="@+id/mechanicalChoppedCheckBox"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Mechanical Chopped"
+                            android:textSize="14sp"
+                            android:layout_marginBottom="8dp" />
+
+                        <CheckBox
+                            android:id="@+id/biteSizeCheckBox"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Bite Size"
+                            android:textSize="14sp"
+                            android:layout_marginBottom="8dp" />
+
+                        <CheckBox
+                            android:id="@+id/breadOkCheckBox"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Bread OK"
+                            android:textSize="14sp"
+                            android:layout_marginBottom="8dp" />
+
+                        <CheckBox
+                            android:id="@+id/extraGravyCheckBox"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Extra Gravy"
+                            android:textSize="14sp"
+                            android:layout_marginBottom="8dp" />
+
+                        <CheckBox
+                            android:id="@+id/meatsOnlyCheckBox"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Meats Only"
+                            android:textSize="14sp"
+                            android:visibility="gone" />
+
+                    </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
+
+                <!-- Liquid Thickness Card -->
+                <androidx.cardview.widget.CardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="2dp">
+
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Physical Modifications"
-                        android:textSize="16sp"
-                        android:textColor="#34495e"
-                        android:layout_marginBottom="8dp" />
+                        android:orientation="vertical"
+                        android:padding="16dp">
 
-                    <CheckBox
-                        android:id="@+id/mechanicalGroundCheckBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Mechanical Ground"
-                        android:layout_marginBottom="4dp" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Liquid Thickness"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textColor="#2c3e50"
+                            android:layout_marginBottom="12dp" />
 
-                    <CheckBox
-                        android:id="@+id/mechanicalChoppedCheckBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Mechanical Chopped"
-                        android:layout_marginBottom="4dp" />
+                        <CheckBox
+                            android:id="@+id/nectarThickCheckBox"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Nectar Thick"
+                            android:textSize="14sp"
+                            android:layout_marginBottom="8dp" />
 
-                    <CheckBox
-                        android:id="@+id/biteSizeCheckBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Bite Size"
-                        android:layout_marginBottom="4dp" />
+                        <CheckBox
+                            android:id="@+id/honeyThickCheckBox"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Honey Thick"
+                            android:textSize="14sp"
+                            android:layout_marginBottom="8dp" />
 
-                    <CheckBox
-                        android:id="@+id/breadOkCheckBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Bread OK"
-                        android:layout_marginBottom="4dp" />
+                        <CheckBox
+                            android:id="@+id/puddingThickCheckBox"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Pudding Thick"
+                            android:textSize="14sp" />
 
-                    <CheckBox
-                        android:id="@+id/extraGravyCheckBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Extra Gravy"
-                        android:layout_marginBottom="4dp" />
+                    </LinearLayout>
 
-                    <CheckBox
-                        android:id="@+id/meatsOnlyCheckBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Meats Only"
-                        android:layout_marginBottom="16dp" />
+                </androidx.cardview.widget.CardView>
 
-                    <!-- Thicken Liquids -->
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Liquid Thickness"
-                        android:textSize="16sp"
-                        android:textColor="#34495e"
-                        android:layout_marginBottom="8dp" />
-
-                    <CheckBox
-                        android:id="@+id/nectarThickCheckBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Nectar Thick"
-                        android:layout_marginBottom="4dp" />
-
-                    <CheckBox
-                        android:id="@+id/honeyThickCheckBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Honey Thick"
-                        android:layout_marginBottom="4dp" />
-
-                    <CheckBox
-                        android:id="@+id/puddingThickCheckBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Pudding Thick" />
-
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
+            </LinearLayout>
 
             <!-- Action Buttons -->
             <LinearLayout
@@ -341,9 +370,9 @@
                     android:layout_height="56dp"
                     android:layout_weight="1"
                     android:text="Cancel"
-                    android:textColor="@android:color/white"
-                    android:background="#95a5a6"
-                    android:layout_marginEnd="8dp" />
+                    android:textSize="16sp"
+                    android:layout_marginEnd="8dp"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
 
                 <Button
                     android:id="@+id/savePatientButton"
@@ -351,9 +380,9 @@
                     android:layout_height="56dp"
                     android:layout_weight="1"
                     android:text="Save Patient"
-                    android:textColor="@android:color/white"
-                    android:background="#27ae60"
-                    android:layout_marginStart="8dp" />
+                    android:textSize="16sp"
+                    android:layout_marginStart="8dp"
+                    style="@style/Widget.MaterialComponents.Button" />
 
             </LinearLayout>
 

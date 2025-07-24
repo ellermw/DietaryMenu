@@ -76,6 +76,10 @@
         "source": "com.hospital.dietary.app-main-6:/layout/activity_main.xml"
     },
     {
+        "merged": "com.hospital.dietary.app-mergeDebugResources-3:/layout/patient_list_item.xml",
+        "source": "com.hospital.dietary.app-main-6:/layout/patient_list_item.xml"
+    },
+    {
         "merged": "com.hospital.dietary.app-mergeDebugResources-3:/layout/activity_patient_info.xml",
         "source": "com.hospital.dietary.app-main-6:/layout/activity_patient_info.xml"
     },

@@ -55,7 +55,7 @@ public class UserManagementActivity extends AppCompatActivity {
                         "Administrator".equalsIgnoreCase(currentUserRole.trim()));
 
         if (!isAdmin) {
-            Toast.makeText(this, "Access denied. Admin privileges required.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Access denied. Admin privileges required.", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
@@ -64,19 +64,18 @@ public class UserManagementActivity extends AppCompatActivity {
         dbHelper = new DatabaseHelper(this);
         userDAO = new UserDAO(dbHelper);
 
-        // Set title and back button
+        // Set title
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle("User Management");
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        // Initialize UI
-        initializeViews();
+        initializeUI();
         setupListeners();
         loadUsers();
     }
 
-    private void initializeViews() {
+    private void initializeUI() {
         usersListView = findViewById(R.id.usersListView);
         usersCountText = findViewById(R.id.usersCountText);
         addUserButton = findViewById(R.id.addUserButton);
@@ -97,22 +96,10 @@ public class UserManagementActivity extends AppCompatActivity {
             backButton.setOnClickListener(v -> finish());
         }
 
-        // Fixed ListView click listener for Samsung devices
         if (usersListView != null) {
-            // Set ListView properties for better click handling
-            usersListView.setItemsCanFocus(false);
-            usersListView.setFocusable(true);
-            usersListView.setFocusableInTouchMode(true);
-            usersListView.setClickable(true);
-
             usersListView.setOnItemClickListener((parent, view, position, id) -> {
-                Log.d(TAG, "ListView item clicked at position: " + position);
-
-                if (position >= 0 && position < allUsers.size()) {
-                    User selectedUser = allUsers.get(position);
-                    Log.d(TAG, "Selected user: " + selectedUser.getUsername());
-                    showUserManagementDialog(selectedUser);
-                }
+                User selectedUser = allUsers.get(position);
+                showEditUserDialog(selectedUser);
             });
         }
     }
@@ -120,12 +107,18 @@ public class UserManagementActivity extends AppCompatActivity {
     private void loadUsers() {
         try {
             allUsers = userDAO.getAllUsers();
-            Log.d(TAG, "Loaded " + allUsers.size() + " users from database");
 
-            // Create custom adapter
-            usersAdapter = new UserAdapter();
-            if (usersListView != null) {
-                usersListView.setAdapter(usersAdapter);
+            if (allUsers == null) {
+                allUsers = new ArrayList<>();
+            }
+
+            if (usersAdapter == null) {
+                usersAdapter = new UserAdapter();
+                if (usersListView != null) {
+                    usersListView.setAdapter(usersAdapter);
+                }
+            } else {
+                usersAdapter.notifyDataSetChanged();
             }
 
             // Update count
@@ -134,437 +127,205 @@ public class UserManagementActivity extends AppCompatActivity {
             }
 
         } catch (Exception e) {
-            Log.e(TAG, "Error loading users: " + e.getMessage());
-            Toast.makeText(this, "Error loading users", Toast.LENGTH_LONG).show();
+            Log.e(TAG, "Error loading users", e);
+            Toast.makeText(this, "Error loading users: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
-    private void showUserManagementDialog(final User user) {
-        // Create the layout programmatically
-        LinearLayout layout = new LinearLayout(this);
-        layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setPadding(40, 40, 40, 40);
+    private void showAddUserDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_user, null);
 
-        // Username (read-only)
-        TextView usernameLabel = new TextView(this);
-        usernameLabel.setText("Username:");
-        usernameLabel.setTextSize(14);
-        usernameLabel.setTextColor(0xFF7f8c8d);
-        layout.addView(usernameLabel);
+        EditText usernameInput = dialogView.findViewById(R.id.usernameInput);
+        EditText passwordInput = dialogView.findViewById(R.id.passwordInput);
+        EditText fullNameInput = dialogView.findViewById(R.id.fullNameInput);
+        Spinner roleSpinner = dialogView.findViewById(R.id.roleSpinner);
+        CheckBox activeCheckBox = dialogView.findViewById(R.id.activeCheckBox);
 
-        TextView usernameText = new TextView(this);
-        usernameText.setText(user.getUsername());
-        usernameText.setTextSize(18);
-        usernameText.setTextColor(0xFF2c3e50);
-        usernameText.setPadding(0, 5, 0, 20);
-        usernameText.setTypeface(null, android.graphics.Typeface.BOLD);
-        layout.addView(usernameText);
-
-        // Full Name (read-only)
-        TextView fullNameLabel = new TextView(this);
-        fullNameLabel.setText("Full Name:");
-        fullNameLabel.setTextSize(14);
-        fullNameLabel.setTextColor(0xFF7f8c8d);
-        layout.addView(fullNameLabel);
-
-        TextView fullNameText = new TextView(this);
-        fullNameText.setText(user.getFullName());
-        fullNameText.setTextSize(18);
-        fullNameText.setTextColor(0xFF2c3e50);
-        fullNameText.setPadding(0, 5, 0, 30);
-        layout.addView(fullNameText);
-
-        // Role selection
-        TextView roleLabel = new TextView(this);
-        roleLabel.setText("Role:");
-        roleLabel.setTextSize(14);
-        roleLabel.setTextColor(0xFF7f8c8d);
-        layout.addView(roleLabel);
-
-        final Spinner roleSpinner = new Spinner(this);
-        String[] roles = {"Admin", "User", "Viewer"};
+        // Setup role spinner
+        String[] roles = {"User", "Staff", "Admin"};
         ArrayAdapter<String> roleAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_dropdown_item, roles);
+                android.R.layout.simple_spinner_item, roles);
+        roleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        roleSpinner.setAdapter(roleAdapter);
+
+        activeCheckBox.setChecked(true);
+
+        builder.setView(dialogView)
+                .setTitle("Add New User")
+                .setPositiveButton("Add", (dialog, which) -> {
+                    String username = usernameInput.getText().toString().trim();
+                    String password = passwordInput.getText().toString().trim();
+                    String fullName = fullNameInput.getText().toString().trim();
+                    String role = (String) roleSpinner.getSelectedItem();
+                    boolean isActive = activeCheckBox.isChecked();
+
+                    if (username.isEmpty() || password.isEmpty() || fullName.isEmpty()) {
+                        Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    User newUser = new User(username, password, fullName, role);
+                    newUser.setActive(isActive);
+
+                    long result = userDAO.insertUser(newUser);
+                    if (result > 0) {
+                        Toast.makeText(this, "User added successfully", Toast.LENGTH_SHORT).show();
+                        loadUsers();
+                    } else {
+                        Toast.makeText(this, "Failed to add user", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private void showEditUserDialog(User user) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_edit_user, null);
+
+        TextView usernameText = dialogView.findViewById(R.id.usernameText);
+        EditText fullNameInput = dialogView.findViewById(R.id.fullNameInput);
+        Spinner roleSpinner = dialogView.findViewById(R.id.roleSpinner);
+        CheckBox activeCheckBox = dialogView.findViewById(R.id.activeCheckBox);
+        Button changePasswordButton = dialogView.findViewById(R.id.changePasswordButton);
+        Button deleteButton = dialogView.findViewById(R.id.deleteButton);
+
+        usernameText.setText("Username: " + user.getUsername());
+        fullNameInput.setText(user.getFullName());
+        activeCheckBox.setChecked(user.isActive());
+
+        // Setup role spinner
+        String[] roles = {"User", "Staff", "Admin"};
+        ArrayAdapter<String> roleAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, roles);
+        roleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         roleSpinner.setAdapter(roleAdapter);
 
         // Set current role
         for (int i = 0; i < roles.length; i++) {
-            if (roles[i].equals(user.getRole())) {
+            if (roles[i].equalsIgnoreCase(user.getRole())) {
                 roleSpinner.setSelection(i);
                 break;
             }
         }
-        roleSpinner.setPadding(0, 10, 0, 30);
-        layout.addView(roleSpinner);
 
-        // Active status
-        final CheckBox activeCheckBox = new CheckBox(this);
-        activeCheckBox.setText("Account is active");
-        activeCheckBox.setTextColor(0xFF2c3e50);
-        activeCheckBox.setTextSize(16);
-        activeCheckBox.setChecked(user.isActive());
-        activeCheckBox.setPadding(0, 0, 0, 30);
-        layout.addView(activeCheckBox);
+        AlertDialog dialog = builder.setView(dialogView)
+                .setTitle("Edit User")
+                .setPositiveButton("Update", (d, which) -> {
+                    user.setFullName(fullNameInput.getText().toString().trim());
+                    user.setRole((String) roleSpinner.getSelectedItem());
+                    user.setActive(activeCheckBox.isChecked());
 
-        // Create the dialog
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Manage User: " + user.getUsername());
-        builder.setView(layout);
-
-        // Add buttons
-        builder.setPositiveButton("Save Changes", null);
-        builder.setNeutralButton("Change Password", null);
-        builder.setNegativeButton("Cancel", null);
-
-        final AlertDialog dialog = builder.create();
-
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialogInterface) {
-                Button saveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                Button passwordButton = dialog.getButton(AlertDialog.BUTTON_NEUTRAL);
-                Button cancelButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-
-                // Style the buttons
-                saveButton.setTextColor(0xFF27ae60);
-                passwordButton.setTextColor(0xFF3498db);
-                cancelButton.setTextColor(0xFF7f8c8d);
-
-                // Save button action
-                saveButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String newRole = roleSpinner.getSelectedItem().toString();
-                        boolean newActive = activeCheckBox.isChecked();
-
-                        // Update user
-                        user.setRole(newRole);
-                        user.setActive(newActive);
-
-                        if (userDAO.updateUser(user)) {
-                            Toast.makeText(UserManagementActivity.this,
-                                    "User updated successfully", Toast.LENGTH_SHORT).show();
-                            dialog.dismiss();
-                            loadUsers(); // Refresh list
-                        } else {
-                            Toast.makeText(UserManagementActivity.this,
-                                    "Failed to update user", Toast.LENGTH_SHORT).show();
-                        }
+                    if (userDAO.updateUser(user)) {
+                        Toast.makeText(this, "User updated successfully", Toast.LENGTH_SHORT).show();
+                        loadUsers();
+                    } else {
+                        Toast.makeText(this, "Failed to update user", Toast.LENGTH_SHORT).show();
                     }
-                });
-
-                // Change password button action
-                passwordButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                        showChangePasswordDialog(user);
-                    }
-                });
-            }
-        });
-
-        dialog.show();
-
-        // Add delete button after showing dialog
-        LinearLayout buttonPanel = (LinearLayout) dialog.findViewById(android.R.id.button1).getParent();
-        if (buttonPanel != null) {
-            Button deleteButton = new Button(this);
-            deleteButton.setText("Delete User");
-            deleteButton.setTextColor(0xFFFFFFFF);
-            deleteButton.setBackgroundColor(0xFFe74c3c);
-            deleteButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // Prevent deleting yourself
-                    if (user.getUsername().equals(currentUsername)) {
-                        Toast.makeText(UserManagementActivity.this,
-                                "Cannot delete your own account", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-
-                    new AlertDialog.Builder(UserManagementActivity.this)
-                            .setTitle("Delete User")
-                            .setMessage("Are you sure you want to delete " + user.getUsername() + "?")
-                            .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface d, int w) {
-                                    if (userDAO.deleteUser(user.getUserId())) {
-                                        Toast.makeText(UserManagementActivity.this,
-                                                "User deleted successfully", Toast.LENGTH_SHORT).show();
-                                        dialog.dismiss();
-                                        loadUsers();
-                                    } else {
-                                        Toast.makeText(UserManagementActivity.this,
-                                                "Failed to delete user", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            })
-                            .setNegativeButton("Cancel", null)
-                            .show();
-                }
-            });
-
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-            );
-            params.setMargins(20, 0, 0, 0);
-            deleteButton.setLayoutParams(params);
-            buttonPanel.addView(deleteButton, 0);
-        }
-    }
-
-    private void showChangePasswordDialog(final User user) {
-        // Create layout
-        LinearLayout layout = new LinearLayout(this);
-        layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setPadding(40, 40, 40, 40);
-
-        // New password field
-        TextView newPasswordLabel = new TextView(this);
-        newPasswordLabel.setText("New Password:");
-        newPasswordLabel.setTextSize(14);
-        newPasswordLabel.setTextColor(0xFF7f8c8d);
-        layout.addView(newPasswordLabel);
-
-        final EditText newPasswordEdit = new EditText(this);
-        newPasswordEdit.setHint("Enter new password (min 6 characters)");
-        newPasswordEdit.setInputType(android.text.InputType.TYPE_CLASS_TEXT |
-                android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        newPasswordEdit.setPadding(0, 10, 0, 20);
-        layout.addView(newPasswordEdit);
-
-        // Confirm password field
-        TextView confirmPasswordLabel = new TextView(this);
-        confirmPasswordLabel.setText("Confirm Password:");
-        confirmPasswordLabel.setTextSize(14);
-        confirmPasswordLabel.setTextColor(0xFF7f8c8d);
-        layout.addView(confirmPasswordLabel);
-
-        final EditText confirmPasswordEdit = new EditText(this);
-        confirmPasswordEdit.setHint("Re-enter new password");
-        confirmPasswordEdit.setInputType(android.text.InputType.TYPE_CLASS_TEXT |
-                android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        confirmPasswordEdit.setPadding(0, 10, 0, 20);
-        layout.addView(confirmPasswordEdit);
-
-        // Show password checkbox
-        final CheckBox showPasswordCheckBox = new CheckBox(this);
-        showPasswordCheckBox.setText("Show passwords");
-        showPasswordCheckBox.setTextColor(0xFF2c3e50);
-        showPasswordCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                int inputType = isChecked ?
-                        android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD :
-                        android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD;
-                newPasswordEdit.setInputType(inputType);
-                confirmPasswordEdit.setInputType(inputType);
-                // Maintain cursor position
-                newPasswordEdit.setSelection(newPasswordEdit.getText().length());
-                confirmPasswordEdit.setSelection(confirmPasswordEdit.getText().length());
-            }
-        });
-        layout.addView(showPasswordCheckBox);
-
-        // Create dialog
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Change Password for " + user.getUsername());
-        builder.setView(layout);
-        builder.setPositiveButton("Change Password", null);
-        builder.setNegativeButton("Cancel", null);
-
-        final AlertDialog dialog = builder.create();
-
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface d) {
-                Button changeButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                changeButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String newPassword = newPasswordEdit.getText().toString();
-                        String confirmPassword = confirmPasswordEdit.getText().toString();
-
-                        if (newPassword.isEmpty()) {
-                            newPasswordEdit.setError("Password is required");
-                            return;
-                        }
-
-                        if (newPassword.length() < 6) {
-                            newPasswordEdit.setError("Password must be at least 6 characters");
-                            return;
-                        }
-
-                        if (!newPassword.equals(confirmPassword)) {
-                            confirmPasswordEdit.setError("Passwords do not match");
-                            return;
-                        }
-
-                        if (userDAO.changePassword(user.getUserId(), newPassword)) {
-                            Toast.makeText(UserManagementActivity.this,
-                                    "Password changed successfully", Toast.LENGTH_SHORT).show();
-                            dialog.dismiss();
-                        } else {
-                            Toast.makeText(UserManagementActivity.this,
-                                    "Failed to change password", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-            }
-        });
-
-        dialog.show();
-    }
-
-    private void showAddUserDialog() {
-        // Create a custom layout for the dialog
-        LinearLayout layout = new LinearLayout(this);
-        layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setPadding(40, 40, 40, 40);
-
-        // Username input
-        TextView usernameLabel = new TextView(this);
-        usernameLabel.setText("Username:");
-        usernameLabel.setTextSize(14);
-        usernameLabel.setTextColor(0xFF7f8c8d);
-        layout.addView(usernameLabel);
-
-        final EditText usernameEdit = new EditText(this);
-        usernameEdit.setHint("Enter username");
-        usernameEdit.setPadding(0, 10, 0, 20);
-        layout.addView(usernameEdit);
-
-        // Password input
-        TextView passwordLabel = new TextView(this);
-        passwordLabel.setText("Password:");
-        passwordLabel.setTextSize(14);
-        passwordLabel.setTextColor(0xFF7f8c8d);
-        layout.addView(passwordLabel);
-
-        final EditText passwordEdit = new EditText(this);
-        passwordEdit.setHint("Enter password (min 6 characters)");
-        passwordEdit.setInputType(android.text.InputType.TYPE_CLASS_TEXT |
-                android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        passwordEdit.setPadding(0, 10, 0, 20);
-        layout.addView(passwordEdit);
-
-        // Full name input
-        TextView fullNameLabel = new TextView(this);
-        fullNameLabel.setText("Full Name:");
-        fullNameLabel.setTextSize(14);
-        fullNameLabel.setTextColor(0xFF7f8c8d);
-        layout.addView(fullNameLabel);
-
-        final EditText fullNameEdit = new EditText(this);
-        fullNameEdit.setHint("Enter full name");
-        fullNameEdit.setPadding(0, 10, 0, 20);
-        layout.addView(fullNameEdit);
-
-        // Role selection
-        TextView roleLabel = new TextView(this);
-        roleLabel.setText("Role:");
-        roleLabel.setTextSize(14);
-        roleLabel.setTextColor(0xFF7f8c8d);
-        layout.addView(roleLabel);
-
-        final Spinner roleSpinner = new Spinner(this);
-        String[] roles = {"Admin", "User", "Viewer"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_dropdown_item, roles);
-        roleSpinner.setAdapter(adapter);
-        roleSpinner.setSelection(1); // Default to "User"
-        roleSpinner.setPadding(0, 10, 0, 20);
-        layout.addView(roleSpinner);
-
-        // Active checkbox
-        final CheckBox activeCheckBox = new CheckBox(this);
-        activeCheckBox.setText("Account is active");
-        activeCheckBox.setTextColor(0xFF2c3e50);
-        activeCheckBox.setChecked(true);
-        layout.addView(activeCheckBox);
-
-        // Create dialog
-        AlertDialog dialog = new AlertDialog.Builder(this)
-                .setTitle("Add New User")
-                .setView(layout)
-                .setPositiveButton("Add", null)
+                })
                 .setNegativeButton("Cancel", null)
                 .create();
 
-        dialog.setOnShowListener(dialogInterface -> {
-            Button addButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            addButton.setOnClickListener(v -> {
-                String username = usernameEdit.getText().toString().trim();
-                String password = passwordEdit.getText().toString().trim();
-                String fullName = fullNameEdit.getText().toString().trim();
-                String role = roleSpinner.getSelectedItem().toString();
-                boolean isActive = activeCheckBox.isChecked();
+        // Change password button
+        changePasswordButton.setOnClickListener(v -> {
+            dialog.dismiss();
+            showChangePasswordDialog(user);
+        });
 
-                if (validateUserInput(username, password, fullName)) {
-                    User newUser = new User();
-                    newUser.setUsername(username);
-                    newUser.setPassword(password);
-                    newUser.setFullName(fullName);
-                    newUser.setRole(role);
-                    newUser.setActive(isActive);
+        // Delete button
+        deleteButton.setOnClickListener(v -> {
+            // Prevent deleting yourself
+            if (user.getUsername().equals(currentUsername)) {
+                Toast.makeText(this, "Cannot delete your own account", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
-                    long result = userDAO.addUser(newUser);
-                    if (result > 0) {
-                        Toast.makeText(this, "User added successfully!", Toast.LENGTH_SHORT).show();
-                        dialog.dismiss();
-                        loadUsers(); // Refresh the list
-                    } else {
-                        Toast.makeText(this, "Error adding user", Toast.LENGTH_LONG).show();
-                    }
-                }
-            });
+            // Prevent deleting the default admin account
+            if ("admin".equals(user.getUsername())) {
+                Toast.makeText(this, "Cannot delete the default admin account", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            new AlertDialog.Builder(this)
+                    .setTitle("Delete User")
+                    .setMessage("Are you sure you want to delete " + user.getUsername() + "?")
+                    .setPositiveButton("Delete", (d2, w) -> {
+                        if (userDAO.deleteUser(user.getUserId())) {
+                            Toast.makeText(this, "User deleted successfully", Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                            loadUsers();
+                        } else {
+                            Toast.makeText(this, "Failed to delete user", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .show();
         });
 
         dialog.show();
     }
 
-    private boolean validateUserInput(String username, String password, String fullName) {
-        if (username.isEmpty()) {
-            Toast.makeText(this, "Username is required", Toast.LENGTH_SHORT).show();
-            return false;
-        }
+    private void showChangePasswordDialog(User user) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_change_password, null);
 
-        if (password.isEmpty()) {
-            Toast.makeText(this, "Password is required", Toast.LENGTH_SHORT).show();
-            return false;
-        }
+        EditText newPasswordInput = dialogView.findViewById(R.id.newPasswordInput);
+        EditText confirmPasswordInput = dialogView.findViewById(R.id.confirmPasswordInput);
 
-        if (password.length() < 6) {
-            Toast.makeText(this, "Password must be at least 6 characters", Toast.LENGTH_SHORT).show();
-            return false;
-        }
+        builder.setView(dialogView)
+                .setTitle("Change Password for " + user.getUsername())
+                .setPositiveButton("Change", (dialog, which) -> {
+                    String newPassword = newPasswordInput.getText().toString();
+                    String confirmPassword = confirmPasswordInput.getText().toString();
 
-        if (fullName.isEmpty()) {
-            Toast.makeText(this, "Full name is required", Toast.LENGTH_SHORT).show();
-            return false;
-        }
+                    if (newPassword.isEmpty()) {
+                        Toast.makeText(this, "Password cannot be empty", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
 
-        // Check if username already exists
-        if (userDAO.getUserByUsername(username) != null) {
-            Toast.makeText(this, "Username already exists", Toast.LENGTH_SHORT).show();
-            return false;
-        }
+                    if (!newPassword.equals(confirmPassword)) {
+                        Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
 
-        return true;
+                    user.setPassword(newPassword);
+                    if (userDAO.updateUser(user)) {
+                        Toast.makeText(this, "Password changed successfully", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(this, "Failed to change password", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 
-    // Custom UserAdapter
-    private class UserAdapter extends BaseAdapter {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (dbHelper != null) {
+            dbHelper.close();
+        }
+    }
+
+    // Custom adapter for users list
+    private class UserAdapter extends BaseAdapter {
         @Override
         public int getCount() {
             return allUsers.size();
         }
 
         @Override
-        public Object getItem(int position) {
+        public User getItem(int position) {
             return allUsers.get(position);
         }
 
@@ -575,46 +336,28 @@ public class UserManagementActivity extends AppCompatActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            View view = convertView;
-            if (view == null) {
-                view = getLayoutInflater().inflate(android.R.layout.simple_list_item_2, parent, false);
+            if (convertView == null) {
+                convertView = LayoutInflater.from(UserManagementActivity.this)
+                        .inflate(android.R.layout.simple_list_item_2, parent, false);
             }
 
-            User user = allUsers.get(position);
+            User user = getItem(position);
 
-            TextView text1 = view.findViewById(android.R.id.text1);
-            TextView text2 = view.findViewById(android.R.id.text2);
+            TextView text1 = convertView.findViewById(android.R.id.text1);
+            TextView text2 = convertView.findViewById(android.R.id.text2);
 
-            if (text1 != null) {
-                text1.setText(user.getFullName());
-                text1.setTextColor(0xFF2c3e50);
-                text1.setTextSize(16);
+            text1.setText(user.getFullName() + " (" + user.getUsername() + ")");
+            text2.setText("Role: " + user.getRole() + " | Status: " +
+                    (user.isActive() ? "Active" : "Inactive"));
+
+            // Highlight admin users
+            if ("Admin".equalsIgnoreCase(user.getRole())) {
+                text1.setTextColor(android.graphics.Color.parseColor("#e74c3c"));
+            } else {
+                text1.setTextColor(android.graphics.Color.BLACK);
             }
 
-            if (text2 != null) {
-                String details = user.getUsername() + " • " + user.getRole();
-                if (!user.isActive()) {
-                    details += " • INACTIVE";
-                }
-                text2.setText(details);
-                text2.setTextColor(user.isActive() ? 0xFF7f8c8d : 0xFFe74c3c);
-                text2.setTextSize(14);
-            }
-
-            // IMPORTANT: Don't make individual items clickable
-            view.setClickable(false);
-            view.setFocusable(false);
-
-            return view;
+            return convertView;
         }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            finish();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 }
