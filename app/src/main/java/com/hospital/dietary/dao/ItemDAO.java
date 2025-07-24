@@ -19,23 +19,20 @@ public class ItemDAO {
     }
 
     /**
-     * FIXED: Get all items with proper column references and error handling
+     * Get all items with proper column references and error handling
      */
     public List<Item> getAllItems() {
         List<Item> items = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        // FIXED: Use simple query without Category table join since Item table has category as TEXT
+        // FIXED: Use correct table name from DatabaseHelper
         String query = "SELECT item_id, name, category, " +
-                "COALESCE(size_ml, 0) as size_ml, " +
                 "COALESCE(description, '') as description, " +
                 "COALESCE(is_ada_friendly, 0) as is_ada_friendly, " +
-                "COALESCE(ada_friendly, 0) as ada_friendly, " +
-                "COALESCE(is_soda, 0) as is_soda, " +
-                "COALESCE(is_clear_liquid, 0) as is_clear_liquid, " +
-                "COALESCE(meal_type, '') as meal_type, " +
-                "COALESCE(is_default, 0) as is_default " +
-                "FROM Item ORDER BY category, name";
+                "COALESCE(is_cardiac_friendly, 0) as is_cardiac_friendly, " +
+                "COALESCE(is_renal_friendly, 0) as is_renal_friendly, " +
+                "created_date " +
+                "FROM " + DatabaseHelper.TABLE_ITEMS + " ORDER BY category, name";
 
         Cursor cursor = null;
         try {
@@ -70,7 +67,8 @@ public class ItemDAO {
         List<Item> items = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        String query = "SELECT * FROM Item WHERE category = ? ORDER BY name";
+        // FIXED: Use correct table name
+        String query = "SELECT * FROM " + DatabaseHelper.TABLE_ITEMS + " WHERE category = ? ORDER BY name";
 
         Cursor cursor = null;
         try {
@@ -85,7 +83,7 @@ public class ItemDAO {
                 } while (cursor.moveToNext());
             }
         } catch (Exception e) {
-            Log.e(TAG, "Error in getItemsByCategory: " + e.getMessage());
+            Log.e(TAG, "Error getting items by category: " + e.getMessage());
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -96,15 +94,15 @@ public class ItemDAO {
     }
 
     /**
-     * Get ADA friendly items by category
+     * Get ADA-friendly items by category
      */
     public List<Item> getAdaItemsByCategory(String category) {
         List<Item> items = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        // Check both ada_friendly and is_ada_friendly columns for compatibility
-        String query = "SELECT * FROM Item WHERE category = ? AND " +
-                "(ada_friendly = 1 OR is_ada_friendly = 1) ORDER BY name";
+        // FIXED: Use correct table name
+        String query = "SELECT * FROM " + DatabaseHelper.TABLE_ITEMS +
+                " WHERE category = ? AND is_ada_friendly = 1 ORDER BY name";
 
         Cursor cursor = null;
         try {
@@ -119,7 +117,7 @@ public class ItemDAO {
                 } while (cursor.moveToNext());
             }
         } catch (Exception e) {
-            Log.e(TAG, "Error in getAdaItemsByCategory: " + e.getMessage());
+            Log.e(TAG, "Error getting ADA items by category: " + e.getMessage());
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -127,35 +125,6 @@ public class ItemDAO {
         }
 
         return items;
-    }
-
-    /**
-     * Get all categories
-     */
-    public List<String> getAllCategories() {
-        List<String> categories = new ArrayList<>();
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-
-        String query = "SELECT DISTINCT category FROM Item ORDER BY category";
-
-        Cursor cursor = null;
-        try {
-            cursor = db.rawQuery(query, null);
-
-            if (cursor.moveToFirst()) {
-                do {
-                    categories.add(cursor.getString(0));
-                } while (cursor.moveToNext());
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Error in getAllCategories: " + e.getMessage());
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
-
-        return categories;
     }
 
     /**
@@ -167,24 +136,15 @@ public class ItemDAO {
 
         values.put("name", item.getName());
         values.put("category", item.getCategory());
-        values.put("ada_friendly", item.isAdaFriendly() ? 1 : 0);
-        values.put("is_ada_friendly", item.isAdaFriendly() ? 1 : 0); // Both columns for compatibility
-
-        // Add optional fields if they exist
-        if (item.getSizeML() != null) {
-            values.put("size_ml", item.getSizeML());
-        }
-        if (item.getDescription() != null) {
-            values.put("description", item.getDescription());
-        }
-        if (item.getMealType() != null) {
-            values.put("meal_type", item.getMealType());
-        }
+        values.put("description", item.getDescription());
+        values.put("is_ada_friendly", item.isAdaFriendly() ? 1 : 0);
 
         try {
-            return db.insert("Item", null, values);
+            // FIXED: Use correct table name constant
+            return db.insert(DatabaseHelper.TABLE_ITEMS, null, values);
         } catch (Exception e) {
             Log.e(TAG, "Error adding item: " + e.getMessage());
+            e.printStackTrace();
             return -1;
         }
     }
@@ -198,22 +158,12 @@ public class ItemDAO {
 
         values.put("name", item.getName());
         values.put("category", item.getCategory());
-        values.put("ada_friendly", item.isAdaFriendly() ? 1 : 0);
-        values.put("is_ada_friendly", item.isAdaFriendly() ? 1 : 0); // Both columns for compatibility
-
-        // Add optional fields if they exist
-        if (item.getSizeML() != null) {
-            values.put("size_ml", item.getSizeML());
-        }
-        if (item.getDescription() != null) {
-            values.put("description", item.getDescription());
-        }
-        if (item.getMealType() != null) {
-            values.put("meal_type", item.getMealType());
-        }
+        values.put("description", item.getDescription());
+        values.put("is_ada_friendly", item.isAdaFriendly() ? 1 : 0);
 
         try {
-            int rowsAffected = db.update("Item", values, "item_id = ?",
+            // FIXED: Use correct table name constant
+            int rowsAffected = db.update(DatabaseHelper.TABLE_ITEMS, values, "item_id = ?",
                     new String[]{String.valueOf(item.getItemId())});
             return rowsAffected > 0;
         } catch (Exception e) {
@@ -229,7 +179,8 @@ public class ItemDAO {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         try {
-            int rowsAffected = db.delete("Item", "item_id = ?",
+            // FIXED: Use correct table name constant
+            int rowsAffected = db.delete(DatabaseHelper.TABLE_ITEMS, "item_id = ?",
                     new String[]{String.valueOf(itemId)});
             return rowsAffected > 0;
         } catch (Exception e) {
@@ -245,9 +196,9 @@ public class ItemDAO {
         List<Item> items = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        String query = "SELECT * FROM Item WHERE " +
-                "LOWER(name) LIKE ? OR LOWER(category) LIKE ? " +
-                "ORDER BY category, name";
+        // FIXED: Use correct table name constant
+        String query = "SELECT * FROM " + DatabaseHelper.TABLE_ITEMS + " WHERE " +
+                "LOWER(name) LIKE ? OR LOWER(category) LIKE ? ORDER BY name";
 
         String searchPattern = "%" + searchTerm.toLowerCase() + "%";
 
@@ -275,25 +226,60 @@ public class ItemDAO {
     }
 
     /**
-     * Get items for specific meal categories (for meal planning)
+     * Check if item exists by name and category
      */
-    public List<Item> getItemsForMealPlanning(String mealType, boolean adaOnly) {
-        List<Item> items = new ArrayList<>();
+    public boolean itemExists(String name, String category) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        // Define categories for different meal planning
-        String[] categories;
-        if ("Breakfast".equals(mealType)) {
-            categories = new String[]{"Breakfast Items", "Beverages", "Juices", "Fruits", "Dairy"};
-        } else {
-            // Lunch and Dinner
-            categories = new String[]{"Proteins", "Starches", "Vegetables", "Desserts", "Beverages"};
+        // FIXED: Use correct table name constant
+        String query = "SELECT COUNT(*) FROM " + DatabaseHelper.TABLE_ITEMS +
+                " WHERE LOWER(name) = ? AND LOWER(category) = ?";
+
+        Cursor cursor = null;
+        try {
+            cursor = db.rawQuery(query, new String[]{name.toLowerCase(), category.toLowerCase()});
+            if (cursor.moveToFirst()) {
+                return cursor.getInt(0) > 0;
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error checking if item exists: " + e.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
         }
 
-        for (String category : categories) {
-            String query = "SELECT * FROM Item WHERE category = ?";
+        return false;
+    }
+
+    /**
+     * Get items suitable for specific diets
+     */
+    public List<Item> getItemsForDiet(String dietType, String category) {
+        List<Item> items = new ArrayList<>();
+
+        if ("ADA".equalsIgnoreCase(dietType) || (dietType != null && dietType.contains("ADA"))) {
+            items = getAdaItemsByCategory(category);
+        } else {
+            items = getItemsByCategory(category);
+        }
+
+        return items;
+    }
+
+    /**
+     * Get items for meal planning with ADA filter option
+     */
+    public List<Item> getItemsForMealPlanning(String category, boolean adaOnly) {
+        List<Item> items = new ArrayList<>();
+
+        if (category != null && !category.isEmpty()) {
+            SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+            // FIXED: Use correct table name constant
+            String query = "SELECT * FROM " + DatabaseHelper.TABLE_ITEMS + " WHERE category = ?";
             if (adaOnly) {
-                query += " AND (ada_friendly = 1 OR is_ada_friendly = 1)";
+                query += " AND is_ada_friendly = 1";
             }
             query += " ORDER BY name";
 
@@ -342,7 +328,9 @@ public class ItemDAO {
      */
     public Item getItemById(int itemId) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String query = "SELECT * FROM Item WHERE item_id = ?";
+
+        // FIXED: Use correct table name constant
+        String query = "SELECT * FROM " + DatabaseHelper.TABLE_ITEMS + " WHERE item_id = ?";
 
         Cursor cursor = null;
         try {
@@ -367,7 +355,9 @@ public class ItemDAO {
      */
     public int getItemCount() {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String query = "SELECT COUNT(*) FROM Item";
+
+        // FIXED: Use correct table name constant
+        String query = "SELECT COUNT(*) FROM " + DatabaseHelper.TABLE_ITEMS;
 
         Cursor cursor = null;
         try {
@@ -387,106 +377,32 @@ public class ItemDAO {
     }
 
     /**
-     * FIXED: Helper method to create Item from cursor with error handling
+     * Helper method to create Item from cursor with error handling
      */
     private Item createItemFromCursor(Cursor cursor) {
         try {
             Item item = new Item();
 
-            // Required fields
             item.setItemId(cursor.getInt(cursor.getColumnIndexOrThrow("item_id")));
             item.setName(cursor.getString(cursor.getColumnIndexOrThrow("name")));
             item.setCategory(cursor.getString(cursor.getColumnIndexOrThrow("category")));
 
-            // Handle ada_friendly column (check both possible column names)
-            boolean isAdaFriendly = false;
-            int adaIdx = cursor.getColumnIndex("ada_friendly");
-            if (adaIdx >= 0) {
-                isAdaFriendly = cursor.getInt(adaIdx) == 1;
-            } else {
-                int isAdaIdx = cursor.getColumnIndex("is_ada_friendly");
-                if (isAdaIdx >= 0) {
-                    isAdaFriendly = cursor.getInt(isAdaIdx) == 1;
-                }
-            }
-            item.setAdaFriendly(isAdaFriendly);
-
-            // Optional fields with safe handling
-            int sizeIdx = cursor.getColumnIndex("size_ml");
-            if (sizeIdx >= 0) {
-                item.setSizeML(cursor.getInt(sizeIdx));
+            // Handle optional columns safely
+            int descIndex = cursor.getColumnIndex("description");
+            if (descIndex >= 0) {
+                item.setDescription(cursor.getString(descIndex));
             }
 
-            int descIdx = cursor.getColumnIndex("description");
-            if (descIdx >= 0) {
-                item.setDescription(cursor.getString(descIdx));
-            }
-
-            int sodaIdx = cursor.getColumnIndex("is_soda");
-            if (sodaIdx >= 0) {
-                item.setSoda(cursor.getInt(sodaIdx) == 1);
-            }
-
-            int clearIdx = cursor.getColumnIndex("is_clear_liquid");
-            if (clearIdx >= 0) {
-                item.setClearLiquid(cursor.getInt(clearIdx) == 1);
-            }
-
-            int mealTypeIdx = cursor.getColumnIndex("meal_type");
-            if (mealTypeIdx >= 0) {
-                item.setMealType(cursor.getString(mealTypeIdx));
-            }
-
-            int defaultIdx = cursor.getColumnIndex("is_default");
-            if (defaultIdx >= 0) {
-                item.setDefault(cursor.getInt(defaultIdx) == 1);
+            int adaIndex = cursor.getColumnIndex("is_ada_friendly");
+            if (adaIndex >= 0) {
+                item.setAdaFriendly(cursor.getInt(adaIndex) == 1);
             }
 
             return item;
-
         } catch (Exception e) {
             Log.e(TAG, "Error creating item from cursor: " + e.getMessage());
             return null;
         }
-    }
-
-    /**
-     * Check if item exists by name and category
-     */
-    public boolean itemExists(String name, String category) {
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String query = "SELECT COUNT(*) FROM Item WHERE LOWER(name) = ? AND LOWER(category) = ?";
-
-        Cursor cursor = null;
-        try {
-            cursor = db.rawQuery(query, new String[]{name.toLowerCase(), category.toLowerCase()});
-            if (cursor.moveToFirst()) {
-                return cursor.getInt(0) > 0;
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Error checking if item exists: " + e.getMessage());
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Get items suitable for specific diets
-     */
-    public List<Item> getItemsForDiet(String dietType, String category) {
-        List<Item> items = new ArrayList<>();
-
-        if ("ADA".equalsIgnoreCase(dietType) || (dietType != null && dietType.contains("ADA"))) {
-            items = getAdaItemsByCategory(category);
-        } else {
-            items = getItemsByCategory(category);
-        }
-
-        return items;
     }
 
     /**
