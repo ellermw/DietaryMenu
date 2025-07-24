@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Select New Location"
-        android:textSize="18sp"
+        android:textSize="16sp"
         android:textStyle="bold"
         android:textColor="#2c3e50"
         android:layout_marginBottom="16dp" />
@@ -24,11 +24,9 @@
         android:layout_marginBottom="4dp" />
 
     <Spinner
-        android:id="@+id/transferWingSpinner"
+        android:id="@+id/wingSpinner"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:background="@drawable/input_field_background"
-        android:padding="8dp"
         android:layout_marginBottom="16dp" />
 
     <!-- Room Selection -->
@@ -41,19 +39,8 @@
         android:layout_marginBottom="4dp" />
 
     <Spinner
-        android:id="@+id/transferRoomSpinner"
+        android:id="@+id/roomSpinner"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="@drawable/input_field_background"
-        android:padding="8dp"
-        android:layout_marginBottom="8dp" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="⚠️ Note: Room availability will be checked before transfer"
-        android:textSize="12sp"
-        android:textColor="#e74c3c"
-        android:textStyle="italic" />
+        android:layout_height="48dp" />
 
 </LinearLayout>

@@ -89,7 +89,6 @@
                         android:orientation="horizontal"
                         android:layout_marginBottom="8dp">
 
-                        <!-- Wing Spinner -->
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -113,7 +112,6 @@
 
                         </LinearLayout>
 
-                        <!-- Room Spinner -->
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -246,7 +244,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Physical Modifications"
+                            android:text="Texture Modifications"
                             android:textSize="16sp"
                             android:textStyle="bold"
                             android:textColor="#2c3e50"
@@ -304,7 +302,7 @@
 
                 </androidx.cardview.widget.CardView>
 
-                <!-- Liquid Thickness Card -->
+                <!-- Thicken Liquids Card -->
                 <androidx.cardview.widget.CardView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -322,7 +320,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Liquid Thickness"
+                            android:text="Thicken Liquids"
                             android:textSize="16sp"
                             android:textStyle="bold"
                             android:textColor="#2c3e50"
@@ -357,12 +355,112 @@
 
             </LinearLayout>
 
+            <!-- Additional Information Card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Additional Information"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#2c3e50"
+                        android:layout_marginBottom="16dp" />
+
+                    <!-- Allergies -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Allergies"
+                        android:textSize="12sp"
+                        android:textColor="#7f8c8d"
+                        android:layout_marginBottom="4dp" />
+
+                    <EditText
+                        android:id="@+id/allergiesInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:hint="Enter allergies..."
+                        android:background="@android:drawable/edit_text"
+                        android:padding="8dp"
+                        android:layout_marginBottom="12dp" />
+
+                    <!-- Likes -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Likes"
+                        android:textSize="12sp"
+                        android:textColor="#7f8c8d"
+                        android:layout_marginBottom="4dp" />
+
+                    <EditText
+                        android:id="@+id/likesInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:hint="Enter food preferences..."
+                        android:background="@android:drawable/edit_text"
+                        android:padding="8dp"
+                        android:layout_marginBottom="12dp" />
+
+                    <!-- Dislikes -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Dislikes"
+                        android:textSize="12sp"
+                        android:textColor="#7f8c8d"
+                        android:layout_marginBottom="4dp" />
+
+                    <EditText
+                        android:id="@+id/dislikesInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:hint="Enter dislikes..."
+                        android:background="@android:drawable/edit_text"
+                        android:padding="8dp"
+                        android:layout_marginBottom="12dp" />
+
+                    <!-- Comments -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Comments"
+                        android:textSize="12sp"
+                        android:textColor="#7f8c8d"
+                        android:layout_marginBottom="4dp" />
+
+                    <EditText
+                        android:id="@+id/commentsInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="80dp"
+                        android:hint="Additional notes..."
+                        android:background="@android:drawable/edit_text"
+                        android:padding="8dp"
+                        android:gravity="top"
+                        android:inputType="textMultiLine" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
             <!-- Action Buttons -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="8dp">
+                android:layout_marginBottom="16dp">
 
                 <Button
                     android:id="@+id/cancelButton"
@@ -371,8 +469,9 @@
                     android:layout_weight="1"
                     android:text="Cancel"
                     android:textSize="16sp"
-                    android:layout_marginEnd="8dp"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+                    android:background="#95a5a6"
+                    android:textColor="@android:color/white"
+                    android:layout_marginEnd="8dp" />
 
                 <Button
                     android:id="@+id/savePatientButton"
@@ -381,8 +480,9 @@
                     android:layout_weight="1"
                     android:text="Save Patient"
                     android:textSize="16sp"
-                    android:layout_marginStart="8dp"
-                    style="@style/Widget.MaterialComponents.Button" />
+                    android:background="#27ae60"
+                    android:textColor="@android:color/white"
+                    android:layout_marginStart="8dp" />
 
             </LinearLayout>
 

@@ -10,7 +10,6 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.viewbinding.ViewBinding;
 import androidx.viewbinding.ViewBindings;
@@ -24,6 +23,9 @@ public final class ActivityPatientDetailBinding implements ViewBinding {
   private final ScrollView rootView;
 
   @NonNull
+  public final TextView allergiesText;
+
+  @NonNull
   public final CheckBox breakfastCompleteCheckBox;
 
   @NonNull
@@ -33,10 +35,10 @@ public final class ActivityPatientDetailBinding implements ViewBinding {
   public final TextView breakfastItemsText;
 
   @NonNull
-  public final TextView createdDateText;
+  public final TextView commentsText;
 
   @NonNull
-  public final Button deletePatientButton;
+  public final TextView createdDateText;
 
   @NonNull
   public final TextView dietText;
@@ -51,6 +53,12 @@ public final class ActivityPatientDetailBinding implements ViewBinding {
   public final TextView dinnerItemsText;
 
   @NonNull
+  public final Button dischargePatientButton;
+
+  @NonNull
+  public final TextView dislikesText;
+
+  @NonNull
   public final Button editMealPlanButton;
 
   @NonNull
@@ -58,6 +66,9 @@ public final class ActivityPatientDetailBinding implements ViewBinding {
 
   @NonNull
   public final TextView fluidRestrictionText;
+
+  @NonNull
+  public final TextView likesText;
 
   @NonNull
   public final TextView locationText;
@@ -87,33 +98,39 @@ public final class ActivityPatientDetailBinding implements ViewBinding {
   public final TextView textureModificationsText;
 
   @NonNull
-  public final Toolbar toolbar;
+  public final Button transferRoomButton;
 
   private ActivityPatientDetailBinding(@NonNull ScrollView rootView,
-      @NonNull CheckBox breakfastCompleteCheckBox, @NonNull TextView breakfastDrinksText,
-      @NonNull TextView breakfastItemsText, @NonNull TextView createdDateText,
-      @NonNull Button deletePatientButton, @NonNull TextView dietText,
+      @NonNull TextView allergiesText, @NonNull CheckBox breakfastCompleteCheckBox,
+      @NonNull TextView breakfastDrinksText, @NonNull TextView breakfastItemsText,
+      @NonNull TextView commentsText, @NonNull TextView createdDateText, @NonNull TextView dietText,
       @NonNull CheckBox dinnerCompleteCheckBox, @NonNull TextView dinnerDrinksText,
-      @NonNull TextView dinnerItemsText, @NonNull Button editMealPlanButton,
+      @NonNull TextView dinnerItemsText, @NonNull Button dischargePatientButton,
+      @NonNull TextView dislikesText, @NonNull Button editMealPlanButton,
       @NonNull Button editPatientButton, @NonNull TextView fluidRestrictionText,
-      @NonNull TextView locationText, @NonNull CheckBox lunchCompleteCheckBox,
-      @NonNull TextView lunchDrinksText, @NonNull TextView lunchItemsText,
-      @NonNull CardView mealItemsSection, @NonNull CardView mealStatusSection,
-      @NonNull TextView orderDateText, @NonNull TextView patientNameText,
-      @NonNull TextView textureModificationsText, @NonNull Toolbar toolbar) {
+      @NonNull TextView likesText, @NonNull TextView locationText,
+      @NonNull CheckBox lunchCompleteCheckBox, @NonNull TextView lunchDrinksText,
+      @NonNull TextView lunchItemsText, @NonNull CardView mealItemsSection,
+      @NonNull CardView mealStatusSection, @NonNull TextView orderDateText,
+      @NonNull TextView patientNameText, @NonNull TextView textureModificationsText,
+      @NonNull Button transferRoomButton) {
     this.rootView = rootView;
+    this.allergiesText = allergiesText;
     this.breakfastCompleteCheckBox = breakfastCompleteCheckBox;
     this.breakfastDrinksText = breakfastDrinksText;
     this.breakfastItemsText = breakfastItemsText;
+    this.commentsText = commentsText;
     this.createdDateText = createdDateText;
-    this.deletePatientButton = deletePatientButton;
     this.dietText = dietText;
     this.dinnerCompleteCheckBox = dinnerCompleteCheckBox;
     this.dinnerDrinksText = dinnerDrinksText;
     this.dinnerItemsText = dinnerItemsText;
+    this.dischargePatientButton = dischargePatientButton;
+    this.dislikesText = dislikesText;
     this.editMealPlanButton = editMealPlanButton;
     this.editPatientButton = editPatientButton;
     this.fluidRestrictionText = fluidRestrictionText;
+    this.likesText = likesText;
     this.locationText = locationText;
     this.lunchCompleteCheckBox = lunchCompleteCheckBox;
     this.lunchDrinksText = lunchDrinksText;
@@ -123,7 +140,7 @@ public final class ActivityPatientDetailBinding implements ViewBinding {
     this.orderDateText = orderDateText;
     this.patientNameText = patientNameText;
     this.textureModificationsText = textureModificationsText;
-    this.toolbar = toolbar;
+    this.transferRoomButton = transferRoomButton;
   }
 
   @Override
@@ -153,6 +170,12 @@ public final class ActivityPatientDetailBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
+      id = R.id.allergiesText;
+      TextView allergiesText = ViewBindings.findChildViewById(rootView, id);
+      if (allergiesText == null) {
+        break missingId;
+      }
+
       id = R.id.breakfastCompleteCheckBox;
       CheckBox breakfastCompleteCheckBox = ViewBindings.findChildViewById(rootView, id);
       if (breakfastCompleteCheckBox == null) {
@@ -171,15 +194,15 @@ public final class ActivityPatientDetailBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.createdDateText;
-      TextView createdDateText = ViewBindings.findChildViewById(rootView, id);
-      if (createdDateText == null) {
+      id = R.id.commentsText;
+      TextView commentsText = ViewBindings.findChildViewById(rootView, id);
+      if (commentsText == null) {
         break missingId;
       }
 
-      id = R.id.deletePatientButton;
-      Button deletePatientButton = ViewBindings.findChildViewById(rootView, id);
-      if (deletePatientButton == null) {
+      id = R.id.createdDateText;
+      TextView createdDateText = ViewBindings.findChildViewById(rootView, id);
+      if (createdDateText == null) {
         break missingId;
       }
 
@@ -207,6 +230,18 @@ public final class ActivityPatientDetailBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.dischargePatientButton;
+      Button dischargePatientButton = ViewBindings.findChildViewById(rootView, id);
+      if (dischargePatientButton == null) {
+        break missingId;
+      }
+
+      id = R.id.dislikesText;
+      TextView dislikesText = ViewBindings.findChildViewById(rootView, id);
+      if (dislikesText == null) {
+        break missingId;
+      }
+
       id = R.id.editMealPlanButton;
       Button editMealPlanButton = ViewBindings.findChildViewById(rootView, id);
       if (editMealPlanButton == null) {
@@ -222,6 +257,12 @@ public final class ActivityPatientDetailBinding implements ViewBinding {
       id = R.id.fluidRestrictionText;
       TextView fluidRestrictionText = ViewBindings.findChildViewById(rootView, id);
       if (fluidRestrictionText == null) {
+        break missingId;
+      }
+
+      id = R.id.likesText;
+      TextView likesText = ViewBindings.findChildViewById(rootView, id);
+      if (likesText == null) {
         break missingId;
       }
 
@@ -279,18 +320,19 @@ public final class ActivityPatientDetailBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.toolbar;
-      Toolbar toolbar = ViewBindings.findChildViewById(rootView, id);
-      if (toolbar == null) {
+      id = R.id.transferRoomButton;
+      Button transferRoomButton = ViewBindings.findChildViewById(rootView, id);
+      if (transferRoomButton == null) {
         break missingId;
       }
 
-      return new ActivityPatientDetailBinding((ScrollView) rootView, breakfastCompleteCheckBox,
-          breakfastDrinksText, breakfastItemsText, createdDateText, deletePatientButton, dietText,
-          dinnerCompleteCheckBox, dinnerDrinksText, dinnerItemsText, editMealPlanButton,
-          editPatientButton, fluidRestrictionText, locationText, lunchCompleteCheckBox,
-          lunchDrinksText, lunchItemsText, mealItemsSection, mealStatusSection, orderDateText,
-          patientNameText, textureModificationsText, toolbar);
+      return new ActivityPatientDetailBinding((ScrollView) rootView, allergiesText,
+          breakfastCompleteCheckBox, breakfastDrinksText, breakfastItemsText, commentsText,
+          createdDateText, dietText, dinnerCompleteCheckBox, dinnerDrinksText, dinnerItemsText,
+          dischargePatientButton, dislikesText, editMealPlanButton, editPatientButton,
+          fluidRestrictionText, likesText, locationText, lunchCompleteCheckBox, lunchDrinksText,
+          lunchItemsText, mealItemsSection, mealStatusSection, orderDateText, patientNameText,
+          textureModificationsText, transferRoomButton);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

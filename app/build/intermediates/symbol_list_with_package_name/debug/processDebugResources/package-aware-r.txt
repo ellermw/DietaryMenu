@@ -3276,7 +3276,6 @@ id addCategoryButton
 id addDinnerDrinkButton
 id addItemButton
 id addLunchDrinkButton
-id addPatientEmptyButton
 id addUserButton
 id adminPasswordInput
 id adminSection
@@ -3286,6 +3285,8 @@ id alertTitle
 id aligned
 id all
 id allStates
+id allergiesInput
+id allergiesText
 id always
 id androidx_window_activity_scope
 id animateToEnd
@@ -3363,6 +3364,8 @@ id clip_vertical
 id clockwise
 id closest
 id collapseActionView
+id commentsInput
+id commentsText
 id completedDateText
 id completedOrdersCountText
 id compress
@@ -3432,8 +3435,11 @@ id disableHome
 id disableIntraAutoTransition
 id disablePostScroll
 id disableScroll
+id dischargePatientButton
 id dischargedCheckBox
 id disjoint
+id dislikesInput
+id dislikesText
 id dragAnticlockwise
 id dragClockwise
 id dragDown
@@ -3558,6 +3564,8 @@ id layout
 id left
 id leftToRight
 id legacy
+id likesInput
+id likesText
 id line1
 id line3
 id linear
@@ -3913,8 +3921,7 @@ id top
 id topPanel
 id totalPatientsCount
 id touch_outside
-id transferRoomSpinner
-id transferWingSpinner
+id transferRoomButton
 id transitionToEnd
 id transitionToStart
 id transition_current_scene
@@ -3946,6 +3953,7 @@ id usersListView
 id usersMenuButton
 id versionText
 id vertical_only
+id viewPatientDetailsButton
 id view_offset_helper
 id view_transition
 id view_tree_lifecycle_owner
@@ -4800,6 +4808,7 @@ style MainMenuButton_Pink
 style MainMenuButton_Primary
 style MainMenuButton_Purple
 style MainMenuButton_Red
+style MainMenuButton_SideBySide
 style MaterialAlertDialog_Material3
 style MaterialAlertDialog_Material3_Animation
 style MaterialAlertDialog_Material3_Body_Text

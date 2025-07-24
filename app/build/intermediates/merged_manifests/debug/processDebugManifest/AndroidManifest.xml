@@ -39,7 +39,7 @@
         <activity
             android:name="com.hospital.dietary.LoginActivity"
             android:exported="true"
-            android:theme="@style/AppTheme"
+            android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -56,7 +56,7 @@
         <activity
             android:name="com.hospital.dietary.MainMenuActivity"
             android:exported="false"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <!-- Patient Management Activities -->
         <activity

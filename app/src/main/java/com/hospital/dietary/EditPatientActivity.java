@@ -11,13 +11,14 @@ import androidx.appcompat.widget.Toolbar;
 import com.hospital.dietary.dao.PatientDAO;
 import com.hospital.dietary.models.Patient;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class EditPatientActivity extends AppCompatActivity {
 
     private DatabaseHelper dbHelper;
     private PatientDAO patientDAO;
-    private long patientId;
+    private int patientId;
     private Patient currentPatient;
 
     private String currentUsername;
@@ -25,6 +26,7 @@ public class EditPatientActivity extends AppCompatActivity {
     private String currentUserFullName;
 
     // UI Components
+    private Toolbar toolbar;
     private EditText firstNameInput;
     private EditText lastNameInput;
     private Spinner wingSpinner;
@@ -47,6 +49,12 @@ public class EditPatientActivity extends AppCompatActivity {
     private CheckBox honeyThickCheckBox;
     private CheckBox puddingThickCheckBox;
 
+    // Additional Fields
+    private EditText allergiesInput;
+    private EditText likesInput;
+    private EditText dislikesInput;
+    private EditText commentsInput;
+
     // Discharge status
     private CheckBox dischargedCheckBox;
 
@@ -59,9 +67,6 @@ public class EditPatientActivity extends AppCompatActivity {
     private Map<String, String[]> wingRoomMap = new HashMap<>();
     private String[] wings = {"1 South", "2 North", "Labor and Delivery", "2 West", "3 North", "ICU"};
 
-    // Fluid restriction mapping (ml amounts for breakfast, lunch, dinner)
-    private Map<String, int[]> fluidRestrictionMap = new HashMap<>();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,7 +76,7 @@ public class EditPatientActivity extends AppCompatActivity {
         currentUsername = getIntent().getStringExtra("current_user");
         currentUserRole = getIntent().getStringExtra("user_role");
         currentUserFullName = getIntent().getStringExtra("user_full_name");
-        patientId = getIntent().getLongExtra("patient_id", -1);
+        patientId = getIntent().getIntExtra("patient_id", -1);
 
         if (patientId == -1) {
             Toast.makeText(this, "Error: Invalid patient ID", Toast.LENGTH_SHORT).show();
@@ -83,11 +88,11 @@ public class EditPatientActivity extends AppCompatActivity {
         dbHelper = new DatabaseHelper(this);
         patientDAO = new PatientDAO(dbHelper);
 
-        // Setup room mappings
-        setupRoomMappings();
-
         // Setup toolbar
         setupToolbar();
+
+        // Setup wing-room mapping
+        setupWingRoomMapping();
 
         // Initialize UI
         initializeUI();
@@ -103,30 +108,21 @@ public class EditPatientActivity extends AppCompatActivity {
     }
 
     private void setupToolbar() {
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle("Edit Patient");
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setTitle("Edit Patient");
         }
     }
 
-    private void setupRoomMappings() {
-        // Hospital wing and room configurations
-        wingRoomMap.put("1 South", generateRoomNumbers(106, 122));
-        wingRoomMap.put("2 North", generateRoomNumbers(250, 264));
-        wingRoomMap.put("Labor and Delivery", new String[]{"LDR1", "LDR2", "LDR3", "LDR4", "LDR5", "LDR6"});
-        wingRoomMap.put("2 West", generateRoomNumbers(225, 248));
-        wingRoomMap.put("3 North", generateRoomNumbers(349, 371));
-        wingRoomMap.put("ICU", new String[]{"ICU1", "ICU2", "ICU3", "ICU4", "ICU5", "ICU6", "ICU7", "ICU8", "ICU9", "ICU10", "ICU11", "ICU12", "ICU13"});
-
-        // Fluid restriction mappings (breakfast, lunch, dinner in ml)
-        fluidRestrictionMap.put("1000ml (34oz)", new int[]{120, 120, 160});
-        fluidRestrictionMap.put("1200ml (41oz)", new int[]{250, 170, 180});
-        fluidRestrictionMap.put("1500ml (51oz)", new int[]{350, 170, 180});
-        fluidRestrictionMap.put("1800ml (61oz)", new int[]{360, 240, 240});
-        fluidRestrictionMap.put("2000ml (68oz)", new int[]{320, 240, 240});
-        fluidRestrictionMap.put("2500ml (85oz)", new int[]{400, 400, 400});
+    private void setupWingRoomMapping() {
+        wingRoomMap.put("1 South", generateRoomNumbers(100, 126));
+        wingRoomMap.put("2 North", generateRoomNumbers(200, 227));
+        wingRoomMap.put("Labor and Delivery", generateRoomNumbers(300, 310));
+        wingRoomMap.put("2 West", generateRoomNumbers(228, 250));
+        wingRoomMap.put("3 North", generateRoomNumbers(301, 325));
+        wingRoomMap.put("ICU", generateRoomNumbers(1, 10));
     }
 
     private String[] generateRoomNumbers(int start, int end) {
@@ -163,6 +159,12 @@ public class EditPatientActivity extends AppCompatActivity {
         honeyThickCheckBox = findViewById(R.id.honeyThickCheckBox);
         puddingThickCheckBox = findViewById(R.id.puddingThickCheckBox);
 
+        // Additional Fields
+        allergiesInput = findViewById(R.id.allergiesInput);
+        likesInput = findViewById(R.id.likesInput);
+        dislikesInput = findViewById(R.id.dislikesInput);
+        commentsInput = findViewById(R.id.commentsInput);
+
         // Discharge status
         dischargedCheckBox = findViewById(R.id.dischargedCheckBox);
 
@@ -179,26 +181,18 @@ public class EditPatientActivity extends AppCompatActivity {
         wingAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         wingSpinner.setAdapter(wingAdapter);
 
-        // Diet types
+        // Diet types - UPDATED
         String[] dietTypes = {
-                "Regular", "Cardiac", "Diabetic", "Renal", "Low Sodium",
-                "Soft", "Clear Liquid", "Full Liquid", "Pureed", "NPO"
+                "Regular", "Cardiac", "ADA", "Renal", "Puree", "Full Liquid", "Clear Liquid"
         };
         ArrayAdapter<String> dietAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, dietTypes);
         dietAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         dietSpinner.setAdapter(dietAdapter);
 
-        // Fluid Restrictions with oz equivalents
+        // Fluid restrictions
         String[] fluidRestrictions = {
-                "No Restriction",
-                "1000ml (34oz)",
-                "1200ml (41oz)",
-                "1500ml (51oz)",
-                "1800ml (61oz)",
-                "2000ml (68oz)",
-                "2500ml (85oz)",
-                "As Ordered"
+                "No Restriction", "1000ml", "1500ml", "2000ml", "As Ordered"
         };
         ArrayAdapter<String> fluidAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, fluidRestrictions);
@@ -207,28 +201,31 @@ public class EditPatientActivity extends AppCompatActivity {
     }
 
     private void loadPatientData() {
-        currentPatient = patientDAO.getPatientById((int) patientId);
-
+        currentPatient = patientDAO.getPatientById(patientId);
         if (currentPatient == null) {
             Toast.makeText(this, "Patient not found", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
 
-        // Load basic information
-        firstNameInput.setText(currentPatient.getPatientFirstName());
-        lastNameInput.setText(currentPatient.getPatientLastName());
+        populateFields();
+    }
+
+    private void populateFields() {
+        // Basic information
+        firstNameInput.setText(currentPatient.getFirstName());
+        lastNameInput.setText(currentPatient.getLastName());
 
         // Set wing
         for (int i = 0; i < wings.length; i++) {
             if (wings[i].equals(currentPatient.getWing())) {
                 wingSpinner.setSelection(i);
-                updateRoomSpinner(wings[i]);
                 break;
             }
         }
 
-        // Set room after room spinner is populated
+        // Update room spinner and set room
+        updateRoomSpinner(currentPatient.getWing());
         wingSpinner.post(() -> {
             ArrayAdapter<String> roomAdapter = (ArrayAdapter<String>) roomSpinner.getAdapter();
             if (roomAdapter != null) {
@@ -276,6 +273,20 @@ public class EditPatientActivity extends AppCompatActivity {
         honeyThickCheckBox.setChecked(currentPatient.isHoneyThick());
         puddingThickCheckBox.setChecked(currentPatient.isPuddingThick());
 
+        // Set additional fields
+        if (currentPatient.getAllergies() != null) {
+            allergiesInput.setText(currentPatient.getAllergies());
+        }
+        if (currentPatient.getLikes() != null) {
+            likesInput.setText(currentPatient.getLikes());
+        }
+        if (currentPatient.getDislikes() != null) {
+            dislikesInput.setText(currentPatient.getDislikes());
+        }
+        if (currentPatient.getComments() != null) {
+            commentsInput.setText(currentPatient.getComments());
+        }
+
         // Set discharged status
         dischargedCheckBox.setChecked(currentPatient.isDischarged());
 
@@ -296,7 +307,7 @@ public class EditPatientActivity extends AppCompatActivity {
     private void updateAdaCheckboxVisibility(String diet) {
         boolean showAdaOption = "Clear Liquid".equals(diet) ||
                 "Full Liquid".equals(diet) ||
-                "Pureed".equals(diet);
+                "Puree".equals(diet);
         adaDietCheckBox.setVisibility(showAdaOption ? View.VISIBLE : View.GONE);
         adaDietLabel.setVisibility(showAdaOption ? View.VISIBLE : View.GONE);
         if (!showAdaOption) {
@@ -345,107 +356,152 @@ public class EditPatientActivity extends AppCompatActivity {
         mechanicalChoppedCheckBox.setOnCheckedChangeListener(textureListener);
         biteSizeCheckBox.setOnCheckedChangeListener(textureListener);
 
-        // Button listeners
-        updatePatientButton.setOnClickListener(v -> updatePatient());
-        deletePatientButton.setOnClickListener(v -> confirmDeletePatient());
+        // Update button
+        updatePatientButton.setOnClickListener(v -> validateAndUpdate());
+
+        // Delete button
+        deletePatientButton.setOnClickListener(v -> confirmDelete());
+
+        // Cancel button
         cancelButton.setOnClickListener(v -> finish());
     }
 
-    private void updatePatient() {
-        // Validate input
+    private void validateAndUpdate() {
         String firstName = firstNameInput.getText().toString().trim();
         String lastName = lastNameInput.getText().toString().trim();
+        String wing = wingSpinner.getSelectedItem().toString();
+        String room = roomSpinner.getSelectedItem().toString();
 
+        // Validate inputs
         if (firstName.isEmpty() || lastName.isEmpty()) {
-            Toast.makeText(this, "Please enter both first and last name", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please enter patient's first and last name", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Update patient information
-        currentPatient.setPatientFirstName(firstName);
-        currentPatient.setPatientLastName(lastName);
-        currentPatient.setWing((String) wingSpinner.getSelectedItem());
-        currentPatient.setRoomNumber((String) roomSpinner.getSelectedItem());
+        // Check if room is already occupied by another patient
+        checkRoomAndUpdate(wing, room);
+    }
 
-        // Update diet
-        String selectedDiet = (String) dietSpinner.getSelectedItem();
-        currentPatient.setDietType(selectedDiet);
-        currentPatient.setDiet(selectedDiet);
-        currentPatient.setAdaDiet(adaDietCheckBox.getVisibility() == View.VISIBLE && adaDietCheckBox.isChecked());
+    private void checkRoomAndUpdate(String wing, String room) {
+        // Get all active patients
+        List<Patient> activePatients = patientDAO.getActivePatients();
+        Patient occupyingPatient = null;
 
-        // Update fluid restriction
-        String selectedFluidRestriction = (String) fluidRestrictionSpinner.getSelectedItem();
-        currentPatient.setFluidRestriction(selectedFluidRestriction);
+        for (Patient patient : activePatients) {
+            // Skip the current patient
+            if (patient.getPatientId() == patientId) {
+                continue;
+            }
 
-        // Set meal-specific fluid limits based on restriction
-        if (fluidRestrictionMap.containsKey(selectedFluidRestriction)) {
-            int[] limits = fluidRestrictionMap.get(selectedFluidRestriction);
-            currentPatient.setBreakfastDrinks("FL:" + limits[0] + "ml");
-            currentPatient.setLunchDrinks("FL:" + limits[1] + "ml");
-            currentPatient.setDinnerDrinks("FL:" + limits[2] + "ml");
+            if (patient.getWing().equals(wing) && patient.getRoomNumber().equals(room)) {
+                occupyingPatient = patient;
+                break;
+            }
         }
 
-        // Update texture modifications
-        StringBuilder textureModifications = new StringBuilder();
-        if (mechanicalGroundCheckBox.isChecked()) textureModifications.append("Mechanical Ground, ");
-        if (mechanicalChoppedCheckBox.isChecked()) textureModifications.append("Mechanical Chopped, ");
-        if (biteSizeCheckBox.isChecked()) textureModifications.append("Bite Size, ");
-        if (breadOkCheckBox.isChecked()) textureModifications.append("Bread OK, ");
-        if (extraGravyCheckBox.isChecked()) textureModifications.append("Extra Gravy, ");
-        if (meatsOnlyCheckBox.isChecked()) textureModifications.append("Meats Only, ");
-        if (nectarThickCheckBox.isChecked()) textureModifications.append("Nectar Thick, ");
-        if (honeyThickCheckBox.isChecked()) textureModifications.append("Honey Thick, ");
-        if (puddingThickCheckBox.isChecked()) textureModifications.append("Pudding Thick, ");
-
-        String textureModsString = textureModifications.length() > 0 ?
-                textureModifications.substring(0, textureModifications.length() - 2) : "";
-        currentPatient.setTextureModifications(textureModsString);
-
-        // Update texture modification flags
-        currentPatient.setMechanicalGround(mechanicalGroundCheckBox.isChecked());
-        currentPatient.setMechanicalChopped(mechanicalChoppedCheckBox.isChecked());
-        currentPatient.setBiteSize(biteSizeCheckBox.isChecked());
-        currentPatient.setBreadOK(breadOkCheckBox.isChecked());
-        currentPatient.setExtraGravy(extraGravyCheckBox.isChecked());
-        currentPatient.setMeatsOnly(meatsOnlyCheckBox.isChecked());
-
-        // Update thicken liquids flags
-        currentPatient.setNectarThick(nectarThickCheckBox.isChecked());
-        currentPatient.setHoneyThick(honeyThickCheckBox.isChecked());
-        currentPatient.setPuddingThick(puddingThickCheckBox.isChecked());
-
-        // Update discharged status
-        currentPatient.setDischarged(dischargedCheckBox.isChecked());
-
-        // Save to database
-        int result = patientDAO.updatePatient(currentPatient);
-
-        if (result > 0) {
-            Toast.makeText(this, "Patient updated successfully", Toast.LENGTH_SHORT).show();
-            finish();
+        if (occupyingPatient != null) {
+            // Room is occupied by another patient
+            final Patient patientToDischarge = occupyingPatient;
+            new AlertDialog.Builder(this)
+                    .setTitle("Room Already Occupied")
+                    .setMessage("Room " + wing + "-" + room + " is currently assigned to " +
+                            patientToDischarge.getFullName() + ".\n\n" +
+                            "Would you like to discharge the existing patient and transfer " +
+                            currentPatient.getFullName() + " to this room?")
+                    .setPositiveButton("Discharge & Transfer", (dialog, which) -> {
+                        // Discharge the existing patient
+                        patientToDischarge.setDischarged(true);
+                        patientDAO.updatePatient(patientToDischarge);
+                        // Update current patient
+                        updatePatient();
+                    })
+                    .setNegativeButton("Choose Different Room", (dialog, which) -> {
+                        Toast.makeText(this, "Please select a different room", Toast.LENGTH_SHORT).show();
+                    })
+                    .setNeutralButton("Cancel", null)
+                    .show();
         } else {
-            Toast.makeText(this, "Error updating patient. Please try again.", Toast.LENGTH_SHORT).show();
+            // Room is available
+            updatePatient();
         }
     }
 
-    private void confirmDeletePatient() {
+    private void updatePatient() {
+        try {
+            // Update basic information
+            currentPatient.setFirstName(firstNameInput.getText().toString().trim());
+            currentPatient.setLastName(lastNameInput.getText().toString().trim());
+            currentPatient.setWing(wingSpinner.getSelectedItem().toString());
+            currentPatient.setRoomNumber(roomSpinner.getSelectedItem().toString());
+
+            // Update diet information
+            currentPatient.setDiet(dietSpinner.getSelectedItem().toString());
+            currentPatient.setAdaDiet(adaDietCheckBox.isChecked());
+            currentPatient.setFluidRestriction(fluidRestrictionSpinner.getSelectedItem().toString());
+
+            // Update texture modifications
+            currentPatient.setMechanicalGround(mechanicalGroundCheckBox.isChecked());
+            currentPatient.setMechanicalChopped(mechanicalChoppedCheckBox.isChecked());
+            currentPatient.setBiteSize(biteSizeCheckBox.isChecked());
+            currentPatient.setBreadOK(breadOkCheckBox.isChecked());
+            currentPatient.setExtraGravy(extraGravyCheckBox.isChecked());
+            currentPatient.setMeatsOnly(meatsOnlyCheckBox.isChecked());
+
+            // Update thicken liquids
+            currentPatient.setNectarThick(nectarThickCheckBox.isChecked());
+            currentPatient.setHoneyThick(honeyThickCheckBox.isChecked());
+            currentPatient.setPuddingThick(puddingThickCheckBox.isChecked());
+
+            // Update additional fields
+            currentPatient.setAllergies(allergiesInput.getText().toString().trim());
+            currentPatient.setLikes(likesInput.getText().toString().trim());
+            currentPatient.setDislikes(dislikesInput.getText().toString().trim());
+            currentPatient.setComments(commentsInput.getText().toString().trim());
+
+            // Update discharged status
+            currentPatient.setDischarged(dischargedCheckBox.isChecked());
+
+            // Save to database
+            boolean success = patientDAO.updatePatient(currentPatient);
+
+            if (success) {
+                Toast.makeText(this, "Patient updated successfully", Toast.LENGTH_SHORT).show();
+                setResult(RESULT_OK);
+                finish();
+            } else {
+                Toast.makeText(this, "Error updating patient", Toast.LENGTH_SHORT).show();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void confirmDelete() {
         new AlertDialog.Builder(this)
                 .setTitle("Delete Patient")
-                .setMessage("Are you sure you want to delete " +
-                        currentPatient.getPatientFirstName() + " " +
-                        currentPatient.getPatientLastName() + "?")
+                .setMessage("Are you sure you want to delete " + currentPatient.getFullName() + "?")
                 .setPositiveButton("Delete", (dialog, which) -> deletePatient())
                 .setNegativeButton("Cancel", null)
                 .show();
     }
 
     private void deletePatient() {
-        int result = patientDAO.deletePatientById((int) patientId);
-        if (result > 0) {
-            Toast.makeText(this, "Patient deleted successfully", Toast.LENGTH_SHORT).show();
-            finish();
-        } else {
-            Toast.makeText(this, "Error deleting patient", Toast.LENGTH_SHORT).show();
+        try {
+            boolean success = patientDAO.deletePatient(patientId);
+
+            if (success) {
+                Toast.makeText(this, "Patient deleted successfully", Toast.LENGTH_SHORT).show();
+                setResult(RESULT_OK);
+                finish();
+            } else {
+                Toast.makeText(this, "Error deleting patient", Toast.LENGTH_SHORT).show();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 

@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -31,6 +32,9 @@ public final class ActivityNewPatientBinding implements ViewBinding {
   public final TextView adaDietLabel;
 
   @NonNull
+  public final EditText allergiesInput;
+
+  @NonNull
   public final CheckBox biteSizeCheckBox;
 
   @NonNull
@@ -40,7 +44,13 @@ public final class ActivityNewPatientBinding implements ViewBinding {
   public final Button cancelButton;
 
   @NonNull
+  public final EditText commentsInput;
+
+  @NonNull
   public final Spinner dietSpinner;
+
+  @NonNull
+  public final EditText dislikesInput;
 
   @NonNull
   public final CheckBox extraGravyCheckBox;
@@ -56,6 +66,9 @@ public final class ActivityNewPatientBinding implements ViewBinding {
 
   @NonNull
   public final TextInputEditText lastNameInput;
+
+  @NonNull
+  public final EditText likesInput;
 
   @NonNull
   public final CheckBox meatsOnlyCheckBox;
@@ -85,11 +98,13 @@ public final class ActivityNewPatientBinding implements ViewBinding {
   public final Spinner wingSpinner;
 
   private ActivityNewPatientBinding(@NonNull ScrollView rootView, @NonNull CheckBox adaDietCheckBox,
-      @NonNull TextView adaDietLabel, @NonNull CheckBox biteSizeCheckBox,
-      @NonNull CheckBox breadOkCheckBox, @NonNull Button cancelButton, @NonNull Spinner dietSpinner,
-      @NonNull CheckBox extraGravyCheckBox, @NonNull TextInputEditText firstNameInput,
-      @NonNull Spinner fluidRestrictionSpinner, @NonNull CheckBox honeyThickCheckBox,
-      @NonNull TextInputEditText lastNameInput, @NonNull CheckBox meatsOnlyCheckBox,
+      @NonNull TextView adaDietLabel, @NonNull EditText allergiesInput,
+      @NonNull CheckBox biteSizeCheckBox, @NonNull CheckBox breadOkCheckBox,
+      @NonNull Button cancelButton, @NonNull EditText commentsInput, @NonNull Spinner dietSpinner,
+      @NonNull EditText dislikesInput, @NonNull CheckBox extraGravyCheckBox,
+      @NonNull TextInputEditText firstNameInput, @NonNull Spinner fluidRestrictionSpinner,
+      @NonNull CheckBox honeyThickCheckBox, @NonNull TextInputEditText lastNameInput,
+      @NonNull EditText likesInput, @NonNull CheckBox meatsOnlyCheckBox,
       @NonNull CheckBox mechanicalChoppedCheckBox, @NonNull CheckBox mechanicalGroundCheckBox,
       @NonNull CheckBox nectarThickCheckBox, @NonNull CheckBox puddingThickCheckBox,
       @NonNull Spinner roomSpinner, @NonNull Button savePatientButton, @NonNull Toolbar toolbar,
@@ -97,15 +112,19 @@ public final class ActivityNewPatientBinding implements ViewBinding {
     this.rootView = rootView;
     this.adaDietCheckBox = adaDietCheckBox;
     this.adaDietLabel = adaDietLabel;
+    this.allergiesInput = allergiesInput;
     this.biteSizeCheckBox = biteSizeCheckBox;
     this.breadOkCheckBox = breadOkCheckBox;
     this.cancelButton = cancelButton;
+    this.commentsInput = commentsInput;
     this.dietSpinner = dietSpinner;
+    this.dislikesInput = dislikesInput;
     this.extraGravyCheckBox = extraGravyCheckBox;
     this.firstNameInput = firstNameInput;
     this.fluidRestrictionSpinner = fluidRestrictionSpinner;
     this.honeyThickCheckBox = honeyThickCheckBox;
     this.lastNameInput = lastNameInput;
+    this.likesInput = likesInput;
     this.meatsOnlyCheckBox = meatsOnlyCheckBox;
     this.mechanicalChoppedCheckBox = mechanicalChoppedCheckBox;
     this.mechanicalGroundCheckBox = mechanicalGroundCheckBox;
@@ -156,6 +175,12 @@ public final class ActivityNewPatientBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.allergiesInput;
+      EditText allergiesInput = ViewBindings.findChildViewById(rootView, id);
+      if (allergiesInput == null) {
+        break missingId;
+      }
+
       id = R.id.biteSizeCheckBox;
       CheckBox biteSizeCheckBox = ViewBindings.findChildViewById(rootView, id);
       if (biteSizeCheckBox == null) {
@@ -174,9 +199,21 @@ public final class ActivityNewPatientBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.commentsInput;
+      EditText commentsInput = ViewBindings.findChildViewById(rootView, id);
+      if (commentsInput == null) {
+        break missingId;
+      }
+
       id = R.id.dietSpinner;
       Spinner dietSpinner = ViewBindings.findChildViewById(rootView, id);
       if (dietSpinner == null) {
+        break missingId;
+      }
+
+      id = R.id.dislikesInput;
+      EditText dislikesInput = ViewBindings.findChildViewById(rootView, id);
+      if (dislikesInput == null) {
         break missingId;
       }
 
@@ -207,6 +244,12 @@ public final class ActivityNewPatientBinding implements ViewBinding {
       id = R.id.lastNameInput;
       TextInputEditText lastNameInput = ViewBindings.findChildViewById(rootView, id);
       if (lastNameInput == null) {
+        break missingId;
+      }
+
+      id = R.id.likesInput;
+      EditText likesInput = ViewBindings.findChildViewById(rootView, id);
+      if (likesInput == null) {
         break missingId;
       }
 
@@ -265,11 +308,11 @@ public final class ActivityNewPatientBinding implements ViewBinding {
       }
 
       return new ActivityNewPatientBinding((ScrollView) rootView, adaDietCheckBox, adaDietLabel,
-          biteSizeCheckBox, breadOkCheckBox, cancelButton, dietSpinner, extraGravyCheckBox,
-          firstNameInput, fluidRestrictionSpinner, honeyThickCheckBox, lastNameInput,
-          meatsOnlyCheckBox, mechanicalChoppedCheckBox, mechanicalGroundCheckBox,
-          nectarThickCheckBox, puddingThickCheckBox, roomSpinner, savePatientButton, toolbar,
-          wingSpinner);
+          allergiesInput, biteSizeCheckBox, breadOkCheckBox, cancelButton, commentsInput,
+          dietSpinner, dislikesInput, extraGravyCheckBox, firstNameInput, fluidRestrictionSpinner,
+          honeyThickCheckBox, lastNameInput, likesInput, meatsOnlyCheckBox,
+          mechanicalChoppedCheckBox, mechanicalGroundCheckBox, nectarThickCheckBox,
+          puddingThickCheckBox, roomSpinner, savePatientButton, toolbar, wingSpinner);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

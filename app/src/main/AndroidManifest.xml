@@ -21,7 +21,7 @@
         <activity
             android:name=".LoginActivity"
             android:exported="true"
-            android:theme="@style/AppTheme"
+            android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -38,7 +38,7 @@
         <activity
             android:name=".MainMenuActivity"
             android:exported="false"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <!-- Patient Management Activities -->
         <activity

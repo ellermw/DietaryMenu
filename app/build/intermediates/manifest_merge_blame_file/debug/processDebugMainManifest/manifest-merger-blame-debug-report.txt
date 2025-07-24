@@ -70,8 +70,8 @@
 40-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:22:13-42
 41            android:exported="true"
 41-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:23:13-36
-42            android:theme="@style/AppTheme"
-42-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:24:13-44
+42            android:theme="@style/AppTheme.NoActionBar"
+42-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:24:13-56
 43            android:windowSoftInputMode="adjustResize" >
 43-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:25:13-55
 44            <intent-filter>
@@ -96,13 +96,13 @@
 55            android:theme="@style/AppTheme" />
 55-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:36:13-44
 56        <activity
-56-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:38:9-41:47
+56-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:38:9-41:59
 57            android:name="com.hospital.dietary.MainMenuActivity"
 57-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:39:13-45
 58            android:exported="false"
 58-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:40:13-37
-59            android:theme="@style/AppTheme" />
-59-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:41:13-44
+59            android:theme="@style/AppTheme.NoActionBar" />
+59-->C:\DietaryMenu\app\src\main\AndroidManifest.xml:41:13-56
 60
 61        <!-- Patient Management Activities -->
 62        <activity

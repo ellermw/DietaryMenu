@@ -114,98 +114,129 @@ public class MainMenuActivity extends AppCompatActivity {
     }
 
     private void setupListeners() {
-        // Patient Info button
+        // Operations Section
         if (patientInfoButton != null) {
-            patientInfoButton.setOnClickListener(v -> {
-                Intent intent = new Intent(this, PatientInfoMenuActivity.class);
-                intent.putExtra("current_user", currentUsername);
-                intent.putExtra("user_role", currentUserRole);
-                intent.putExtra("user_full_name", currentUserFullName);
-                startActivity(intent);
-            });
+            patientInfoButton.setOnClickListener(v -> openPatientInfo());
         }
-
-        // Pending Orders button
         if (pendingOrdersButton != null) {
-            pendingOrdersButton.setOnClickListener(v -> {
-                Intent intent = new Intent(this, PendingOrdersActivity.class);
-                intent.putExtra("current_user", currentUsername);
-                intent.putExtra("user_role", currentUserRole);
-                intent.putExtra("user_full_name", currentUserFullName);
-                startActivity(intent);
-            });
+            pendingOrdersButton.setOnClickListener(v -> openPendingOrders());
         }
-
-        // Retired Orders button
         if (retiredOrdersButton != null) {
-            retiredOrdersButton.setOnClickListener(v -> {
-                Toast.makeText(this, "Retired Orders feature coming soon", Toast.LENGTH_SHORT).show();
-            });
+            retiredOrdersButton.setOnClickListener(v -> openRetiredOrders());
         }
 
-        // Production Sheets button
+        // Documents Section
         if (productionSheetsButton != null) {
-            productionSheetsButton.setOnClickListener(v -> {
-                Toast.makeText(this, "Production Sheets feature coming soon", Toast.LENGTH_SHORT).show();
-            });
+            productionSheetsButton.setOnClickListener(v -> openProductionSheets());
         }
-
-        // Stock Sheets button
         if (stockSheetsButton != null) {
-            stockSheetsButton.setOnClickListener(v -> {
-                Toast.makeText(this, "Stock Sheets feature coming soon", Toast.LENGTH_SHORT).show();
-            });
+            stockSheetsButton.setOnClickListener(v -> openStockSheets());
         }
 
-        // User Management button (Admin only)
+        // Admin Tools Section
         if (userManagementButton != null) {
-            userManagementButton.setOnClickListener(v -> {
-                Intent intent = new Intent(this, UserManagementActivity.class);
-                intent.putExtra("current_user", currentUsername);
-                intent.putExtra("user_role", currentUserRole);
-                intent.putExtra("user_full_name", currentUserFullName);
-                startActivity(intent);
-            });
+            userManagementButton.setOnClickListener(v -> openUserManagement());
         }
-
-        // Item Management button (Admin only)
         if (itemManagementButton != null) {
-            itemManagementButton.setOnClickListener(v -> {
-                Intent intent = new Intent(this, ItemManagementActivity.class);
-                intent.putExtra("current_user", currentUsername);
-                intent.putExtra("user_role", currentUserRole);
-                intent.putExtra("user_full_name", currentUserFullName);
-                startActivity(intent);
-            });
+            itemManagementButton.setOnClickListener(v -> openItemManagement());
         }
-
-        // Default Menu Management button (Admin only)
         if (defaultMenuManagementButton != null) {
-            defaultMenuManagementButton.setOnClickListener(v -> {
-                Intent intent = new Intent(this, DefaultMenuManagementActivity.class);
-                intent.putExtra("current_user", currentUsername);
-                intent.putExtra("user_role", currentUserRole);
-                intent.putExtra("user_full_name", currentUserFullName);
-                startActivity(intent);
-            });
+            defaultMenuManagementButton.setOnClickListener(v -> openDefaultMenuManagement());
         }
 
-        // Logout button
+        // Logout
         if (logoutButton != null) {
-            logoutButton.setOnClickListener(v -> confirmLogout());
+            logoutButton.setOnClickListener(v -> showLogoutConfirmation());
         }
     }
 
-    private void confirmLogout() {
+    // Navigation methods
+    private void openPatientInfo() {
+        Intent intent = new Intent(this, PatientInfoMenuActivity.class);
+        intent.putExtra("current_user", currentUsername);
+        intent.putExtra("user_role", currentUserRole);
+        intent.putExtra("user_full_name", currentUserFullName);
+        startActivity(intent);
+    }
+
+    private void openPendingOrders() {
+        Intent intent = new Intent(this, PendingOrdersActivity.class);
+        intent.putExtra("current_user", currentUsername);
+        intent.putExtra("user_role", currentUserRole);
+        intent.putExtra("user_full_name", currentUserFullName);
+        startActivity(intent);
+    }
+
+    private void openRetiredOrders() {
+        // FIXED: Now launches the actual RetiredOrdersActivity instead of showing "Coming Soon"
+        Intent intent = new Intent(this, RetiredOrdersActivity.class);
+        intent.putExtra("current_user", currentUsername);
+        intent.putExtra("user_role", currentUserRole);
+        intent.putExtra("user_full_name", currentUserFullName);
+        startActivity(intent);
+    }
+
+    private void openProductionSheets() {
+        // Navigate to DocumentsActivity for production sheets
+        Intent intent = new Intent(this, DocumentsActivity.class);
+        intent.putExtra("current_user", currentUsername);
+        intent.putExtra("user_role", currentUserRole);
+        intent.putExtra("user_full_name", currentUserFullName);
+        intent.putExtra("document_type", "production_sheets");
+        startActivity(intent);
+    }
+
+    private void openStockSheets() {
+        // Navigate to DocumentsActivity for stock sheets
+        Intent intent = new Intent(this, DocumentsActivity.class);
+        intent.putExtra("current_user", currentUsername);
+        intent.putExtra("user_role", currentUserRole);
+        intent.putExtra("user_full_name", currentUserFullName);
+        intent.putExtra("document_type", "stock_sheets");
+        startActivity(intent);
+    }
+
+    private void openUserManagement() {
+        Intent intent = new Intent(this, UserManagementActivity.class);
+        intent.putExtra("current_user", currentUsername);
+        intent.putExtra("user_role", currentUserRole);
+        intent.putExtra("user_full_name", currentUserFullName);
+        startActivity(intent);
+    }
+
+    private void openItemManagement() {
+        Intent intent = new Intent(this, ItemManagementActivity.class);
+        intent.putExtra("current_user", currentUsername);
+        intent.putExtra("user_role", currentUserRole);
+        intent.putExtra("user_full_name", currentUserFullName);
+        startActivity(intent);
+    }
+
+    private void openDefaultMenuManagement() {
+        Intent intent = new Intent(this, DefaultMenuManagementActivity.class);
+        intent.putExtra("current_user", currentUsername);
+        intent.putExtra("user_role", currentUserRole);
+        intent.putExtra("user_full_name", currentUserFullName);
+        startActivity(intent);
+    }
+
+    private void showLogoutConfirmation() {
         new AlertDialog.Builder(this)
                 .setTitle("Logout")
                 .setMessage("Are you sure you want to logout?")
-                .setPositiveButton("Yes", (dialog, which) -> logout())
+                .setPositiveButton("Yes", (dialog, which) -> performLogout())
                 .setNegativeButton("No", null)
                 .show();
     }
 
-    private void logout() {
+    private void performLogout() {
+        // Clear any stored user data
+        getSharedPreferences("UserPrefs", MODE_PRIVATE)
+                .edit()
+                .clear()
+                .apply();
+
+        // Navigate to login screen
         Intent intent = new Intent(this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
@@ -220,31 +251,37 @@ public class MainMenuActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_account:
-                Intent accountIntent = new Intent(this, AccountManagementActivity.class);
-                accountIntent.putExtra("current_user", currentUsername);
-                accountIntent.putExtra("user_role", currentUserRole);
-                accountIntent.putExtra("user_full_name", currentUserFullName);
-                startActivity(accountIntent);
-                return true;
+        int itemId = item.getItemId();
 
-            case R.id.action_refresh:
-                recreate();
-                return true;
-
-            case R.id.action_logout:
-                confirmLogout();
-                return true;
-
-            default:
-                return super.onOptionsItemSelected(item);
+        if (itemId == R.id.action_account) {
+            Intent accountIntent = new Intent(this, AccountManagementActivity.class);
+            accountIntent.putExtra("current_user", currentUsername);
+            accountIntent.putExtra("user_role", currentUserRole);
+            accountIntent.putExtra("user_full_name", currentUserFullName);
+            startActivity(accountIntent);
+            return true;
+        } else if (itemId == R.id.action_refresh) {
+            recreate();
+            Toast.makeText(this, "Menu refreshed", Toast.LENGTH_SHORT).show();
+            return true;
+        } else if (itemId == R.id.action_logout) {
+            showLogoutConfirmation();
+            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
         }
     }
 
     @Override
     public void onBackPressed() {
         // Prevent going back to login screen
-        confirmLogout();
+        showLogoutConfirmation();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Refresh UI when returning to main menu
+        setupUserInterface();
     }
 }

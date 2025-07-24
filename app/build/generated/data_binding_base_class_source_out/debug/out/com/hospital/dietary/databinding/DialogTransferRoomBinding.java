@@ -20,16 +20,16 @@ public final class DialogTransferRoomBinding implements ViewBinding {
   private final LinearLayout rootView;
 
   @NonNull
-  public final Spinner transferRoomSpinner;
+  public final Spinner roomSpinner;
 
   @NonNull
-  public final Spinner transferWingSpinner;
+  public final Spinner wingSpinner;
 
-  private DialogTransferRoomBinding(@NonNull LinearLayout rootView,
-      @NonNull Spinner transferRoomSpinner, @NonNull Spinner transferWingSpinner) {
+  private DialogTransferRoomBinding(@NonNull LinearLayout rootView, @NonNull Spinner roomSpinner,
+      @NonNull Spinner wingSpinner) {
     this.rootView = rootView;
-    this.transferRoomSpinner = transferRoomSpinner;
-    this.transferWingSpinner = transferWingSpinner;
+    this.roomSpinner = roomSpinner;
+    this.wingSpinner = wingSpinner;
   }
 
   @Override
@@ -59,20 +59,19 @@ public final class DialogTransferRoomBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
-      id = R.id.transferRoomSpinner;
-      Spinner transferRoomSpinner = ViewBindings.findChildViewById(rootView, id);
-      if (transferRoomSpinner == null) {
+      id = R.id.roomSpinner;
+      Spinner roomSpinner = ViewBindings.findChildViewById(rootView, id);
+      if (roomSpinner == null) {
         break missingId;
       }
 
-      id = R.id.transferWingSpinner;
-      Spinner transferWingSpinner = ViewBindings.findChildViewById(rootView, id);
-      if (transferWingSpinner == null) {
+      id = R.id.wingSpinner;
+      Spinner wingSpinner = ViewBindings.findChildViewById(rootView, id);
+      if (wingSpinner == null) {
         break missingId;
       }
 
-      return new DialogTransferRoomBinding((LinearLayout) rootView, transferRoomSpinner,
-          transferWingSpinner);
+      return new DialogTransferRoomBinding((LinearLayout) rootView, roomSpinner, wingSpinner);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

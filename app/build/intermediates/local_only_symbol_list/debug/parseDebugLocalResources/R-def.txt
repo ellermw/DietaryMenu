@@ -90,12 +90,13 @@ id addCategoryButton
 id addDinnerDrinkButton
 id addItemButton
 id addLunchDrinkButton
-id addPatientEmptyButton
 id addUserButton
 id adminPasswordInput
 id adminSection
 id adminToolsSection
 id adminUsernameInput
+id allergiesInput
+id allergiesText
 id backButton
 id backToMenuButton
 id biteSizeCB
@@ -126,6 +127,8 @@ id categorySpinner
 id categoryText
 id changePasswordButton
 id clearFormButton
+id commentsInput
+id commentsText
 id completedDateText
 id completedOrdersCountText
 id confirmPasswordEditText
@@ -160,7 +163,10 @@ id dinnerProtein
 id dinnerSection
 id dinnerStarch
 id dinnerVegetable
+id dischargePatientButton
 id dischargedCheckBox
+id dislikesInput
+id dislikesText
 id drinkFluidML
 id drinkItemName
 id drinkQuantity
@@ -208,6 +214,8 @@ id itemsListView
 id itemsMenuButton
 id lastLoginText
 id lastNameInput
+id likesInput
+id likesText
 id locationText
 id logoutButton
 id lunchCompleteCheckBox
@@ -325,8 +333,7 @@ id tab_users
 id textureModificationsText
 id toolbar
 id totalPatientsCount
-id transferRoomSpinner
-id transferWingSpinner
+id transferRoomButton
 id updatePatientButton
 id userEmail
 id userFullName
@@ -344,6 +351,7 @@ id usersCountText
 id usersListView
 id usersMenuButton
 id versionText
+id viewPatientDetailsButton
 id welcomeText
 id wingSpinner
 layout activity_account_management
@@ -536,6 +544,7 @@ style MainMenuButton.Pink
 style MainMenuButton.Primary
 style MainMenuButton.Purple
 style MainMenuButton.Red
+style MainMenuButton.SideBySide
 style SectionTitle
 style SpinnerDropdownStyle
 style SpinnerStyle

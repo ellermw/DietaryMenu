@@ -25,6 +25,9 @@ public final class ActivityMainMenuBinding implements ViewBinding {
   public final LinearLayout adminToolsSection;
 
   @NonNull
+  public final Button defaultMenuManagementButton;
+
+  @NonNull
   public final Button itemManagementButton;
 
   @NonNull
@@ -52,13 +55,15 @@ public final class ActivityMainMenuBinding implements ViewBinding {
   public final TextView welcomeText;
 
   private ActivityMainMenuBinding(@NonNull ScrollView rootView,
-      @NonNull LinearLayout adminToolsSection, @NonNull Button itemManagementButton,
-      @NonNull Button logoutButton, @NonNull Button patientInfoButton,
-      @NonNull Button pendingOrdersButton, @NonNull Button productionSheetsButton,
-      @NonNull Button retiredOrdersButton, @NonNull Button stockSheetsButton,
-      @NonNull Button userManagementButton, @NonNull TextView welcomeText) {
+      @NonNull LinearLayout adminToolsSection, @NonNull Button defaultMenuManagementButton,
+      @NonNull Button itemManagementButton, @NonNull Button logoutButton,
+      @NonNull Button patientInfoButton, @NonNull Button pendingOrdersButton,
+      @NonNull Button productionSheetsButton, @NonNull Button retiredOrdersButton,
+      @NonNull Button stockSheetsButton, @NonNull Button userManagementButton,
+      @NonNull TextView welcomeText) {
     this.rootView = rootView;
     this.adminToolsSection = adminToolsSection;
+    this.defaultMenuManagementButton = defaultMenuManagementButton;
     this.itemManagementButton = itemManagementButton;
     this.logoutButton = logoutButton;
     this.patientInfoButton = patientInfoButton;
@@ -100,6 +105,12 @@ public final class ActivityMainMenuBinding implements ViewBinding {
       id = R.id.adminToolsSection;
       LinearLayout adminToolsSection = ViewBindings.findChildViewById(rootView, id);
       if (adminToolsSection == null) {
+        break missingId;
+      }
+
+      id = R.id.defaultMenuManagementButton;
+      Button defaultMenuManagementButton = ViewBindings.findChildViewById(rootView, id);
+      if (defaultMenuManagementButton == null) {
         break missingId;
       }
 
@@ -158,9 +169,9 @@ public final class ActivityMainMenuBinding implements ViewBinding {
       }
 
       return new ActivityMainMenuBinding((ScrollView) rootView, adminToolsSection,
-          itemManagementButton, logoutButton, patientInfoButton, pendingOrdersButton,
-          productionSheetsButton, retiredOrdersButton, stockSheetsButton, userManagementButton,
-          welcomeText);
+          defaultMenuManagementButton, itemManagementButton, logoutButton, patientInfoButton,
+          pendingOrdersButton, productionSheetsButton, retiredOrdersButton, stockSheetsButton,
+          userManagementButton, welcomeText);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));
