@@ -3299,7 +3299,6 @@ id autoComplete
 id autoCompleteToEnd
 id autoCompleteToStart
 id backButton
-id backToMainButton
 id backToMenuButton
 id barrier
 id baseline
@@ -3775,6 +3774,7 @@ id progress_horizontal
 id puddingThickCheckBox
 id quantityInput
 id quantitySpinner
+id quickStatsText
 id radio
 id ratio
 id rectangles
@@ -3876,7 +3876,6 @@ id startToEnd
 id startVertical
 id staticLayout
 id staticPostLayout
-id statsText
 id statusText
 id stockSheetsButton
 id stop

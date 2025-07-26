@@ -21,30 +21,21 @@ public final class ActivityPatientInfoMenuBinding implements ViewBinding {
   private final ScrollView rootView;
 
   @NonNull
-  public final Button backToMainButton;
-
-  @NonNull
   public final Button existingPatientsButton;
 
   @NonNull
   public final Button newPatientButton;
 
   @NonNull
-  public final TextView statsText;
-
-  @NonNull
-  public final TextView welcomeText;
+  public final TextView quickStatsText;
 
   private ActivityPatientInfoMenuBinding(@NonNull ScrollView rootView,
-      @NonNull Button backToMainButton, @NonNull Button existingPatientsButton,
-      @NonNull Button newPatientButton, @NonNull TextView statsText,
-      @NonNull TextView welcomeText) {
+      @NonNull Button existingPatientsButton, @NonNull Button newPatientButton,
+      @NonNull TextView quickStatsText) {
     this.rootView = rootView;
-    this.backToMainButton = backToMainButton;
     this.existingPatientsButton = existingPatientsButton;
     this.newPatientButton = newPatientButton;
-    this.statsText = statsText;
-    this.welcomeText = welcomeText;
+    this.quickStatsText = quickStatsText;
   }
 
   @Override
@@ -74,12 +65,6 @@ public final class ActivityPatientInfoMenuBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
-      id = R.id.backToMainButton;
-      Button backToMainButton = ViewBindings.findChildViewById(rootView, id);
-      if (backToMainButton == null) {
-        break missingId;
-      }
-
       id = R.id.existingPatientsButton;
       Button existingPatientsButton = ViewBindings.findChildViewById(rootView, id);
       if (existingPatientsButton == null) {
@@ -92,20 +77,14 @@ public final class ActivityPatientInfoMenuBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.statsText;
-      TextView statsText = ViewBindings.findChildViewById(rootView, id);
-      if (statsText == null) {
+      id = R.id.quickStatsText;
+      TextView quickStatsText = ViewBindings.findChildViewById(rootView, id);
+      if (quickStatsText == null) {
         break missingId;
       }
 
-      id = R.id.welcomeText;
-      TextView welcomeText = ViewBindings.findChildViewById(rootView, id);
-      if (welcomeText == null) {
-        break missingId;
-      }
-
-      return new ActivityPatientInfoMenuBinding((ScrollView) rootView, backToMainButton,
-          existingPatientsButton, newPatientButton, statsText, welcomeText);
+      return new ActivityPatientInfoMenuBinding((ScrollView) rootView, existingPatientsButton,
+          newPatientButton, quickStatsText);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

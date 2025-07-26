@@ -2,6 +2,7 @@ package com.hospital.dietary;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -13,26 +14,27 @@ import java.util.List;
 
 public class PatientInfoMenuActivity extends AppCompatActivity {
 
+    private static final String TAG = "PatientInfoMenu";
+
+    private DatabaseHelper dbHelper;
+    private PatientDAO patientDAO;
     private String currentUsername;
     private String currentUserRole;
     private String currentUserFullName;
 
-    private DatabaseHelper dbHelper;
-    private PatientDAO patientDAO;
-
     // UI Components
-    private TextView welcomeText;
-    private TextView statsText;
     private Button newPatientButton;
     private Button existingPatientsButton;
-    private Button backToMainButton;
+    private TextView quickStatsText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_patient_info_menu);
 
-        // Get user data from intent
+        Log.d(TAG, "PatientInfoMenuActivity onCreate started");
+
+        // Get user information from intent
         currentUsername = getIntent().getStringExtra("current_user");
         currentUserRole = getIntent().getStringExtra("user_role");
         currentUserFullName = getIntent().getStringExtra("user_full_name");
@@ -41,79 +43,74 @@ public class PatientInfoMenuActivity extends AppCompatActivity {
         dbHelper = new DatabaseHelper(this);
         patientDAO = new PatientDAO(dbHelper);
 
-        // Set up action bar
+        // Set title
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setTitle("Patient Information");
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        // Initialize views
-        initializeViews();
-
-        // Update UI
-        updateUI();
-
-        // Set up listeners
+        initializeUI();
         setupListeners();
-
-        // Load statistics
         loadQuickStats();
+
+        Log.d(TAG, "PatientInfoMenuActivity onCreate completed");
     }
 
-    private void initializeViews() {
-        welcomeText = findViewById(R.id.welcomeText);
-        statsText = findViewById(R.id.statsText);
+    private void initializeUI() {
         newPatientButton = findViewById(R.id.newPatientButton);
         existingPatientsButton = findViewById(R.id.existingPatientsButton);
-        backToMainButton = findViewById(R.id.backToMainButton);
-    }
-
-    private void updateUI() {
-        if (welcomeText != null && currentUserFullName != null) {
-            welcomeText.setText("Patient Management - " + currentUserFullName);
-        }
+        quickStatsText = findViewById(R.id.quickStatsText);
     }
 
     private void setupListeners() {
-        if (newPatientButton != null) {
-            newPatientButton.setOnClickListener(v -> openNewPatient());
-        }
-
-        if (existingPatientsButton != null) {
-            existingPatientsButton.setOnClickListener(v -> openExistingPatients());
-        }
-
-        if (backToMainButton != null) {
-            backToMainButton.setOnClickListener(v -> goToMainMenu());
-        }
+        newPatientButton.setOnClickListener(v -> openNewPatient());
+        existingPatientsButton.setOnClickListener(v -> openExistingPatients());
     }
 
     private void loadQuickStats() {
         try {
-            // Get all patients and calculate stats
+            // Get all patients
             List<Patient> allPatients = patientDAO.getAllPatients();
             int totalPatients = allPatients.size();
 
-            // Count ADA diet patients
-            int adaPatients = 0;
+            // Count various statuses
+            int pendingBreakfast = 0;
+            int pendingLunch = 0;
+            int pendingDinner = 0;
+            int completedOrders = 0;
+            int adaDietCount = 0;
+
             for (Patient patient : allPatients) {
+                if (!patient.isBreakfastComplete()) {
+                    pendingBreakfast++;
+                }
+                if (!patient.isLunchComplete()) {
+                    pendingLunch++;
+                }
+                if (!patient.isDinnerComplete()) {
+                    pendingDinner++;
+                }
+                if (patient.isBreakfastComplete() && patient.isLunchComplete() && patient.isDinnerComplete()) {
+                    completedOrders++;
+                }
                 if (patient.isAdaDiet()) {
-                    adaPatients++;
+                    adaDietCount++;
                 }
             }
 
-            String stats = String.format("Total Patients: %d\nADA Diet Patients: %d",
-                    totalPatients, adaPatients);
+            StringBuilder stats = new StringBuilder();
+            stats.append("Total Patients: ").append(totalPatients).append("\n");
+            stats.append("Pending Breakfast: ").append(pendingBreakfast).append("\n");
+            stats.append("Pending Lunch: ").append(pendingLunch).append("\n");
+            stats.append("Pending Dinner: ").append(pendingDinner).append("\n");
+            stats.append("Completed Orders: ").append(completedOrders).append("\n");
+            stats.append("ADA Diet Patients: ").append(adaDietCount);
 
-            if (statsText != null) {
-                statsText.setText(stats);
-                statsText.setVisibility(View.VISIBLE);
-            }
+            quickStatsText.setText(stats.toString());
+
         } catch (Exception e) {
-            // If stats fail to load, just hide the stats view
-            if (statsText != null) {
-                statsText.setVisibility(View.GONE);
-            }
+            Log.e(TAG, "Error loading quick stats", e);
+            quickStatsText.setText("Unable to load statistics");
         }
     }
 
@@ -126,7 +123,6 @@ public class PatientInfoMenuActivity extends AppCompatActivity {
     }
 
     private void openExistingPatients() {
-        // FIXED: Changed to ExistingPatientsActivity (with 's')
         Intent intent = new Intent(this, ExistingPatientsActivity.class);
         intent.putExtra("current_user", currentUsername);
         intent.putExtra("user_role", currentUserRole);

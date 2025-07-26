@@ -96,7 +96,6 @@ id adminToolsSection
 id adminUsernameInput
 id allergiesInput
 id backButton
-id backToMainButton
 id backToMenuButton
 id biteSizeCB
 id biteSizeCheckBox
@@ -300,6 +299,7 @@ id progressBar
 id puddingThickCheckBox
 id quantityInput
 id quantitySpinner
+id quickStatsText
 id refreshButton
 id removeButton
 id removeDrinkButton
@@ -331,7 +331,6 @@ id showPasswordCheckBox
 id showPasswordsCheckBox
 id signInButton
 id sodaCheckBox
-id statsText
 id statusText
 id stockSheetsButton
 id submitOrderButton
