@@ -1,37 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Primary colors -->
-    <color name="colorPrimary">#3498db</color>
-    <color name="colorPrimaryDark">#2980b9</color>
-    <color name="colorAccent">#e74c3c</color>
-
-    <!-- UI Colors -->
-    <color name="white">#FFFFFF</color>
-    <color name="black">#000000</color>
-    <color name="gray_light">#f8f9fa</color>
-    <color name="gray_medium">#6c757d</color>
-    <color name="gray_dark">#343a40</color>
-
-    <!-- Status Colors -->
-    <color name="success">#28a745</color>
-    <color name="danger">#dc3545</color>
-    <color name="warning">#ffc107</color>
-    <color name="info">#17a2b8</color>
-
-    <!-- Background Colors -->
-    <color name="background_primary">#f8fafc</color>
-    <color name="background_secondary">#e9ecef</color>
-    <color name="background_card">#ffffff</color>
-
-    <!-- Text Colors -->
-    <color name="text_primary">#212529</color>
-    <color name="text_secondary">#6c757d</color>
-    <color name="text_light">#adb5bd</color>
+    <!-- Primary Colors -->
+    <color name="colorPrimary">#2196F3</color>
+    <color name="colorPrimaryDark">#1976D2</color>
+    <color name="colorAccent">#03A9F4</color>
 
     <!-- Button Colors -->
-    <color name="button_primary">#3498db</color>
-    <color name="button_success">#27ae60</color>
-    <color name="button_warning">#f39c12</color>
-    <color name="button_danger">#e74c3c</color>
-    <color name="button_disabled">#95a5a6</color>
+    <color name="buttonPrimary">#3498db</color>
+    <color name="buttonPurple">#9b59b6</color>
+    <color name="buttonGreen">#27ae60</color>
+    <color name="buttonOrange">#e67e22</color>
+    <color name="buttonPink">#e91e63</color>
+    <color name="buttonGray">#95a5a6</color>
+    <color name="buttonDark">#34495e</color>
+
+    <!-- Text Colors -->
+    <color name="textPrimary">#2c3e50</color>
+    <color name="textSecondary">#7f8c8d</color>
+    <color name="textLight">#ecf0f1</color>
+
+    <!-- Background Colors -->
+    <color name="backgroundLight">#f8fafc</color>
+    <color name="backgroundWhite">#ffffff</color>
+    <color name="backgroundGray">#ecf0f1</color>
+
+    <!-- Status Colors -->
+    <color name="success">#27ae60</color>
+    <color name="warning">#f39c12</color>
+    <color name="error">#e74c3c</color>
+    <color name="info">#3498db</color>
+
+    <!-- Additional Colors -->
+    <color name="divider">#bdc3c7</color>
+    <color name="transparent">#00000000</color>
+    <color name="semi_transparent">#80000000</color>
 </resources>

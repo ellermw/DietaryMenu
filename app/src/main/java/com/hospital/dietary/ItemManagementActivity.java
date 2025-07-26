@@ -64,7 +64,7 @@ public class ItemManagementActivity extends AppCompatActivity {
                         "Administrator".equalsIgnoreCase(currentUserRole.trim()));
 
         if (!isAdmin) {
-            Toast.makeText(this, "Access denied. Admin privileges required.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Access denied. Admin privileges required.", Toast.LENGTH_LONG).show();
             finish();
             return;
         }
@@ -74,42 +74,41 @@ public class ItemManagementActivity extends AppCompatActivity {
         itemDAO = new ItemDAO(dbHelper);
         categoryDAO = new CategoryDAO(dbHelper);
 
-        // Initialize UI
-        initializeUI();
-        setupListeners();
+        // Set title and back button
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle("Item Management");
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
-        // Load data
+        // Initialize UI
+        initializeViews();
+        setupListeners();
         loadCategories();
         loadItems();
     }
 
-    private void initializeUI() {
+    private void initializeViews() {
         itemsListView = findViewById(R.id.itemsListView);
         itemsCountText = findViewById(R.id.itemsCountText);
         addItemButton = findViewById(R.id.addItemButton);
         manageCategoriesButton = findViewById(R.id.manageCategoriesButton);
-        searchEditText = findViewById(R.id.searchEditText);
+        searchEditText = findViewById(R.id.itemSearchEditText);
         categoryFilterSpinner = findViewById(R.id.categoryFilterSpinner);
 
-        // Setup list adapter
-        itemsAdapter = new ArrayAdapter<Item>(this, android.R.layout.simple_list_item_2, android.R.id.text1, filteredItems) {
+        // Setup items adapter
+        itemsAdapter = new ArrayAdapter<Item>(this, android.R.layout.simple_list_item_1, filteredItems) {
             @Override
             public View getView(int position, View convertView, android.view.ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
+                TextView textView = (TextView) view;
                 Item item = getItem(position);
-
-                TextView text1 = view.findViewById(android.R.id.text1);
-                TextView text2 = view.findViewById(android.R.id.text2);
-
                 if (item != null) {
-                    text1.setText(item.getItemName());
-                    String subtitle = item.getCategory();
+                    String displayText = item.getName() + " (" + item.getCategory() + ")";
                     if (item.isAdaFriendly()) {
-                        subtitle += " • ADA Friendly";
+                        displayText += " - ADA";
                     }
-                    text2.setText(subtitle);
+                    textView.setText(displayText);
                 }
-
                 return view;
             }
         };
@@ -226,8 +225,18 @@ public class ItemManagementActivity extends AppCompatActivity {
         // Setup category spinner (exclude "All Categories")
         List<String> itemCategories = new ArrayList<>(categories);
         itemCategories.remove(0); // Remove "All Categories"
+
+        // Use custom dropdown layout to fix height issue
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_dropdown_item, itemCategories);
+                android.R.layout.simple_spinner_item, itemCategories);
+
+        // Create custom dropdown view if the default one has issues
+        if (getResources().getIdentifier("spinner_dropdown_item", "layout", getPackageName()) != 0) {
+            spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        } else {
+            spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        }
+
         categorySpinner.setAdapter(spinnerAdapter);
 
         builder.setPositiveButton("Add", (dialog, which) -> {
@@ -263,7 +272,9 @@ public class ItemManagementActivity extends AppCompatActivity {
         });
 
         builder.setNegativeButton("Cancel", null);
-        builder.show();
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     private void showItemOptionsDialog(Item item) {
@@ -299,8 +310,18 @@ public class ItemManagementActivity extends AppCompatActivity {
         // Setup category spinner
         List<String> itemCategories = new ArrayList<>(categories);
         itemCategories.remove(0); // Remove "All Categories"
+
+        // Use custom dropdown layout to fix height issue
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_dropdown_item, itemCategories);
+                android.R.layout.simple_spinner_item, itemCategories);
+
+        // Create custom dropdown view if the default one has issues
+        if (getResources().getIdentifier("spinner_dropdown_item", "layout", getPackageName()) != 0) {
+            spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        } else {
+            spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        }
+
         categorySpinner.setAdapter(spinnerAdapter);
 
         // Set current category
@@ -335,31 +356,43 @@ public class ItemManagementActivity extends AppCompatActivity {
         });
 
         builder.setNegativeButton("Cancel", null);
-        builder.show();
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     private void showDeleteConfirmation(Item item) {
         new AlertDialog.Builder(this)
                 .setTitle("Delete Item")
-                .setMessage("Are you sure you want to delete '" + item.getName() + "'?\n\nThis action cannot be undone.")
+                .setMessage("Are you sure you want to delete '" + item.getName() + "'?")
                 .setPositiveButton("Delete", (dialog, which) -> {
                     if (itemDAO.deleteItem(item.getItemId())) {
-                        Toast.makeText(this, "Item deleted successfully", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Item deleted successfully!", Toast.LENGTH_SHORT).show();
                         loadItems();
                     } else {
-                        Toast.makeText(this, "Failed to delete item", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Error deleting item", Toast.LENGTH_LONG).show();
                     }
                 })
                 .setNegativeButton("Cancel", null)
                 .show();
     }
 
+    private void openCategoryManagement() {
+        Intent intent = new Intent(this, CategoryManagementActivity.class);
+        intent.putExtra("current_user", currentUsername);
+        intent.putExtra("user_role", currentUserRole);
+        intent.putExtra("user_full_name", currentUserFullName);
+        startActivityForResult(intent, 100);
+    }
+
     @Override
-    protected void onResume() {
-        super.onResume();
-        // Reload categories and items in case they were changed in CategoryManagementActivity
-        loadCategories();
-        loadItems();
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 100) {
+            // Refresh categories when returning from CategoryManagementActivity
+            loadCategories();
+            loadItems();
+        }
     }
 
     @Override
@@ -369,5 +402,11 @@ public class ItemManagementActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 }

@@ -1,6 +1,5 @@
 package com.hospital.dietary;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -10,28 +9,38 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import android.util.Log;
 
 public class MainMenuActivity extends AppCompatActivity {
 
+    private static final String TAG = "MainMenuActivity";
+
+    // User data
     private String currentUsername;
     private String currentUserRole;
     private String currentUserFullName;
+    private boolean isAdmin = false;
 
-    // UI Components
-    private TextView welcomeText;
+    // UI Components - Operations Section
     private Button patientInfoButton;
     private Button pendingOrdersButton;
     private Button retiredOrdersButton;
+
+    // UI Components - Documents Section
     private Button productionSheetsButton;
     private Button stockSheetsButton;
+
+    // UI Components - Admin Tools Section
+    private LinearLayout adminToolsSection;
     private Button userManagementButton;
     private Button itemManagementButton;
     private Button defaultMenuManagementButton;
-    private Button logoutButton;
 
-    // Admin tools section container
-    private LinearLayout adminToolsSection;
+    // UI Components - Logout
+    private Button logoutButton;
+    private TextView welcomeText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,73 +52,51 @@ public class MainMenuActivity extends AppCompatActivity {
         currentUserRole = getIntent().getStringExtra("user_role");
         currentUserFullName = getIntent().getStringExtra("user_full_name");
 
-        // Ensure we have at least basic user info
-        if (currentUsername == null) currentUsername = "User";
-        if (currentUserRole == null) currentUserRole = "Staff";
+        // Check if user is admin
+        isAdmin = currentUserRole != null &&
+                ("Admin".equalsIgnoreCase(currentUserRole.trim()) ||
+                        "Administrator".equalsIgnoreCase(currentUserRole.trim()));
 
-        // Set title
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle("Hospital Dietary Management");
-            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        }
+        Log.d(TAG, "User: " + currentUsername + ", Role: " + currentUserRole + ", IsAdmin: " + isAdmin);
 
         // Initialize UI
         initializeViews();
-        setupUserInterface();
+        updateUI();
         setupListeners();
     }
 
     private void initializeViews() {
+        // Welcome text
         welcomeText = findViewById(R.id.welcomeText);
+
+        // Operations Section
         patientInfoButton = findViewById(R.id.patientInfoButton);
         pendingOrdersButton = findViewById(R.id.pendingOrdersButton);
         retiredOrdersButton = findViewById(R.id.retiredOrdersButton);
+
+        // Documents Section
         productionSheetsButton = findViewById(R.id.productionSheetsButton);
         stockSheetsButton = findViewById(R.id.stockSheetsButton);
+
+        // Admin Tools Section
+        adminToolsSection = findViewById(R.id.adminToolsSection);
         userManagementButton = findViewById(R.id.userManagementButton);
         itemManagementButton = findViewById(R.id.itemManagementButton);
         defaultMenuManagementButton = findViewById(R.id.defaultMenuManagementButton);
+
+        // Logout
         logoutButton = findViewById(R.id.logoutButton);
-
-        // Get reference to admin tools section container
-        adminToolsSection = findViewById(R.id.adminToolsSection);
     }
 
-    private void setupUserInterface() {
-        // Set welcome message
-        String welcomeMessage = "Welcome, ";
-        if (currentUserFullName != null && !currentUserFullName.trim().isEmpty()) {
-            welcomeMessage += currentUserFullName + "!";
-        } else {
-            welcomeMessage += currentUsername + "!";
+    private void updateUI() {
+        // Update welcome message
+        if (welcomeText != null && currentUserFullName != null) {
+            welcomeText.setText("Welcome, " + currentUserFullName + "!");
         }
-        welcomeText.setText(welcomeMessage);
 
-        // Configure admin tools section based on user role
-        configureAdminAccess();
-    }
-
-    private void configureAdminAccess() {
-        // Check for both "Admin" and "Administrator" role values (case-insensitive)
-        boolean isAdmin = currentUserRole != null &&
-                ("Admin".equalsIgnoreCase(currentUserRole.trim()) ||
-                        "Administrator".equalsIgnoreCase(currentUserRole.trim()));
-
-        // Debug logging to see what role we're getting
-        android.util.Log.d("MainMenu", "Current user role: '" + currentUserRole + "', isAdmin: " + isAdmin);
-
+        // Show/hide admin section based on role
         if (adminToolsSection != null) {
-            if (isAdmin) {
-                // Show admin tools section for admin users
-                adminToolsSection.setVisibility(View.VISIBLE);
-                android.util.Log.d("MainMenu", "Admin tools section made visible");
-            } else {
-                // Hide admin tools section for non-admin users
-                adminToolsSection.setVisibility(View.GONE);
-                android.util.Log.d("MainMenu", "Admin tools section hidden for non-admin user");
-            }
-        } else {
-            android.util.Log.e("MainMenu", "Admin tools section is null!");
+            adminToolsSection.setVisibility(isAdmin ? View.VISIBLE : View.GONE);
         }
     }
 
@@ -125,12 +112,16 @@ public class MainMenuActivity extends AppCompatActivity {
             retiredOrdersButton.setOnClickListener(v -> openRetiredOrders());
         }
 
-        // Documents Section
+        // Documents Section - FIXED: Show "Coming Soon" instead of navigating
         if (productionSheetsButton != null) {
-            productionSheetsButton.setOnClickListener(v -> openProductionSheets());
+            productionSheetsButton.setOnClickListener(v -> {
+                Toast.makeText(this, "Production Sheets - Coming Soon!", Toast.LENGTH_SHORT).show();
+            });
         }
         if (stockSheetsButton != null) {
-            stockSheetsButton.setOnClickListener(v -> openStockSheets());
+            stockSheetsButton.setOnClickListener(v -> {
+                Toast.makeText(this, "Stock Sheets - Coming Soon!", Toast.LENGTH_SHORT).show();
+            });
         }
 
         // Admin Tools Section
@@ -168,31 +159,10 @@ public class MainMenuActivity extends AppCompatActivity {
     }
 
     private void openRetiredOrders() {
-        // FIXED: Now launches the actual RetiredOrdersActivity instead of showing "Coming Soon"
         Intent intent = new Intent(this, RetiredOrdersActivity.class);
         intent.putExtra("current_user", currentUsername);
         intent.putExtra("user_role", currentUserRole);
         intent.putExtra("user_full_name", currentUserFullName);
-        startActivity(intent);
-    }
-
-    private void openProductionSheets() {
-        // Navigate to DocumentsActivity for production sheets
-        Intent intent = new Intent(this, DocumentsActivity.class);
-        intent.putExtra("current_user", currentUsername);
-        intent.putExtra("user_role", currentUserRole);
-        intent.putExtra("user_full_name", currentUserFullName);
-        intent.putExtra("document_type", "production_sheets");
-        startActivity(intent);
-    }
-
-    private void openStockSheets() {
-        // Navigate to DocumentsActivity for stock sheets
-        Intent intent = new Intent(this, DocumentsActivity.class);
-        intent.putExtra("current_user", currentUsername);
-        intent.putExtra("user_role", currentUserRole);
-        intent.putExtra("user_full_name", currentUserFullName);
-        intent.putExtra("document_type", "stock_sheets");
         startActivity(intent);
     }
 
@@ -224,19 +194,12 @@ public class MainMenuActivity extends AppCompatActivity {
         new AlertDialog.Builder(this)
                 .setTitle("Logout")
                 .setMessage("Are you sure you want to logout?")
-                .setPositiveButton("Yes", (dialog, which) -> performLogout())
+                .setPositiveButton("Yes", (dialog, which) -> logout())
                 .setNegativeButton("No", null)
                 .show();
     }
 
-    private void performLogout() {
-        // Clear any stored user data
-        getSharedPreferences("UserPrefs", MODE_PRIVATE)
-                .edit()
-                .clear()
-                .apply();
-
-        // Navigate to login screen
+    private void logout() {
         Intent intent = new Intent(this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
@@ -251,37 +214,16 @@ public class MainMenuActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int itemId = item.getItemId();
-
-        if (itemId == R.id.action_account) {
-            Intent accountIntent = new Intent(this, AccountManagementActivity.class);
-            accountIntent.putExtra("current_user", currentUsername);
-            accountIntent.putExtra("user_role", currentUserRole);
-            accountIntent.putExtra("user_full_name", currentUserFullName);
-            startActivity(accountIntent);
-            return true;
-        } else if (itemId == R.id.action_refresh) {
-            recreate();
-            Toast.makeText(this, "Menu refreshed", Toast.LENGTH_SHORT).show();
-            return true;
-        } else if (itemId == R.id.action_logout) {
+        int id = item.getItemId();
+        if (id == R.id.action_logout) {
             showLogoutConfirmation();
             return true;
-        } else {
-            return super.onOptionsItemSelected(item);
         }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
     public void onBackPressed() {
-        // Prevent going back to login screen
         showLogoutConfirmation();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        // Refresh UI when returning to main menu
-        setupUserInterface();
     }
 }

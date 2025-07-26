@@ -4,17 +4,14 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="16dp"
-    android:background="#FFFFFF"
-    android:clickable="true"
-    android:focusable="true"
-    android:foreground="?android:attr/selectableItemBackground">
+    android:background="?android:attr/selectableItemBackground">
 
-    <!-- First Row: Name and Status -->
+    <!-- Name and Username Row -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginBottom="8dp">
+        android:gravity="center_vertical">
 
         <TextView
             android:id="@+id/fullNameText"
@@ -22,70 +19,60 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Full Name"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:textStyle="bold"
-            android:textColor="#2c3e50"
-            android:ellipsize="end"
-            android:maxLines="1" />
+            android:textColor="#2c3e50" />
 
         <TextView
             android:id="@+id/statusText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="✅ Active"
+            android:text="Active"
             android:textSize="14sp"
-            android:textStyle="bold"
-            android:layout_marginStart="8dp" />
+            android:textColor="#27ae60" />
 
     </LinearLayout>
 
-    <!-- Second Row: Username -->
-    <TextView
-        android:id="@+id/usernameText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@username"
-        android:textSize="14sp"
-        android:textColor="#7f8c8d"
-        android:layout_marginBottom="8dp"
-        android:ellipsize="end"
-        android:maxLines="1" />
-
-    <!-- Third Row: Role and Created Date -->
+    <!-- Username and Role Row -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginTop="4dp">
+
+        <TextView
+            android:id="@+id/usernameText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@username"
+            android:textSize="14sp"
+            android:textColor="#7f8c8d" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" • "
+            android:textSize="14sp"
+            android:textColor="#7f8c8d" />
 
         <TextView
             android:id="@+id/roleText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="👑 Role"
-            android:textSize="14sp"
-            android:textColor="#374151"
-            android:ellipsize="end"
-            android:maxLines="1" />
-
-        <TextView
-            android:id="@+id/createdDateText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="📅 Created Date"
-            android:textSize="12sp"
-            android:textColor="#9ca3af"
-            android:layout_marginStart="8dp"
-            android:ellipsize="end"
-            android:maxLines="1" />
+            android:text="Role"
+            android:textSize="14sp"
+            android:textColor="#7f8c8d" />
 
     </LinearLayout>
 
-    <!-- Divider for visual separation -->
-    <View
+    <!-- Created Date -->
+    <TextView
+        android:id="@+id/createdDateText"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#ecf0f1"
-        android:layout_marginTop="12dp" />
+        android:layout_height="wrap_content"
+        android:text="Created: Date"
+        android:textSize="12sp"
+        android:textColor="#95a5a6"
+        android:layout_marginTop="4dp" />
 
 </LinearLayout>

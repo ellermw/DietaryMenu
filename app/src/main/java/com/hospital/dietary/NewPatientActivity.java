@@ -1,41 +1,39 @@
 package com.hospital.dietary;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import com.hospital.dietary.dao.PatientDAO;
 import com.hospital.dietary.models.Patient;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class NewPatientActivity extends AppCompatActivity {
 
+    private static final String TAG = "NewPatientActivity";
+
     private DatabaseHelper dbHelper;
     private PatientDAO patientDAO;
-
-    // User information
     private String currentUsername;
     private String currentUserRole;
     private String currentUserFullName;
 
-    // UI Components
-    private Toolbar toolbar;
+    // UI Components - Basic Information
     private EditText firstNameInput;
     private EditText lastNameInput;
     private Spinner wingSpinner;
     private Spinner roomSpinner;
+
+    // UI Components - Dietary Requirements
     private Spinner dietSpinner;
     private CheckBox adaDietCheckBox;
-    private TextView adaDietLabel;
     private Spinner fluidRestrictionSpinner;
 
-    // Texture Modifications
+    // UI Components - Texture Modifications
     private CheckBox mechanicalGroundCheckBox;
     private CheckBox mechanicalChoppedCheckBox;
     private CheckBox biteSizeCheckBox;
@@ -43,257 +41,374 @@ public class NewPatientActivity extends AppCompatActivity {
     private CheckBox extraGravyCheckBox;
     private CheckBox meatsOnlyCheckBox;
 
-    // Thicken Liquids
+    // UI Components - Thicken Liquids
     private CheckBox nectarThickCheckBox;
     private CheckBox honeyThickCheckBox;
     private CheckBox puddingThickCheckBox;
 
-    // Additional Fields
+    // UI Components - Additional Information
     private EditText allergiesInput;
-    private EditText likesInput;
-    private EditText dislikesInput;
     private EditText commentsInput;
 
-    // Action Buttons
-    private Button savePatientButton;
+    // Buttons
+    private Button saveButton;
     private Button cancelButton;
 
-    // Wing-Room mapping
+    // Data
+    private String[] wings = {"North", "South", "East", "West"};
     private Map<String, String[]> wingRoomMap = new HashMap<>();
-    private String[] wings = {"1 South", "2 North", "Labor and Delivery", "2 West", "3 North", "ICU"};
-
-    // Edit mode
     private boolean isEditMode = false;
-    private int editPatientId = -1;
+    private long editPatientId = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_patient);
 
-        // Get user information from intent
-        currentUsername = getIntent().getStringExtra("current_user");
-        currentUserRole = getIntent().getStringExtra("user_role");
-        currentUserFullName = getIntent().getStringExtra("user_full_name");
-
-        // Check if in edit mode
-        editPatientId = getIntent().getIntExtra("edit_patient_id", -1);
-        isEditMode = editPatientId != -1;
+        // Setup room mappings
+        setupRoomMappings();
 
         // Initialize database
         dbHelper = new DatabaseHelper(this);
         patientDAO = new PatientDAO(dbHelper);
 
-        // Setup toolbar
-        setupToolbar();
+        // Get user data and check if edit mode
+        currentUsername = getIntent().getStringExtra("current_user");
+        currentUserRole = getIntent().getStringExtra("user_role");
+        currentUserFullName = getIntent().getStringExtra("user_full_name");
+        editPatientId = getIntent().getLongExtra("patient_id", -1);
+        isEditMode = editPatientId != -1;
 
-        // Setup wing-room mapping
-        setupWingRoomMapping();
+        // Set title
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setTitle(isEditMode ? "Edit Patient" : "Add New Patient");
+        }
 
-        // Initialize UI
-        initializeUI();
+        // Create UI programmatically
+        createUI();
 
-        // Setup spinners
+        // Setup spinners and listeners
         setupSpinners();
-
-        // Setup listeners
         setupListeners();
 
-        // Load patient data if in edit mode
+        // If edit mode, load patient data
         if (isEditMode) {
             loadPatientData();
         }
     }
 
-    private void setupToolbar() {
-        toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle(isEditMode ? "Edit Patient" : "New Patient");
-        }
+    private void setupRoomMappings() {
+        wingRoomMap.put("North", new String[]{"100", "101", "102", "103", "104", "105", "106", "107", "108", "109", "110"});
+        wingRoomMap.put("South", new String[]{"200", "201", "202", "203", "204", "205", "206", "207", "208", "209", "210"});
+        wingRoomMap.put("East", new String[]{"300", "301", "302", "303", "304", "305", "306", "307", "308", "309", "310"});
+        wingRoomMap.put("West", new String[]{"400", "401", "402", "403", "404", "405", "406", "407", "408", "409", "410"});
     }
 
-    private void setupWingRoomMapping() {
-        // 1 South - Rooms 106 through 122
-        wingRoomMap.put("1 South", generateRoomNumbers(106, 122));
+    private void createUI() {
+        ScrollView scrollView = new ScrollView(this);
+        scrollView.setBackgroundColor(0xFFF8FAFC);
 
-        // 2 North - Rooms 250 through 264
-        wingRoomMap.put("2 North", generateRoomNumbers(250, 264));
+        LinearLayout mainLayout = new LinearLayout(this);
+        mainLayout.setOrientation(LinearLayout.VERTICAL);
+        mainLayout.setPadding(30, 30, 30, 30);
 
-        // Labor and Delivery - Rooms LDR1 through LDR6
-        wingRoomMap.put("Labor and Delivery", generateLDRRooms(1, 6));
+        // Basic Information Section
+        TextView basicInfoLabel = new TextView(this);
+        basicInfoLabel.setText("Basic Information");
+        basicInfoLabel.setTextSize(18);
+        basicInfoLabel.setTextColor(0xFF2c3e50);
+        basicInfoLabel.setTypeface(null, android.graphics.Typeface.BOLD);
+        basicInfoLabel.setPadding(0, 0, 0, 10);
+        mainLayout.addView(basicInfoLabel);
 
-        // 2 West - Rooms 225 through 248
-        wingRoomMap.put("2 West", generateRoomNumbers(225, 248));
+        // First Name
+        TextView firstNameLabel = new TextView(this);
+        firstNameLabel.setText("First Name *");
+        firstNameLabel.setTextColor(0xFF2c3e50);
+        mainLayout.addView(firstNameLabel);
 
-        // 3 North - Rooms 349 through 371
-        wingRoomMap.put("3 North", generateRoomNumbers(349, 371));
+        firstNameInput = new EditText(this);
+        firstNameInput.setHint("Enter first name");
+        firstNameInput.setBackgroundColor(0xFFFFFFFF);
+        firstNameInput.setPadding(15, 15, 15, 15);
+        mainLayout.addView(firstNameInput);
 
-        // ICU - Rooms ICU1 through ICU13
-        wingRoomMap.put("ICU", generateICURooms(1, 13));
-    }
+        // Last Name
+        TextView lastNameLabel = new TextView(this);
+        lastNameLabel.setText("Last Name *");
+        lastNameLabel.setTextColor(0xFF2c3e50);
+        lastNameLabel.setPadding(0, 15, 0, 0);
+        mainLayout.addView(lastNameLabel);
 
-    private String[] generateRoomNumbers(int start, int end) {
-        String[] rooms = new String[end - start + 1];
-        for (int i = 0; i < rooms.length; i++) {
-            rooms[i] = String.valueOf(start + i);
-        }
-        return rooms;
-    }
+        lastNameInput = new EditText(this);
+        lastNameInput.setHint("Enter last name");
+        lastNameInput.setBackgroundColor(0xFFFFFFFF);
+        lastNameInput.setPadding(15, 15, 15, 15);
+        mainLayout.addView(lastNameInput);
 
-    private String[] generateLDRRooms(int start, int end) {
-        String[] rooms = new String[end - start + 1];
-        for (int i = 0; i < rooms.length; i++) {
-            rooms[i] = "LDR" + (start + i);
-        }
-        return rooms;
-    }
+        // Wing
+        TextView wingLabel = new TextView(this);
+        wingLabel.setText("Wing *");
+        wingLabel.setTextColor(0xFF2c3e50);
+        wingLabel.setPadding(0, 15, 0, 0);
+        mainLayout.addView(wingLabel);
 
-    private String[] generateICURooms(int start, int end) {
-        String[] rooms = new String[end - start + 1];
-        for (int i = 0; i < rooms.length; i++) {
-            rooms[i] = "ICU" + (start + i);
-        }
-        return rooms;
-    }
+        wingSpinner = new Spinner(this);
+        wingSpinner.setBackgroundColor(0xFFFFFFFF);
+        wingSpinner.setPadding(15, 15, 15, 15);
+        wingSpinner.setMinimumHeight(120);
+        mainLayout.addView(wingSpinner);
 
-    private void initializeUI() {
-        // Basic Information
-        firstNameInput = findViewById(R.id.firstNameInput);
-        lastNameInput = findViewById(R.id.lastNameInput);
-        wingSpinner = findViewById(R.id.wingSpinner);
-        roomSpinner = findViewById(R.id.roomSpinner);
+        // Room Dropdown (depends on wing selection)
+        TextView roomLabel = new TextView(this);
+        roomLabel.setText("Room Number *");
+        roomLabel.setTextColor(0xFF2c3e50);
+        roomLabel.setPadding(0, 15, 0, 0);
+        mainLayout.addView(roomLabel);
 
-        // Dietary Requirements
-        dietSpinner = findViewById(R.id.dietSpinner);
-        adaDietCheckBox = findViewById(R.id.adaDietCheckBox);
-        adaDietLabel = findViewById(R.id.adaDietLabel);
-        fluidRestrictionSpinner = findViewById(R.id.fluidRestrictionSpinner);
+        roomSpinner = new Spinner(this);
+        roomSpinner.setBackgroundColor(0xFFFFFFFF);
+        roomSpinner.setPadding(15, 15, 15, 15);
+        roomSpinner.setMinimumHeight(120);
+        mainLayout.addView(roomSpinner);
+
+        // Dietary Requirements Section
+        TextView dietaryLabel = new TextView(this);
+        dietaryLabel.setText("Dietary Requirements");
+        dietaryLabel.setTextSize(18);
+        dietaryLabel.setTextColor(0xFF2c3e50);
+        dietaryLabel.setTypeface(null, android.graphics.Typeface.BOLD);
+        dietaryLabel.setPadding(0, 30, 0, 10);
+        mainLayout.addView(dietaryLabel);
+
+        // Diet Type
+        TextView dietLabel = new TextView(this);
+        dietLabel.setText("Diet Type *");
+        dietLabel.setTextColor(0xFF2c3e50);
+        mainLayout.addView(dietLabel);
+
+        dietSpinner = new Spinner(this);
+        dietSpinner.setBackgroundColor(0xFFFFFFFF);
+        dietSpinner.setPadding(15, 15, 15, 15);
+        dietSpinner.setMinimumHeight(120);
+        mainLayout.addView(dietSpinner);
+
+        // ADA Diet (only shows for specific diet types)
+        adaDietCheckBox = new CheckBox(this);
+        adaDietCheckBox.setText("ADA Diet (Diabetic)");
+        adaDietCheckBox.setTextColor(0xFF2c3e50);
+        adaDietCheckBox.setPadding(0, 15, 0, 0);
+        adaDietCheckBox.setVisibility(View.GONE); // Hidden by default
+        mainLayout.addView(adaDietCheckBox);
+
+        // Fluid Restriction
+        TextView fluidLabel = new TextView(this);
+        fluidLabel.setText("Fluid Restriction");
+        fluidLabel.setTextColor(0xFF2c3e50);
+        fluidLabel.setPadding(0, 15, 0, 0);
+        mainLayout.addView(fluidLabel);
+
+        fluidRestrictionSpinner = new Spinner(this);
+        fluidRestrictionSpinner.setBackgroundColor(0xFFFFFFFF);
+        fluidRestrictionSpinner.setPadding(15, 15, 15, 15);
+        fluidRestrictionSpinner.setMinimumHeight(120);
+        mainLayout.addView(fluidRestrictionSpinner);
 
         // Texture Modifications
-        mechanicalGroundCheckBox = findViewById(R.id.mechanicalGroundCheckBox);
-        mechanicalChoppedCheckBox = findViewById(R.id.mechanicalChoppedCheckBox);
-        biteSizeCheckBox = findViewById(R.id.biteSizeCheckBox);
-        breadOkCheckBox = findViewById(R.id.breadOkCheckBox);
-        extraGravyCheckBox = findViewById(R.id.extraGravyCheckBox);
-        meatsOnlyCheckBox = findViewById(R.id.meatsOnlyCheckBox);
+        TextView textureLabel = new TextView(this);
+        textureLabel.setText("Texture Modifications");
+        textureLabel.setTextSize(18);
+        textureLabel.setTextColor(0xFF2c3e50);
+        textureLabel.setTypeface(null, android.graphics.Typeface.BOLD);
+        textureLabel.setPadding(0, 30, 0, 10);
+        mainLayout.addView(textureLabel);
+
+        // Texture checkboxes
+        mechanicalGroundCheckBox = new CheckBox(this);
+        mechanicalGroundCheckBox.setText("Mechanical Ground");
+        mechanicalGroundCheckBox.setTextColor(0xFF2c3e50);
+        mainLayout.addView(mechanicalGroundCheckBox);
+
+        mechanicalChoppedCheckBox = new CheckBox(this);
+        mechanicalChoppedCheckBox.setText("Mechanical Chopped");
+        mechanicalChoppedCheckBox.setTextColor(0xFF2c3e50);
+        mainLayout.addView(mechanicalChoppedCheckBox);
+
+        biteSizeCheckBox = new CheckBox(this);
+        biteSizeCheckBox.setText("Bite Size");
+        biteSizeCheckBox.setTextColor(0xFF2c3e50);
+        mainLayout.addView(biteSizeCheckBox);
+
+        breadOkCheckBox = new CheckBox(this);
+        breadOkCheckBox.setText("Bread OK");
+        breadOkCheckBox.setTextColor(0xFF2c3e50);
+        mainLayout.addView(breadOkCheckBox);
+
+        extraGravyCheckBox = new CheckBox(this);
+        extraGravyCheckBox.setText("Extra Gravy");
+        extraGravyCheckBox.setTextColor(0xFF2c3e50);
+        mainLayout.addView(extraGravyCheckBox);
+
+        meatsOnlyCheckBox = new CheckBox(this);
+        meatsOnlyCheckBox.setText("Meats Only");
+        meatsOnlyCheckBox.setTextColor(0xFF2c3e50);
+        mainLayout.addView(meatsOnlyCheckBox);
 
         // Thicken Liquids
-        nectarThickCheckBox = findViewById(R.id.nectarThickCheckBox);
-        honeyThickCheckBox = findViewById(R.id.honeyThickCheckBox);
-        puddingThickCheckBox = findViewById(R.id.puddingThickCheckBox);
+        TextView thickenLabel = new TextView(this);
+        thickenLabel.setText("Thicken Liquids");
+        thickenLabel.setTextSize(18);
+        thickenLabel.setTextColor(0xFF2c3e50);
+        thickenLabel.setTypeface(null, android.graphics.Typeface.BOLD);
+        thickenLabel.setPadding(0, 30, 0, 10);
+        mainLayout.addView(thickenLabel);
 
-        // Additional Fields
-        allergiesInput = findViewById(R.id.allergiesInput);
-        likesInput = findViewById(R.id.likesInput);
-        dislikesInput = findViewById(R.id.dislikesInput);
-        commentsInput = findViewById(R.id.commentsInput);
+        nectarThickCheckBox = new CheckBox(this);
+        nectarThickCheckBox.setText("Nectar Thick");
+        nectarThickCheckBox.setTextColor(0xFF2c3e50);
+        mainLayout.addView(nectarThickCheckBox);
 
-        // Action Buttons
-        savePatientButton = findViewById(R.id.savePatientButton);
-        cancelButton = findViewById(R.id.cancelButton);
+        honeyThickCheckBox = new CheckBox(this);
+        honeyThickCheckBox.setText("Honey Thick");
+        honeyThickCheckBox.setTextColor(0xFF2c3e50);
+        mainLayout.addView(honeyThickCheckBox);
+
+        puddingThickCheckBox = new CheckBox(this);
+        puddingThickCheckBox.setText("Pudding Thick");
+        puddingThickCheckBox.setTextColor(0xFF2c3e50);
+        mainLayout.addView(puddingThickCheckBox);
+
+        // Additional Information (NO LIKES/DISLIKES)
+        TextView additionalLabel = new TextView(this);
+        additionalLabel.setText("Additional Information");
+        additionalLabel.setTextSize(18);
+        additionalLabel.setTextColor(0xFF2c3e50);
+        additionalLabel.setTypeface(null, android.graphics.Typeface.BOLD);
+        additionalLabel.setPadding(0, 30, 0, 10);
+        mainLayout.addView(additionalLabel);
+
+        // Allergies
+        TextView allergiesLabel = new TextView(this);
+        allergiesLabel.setText("Allergies");
+        allergiesLabel.setTextColor(0xFF2c3e50);
+        mainLayout.addView(allergiesLabel);
+
+        allergiesInput = new EditText(this);
+        allergiesInput.setHint("Enter any allergies");
+        allergiesInput.setBackgroundColor(0xFFFFFFFF);
+        allergiesInput.setPadding(15, 15, 15, 15);
+        allergiesInput.setMinLines(2);
+        mainLayout.addView(allergiesInput);
+
+        // Comments
+        TextView commentsLabel = new TextView(this);
+        commentsLabel.setText("Comments");
+        commentsLabel.setTextColor(0xFF2c3e50);
+        commentsLabel.setPadding(0, 15, 0, 0);
+        mainLayout.addView(commentsLabel);
+
+        commentsInput = new EditText(this);
+        commentsInput.setHint("Additional comments");
+        commentsInput.setBackgroundColor(0xFFFFFFFF);
+        commentsInput.setPadding(15, 15, 15, 15);
+        commentsInput.setMinLines(3);
+        mainLayout.addView(commentsInput);
+
+        // Buttons
+        LinearLayout buttonLayout = new LinearLayout(this);
+        buttonLayout.setOrientation(LinearLayout.HORIZONTAL);
+        buttonLayout.setPadding(0, 30, 0, 0);
+
+        saveButton = new Button(this);
+        saveButton.setText(isEditMode ? "Update" : "Save");
+        saveButton.setBackgroundColor(0xFF2196F3);
+        saveButton.setTextColor(0xFFFFFFFF);
+        LinearLayout.LayoutParams saveParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1);
+        saveParams.setMargins(0, 0, 10, 0);
+        saveButton.setLayoutParams(saveParams);
+        buttonLayout.addView(saveButton);
+
+        cancelButton = new Button(this);
+        cancelButton.setText("Cancel");
+        cancelButton.setBackgroundColor(0xFF757575);
+        cancelButton.setTextColor(0xFFFFFFFF);
+        LinearLayout.LayoutParams cancelParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1);
+        cancelButton.setLayoutParams(cancelParams);
+        buttonLayout.addView(cancelButton);
+
+        mainLayout.addView(buttonLayout);
+
+        scrollView.addView(mainLayout);
+        setContentView(scrollView);
     }
 
     private void setupSpinners() {
-        // Setup wing spinner
+        // Wing Spinner
         ArrayAdapter<String> wingAdapter = new ArrayAdapter<>(this,
-                R.layout.spinner_item, wings);
-        wingAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+                android.R.layout.simple_spinner_item, wings);
+        wingAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         wingSpinner.setAdapter(wingAdapter);
 
-        // Setup room spinner based on selected wing
+        // Diet Types
+        String[] dietTypes = {
+                "Regular", "Cardiac", "Diabetic", "Renal", "Low Sodium",
+                "Soft", "Clear Liquid", "Full Liquid", "Pureed", "NPO"
+        };
+        ArrayAdapter<String> dietAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, dietTypes);
+        dietAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        dietSpinner.setAdapter(dietAdapter);
+
+        // Fluid Restrictions
+        String[] fluidRestrictions = {
+                "No Restriction", "1000ml", "1500ml", "2000ml", "As Ordered"
+        };
+        ArrayAdapter<String> fluidAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, fluidRestrictions);
+        fluidAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        fluidRestrictionSpinner.setAdapter(fluidAdapter);
+    }
+
+    private void updateRoomSpinner(String selectedWing) {
+        String[] rooms = wingRoomMap.get(selectedWing);
+        if (rooms != null) {
+            ArrayAdapter<String> roomAdapter = new ArrayAdapter<>(this,
+                    android.R.layout.simple_spinner_item, rooms);
+            roomAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            roomSpinner.setAdapter(roomAdapter);
+        }
+    }
+
+    private void setupListeners() {
+        // Wing selection listener - update rooms when wing changes
         wingSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selectedWing = wings[position];
-                String[] rooms = wingRoomMap.get(selectedWing);
-                ArrayAdapter<String> roomAdapter = new ArrayAdapter<>(NewPatientActivity.this,
-                        R.layout.spinner_item, rooms);
-                roomAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-                roomSpinner.setAdapter(roomAdapter);
+                updateRoomSpinner(selectedWing);
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // Do nothing
-            }
+            public void onNothingSelected(AdapterView<?> parent) {}
         });
 
-        // Setup diet spinner
-        String[] dietTypes = {
-                "Regular",
-                "Low Fat",
-                "Cardiac (Low Fat/Low Sodium 2g)",
-                "Low Sodium 2g",
-                "Low Sodium 4g",
-                "Renal",
-                "Gluten Free",
-                "Low Fiber/Low Residue",
-                "High Fiber",
-                "Bland",
-                "Vegetarian",
-                "Lactose Free",
-                "Kosher",
-                "Low Potassium",
-                "Pureed",
-                "Full Liquid",
-                "Clear Liquid",
-                "NPO"
-        };
-        ArrayAdapter<String> dietAdapter = new ArrayAdapter<>(this,
-                R.layout.spinner_item, dietTypes);
-        dietAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-        dietSpinner.setAdapter(dietAdapter);
-
-        // Setup diet change listener for ADA checkbox
+        // Diet selection listener - show/hide ADA checkbox for specific diets
         dietSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selectedDiet = dietTypes[position];
-                // Show ADA checkbox for specific diets
-                if (selectedDiet.equals("Regular") || selectedDiet.equals("Low Fat") ||
-                        selectedDiet.equals("Cardiac (Low Fat/Low Sodium 2g)") ||
-                        selectedDiet.equals("Low Sodium 2g") || selectedDiet.equals("Low Sodium 4g") ||
-                        selectedDiet.equals("Renal") || selectedDiet.equals("Gluten Free") ||
-                        selectedDiet.equals("Low Fiber/Low Residue") || selectedDiet.equals("High Fiber") ||
-                        selectedDiet.equals("Bland") || selectedDiet.equals("Vegetarian") ||
-                        selectedDiet.equals("Lactose Free")) {
-                    adaDietCheckBox.setVisibility(View.VISIBLE);
-                    adaDietLabel.setVisibility(View.VISIBLE);
-                } else {
-                    adaDietCheckBox.setVisibility(View.GONE);
-                    adaDietLabel.setVisibility(View.GONE);
-                    adaDietCheckBox.setChecked(false);
-                }
+                String selectedDiet = (String) parent.getItemAtPosition(position);
+                boolean showAdaOption = "Clear Liquid".equals(selectedDiet) ||
+                        "Full Liquid".equals(selectedDiet) ||
+                        "Pureed".equals(selectedDiet);
+                adaDietCheckBox.setVisibility(showAdaOption ? View.VISIBLE : View.GONE);
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                adaDietCheckBox.setVisibility(View.GONE);
-                adaDietLabel.setVisibility(View.GONE);
-            }
+            public void onNothingSelected(AdapterView<?> parent) {}
         });
 
-        // Setup fluid restriction spinner
-        String[] fluidRestrictions = {
-                "None",
-                "1000ml (34oz)",
-                "1200ml (41oz)",
-                "1500ml (51oz)",
-                "1800ml (61oz)",
-                "2000ml (68oz)",
-                "2500ml (85oz)"
-        };
-        ArrayAdapter<String> fluidAdapter = new ArrayAdapter<>(this,
-                R.layout.spinner_item, fluidRestrictions);
-        fluidAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-        fluidRestrictionSpinner.setAdapter(fluidAdapter);
-    }
-
-    private void setupListeners() {
         // Save button
-        savePatientButton.setOnClickListener(v -> savePatient());
+        saveButton.setOnClickListener(v -> savePatient());
 
         // Cancel button
         cancelButton.setOnClickListener(v -> finish());
@@ -319,8 +434,9 @@ public class NewPatientActivity extends AppCompatActivity {
             return;
         }
 
-        // Create patient object
-        Patient patient = new Patient();
+        // Create or update patient
+        Patient patient = isEditMode ? patientDAO.getPatientById(editPatientId) : new Patient();
+
         patient.setFirstName(firstName);
         patient.setLastName(lastName);
         patient.setWing(wingSpinner.getSelectedItem().toString());
@@ -330,12 +446,16 @@ public class NewPatientActivity extends AppCompatActivity {
         // Set ADA diet if applicable
         if (adaDietCheckBox.getVisibility() == View.VISIBLE && adaDietCheckBox.isChecked()) {
             patient.setAdaDiet(true);
+        } else {
+            patient.setAdaDiet(false);
         }
 
         // Set fluid restriction
         String fluidRestriction = fluidRestrictionSpinner.getSelectedItem().toString();
-        if (!fluidRestriction.equals("None")) {
+        if (!fluidRestriction.equals("No Restriction")) {
             patient.setFluidRestriction(fluidRestriction);
+        } else {
+            patient.setFluidRestriction("");
         }
 
         // Set texture modifications
@@ -353,23 +473,20 @@ public class NewPatientActivity extends AppCompatActivity {
 
         // Set additional info
         patient.setAllergies(allergiesInput.getText().toString().trim());
-        patient.setLikes(likesInput.getText().toString().trim());
-        patient.setDislikes(dislikesInput.getText().toString().trim());
         patient.setComments(commentsInput.getText().toString().trim());
-
 
         // Save to database
         boolean success;
         if (isEditMode) {
-            patient.setPatientId(editPatientId);
             success = patientDAO.updatePatient(patient);
         } else {
-            long newId = patientDAO.insertPatient(patient);
-            success = newId > 0;
+            long result = patientDAO.insertPatient(patient);
+            success = result > 0;
         }
 
         if (success) {
-            Toast.makeText(this, isEditMode ? "Patient updated successfully" : "Patient added successfully",
+            Toast.makeText(this,
+                    isEditMode ? "Patient updated successfully" : "Patient added successfully",
                     Toast.LENGTH_SHORT).show();
 
             // Return to patient list
@@ -456,8 +573,6 @@ public class NewPatientActivity extends AppCompatActivity {
 
         // Set additional info
         if (patient.getAllergies() != null) allergiesInput.setText(patient.getAllergies());
-        if (patient.getLikes() != null) likesInput.setText(patient.getLikes());
-        if (patient.getDislikes() != null) dislikesInput.setText(patient.getDislikes());
         if (patient.getComments() != null) commentsInput.setText(patient.getComments());
     }
 

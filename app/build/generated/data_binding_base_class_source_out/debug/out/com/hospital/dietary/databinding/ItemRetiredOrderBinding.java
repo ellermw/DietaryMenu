@@ -4,6 +4,7 @@ package com.hospital.dietary.databinding;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
@@ -20,29 +21,29 @@ public final class ItemRetiredOrderBinding implements ViewBinding {
   private final LinearLayout rootView;
 
   @NonNull
-  public final TextView dietText;
+  public final CheckBox checkBox;
 
   @NonNull
-  public final TextView locationText;
+  public final TextView dietInfoText;
 
   @NonNull
-  public final TextView mealSummaryText;
-
-  @NonNull
-  public final TextView orderDateText;
+  public final TextView mealsCompletedText;
 
   @NonNull
   public final TextView patientNameText;
 
-  private ItemRetiredOrderBinding(@NonNull LinearLayout rootView, @NonNull TextView dietText,
-      @NonNull TextView locationText, @NonNull TextView mealSummaryText,
-      @NonNull TextView orderDateText, @NonNull TextView patientNameText) {
+  @NonNull
+  public final TextView roomInfoText;
+
+  private ItemRetiredOrderBinding(@NonNull LinearLayout rootView, @NonNull CheckBox checkBox,
+      @NonNull TextView dietInfoText, @NonNull TextView mealsCompletedText,
+      @NonNull TextView patientNameText, @NonNull TextView roomInfoText) {
     this.rootView = rootView;
-    this.dietText = dietText;
-    this.locationText = locationText;
-    this.mealSummaryText = mealSummaryText;
-    this.orderDateText = orderDateText;
+    this.checkBox = checkBox;
+    this.dietInfoText = dietInfoText;
+    this.mealsCompletedText = mealsCompletedText;
     this.patientNameText = patientNameText;
+    this.roomInfoText = roomInfoText;
   }
 
   @Override
@@ -72,27 +73,21 @@ public final class ItemRetiredOrderBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
-      id = R.id.dietText;
-      TextView dietText = ViewBindings.findChildViewById(rootView, id);
-      if (dietText == null) {
+      id = R.id.checkBox;
+      CheckBox checkBox = ViewBindings.findChildViewById(rootView, id);
+      if (checkBox == null) {
         break missingId;
       }
 
-      id = R.id.locationText;
-      TextView locationText = ViewBindings.findChildViewById(rootView, id);
-      if (locationText == null) {
+      id = R.id.dietInfoText;
+      TextView dietInfoText = ViewBindings.findChildViewById(rootView, id);
+      if (dietInfoText == null) {
         break missingId;
       }
 
-      id = R.id.mealSummaryText;
-      TextView mealSummaryText = ViewBindings.findChildViewById(rootView, id);
-      if (mealSummaryText == null) {
-        break missingId;
-      }
-
-      id = R.id.orderDateText;
-      TextView orderDateText = ViewBindings.findChildViewById(rootView, id);
-      if (orderDateText == null) {
+      id = R.id.mealsCompletedText;
+      TextView mealsCompletedText = ViewBindings.findChildViewById(rootView, id);
+      if (mealsCompletedText == null) {
         break missingId;
       }
 
@@ -102,8 +97,14 @@ public final class ItemRetiredOrderBinding implements ViewBinding {
         break missingId;
       }
 
-      return new ItemRetiredOrderBinding((LinearLayout) rootView, dietText, locationText,
-          mealSummaryText, orderDateText, patientNameText);
+      id = R.id.roomInfoText;
+      TextView roomInfoText = ViewBindings.findChildViewById(rootView, id);
+      if (roomInfoText == null) {
+        break missingId;
+      }
+
+      return new ItemRetiredOrderBinding((LinearLayout) rootView, checkBox, dietInfoText,
+          mealsCompletedText, patientNameText, roomInfoText);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

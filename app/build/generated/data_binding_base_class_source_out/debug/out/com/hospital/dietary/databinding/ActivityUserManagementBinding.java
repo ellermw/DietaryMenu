@@ -5,9 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,7 +19,7 @@ import java.lang.String;
 
 public final class ActivityUserManagementBinding implements ViewBinding {
   @NonNull
-  private final ScrollView rootView;
+  private final LinearLayout rootView;
 
   @NonNull
   public final Button addUserButton;
@@ -38,7 +37,7 @@ public final class ActivityUserManagementBinding implements ViewBinding {
   public final Button passwordPolicyButton;
 
   @NonNull
-  public final EditText searchInput;
+  public final Button refreshButton;
 
   @NonNull
   public final TextView usersCountText;
@@ -46,10 +45,10 @@ public final class ActivityUserManagementBinding implements ViewBinding {
   @NonNull
   public final ListView usersListView;
 
-  private ActivityUserManagementBinding(@NonNull ScrollView rootView, @NonNull Button addUserButton,
-      @NonNull Button backButton, @NonNull Button exportUsersButton,
+  private ActivityUserManagementBinding(@NonNull LinearLayout rootView,
+      @NonNull Button addUserButton, @NonNull Button backButton, @NonNull Button exportUsersButton,
       @NonNull Button importUsersButton, @NonNull Button passwordPolicyButton,
-      @NonNull EditText searchInput, @NonNull TextView usersCountText,
+      @NonNull Button refreshButton, @NonNull TextView usersCountText,
       @NonNull ListView usersListView) {
     this.rootView = rootView;
     this.addUserButton = addUserButton;
@@ -57,14 +56,14 @@ public final class ActivityUserManagementBinding implements ViewBinding {
     this.exportUsersButton = exportUsersButton;
     this.importUsersButton = importUsersButton;
     this.passwordPolicyButton = passwordPolicyButton;
-    this.searchInput = searchInput;
+    this.refreshButton = refreshButton;
     this.usersCountText = usersCountText;
     this.usersListView = usersListView;
   }
 
   @Override
   @NonNull
-  public ScrollView getRoot() {
+  public LinearLayout getRoot() {
     return rootView;
   }
 
@@ -119,9 +118,9 @@ public final class ActivityUserManagementBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.searchInput;
-      EditText searchInput = ViewBindings.findChildViewById(rootView, id);
-      if (searchInput == null) {
+      id = R.id.refreshButton;
+      Button refreshButton = ViewBindings.findChildViewById(rootView, id);
+      if (refreshButton == null) {
         break missingId;
       }
 
@@ -137,8 +136,8 @@ public final class ActivityUserManagementBinding implements ViewBinding {
         break missingId;
       }
 
-      return new ActivityUserManagementBinding((ScrollView) rootView, addUserButton, backButton,
-          exportUsersButton, importUsersButton, passwordPolicyButton, searchInput, usersCountText,
+      return new ActivityUserManagementBinding((LinearLayout) rootView, addUserButton, backButton,
+          exportUsersButton, importUsersButton, passwordPolicyButton, refreshButton, usersCountText,
           usersListView);
     }
     String missingId = rootView.getResources().getResourceName(id);

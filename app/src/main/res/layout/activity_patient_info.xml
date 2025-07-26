@@ -12,116 +12,146 @@
 
         <!-- Header Card -->
         <LinearLayout
-            style="@style/HeaderCard">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/card_background"
+            android:padding="24dp"
+            android:layout_marginBottom="16dp"
+            android:elevation="2dp">
 
             <TextView
-                style="@style/AppTitle"
-                android:text="👤 Patient Information" />
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="👤 Patient Information"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:textColor="#2c3e50"
+                android:gravity="center" />
 
             <TextView
-                style="@style/WelcomeText"
-                android:text="Manage patient records and information" />
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Manage patient records and dietary orders"
+                android:textSize="16sp"
+                android:textColor="#7f8c8d"
+                android:gravity="center"
+                android:layout_marginTop="8dp" />
 
         </LinearLayout>
 
-        <!-- Patient Options Section -->
+        <!-- Quick Stats Card -->
         <LinearLayout
-            style="@style/CardSection">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/card_background"
+            android:padding="20dp"
+            android:layout_marginBottom="16dp"
+            android:elevation="2dp">
 
             <TextView
-                style="@style/SectionTitle"
-                android:text="Patient Management" />
-
-            <!-- New Patient Button -->
-            <Button
-                android:id="@+id/newPatientButton"
-                style="@style/MainMenuButton.Primary"
-                android:text="➕  New Patient" />
-
-            <!-- Existing Patients Button -->
-            <Button
-                android:id="@+id/existingPatientsButton"
-                style="@style/MainMenuButton.Primary"
-                android:text="👥  Existing Patients"
-                android:layout_marginBottom="0dp" />
-
-        </LinearLayout>
-
-        <!-- Quick Stats Section -->
-        <LinearLayout
-            style="@style/CardSection">
-
-            <TextView
-                style="@style/SectionTitle"
-                android:text="Quick Statistics" />
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Quick Statistics"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="#2c3e50"
+                android:layout_marginBottom="16dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="8dp">
+                android:orientation="horizontal">
 
-                <!-- Total Patients Card -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical"
-                    android:background="@drawable/stat_card_background"
+                    android:gravity="center"
                     android:padding="16dp"
+                    android:background="#ecf0f1"
                     android:layout_marginEnd="8dp">
 
                     <TextView
                         android:id="@+id/totalPatientsCount"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="0"
-                        android:textSize="32sp"
+                        android:textSize="36sp"
                         android:textStyle="bold"
-                        android:textColor="#2196F3"
-                        android:gravity="center" />
+                        android:textColor="#3498db" />
 
                     <TextView
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Total Patients"
                         android:textSize="14sp"
-                        android:textColor="#7f8c8d"
-                        android:gravity="center" />
+                        android:textColor="#7f8c8d" />
 
                 </LinearLayout>
 
-                <!-- Completed Orders Card -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical"
-                    android:background="@drawable/stat_card_background"
+                    android:gravity="center"
                     android:padding="16dp"
+                    android:background="#ecf0f1"
                     android:layout_marginStart="8dp">
 
                     <TextView
                         android:id="@+id/completedOrdersCountText"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="0"
-                        android:textSize="32sp"
+                        android:textSize="36sp"
                         android:textStyle="bold"
-                        android:textColor="#27ae60"
-                        android:gravity="center" />
+                        android:textColor="#27ae60" />
 
                     <TextView
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Completed Orders"
                         android:textSize="14sp"
-                        android:textColor="#7f8c8d"
-                        android:gravity="center" />
+                        android:textColor="#7f8c8d" />
 
                 </LinearLayout>
 
             </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Menu Options -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/card_background"
+            android:padding="20dp"
+            android:elevation="2dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Patient Options"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="#2c3e50"
+                android:layout_marginBottom="12dp" />
+
+            <Button
+                android:id="@+id/newPatientButton"
+                style="@style/MainMenuButton.Primary"
+                android:text="➕ New Patient" />
+
+            <Button
+                android:id="@+id/existingPatientsButton"
+                style="@style/MainMenuButton.Primary"
+                android:text="📋 Existing Patients"
+                android:layout_marginBottom="0dp" />
 
         </LinearLayout>
 

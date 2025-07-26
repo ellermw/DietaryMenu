@@ -646,35 +646,35 @@
     <color name="accent_material_light">@color/material_deep_teal_500</color>
     <color name="androidx_core_ripple_material_light">#1f000000</color>
     <color name="androidx_core_secondary_text_default_material_light">#8a000000</color>
-    <color name="background_card">#ffffff</color>
+    <color name="backgroundGray">#ecf0f1</color>
+    <color name="backgroundLight">#f8fafc</color>
+    <color name="backgroundWhite">#ffffff</color>
     <color name="background_floating_material_dark">@color/material_grey_800</color>
     <color name="background_floating_material_light">@android:color/white</color>
     <color name="background_material_dark">@color/material_grey_850</color>
     <color name="background_material_light">@color/material_grey_50</color>
-    <color name="background_primary">#f8fafc</color>
-    <color name="background_secondary">#e9ecef</color>
-    <color name="black">#000000</color>
     <color name="bright_foreground_disabled_material_dark">#80ffffff</color>
     <color name="bright_foreground_disabled_material_light">#80000000</color>
     <color name="bright_foreground_inverse_material_dark">@color/bright_foreground_material_light</color>
     <color name="bright_foreground_inverse_material_light">@color/bright_foreground_material_dark</color>
     <color name="bright_foreground_material_dark">@android:color/white</color>
     <color name="bright_foreground_material_light">@android:color/black</color>
-    <color name="button_danger">#e74c3c</color>
-    <color name="button_disabled">#95a5a6</color>
+    <color name="buttonDark">#34495e</color>
+    <color name="buttonGray">#95a5a6</color>
+    <color name="buttonGreen">#27ae60</color>
+    <color name="buttonOrange">#e67e22</color>
+    <color name="buttonPink">#e91e63</color>
+    <color name="buttonPrimary">#3498db</color>
+    <color name="buttonPurple">#9b59b6</color>
     <color name="button_material_dark">#ff5a595b</color>
     <color name="button_material_light">#ffd6d7d7</color>
-    <color name="button_primary">#3498db</color>
-    <color name="button_success">#27ae60</color>
-    <color name="button_warning">#f39c12</color>
     <color name="cardview_dark_background">#FF424242</color>
     <color name="cardview_light_background">#FFFFFFFF</color>
     <color name="cardview_shadow_end_color">#03000000</color>
     <color name="cardview_shadow_start_color">#37000000</color>
-    <color name="colorAccent">#e74c3c</color>
-    <color name="colorPrimary">#3498db</color>
-    <color name="colorPrimaryDark">#2980b9</color>
-    <color name="danger">#dc3545</color>
+    <color name="colorAccent">#03A9F4</color>
+    <color name="colorPrimary">#2196F3</color>
+    <color name="colorPrimaryDark">#1976D2</color>
     <color name="design_bottom_navigation_shadow_color">#14000000</color>
     <color name="design_dark_default_color_background">#121212</color>
     <color name="design_dark_default_color_error">#CF6679</color>
@@ -714,18 +714,17 @@
     <color name="dim_foreground_disabled_material_light">#80323232</color>
     <color name="dim_foreground_material_dark">#ffbebebe</color>
     <color name="dim_foreground_material_light">#ff323232</color>
+    <color name="divider">#bdc3c7</color>
+    <color name="error">#e74c3c</color>
     <color name="error_color_material_dark">#ff7043</color>
     <color name="error_color_material_light">#ff5722</color>
     <color name="foreground_material_dark">@android:color/white</color>
     <color name="foreground_material_light">@android:color/black</color>
-    <color name="gray_dark">#343a40</color>
-    <color name="gray_light">#f8f9fa</color>
-    <color name="gray_medium">#6c757d</color>
     <color name="highlighted_text_material_dark">#6680cbc4</color>
     <color name="highlighted_text_material_light">#66009688</color>
     <color name="hospital_logo_background">#FFFFFF</color>
     <color name="ic_launcher_background">#FFFFFF</color>
-    <color name="info">#17a2b8</color>
+    <color name="info">#3498db</color>
     <color name="m3_ref_palette_black">#ff000000</color>
     <color name="m3_ref_palette_error0">#ff000000</color>
     <color name="m3_ref_palette_error10">#ff410e0b</color>
@@ -979,18 +978,19 @@
     <color name="secondary_text_default_material_light">#8a000000</color>
     <color name="secondary_text_disabled_material_dark">#36ffffff</color>
     <color name="secondary_text_disabled_material_light">#24000000</color>
-    <color name="success">#28a745</color>
+    <color name="semi_transparent">#80000000</color>
+    <color name="success">#27ae60</color>
     <color name="switch_thumb_disabled_material_dark">#ff616161</color>
     <color name="switch_thumb_disabled_material_light">#ffbdbdbd</color>
     <color name="switch_thumb_normal_material_dark">#ffbdbdbd</color>
     <color name="switch_thumb_normal_material_light">#fff1f1f1</color>
-    <color name="text_light">#adb5bd</color>
-    <color name="text_primary">#212529</color>
-    <color name="text_secondary">#6c757d</color>
+    <color name="textLight">#ecf0f1</color>
+    <color name="textPrimary">#2c3e50</color>
+    <color name="textSecondary">#7f8c8d</color>
     <color name="tooltip_background_dark">#e6616161</color>
     <color name="tooltip_background_light">#e6FFFFFF</color>
-    <color name="warning">#ffc107</color>
-    <color name="white">#FFFFFF</color>
+    <color name="transparent">#00000000</color>
+    <color name="warning">#f39c12</color>
     <dimen name="abc_action_bar_content_inset_material">16dp</dimen>
     <dimen name="abc_action_bar_content_inset_with_nav">72dp</dimen>
     <dimen name="abc_action_bar_default_height_material">56dp</dimen>
@@ -2293,30 +2293,25 @@
   </style>
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         
-        <item name="colorPrimary">#2196F3</item>
-        <item name="colorPrimaryDark">#1976D2</item>
-        <item name="colorAccent">#FF5722</item>
-
-        
-        <item name="materialButtonStyle">@style/Widget.App.Button</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
 
         
         <item name="android:spinnerStyle">@style/SpinnerStyle</item>
-        <item name="android:spinnerDropDownItemStyle">@style/SpinnerDropdownStyle</item>
-        <item name="android:dropDownListViewStyle">@style/SpinnerDropdownListView</item>
+        <item name="android:spinnerDropDownItemStyle">@style/SpinnerDropDownItemStyle</item>
     </style>
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
     <style name="AppTitle">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">24sp</item>
+        <item name="android:textSize">28sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">#2c3e50</item>
         <item name="android:gravity">center</item>
-        <item name="android:layout_marginBottom">8dp</item>
     </style>
     <style name="Base.AlertDialog.AppCompat" parent="android:Widget">
         <item name="android:layout">@layout/abc_alert_dialog_material</item>
@@ -5690,13 +5685,10 @@
   </style>
     <style name="Base.Widget.MaterialComponents.TextView" parent="Widget.AppCompat.TextView"/>
     <style name="CardSection">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:orientation">vertical</item>
-        <item name="android:background">@drawable/card_background</item>
-        <item name="android:padding">20dp</item>
+        <item name="android:background">@android:color/white</item>
+        <item name="android:padding">16dp</item>
         <item name="android:layout_marginBottom">16dp</item>
-        <item name="android:elevation">4dp</item>
+        <item name="android:elevation">2dp</item>
     </style>
     <style name="CardView" parent="Base.CardView">
     </style>
@@ -5707,104 +5699,87 @@
         <item name="cardBackgroundColor">@color/cardview_light_background</item>
     </style>
     <style name="CustomAlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
-        <item name="colorAccent">#2196F3</item>
-        <item name="android:textColorPrimary">#2c3e50</item>
-        <item name="android:background">#FFFFFF</item>
-        <item name="android:windowBackground">@android:color/white</item>
+        <item name="colorAccent">@color/colorPrimary</item>
     </style>
     <style name="CustomEditText" parent="Widget.AppCompat.EditText">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">48dp</item>
         <item name="android:background">@android:drawable/edit_text</item>
         <item name="android:padding">12dp</item>
+        <item name="android:minHeight">48dp</item>
         <item name="android:textSize">16sp</item>
-        <item name="android:textColor">#2c3e50</item>
         <item name="android:layout_marginBottom">16dp</item>
     </style>
     <style name="DialogContent">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">16dp</item>
         <item name="android:orientation">vertical</item>
-        <item name="android:padding">24dp</item>
+        <item name="android:background">@android:color/white</item>
     </style>
     <style name="DialogLabel">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">#2c3e50</item>
-        <item name="android:layout_marginBottom">8dp</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:layout_marginTop">8dp</item>
+    </style>
+    <style name="FullScreenDialog" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowBackground">@android:color/white</item>
+        <item name="android:windowIsFloating">false</item>
     </style>
     <style name="HeaderCard">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:orientation">vertical</item>
-        <item name="android:background">@drawable/header_card_background</item>
-        <item name="android:padding">24dp</item>
+        <item name="android:background">@android:color/white</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:elevation">2dp</item>
         <item name="android:layout_marginBottom">16dp</item>
-        <item name="android:elevation">6dp</item>
-        <item name="android:layout_marginStart">4dp</item>
-        <item name="android:layout_marginEnd">4dp</item>
     </style>
     <style name="LogoutButton">
         <item name="android:layout_width">200dp</item>
         <item name="android:layout_height">56dp</item>
         <item name="android:textSize">16sp</item>
-        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textColor">@android:color/white</item>
         <item name="android:textStyle">bold</item>
         <item name="android:gravity">center</item>
         <item name="android:background">@drawable/button_logout</item>
         <item name="android:elevation">4dp</item>
         <item name="android:stateListAnimator">@null</item>
+        <item name="android:layout_marginTop">16dp</item>
     </style>
     <style name="MainMenuButton" parent="Widget.AppCompat.Button">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">72dp</item>
-        <item name="android:textSize">18sp</item>
+        <item name="android:layout_height">64dp</item>
+        <item name="android:textSize">16sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@android:color/white</item>
-        <item name="android:gravity">center</item>
         <item name="android:layout_marginBottom">12dp</item>
         <item name="android:elevation">4dp</item>
         <item name="android:stateListAnimator">@null</item>
-        <item name="android:textAllCaps">false</item>
-        
-        <item name="android:backgroundTint">@null</item>
-        <item name="backgroundTint">@null</item>
     </style>
-    <style name="MainMenuButton.Gray" parent="MainMenuButton">
-        <item name="android:background">@drawable/button_gray</item>
+    <style name="MainMenuButton.Gray">
+        <item name="android:background">@drawable/button_rounded_blue</item>
     </style>
-    <style name="MainMenuButton.Green" parent="MainMenuButton">
-        <item name="android:background">@drawable/button_green</item>
+    <style name="MainMenuButton.Green">
+        <item name="android:background">@drawable/button_rounded_blue</item>
     </style>
-    <style name="MainMenuButton.Orange" parent="MainMenuButton">
-        <item name="android:background">@drawable/button_orange</item>
+    <style name="MainMenuButton.Orange">
+        <item name="android:background">@drawable/button_rounded_blue</item>
     </style>
-    <style name="MainMenuButton.Pink" parent="MainMenuButton">
-        <item name="android:background">@drawable/button_pink</item>
+    <style name="MainMenuButton.Pink">
+        <item name="android:background">@drawable/button_rounded_blue</item>
     </style>
-    <style name="MainMenuButton.Primary" parent="MainMenuButton">
-        <item name="android:background">@drawable/button_primary</item>
+    <style name="MainMenuButton.Primary">
+        <item name="android:background">@drawable/button_rounded_blue</item>
     </style>
-    <style name="MainMenuButton.Purple" parent="MainMenuButton">
-        <item name="android:background">@drawable/button_purple</item>
+    <style name="MainMenuButton.Purple">
+        <item name="android:background">@drawable/button_rounded_blue</item>
     </style>
-    <style name="MainMenuButton.Red" parent="MainMenuButton">
-        <item name="android:background">@drawable/button_red</item>
+    <style name="MainMenuButton.Red">
+        <item name="android:background">@drawable/button_logout</item>
     </style>
     <style name="MainMenuButton.SideBySide">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_weight">1</item>
-        <item name="android:layout_marginEnd">6dp</item>
-        <item name="android:layout_marginStart">6dp</item>
-        <item name="android:textSize">14sp</item>
         <item name="android:layout_height">64dp</item>
-        <item name="android:textColor">#FFFFFF</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:gravity">center</item>
-        <item name="android:elevation">4dp</item>
-        <item name="android:stateListAnimator">@null</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:layout_marginEnd">8dp</item>
+        <item name="android:background">@drawable/button_rounded_blue</item>
     </style>
     <style name="MaterialAlertDialog.Material3" parent="MaterialAlertDialog.MaterialComponents">
     <item name="backgroundTint">@macro/m3_comp_dialog_container_color</item>
@@ -6064,6 +6039,10 @@
         <item name="android:dropDownItemStyle">@style/Widget.AppCompat.DropDownItem.Spinner</item>
     </style>
     <style name="Platform.Widget.AppCompat.Spinner" parent="android:Widget.Holo.Spinner"/>
+    <style name="PrimaryButton" parent="Widget.AppCompat.Button.Colored">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:minHeight">48dp</item>
+    </style>
     <style name="RtlOverlay.DialogWindowTitle.AppCompat" parent="Base.DialogWindowTitle.AppCompat">
     </style>
     <style name="RtlOverlay.Widget.AppCompat.ActionBar.TitleItem" parent="android:Widget">
@@ -6119,13 +6098,14 @@
         <item name="android:paddingLeft">@dimen/abc_action_bar_overflow_padding_start_material</item>
         <item name="android:paddingRight">@dimen/abc_action_bar_overflow_padding_end_material</item>
     </style>
+    <style name="SecondaryButton" parent="Widget.AppCompat.Button">
+        <item name="android:minHeight">48dp</item>
+    </style>
     <style name="SectionTitle">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">20sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">#2c3e50</item>
-        <item name="android:layout_marginBottom">16dp</item>
+        <item name="android:layout_marginBottom">12dp</item>
     </style>
     <style name="ShapeAppearance.M3.Comp.Badge.Large.Shape" parent="ShapeAppearance.M3.Sys.Shape.Corner.Full"/>
     <style name="ShapeAppearance.M3.Comp.Badge.Shape" parent="ShapeAppearance.M3.Sys.Shape.Corner.Full"/>
@@ -6271,30 +6251,18 @@
     <item name="cornerSizeBottomLeft">@dimen/mtrl_textinput_box_corner_radius_small</item>
     <item name="cornerSizeBottomRight">@dimen/mtrl_textinput_box_corner_radius_small</item>
   </style>
-    <style name="SpinnerDropdownListView" parent="Widget.AppCompat.ListView.DropDown">
-        <item name="android:dividerHeight">1dp</item>
-        <item name="android:divider">#E0E0E0</item>
-        <item name="android:scrollbarStyle">outsideOverlay</item>
-        <item name="android:paddingTop">8dp</item>
-        <item name="android:paddingBottom">8dp</item>
-        <item name="android:clipToPadding">false</item>
-    </style>
-    <style name="SpinnerDropdownStyle" parent="Widget.AppCompat.DropDownItem.Spinner">
+    <style name="SpinnerDropDownItemStyle" parent="Widget.AppCompat.TextView.SpinnerItem">
         <item name="android:minHeight">56dp</item>
-        <item name="android:paddingStart">16dp</item>
-        <item name="android:paddingEnd">16dp</item>
-        <item name="android:paddingTop">16dp</item>
-        <item name="android:paddingBottom">16dp</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
         <item name="android:textSize">16sp</item>
-        <item name="android:textColor">#000000</item>
+        <item name="android:gravity">center_vertical</item>
     </style>
     <style name="SpinnerStyle" parent="Widget.AppCompat.Spinner">
         <item name="android:minHeight">48dp</item>
-        <item name="android:paddingStart">12dp</item>
-        <item name="android:paddingEnd">40dp</item>
-        <item name="android:paddingTop">12dp</item>
-        <item name="android:paddingBottom">12dp</item>
-        <item name="android:dropDownVerticalOffset">48dp</item>
+        <item name="android:padding">12dp</item>
     </style>
     <style name="TextAppearance.AppCompat" parent="Base.TextAppearance.AppCompat"/>
     <style name="TextAppearance.AppCompat.Body1" parent="Base.TextAppearance.AppCompat.Body1"/>
@@ -7383,15 +7351,9 @@
     <item name="actionMenuTextColor">@color/material_on_surface_emphasis_medium</item>
   </style>
     <style name="WelcomeText">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">#7f8c8d</item>
         <item name="android:gravity">center</item>
-    </style>
-    <style name="Widget.App.Button" parent="Widget.AppCompat.Button">
-        <item name="android:backgroundTint">@null</item>
-        <item name="backgroundTint">@null</item>
     </style>
     <style name="Widget.AppCompat.ActionBar" parent="Base.Widget.AppCompat.ActionBar">
     </style>

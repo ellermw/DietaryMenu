@@ -4,105 +4,113 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.TextView;
-import com.hospital.dietary.models.FinalizedOrder;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import com.hospital.dietary.models.Patient;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
-public class RetiredOrdersAdapter extends BaseAdapter {
-    
+public class RetiredOrdersAdapter extends ArrayAdapter<Patient> {
+
     private Context context;
-    private List<FinalizedOrder> orders;
-    private LayoutInflater inflater;
-    private SimpleDateFormat displayDateFormat = new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault());
-    private SimpleDateFormat parseDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+    private List<Patient> patients;
+    private List<Integer> selectedPositions;
 
-    public RetiredOrdersAdapter(Context context, List<FinalizedOrder> orders) {
+    public RetiredOrdersAdapter(Context context, List<Patient> patients) {
+        super(context, R.layout.item_retired_order, patients);
         this.context = context;
-        this.orders = orders;
-        this.inflater = LayoutInflater.from(context);
-    }
-
-    @Override
-    public int getCount() {
-        return orders.size();
-    }
-
-    @Override
-    public Object getItem(int position) {
-        return orders.get(position);
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return orders.get(position).getOrderId();
+        this.patients = patients;
+        this.selectedPositions = new ArrayList<>();
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
-        
+
         if (convertView == null) {
-            convertView = inflater.inflate(R.layout.item_retired_order, parent, false);
+            convertView = LayoutInflater.from(context).inflate(R.layout.item_retired_order, parent, false);
             holder = new ViewHolder();
+            holder.checkBox = convertView.findViewById(R.id.checkBox);
             holder.patientNameText = convertView.findViewById(R.id.patientNameText);
-            holder.locationText = convertView.findViewById(R.id.locationText);
-            holder.orderDateText = convertView.findViewById(R.id.orderDateText);
-            holder.dietText = convertView.findViewById(R.id.dietText);
-            holder.mealSummaryText = convertView.findViewById(R.id.mealSummaryText);
+            holder.roomInfoText = convertView.findViewById(R.id.roomInfoText);
+            holder.dietInfoText = convertView.findViewById(R.id.dietInfoText);
+            holder.mealsCompletedText = convertView.findViewById(R.id.mealsCompletedText);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        
-        FinalizedOrder order = orders.get(position);
-        
-        // Set patient name
-        holder.patientNameText.setText(order.getPatientName());
-        
-        // Set location
-        holder.locationText.setText("📍 " + order.getWing() + " - Room " + order.getRoom());
-        
-        // Set order date
-        try {
-            Date orderDate = parseDateFormat.parse(order.getOrderDate());
-            holder.orderDateText.setText("📅 " + displayDateFormat.format(orderDate));
-        } catch (ParseException e) {
-            holder.orderDateText.setText("📅 " + order.getOrderDate());
-        }
-        
-        // Set diet
-        holder.dietText.setText("🍽️ " + order.getDietType());
-        
-        // Set meal summary
-        StringBuilder mealSummary = new StringBuilder();
-        int mealCount = 0;
-        
-        if (order.getBreakfastItems() != null && !order.getBreakfastItems().isEmpty()) {
-            mealCount++;
-        }
-        if (order.getLunchItems() != null && !order.getLunchItems().isEmpty()) {
-            mealCount++;
-        }
-        if (order.getDinnerItems() != null && !order.getDinnerItems().isEmpty()) {
-            mealCount++;
-        }
-        
-        mealSummary.append("📋 ").append(mealCount).append(" meal(s) ordered");
-        holder.mealSummaryText.setText(mealSummary.toString());
-        
+
+        Patient patient = patients.get(position);
+
+        // Set patient info
+        holder.patientNameText.setText(patient.getFirstName() + " " + patient.getLastName());
+        holder.roomInfoText.setText(patient.getWing() + " - Room " + patient.getRoomNumber());
+        holder.dietInfoText.setText(patient.getDietType());
+
+        // Show completed meals
+        String completedMeals = getCompletedMealsText(patient);
+        holder.mealsCompletedText.setText(completedMeals);
+
+        // Handle checkbox
+        holder.checkBox.setChecked(selectedPositions.contains(position));
+        holder.checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                if (!selectedPositions.contains(position)) {
+                    selectedPositions.add(position);
+                }
+            } else {
+                selectedPositions.remove(Integer.valueOf(position));
+            }
+        });
+
         return convertView;
     }
-    
-    private static class ViewHolder {
+
+    private String getCompletedMealsText(Patient patient) {
+        List<String> completedMeals = new ArrayList<>();
+
+        if (patient.isBreakfastComplete() || patient.isBreakfastNPO()) {
+            completedMeals.add("B");
+        }
+        if (patient.isLunchComplete() || patient.isLunchNPO()) {
+            completedMeals.add("L");
+        }
+        if (patient.isDinnerComplete() || patient.isDinnerNPO()) {
+            completedMeals.add("D");
+        }
+
+        return String.join(", ", completedMeals);
+    }
+
+    public List<Patient> getSelectedPatients() {
+        List<Patient> selected = new ArrayList<>();
+        for (Integer position : selectedPositions) {
+            if (position < patients.size()) {
+                selected.add(patients.get(position));
+            }
+        }
+        return selected;
+    }
+
+    public void clearSelections() {
+        selectedPositions.clear();
+        notifyDataSetChanged();
+    }
+
+    public void selectAll() {
+        selectedPositions.clear();
+        for (int i = 0; i < patients.size(); i++) {
+            selectedPositions.add(i);
+        }
+        notifyDataSetChanged();
+    }
+
+    static class ViewHolder {
+        CheckBox checkBox;
         TextView patientNameText;
-        TextView locationText;
-        TextView orderDateText;
-        TextView dietText;
-        TextView mealSummaryText;
+        TextView roomInfoText;
+        TextView dietInfoText;
+        TextView mealsCompletedText;
     }
 }

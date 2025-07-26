@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="background_card">#ffffff</color>
-    <color name="background_primary">#f8fafc</color>
-    <color name="background_secondary">#e9ecef</color>
-    <color name="black">#000000</color>
-    <color name="button_danger">#e74c3c</color>
-    <color name="button_disabled">#95a5a6</color>
-    <color name="button_primary">#3498db</color>
-    <color name="button_success">#27ae60</color>
-    <color name="button_warning">#f39c12</color>
-    <color name="colorAccent">#e74c3c</color>
-    <color name="colorPrimary">#3498db</color>
-    <color name="colorPrimaryDark">#2980b9</color>
-    <color name="danger">#dc3545</color>
-    <color name="gray_dark">#343a40</color>
-    <color name="gray_light">#f8f9fa</color>
-    <color name="gray_medium">#6c757d</color>
+    <color name="backgroundGray">#ecf0f1</color>
+    <color name="backgroundLight">#f8fafc</color>
+    <color name="backgroundWhite">#ffffff</color>
+    <color name="buttonDark">#34495e</color>
+    <color name="buttonGray">#95a5a6</color>
+    <color name="buttonGreen">#27ae60</color>
+    <color name="buttonOrange">#e67e22</color>
+    <color name="buttonPink">#e91e63</color>
+    <color name="buttonPrimary">#3498db</color>
+    <color name="buttonPurple">#9b59b6</color>
+    <color name="colorAccent">#03A9F4</color>
+    <color name="colorPrimary">#2196F3</color>
+    <color name="colorPrimaryDark">#1976D2</color>
+    <color name="divider">#bdc3c7</color>
+    <color name="error">#e74c3c</color>
     <color name="hospital_logo_background">#FFFFFF</color>
     <color name="ic_launcher_background">#FFFFFF</color>
-    <color name="info">#17a2b8</color>
-    <color name="success">#28a745</color>
-    <color name="text_light">#adb5bd</color>
-    <color name="text_primary">#212529</color>
-    <color name="text_secondary">#6c757d</color>
-    <color name="warning">#ffc107</color>
-    <color name="white">#FFFFFF</color>
+    <color name="info">#3498db</color>
+    <color name="semi_transparent">#80000000</color>
+    <color name="success">#27ae60</color>
+    <color name="textLight">#ecf0f1</color>
+    <color name="textPrimary">#2c3e50</color>
+    <color name="textSecondary">#7f8c8d</color>
+    <color name="transparent">#00000000</color>
+    <color name="warning">#f39c12</color>
     <string name="about">About</string>
     <string name="account_inactive">Account is inactive. Please contact administrator.</string>
     <string name="ada_diet">ADA Diet</string>
@@ -140,182 +140,144 @@
     <string name="yes">Yes</string>
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         
-        <item name="colorPrimary">#2196F3</item>
-        <item name="colorPrimaryDark">#1976D2</item>
-        <item name="colorAccent">#FF5722</item>
-
-        
-        <item name="materialButtonStyle">@style/Widget.App.Button</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
 
         
         <item name="android:spinnerStyle">@style/SpinnerStyle</item>
-        <item name="android:spinnerDropDownItemStyle">@style/SpinnerDropdownStyle</item>
-        <item name="android:dropDownListViewStyle">@style/SpinnerDropdownListView</item>
+        <item name="android:spinnerDropDownItemStyle">@style/SpinnerDropDownItemStyle</item>
     </style>
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
     <style name="AppTitle">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">24sp</item>
+        <item name="android:textSize">28sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">#2c3e50</item>
         <item name="android:gravity">center</item>
-        <item name="android:layout_marginBottom">8dp</item>
     </style>
     <style name="CardSection">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:orientation">vertical</item>
-        <item name="android:background">@drawable/card_background</item>
-        <item name="android:padding">20dp</item>
+        <item name="android:background">@android:color/white</item>
+        <item name="android:padding">16dp</item>
         <item name="android:layout_marginBottom">16dp</item>
-        <item name="android:elevation">4dp</item>
+        <item name="android:elevation">2dp</item>
     </style>
     <style name="CustomAlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
-        <item name="colorAccent">#2196F3</item>
-        <item name="android:textColorPrimary">#2c3e50</item>
-        <item name="android:background">#FFFFFF</item>
-        <item name="android:windowBackground">@android:color/white</item>
+        <item name="colorAccent">@color/colorPrimary</item>
     </style>
     <style name="CustomEditText" parent="Widget.AppCompat.EditText">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">48dp</item>
         <item name="android:background">@android:drawable/edit_text</item>
         <item name="android:padding">12dp</item>
+        <item name="android:minHeight">48dp</item>
         <item name="android:textSize">16sp</item>
-        <item name="android:textColor">#2c3e50</item>
         <item name="android:layout_marginBottom">16dp</item>
     </style>
     <style name="DialogContent">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">16dp</item>
         <item name="android:orientation">vertical</item>
-        <item name="android:padding">24dp</item>
+        <item name="android:background">@android:color/white</item>
     </style>
     <style name="DialogLabel">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">#2c3e50</item>
-        <item name="android:layout_marginBottom">8dp</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:layout_marginTop">8dp</item>
+    </style>
+    <style name="FullScreenDialog" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowBackground">@android:color/white</item>
+        <item name="android:windowIsFloating">false</item>
     </style>
     <style name="HeaderCard">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:orientation">vertical</item>
-        <item name="android:background">@drawable/header_card_background</item>
-        <item name="android:padding">24dp</item>
+        <item name="android:background">@android:color/white</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:elevation">2dp</item>
         <item name="android:layout_marginBottom">16dp</item>
-        <item name="android:elevation">6dp</item>
-        <item name="android:layout_marginStart">4dp</item>
-        <item name="android:layout_marginEnd">4dp</item>
     </style>
     <style name="LogoutButton">
         <item name="android:layout_width">200dp</item>
         <item name="android:layout_height">56dp</item>
         <item name="android:textSize">16sp</item>
-        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textColor">@android:color/white</item>
         <item name="android:textStyle">bold</item>
         <item name="android:gravity">center</item>
         <item name="android:background">@drawable/button_logout</item>
         <item name="android:elevation">4dp</item>
         <item name="android:stateListAnimator">@null</item>
+        <item name="android:layout_marginTop">16dp</item>
     </style>
     <style name="MainMenuButton" parent="Widget.AppCompat.Button">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">72dp</item>
-        <item name="android:textSize">18sp</item>
+        <item name="android:layout_height">64dp</item>
+        <item name="android:textSize">16sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@android:color/white</item>
-        <item name="android:gravity">center</item>
         <item name="android:layout_marginBottom">12dp</item>
         <item name="android:elevation">4dp</item>
         <item name="android:stateListAnimator">@null</item>
-        <item name="android:textAllCaps">false</item>
-        
-        <item name="android:backgroundTint">@null</item>
-        <item name="backgroundTint">@null</item>
     </style>
-    <style name="MainMenuButton.Gray" parent="MainMenuButton">
-        <item name="android:background">@drawable/button_gray</item>
+    <style name="MainMenuButton.Gray">
+        <item name="android:background">@drawable/button_rounded_blue</item>
     </style>
-    <style name="MainMenuButton.Green" parent="MainMenuButton">
-        <item name="android:background">@drawable/button_green</item>
+    <style name="MainMenuButton.Green">
+        <item name="android:background">@drawable/button_rounded_blue</item>
     </style>
-    <style name="MainMenuButton.Orange" parent="MainMenuButton">
-        <item name="android:background">@drawable/button_orange</item>
+    <style name="MainMenuButton.Orange">
+        <item name="android:background">@drawable/button_rounded_blue</item>
     </style>
-    <style name="MainMenuButton.Pink" parent="MainMenuButton">
-        <item name="android:background">@drawable/button_pink</item>
+    <style name="MainMenuButton.Pink">
+        <item name="android:background">@drawable/button_rounded_blue</item>
     </style>
-    <style name="MainMenuButton.Primary" parent="MainMenuButton">
-        <item name="android:background">@drawable/button_primary</item>
+    <style name="MainMenuButton.Primary">
+        <item name="android:background">@drawable/button_rounded_blue</item>
     </style>
-    <style name="MainMenuButton.Purple" parent="MainMenuButton">
-        <item name="android:background">@drawable/button_purple</item>
+    <style name="MainMenuButton.Purple">
+        <item name="android:background">@drawable/button_rounded_blue</item>
     </style>
-    <style name="MainMenuButton.Red" parent="MainMenuButton">
-        <item name="android:background">@drawable/button_red</item>
+    <style name="MainMenuButton.Red">
+        <item name="android:background">@drawable/button_logout</item>
     </style>
     <style name="MainMenuButton.SideBySide">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_weight">1</item>
-        <item name="android:layout_marginEnd">6dp</item>
-        <item name="android:layout_marginStart">6dp</item>
-        <item name="android:textSize">14sp</item>
         <item name="android:layout_height">64dp</item>
-        <item name="android:textColor">#FFFFFF</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:gravity">center</item>
-        <item name="android:elevation">4dp</item>
-        <item name="android:stateListAnimator">@null</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:layout_marginEnd">8dp</item>
+        <item name="android:background">@drawable/button_rounded_blue</item>
+    </style>
+    <style name="PrimaryButton" parent="Widget.AppCompat.Button.Colored">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:minHeight">48dp</item>
+    </style>
+    <style name="SecondaryButton" parent="Widget.AppCompat.Button">
+        <item name="android:minHeight">48dp</item>
     </style>
     <style name="SectionTitle">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">20sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">#2c3e50</item>
-        <item name="android:layout_marginBottom">16dp</item>
+        <item name="android:layout_marginBottom">12dp</item>
     </style>
-    <style name="SpinnerDropdownListView" parent="Widget.AppCompat.ListView.DropDown">
-        <item name="android:dividerHeight">1dp</item>
-        <item name="android:divider">#E0E0E0</item>
-        <item name="android:scrollbarStyle">outsideOverlay</item>
-        <item name="android:paddingTop">8dp</item>
-        <item name="android:paddingBottom">8dp</item>
-        <item name="android:clipToPadding">false</item>
-    </style>
-    <style name="SpinnerDropdownStyle" parent="Widget.AppCompat.DropDownItem.Spinner">
+    <style name="SpinnerDropDownItemStyle" parent="Widget.AppCompat.TextView.SpinnerItem">
         <item name="android:minHeight">56dp</item>
-        <item name="android:paddingStart">16dp</item>
-        <item name="android:paddingEnd">16dp</item>
-        <item name="android:paddingTop">16dp</item>
-        <item name="android:paddingBottom">16dp</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
         <item name="android:textSize">16sp</item>
-        <item name="android:textColor">#000000</item>
+        <item name="android:gravity">center_vertical</item>
     </style>
     <style name="SpinnerStyle" parent="Widget.AppCompat.Spinner">
         <item name="android:minHeight">48dp</item>
-        <item name="android:paddingStart">12dp</item>
-        <item name="android:paddingEnd">40dp</item>
-        <item name="android:paddingTop">12dp</item>
-        <item name="android:paddingBottom">12dp</item>
-        <item name="android:dropDownVerticalOffset">48dp</item>
+        <item name="android:padding">12dp</item>
     </style>
     <style name="WelcomeText">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">#7f8c8d</item>
         <item name="android:gravity">center</item>
-    </style>
-    <style name="Widget.App.Button" parent="Widget.AppCompat.Button">
-        <item name="android:backgroundTint">@null</item>
-        <item name="backgroundTint">@null</item>
     </style>
 </resources>

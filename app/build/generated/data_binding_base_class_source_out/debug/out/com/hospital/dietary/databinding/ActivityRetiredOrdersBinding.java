@@ -25,6 +25,9 @@ public final class ActivityRetiredOrdersBinding implements ViewBinding {
   public final Button backButton;
 
   @NonNull
+  public final Button datePickerButton;
+
+  @NonNull
   public final Button homeButton;
 
   @NonNull
@@ -49,12 +52,14 @@ public final class ActivityRetiredOrdersBinding implements ViewBinding {
   public final TextView selectedDateText;
 
   private ActivityRetiredOrdersBinding(@NonNull LinearLayout rootView, @NonNull Button backButton,
-      @NonNull Button homeButton, @NonNull TextView noRetiredOrdersText,
-      @NonNull Button printAllButton, @NonNull Button printSelectedButton,
-      @NonNull ListView retiredOrdersListView, @NonNull TextView retiredOrdersTitle,
-      @NonNull Button selectDateButton, @NonNull TextView selectedDateText) {
+      @NonNull Button datePickerButton, @NonNull Button homeButton,
+      @NonNull TextView noRetiredOrdersText, @NonNull Button printAllButton,
+      @NonNull Button printSelectedButton, @NonNull ListView retiredOrdersListView,
+      @NonNull TextView retiredOrdersTitle, @NonNull Button selectDateButton,
+      @NonNull TextView selectedDateText) {
     this.rootView = rootView;
     this.backButton = backButton;
+    this.datePickerButton = datePickerButton;
     this.homeButton = homeButton;
     this.noRetiredOrdersText = noRetiredOrdersText;
     this.printAllButton = printAllButton;
@@ -95,6 +100,12 @@ public final class ActivityRetiredOrdersBinding implements ViewBinding {
       id = R.id.backButton;
       Button backButton = ViewBindings.findChildViewById(rootView, id);
       if (backButton == null) {
+        break missingId;
+      }
+
+      id = R.id.datePickerButton;
+      Button datePickerButton = ViewBindings.findChildViewById(rootView, id);
+      if (datePickerButton == null) {
         break missingId;
       }
 
@@ -146,9 +157,9 @@ public final class ActivityRetiredOrdersBinding implements ViewBinding {
         break missingId;
       }
 
-      return new ActivityRetiredOrdersBinding((LinearLayout) rootView, backButton, homeButton,
-          noRetiredOrdersText, printAllButton, printSelectedButton, retiredOrdersListView,
-          retiredOrdersTitle, selectDateButton, selectedDateText);
+      return new ActivityRetiredOrdersBinding((LinearLayout) rootView, backButton, datePickerButton,
+          homeButton, noRetiredOrdersText, printAllButton, printSelectedButton,
+          retiredOrdersListView, retiredOrdersTitle, selectDateButton, selectedDateText);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));
