@@ -36,6 +36,10 @@
         "source": "com.hospital.dietary.app-main-6:/drawable/ic_home.xml"
     },
     {
+        "merged": "com.hospital.dietary.app-debug-4:/layout_spinner_item.xml.flat",
+        "source": "com.hospital.dietary.app-main-6:/layout/spinner_item.xml"
+    },
+    {
         "merged": "com.hospital.dietary.app-debug-4:/mipmap-hdpi_ic_launcher_round.png.flat",
         "source": "com.hospital.dietary.app-main-6:/mipmap-hdpi/ic_launcher_round.png"
     },
@@ -386,6 +390,10 @@
     {
         "merged": "com.hospital.dietary.app-debug-4:/drawable_ic_speaker.xml.flat",
         "source": "com.hospital.dietary.app-main-6:/drawable/ic_speaker.xml"
+    },
+    {
+        "merged": "com.hospital.dietary.app-debug-4:/layout_spinner_dropdown_item.xml.flat",
+        "source": "com.hospital.dietary.app-main-6:/layout/spinner_dropdown_item.xml"
     },
     {
         "merged": "com.hospital.dietary.app-debug-4:/mipmap-xxhdpi_hospital_logo_round.webp.flat",

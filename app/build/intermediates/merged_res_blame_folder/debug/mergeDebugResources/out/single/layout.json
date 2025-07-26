@@ -120,6 +120,10 @@
         "source": "com.hospital.dietary.app-main-6:/layout/dialog_patient_details.xml"
     },
     {
+        "merged": "com.hospital.dietary.app-mergeDebugResources-3:/layout/spinner_item.xml",
+        "source": "com.hospital.dietary.app-main-6:/layout/spinner_item.xml"
+    },
+    {
         "merged": "com.hospital.dietary.app-mergeDebugResources-3:/layout/activity_edit_patient.xml",
         "source": "com.hospital.dietary.app-main-6:/layout/activity_edit_patient.xml"
     },
@@ -184,6 +188,10 @@
         "source": "com.hospital.dietary.app-main-6:/layout/item_retired_order.xml"
     },
     {
+        "merged": "com.hospital.dietary.app-mergeDebugResources-3:/layout/spinner_dropdown_item.xml",
+        "source": "com.hospital.dietary.app-main-6:/layout/spinner_dropdown_item.xml"
+    },
+    {
         "merged": "com.hospital.dietary.app-mergeDebugResources-3:/layout/activity_meal_planning.xml",
         "source": "com.hospital.dietary.app-main-6:/layout/activity_meal_planning.xml"
     },
@@ -236,12 +244,12 @@
         "source": "com.hospital.dietary.app-main-6:/layout/activity_admin_menu.xml"
     },
     {
-        "merged": "com.hospital.dietary.app-mergeDebugResources-3:/layout/dialog_admin_access.xml",
-        "source": "com.hospital.dietary.app-main-6:/layout/dialog_admin_access.xml"
-    },
-    {
         "merged": "com.hospital.dietary.app-mergeDebugResources-3:/layout/item_saved_menu.xml",
         "source": "com.hospital.dietary.app-main-6:/layout/item_saved_menu.xml"
+    },
+    {
+        "merged": "com.hospital.dietary.app-mergeDebugResources-3:/layout/dialog_admin_access.xml",
+        "source": "com.hospital.dietary.app-main-6:/layout/dialog_admin_access.xml"
     },
     {
         "merged": "com.hospital.dietary.app-mergeDebugResources-3:/layout/activity_admin_new.xml",
