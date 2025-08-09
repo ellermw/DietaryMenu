@@ -1,3 +1,0 @@
-com.hospital.dietary.test
-style WhiteBackgroundDialogTheme
-style WhiteBackgroundTheme
